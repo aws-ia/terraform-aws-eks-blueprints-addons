@@ -1,0 +1,27 @@
+{
+  "checks": [
+    {
+      "code": "CUS003",
+      "description": "Use `aws_launch_template` over `aws_launch_configuration",
+      "impact": "Launch configurations are not capable of versions",
+      "resolution": "Convert resource type and attributes to `aws_launch_template`",
+      "requiredTypes": [
+        "resource"
+      ],
+      "requiredLabels": [
+        "aws_launch_configuration"
+      ],
+      "severity": "MEDIUM",
+      "matchSpec": {
+          "action": "notPresent",
+          "name": "image_id"
+        },
+
+      "errorMessage": "should be changed to `aws_launch_template` since the functionality is the same but templates can be versioned.",
+      "relatedLinks": [
+        "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template",
+        "https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service"
+      ]
+    }
+  ]
+}

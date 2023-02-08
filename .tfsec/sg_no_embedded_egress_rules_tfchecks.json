@@ -1,0 +1,27 @@
+{
+  "checks": [
+    {
+      "code": "CUS005",
+      "description": "Security group rules should be defined with `aws_security_group_rule` instead of embedded.",
+      "impact": "Embedded security group rules can cause issues during configuration updates.",
+      "resolution": "Move `egress` rules to `aws_security_group_rule` and attach to `aws_security_group`.",
+      "requiredTypes": [
+        "resource"
+      ],
+      "requiredLabels": [
+        "aws_security_group"
+      ],
+      "severity": "MEDIUM",
+      "matchSpec": {
+          "action": "notPresent",
+          "name": "egress"
+        },
+
+      "errorMessage": "`egress` rules should be moved to `aws_security_group_rule` and attached to `aws_security_group` instead of embedded.",
+      "relatedLinks": [
+        "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule",
+        "https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group"
+      ]
+    }
+  ]
+}
