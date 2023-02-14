@@ -2,6 +2,8 @@
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
+  annotations:
+    checkov.io/skip: CKV_K8S_21
   labels:
 {{ include "kuberay-operator.labels" . | indent 4 }}
   name: {{ include "kuberay-operator.fullname" . }}
