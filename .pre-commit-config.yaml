@@ -36,4 +36,3 @@ repos:
       - id: terraform_tfsec
         args:
           - --args=--concise-output
-          - --args=--config-file=__GIT_WORKING_DIR__/.tfsec.yaml

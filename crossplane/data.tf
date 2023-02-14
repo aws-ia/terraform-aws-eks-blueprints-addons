@@ -4,6 +4,7 @@ data "aws_iam_policy_document" "s3_policy" {
     effect    = "Allow"
     resources = ["arn:${var.addon_context.aws_partition_id}:s3:::*"]
 
+    #tfsec:ignore:aws-iam-no-policy-wildcards
     actions = [
       "s3:CreateBucket",
       "s3:DeleteBucket",
