@@ -25,7 +25,7 @@ Helm Addon module can be used to provision a generic Helm Chart as an Add-On for
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_irsa"></a> [irsa](#module\_irsa) | ../../irsa | n/a |
+| <a name="module_irsa"></a> [irsa](#module\_irsa) | ../irsa | n/a |
 
 ## Resources
 

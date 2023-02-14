@@ -51,10 +51,10 @@ Refer to [docs](../../../docs/add-ons/crossplane.md) on how to deploy AWS Provid
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_aws_provider_irsa"></a> [aws\_provider\_irsa](#module\_aws\_provider\_irsa) | ../../../modules/irsa | n/a |
+| <a name="module_aws_provider_irsa"></a> [aws\_provider\_irsa](#module\_aws\_provider\_irsa) | ../irsa | n/a |
 | <a name="module_helm_addon"></a> [helm\_addon](#module\_helm\_addon) | ../helm-addon | n/a |
-| <a name="module_jet_aws_provider_irsa"></a> [jet\_aws\_provider\_irsa](#module\_jet\_aws\_provider\_irsa) | ../../../modules/irsa | n/a |
-| <a name="module_upbound_aws_provider_irsa"></a> [upbound\_aws\_provider\_irsa](#module\_upbound\_aws\_provider\_irsa) | ../../../modules/irsa | n/a |
+| <a name="module_jet_aws_provider_irsa"></a> [jet\_aws\_provider\_irsa](#module\_jet\_aws\_provider\_irsa) | ../irsa | n/a |
+| <a name="module_upbound_aws_provider_irsa"></a> [upbound\_aws\_provider\_irsa](#module\_upbound\_aws\_provider\_irsa) | ../irsa | n/a |
 
 ## Resources
 

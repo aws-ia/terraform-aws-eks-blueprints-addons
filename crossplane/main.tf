@@ -19,7 +19,7 @@ module "helm_addon" {
 #--------------------------------------
 module "aws_provider_irsa" {
   count                             = local.aws_provider.enable == true ? 1 : 0
-  source                            = "../../../modules/irsa"
+  source                            = "../irsa"
   create_kubernetes_namespace       = false
   create_kubernetes_service_account = false
   kubernetes_namespace              = local.namespace
@@ -97,7 +97,7 @@ resource "kubectl_manifest" "jet_aws_provider" {
 module "jet_aws_provider_irsa" {
   count = var.jet_aws_provider.enable == true ? 1 : 0
 
-  source                            = "../../../modules/irsa"
+  source                            = "../irsa"
   create_kubernetes_namespace       = false
   create_kubernetes_service_account = false
   kubernetes_namespace              = local.namespace
@@ -130,7 +130,7 @@ resource "kubectl_manifest" "jet_aws_provider_config" {
 #--------------------------------------
 module "upbound_aws_provider_irsa" {
   count                             = local.upbound_aws_provider.enable == true ? 1 : 0
-  source                            = "../../../modules/irsa"
+  source                            = "../irsa"
   create_kubernetes_namespace       = false
   create_kubernetes_service_account = false
   kubernetes_namespace              = local.namespace
