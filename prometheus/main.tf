@@ -86,7 +86,7 @@ resource "aws_iam_policy" "ingest" {
 }
 
 module "irsa_amp_ingest" {
-  source = "../../../modules/irsa"
+  source = "../irsa"
 
   count = var.enable_amazon_prometheus ? 1 : 0
 
@@ -114,7 +114,7 @@ resource "aws_iam_policy" "query" {
 }
 
 module "irsa_amp_query" {
-  source = "../../../modules/irsa"
+  source = "../irsa"
 
   count = var.enable_amazon_prometheus ? 1 : 0
 
