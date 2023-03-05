@@ -61,7 +61,7 @@ resource "helm_release" "addon" {
 }
 
 module "irsa" {
-  source = "../irsa"
+  source = "../../irsa"
 
   count = length(var.irsa_config) > 0 ? 1 : 0
 

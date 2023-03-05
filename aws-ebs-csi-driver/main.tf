@@ -75,7 +75,7 @@ module "helm_addon" {
 }
 
 module "irsa_addon" {
-  source = "../irsa"
+  source = "../../../modules/irsa"
 
   count = local.create_irsa && !var.enable_self_managed_aws_ebs_csi_driver ? 1 : 0
 

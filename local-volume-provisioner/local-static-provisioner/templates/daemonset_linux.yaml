@@ -2,26 +2,6 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  annotations:
-    checkov.io/skip37: CKV_K8S_37
-    checkov.io/skip31: CKV_K8S_31
-    checkov.io/skip8: CKV_K8S_8
-    checkov.io/skip12: CKV_K8S_12
-    checkov.io/skip20: CKV_K8S_20
-    checkov.io/skip15: CKV_K8S_15
-    checkov.io/skip13: CKV_K8S_13
-    checkov.io/skip40: CKV_K8S_40
-    checkov.io/skip10: CKV_K8S_10
-    checkov.io/skip16: CKV_K8S_16
-    checkov.io/skip22: CKV_K8S_22
-    checkov.io/skip9: CKV_K8S_9
-    checkov.io/skip28: CKV_K8S_28
-    checkov.io/skip29: CKV_K8S_29
-    checkov.io/skip38: CKV_K8S_38
-    checkov.io/skip21: CKV_K8S_21
-    checkov.io/skip23: CKV_K8S_23
-    checkov.io/skip43: CKV_K8S_43
-    checkov.io/skip11: CKV_K8S_11
   name: {{ include "provisioner.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:

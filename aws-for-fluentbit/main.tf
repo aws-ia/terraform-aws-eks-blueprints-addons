@@ -24,7 +24,7 @@ resource "aws_iam_policy" "aws_for_fluent_bit" {
 
 module "kms" {
   count       = var.cw_log_group_kms_key_arn == null && var.create_cw_log_group ? 1 : 0
-  source      = "../aws-kms"
+  source      = "../../../modules/aws-kms"
   description = "EKS Workers FluentBit CloudWatch Log group KMS Key"
   alias       = "alias/${var.addon_context.eks_cluster_id}-cw-fluent-bit"
   policy      = data.aws_iam_policy_document.kms.json
