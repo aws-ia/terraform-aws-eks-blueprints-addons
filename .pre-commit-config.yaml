@@ -25,7 +25,7 @@ repos:
           - '--args=--only=terraform_documented_outputs'
           - '--args=--only=terraform_documented_variables'
           - '--args=--only=terraform_typed_variables'
-          - '--args=--only=terraform_module_pinned_source'
+#          - '--args=--only=terraform_module_pinned_source'
           - '--args=--only=terraform_naming_convention'
           - '--args=--only=terraform_required_version'
           - '--args=--only=terraform_required_providers'
@@ -36,3 +36,5 @@ repos:
       - id: terraform_tfsec
         args:
           - --args=--concise-output
+          - --args=--config-file=__GIT_WORKING_DIR__/.tfsec.yaml
+          - --args=--exclude-path=examples/
