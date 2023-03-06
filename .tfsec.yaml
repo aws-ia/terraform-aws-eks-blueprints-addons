@@ -1,0 +1,3 @@
+
+exclude:
+  - aws-iam-no-policy-wildcards # Wildcards required in addon IAM policies
