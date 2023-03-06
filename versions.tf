@@ -10,9 +10,5 @@ terraform {
       source  = "hashicorp/time"
       version = ">= 0.8"
     }
-    awscc = {
-      source  = "hashicorp/awscc"
-      version = ">= 0.24.0"
-    }
   }
 }
