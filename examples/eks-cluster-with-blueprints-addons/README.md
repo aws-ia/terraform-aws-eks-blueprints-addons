@@ -1,12 +1,21 @@
-# EKS Cluster with Teams to a new VPC
+# EKS Cluster with Blueprints AddOns
 
-This example deploys a new EKS Cluster with Teams to a new VPC.
+This example deploys a new EKS Cluster in a nwe VPC with the following enabled features and AddOn using EKS Blueprints.
 
 - Creates a new sample VPC, 3 Private Subnets and 3 Public Subnets
 - Creates an Internet gateway for the Public Subnets and a NAT Gateway for the Private Subnets
 - Creates an EKS Cluster Control plane with public endpoint with one managed node group
-- Creates two application teams - blue and red and deploys team manifests to the cluster
-- Creates a single platform admin team - you will need to provide your own IAM user/role first, see the example for more details
+- Enabled Addons:
+  - AWS EKS VPC CNI
+  - AWS EKS CoreDNS
+  - AWS EKS KubeProxy
+  - AWS EKS EBS CSI Driver
+  - AWS Load Balancer Controller
+  - Kubernetes Metrics Server
+  - AWS CloudWatch Metrics
+  - Kubecost
+  - GateKeeper
+  - Cluster AutoScaler
 
 ## How to Deploy
 
@@ -23,7 +32,7 @@ Ensure that you have installed the following tools in your Mac or Windows Laptop
 #### Step 1: Clone the repo using the command below
 
 ```sh
-git clone https://github.com/aws-ia/terraform-aws-eks-blueprints.git
+git clone https://github.com/aws-ia/terraform-aws-eks-blueprints-addons.git
 ```
 
 #### Step 2: Run `terraform init`
@@ -31,7 +40,7 @@ git clone https://github.com/aws-ia/terraform-aws-eks-blueprints.git
 to initialize a working directory with configuration files
 
 ```sh
-cd examples/multi-tenancy-with-teams/
+cd examples/eks-cluster-with-blueprints-addons
 terraform init
 ```
 
