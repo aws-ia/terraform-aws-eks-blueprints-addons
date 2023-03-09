@@ -1,38 +1,3 @@
-output "adot_collector_haproxy" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.adot_collector_haproxy[0], null)
-}
-
-output "adot_collector_java" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.adot_collector_java[0], null)
-}
-
-output "adot_collector_memcached" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.adot_collector_memcached[0], null)
-}
-
-output "adot_collector_nginx" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.adot_collector_nginx[0], null)
-}
-
-output "agones" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.agones[0], null)
-}
-
-output "airflow" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.airflow[0], null)
-}
-
-output "appmesh_controller" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.appmesh_controller[0], null)
-}
-
 output "argocd" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = try(module.argocd[0], null)
@@ -103,34 +68,9 @@ output "aws_vpc_cni" {
   value       = try(module.aws_vpc_cni[0], null)
 }
 
-output "calico" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.calico[0], null)
-}
-
 output "cert_manager" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = try(module.cert_manager[0], null)
-}
-
-output "cert_manager_csi_driver" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.cert_manager_csi_driver[0], null)
-}
-
-output "cert_manager_istio_csr" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.cert_manager_istio_csr[0], null)
-}
-
-output "chaos_mesh" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.chaos_mesh[0], null)
-}
-
-output "cilium" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.cilium[0], null)
 }
 
 output "cluster_autoscaler" {
@@ -138,24 +78,9 @@ output "cluster_autoscaler" {
   value       = try(module.cluster_autoscaler[0], null)
 }
 
-output "coredns_autoscaler" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.coredns_autoscaler[0], null)
-}
-
-output "crossplane" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.crossplane[0], null)
-}
-
 output "csi_secrets_store_provider_aws" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = try(module.csi_secrets_store_provider_aws[0], null)
-}
-
-output "datadog_operator" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.datadog_operator[0], null)
 }
 
 output "external_dns" {
@@ -193,54 +118,14 @@ output "karpenter" {
   value       = try(module.karpenter[0], null)
 }
 
-output "keda" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.keda[0], null)
-}
-
-output "kubecost" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.kubecost[0], null)
-}
-
 output "kube_prometheus_stack" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = try(module.kube_prometheus_stack[0], null)
 }
 
-output "kuberay_operator" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.kuberay_operator[0], null)
-}
-
-output "kubernetes_dashboard" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.kubernetes_dashboard[0], null)
-}
-
-output "kyverno" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.kyverno[0], null)
-}
-
-output "local_volume_provisioner" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.local_volume_provisioner[0], null)
-}
-
 output "metrics_server" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = try(module.metrics_server[0], null)
-}
-
-output "kube_state_metrics" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.kube_state_metrics[0], null)
-}
-
-output "nvidia_device_plugin" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.nvidia_device_plugin[0], null)
 }
 
 output "opentelemetry_operator" {
@@ -258,44 +143,9 @@ output "promtail" {
   value       = try(module.promtail[0], null)
 }
 
-output "reloader" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.reloader[0], null)
-}
-
 output "secrets_store_csi_driver" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = try(module.secrets_store_csi_driver[0], null)
-}
-
-output "smb_csi_driver" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.smb_csi_driver[0], null)
-}
-
-output "spark_history_server" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.spark_history_server[0], null)
-}
-
-output "spark_k8s_operator" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.spark_k8s_operator[0], null)
-}
-
-output "strimzi_kafka_operator" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.strimzi_kafka_operator[0], null)
-}
-
-output "thanos" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.thanos[0], null)
-}
-
-output "traefik" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.traefik[0], null)
 }
 
 output "velero" {
@@ -306,14 +156,4 @@ output "velero" {
 output "vpa" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = try(module.vpa[0], null)
-}
-
-output "yunikorn" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.yunikorn[0], null)
-}
-
-output "emr_on_eks" {
-  description = "EMR on EKS"
-  value       = module.emr_on_eks
 }

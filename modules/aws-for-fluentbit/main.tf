@@ -11,7 +11,7 @@ resource "aws_cloudwatch_log_group" "aws_for_fluent_bit" {
   count             = var.create_cw_log_group ? 1 : 0
   name              = local.log_group_name
   retention_in_days = var.cw_log_group_retention
-  kms_key_id        = var.cw_log_group_kms_key_arn == null ? module.kms[0].key_arn : var.cw_log_group_kms_key_arn
+  kms_key_id        = var.cw_log_group_kms_key_arn
   tags              = var.addon_context.tags
 }
 
@@ -22,11 +22,24 @@ resource "aws_iam_policy" "aws_for_fluent_bit" {
   tags        = var.addon_context.tags
 }
 
-module "kms" {
-  count       = var.cw_log_group_kms_key_arn == null && var.create_cw_log_group ? 1 : 0
-  source      = "../aws-kms"
-  description = "EKS Workers FluentBit CloudWatch Log group KMS Key"
-  alias       = "alias/${var.addon_context.eks_cluster_id}-cw-fluent-bit"
-  policy      = data.aws_iam_policy_document.kms.json
-  tags        = var.addon_context.tags
+data "aws_iam_policy_document" "irsa" {
+  statement {
+    sid       = "PutLogEvents"
+    effect    = "Allow"
+    resources = ["arn:${var.addon_context.aws_partition_id}:logs:${var.addon_context.aws_region_name}:${var.addon_context.aws_caller_identity_account_id}:log-group:*:log-stream:*"]
+    actions   = ["logs:PutLogEvents"]
+  }
+
+  statement {
+    sid       = "CreateCWLogs"
+    effect    = "Allow"
+    resources = ["arn:${var.addon_context.aws_partition_id}:logs:${var.addon_context.aws_region_name}:${var.addon_context.aws_caller_identity_account_id}:log-group:*"]
+
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:DescribeLogGroups",
+      "logs:DescribeLogStreams",
+    ]
+  }
 }
