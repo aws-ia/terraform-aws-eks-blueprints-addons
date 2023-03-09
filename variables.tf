@@ -9,12 +9,6 @@ variable "eks_cluster_domain" {
   default     = ""
 }
 
-variable "eks_worker_security_group_id" {
-  description = "EKS Worker Security group Id created by EKS module"
-  type        = string
-  default     = ""
-}
-
 variable "data_plane_wait_arn" {
   description = "Addon deployment will not proceed until this value is known. Set to node group/Fargate profile ARN to wait for data plane to be ready before provisioning addons"
   type        = string
@@ -47,12 +41,6 @@ variable "irsa_iam_permissions_boundary" {
 
 variable "eks_oidc_provider" {
   description = "The OpenID Connect identity provider (issuer URL without leading `https://`)"
-  type        = string
-  default     = null
-}
-
-variable "eks_oidc_provider_arn" {
-  description = "The OpenID Connect identity provider ARN"
   type        = string
   default     = null
 }
@@ -124,7 +112,6 @@ variable "coredns_cluster_proportional_autoscaler_helm_config" {
   type        = any
 }
 
-
 variable "amazon_eks_kube_proxy_config" {
   description = "ConfigMap for Amazon EKS Kube-Proxy add-on"
   type        = any
@@ -186,160 +173,6 @@ variable "cluster_autoscaler_helm_config" {
   default     = {}
 }
 
-#-----------COREDNS AUTOSCALER-------------
-variable "enable_coredns_autoscaler" {
-  description = "Enable CoreDNS autoscaler add-on"
-  type        = bool
-  default     = false
-}
-
-variable "coredns_autoscaler_helm_config" {
-  description = "CoreDNS Autoscaler Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#-----------AWS Appmesh-------------
-variable "enable_appmesh_controller" {
-  description = "Enable AppMesh add-on"
-  type        = bool
-  default     = false
-}
-
-variable "appmesh_helm_config" {
-  description = "AppMesh Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "appmesh_irsa_policies" {
-  description = "Additional IAM policies for a IAM role for service accounts"
-  type        = list(string)
-  default     = []
-}
-
-#-----------Crossplane ADDON-------------
-variable "enable_crossplane" {
-  description = "Enable Crossplane add-on"
-  type        = bool
-  default     = false
-}
-
-variable "crossplane_helm_config" {
-  description = "Crossplane Helm Chart config"
-  type        = any
-  default     = null
-}
-
-variable "crossplane_aws_provider" {
-  description = "AWS Provider config for Crossplane"
-  type        = any
-  default = {
-    enable = false
-  }
-}
-
-variable "crossplane_upbound_aws_provider" {
-  description = "AWS Upbound Provider config for Crossplane"
-  type        = any
-  default = {
-    enable = false
-  }
-}
-
-variable "crossplane_jet_aws_provider" {
-  description = "AWS Provider Jet AWS config for Crossplane"
-  type = object({
-    enable                   = bool
-    provider_aws_version     = string
-    additional_irsa_policies = list(string)
-  })
-  default = {
-    enable                   = false
-    provider_aws_version     = "v0.24.1"
-    additional_irsa_policies = []
-  }
-}
-
-variable "crossplane_kubernetes_provider" {
-  description = "Kubernetes Provider config for Crossplane"
-  type        = any
-  default = {
-    enable = false
-  }
-}
-
-variable "crossplane_helm_provider" {
-  description = "Helm Provider config for Crossplane"
-  type        = any
-  default = {
-    enable = false
-  }
-}
-
-#-----------ONDAT ADDON-------------
-variable "enable_ondat" {
-  description = "Enable Ondat add-on"
-  type        = bool
-  default     = false
-}
-
-variable "ondat_helm_config" {
-  description = "Ondat Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "ondat_irsa_policies" {
-  description = "IAM policy ARNs for Ondat IRSA"
-  type        = list(string)
-  default     = []
-}
-
-variable "ondat_create_cluster" {
-  description = "Create cluster resources"
-  type        = bool
-  default     = true
-}
-
-variable "ondat_etcd_endpoints" {
-  description = "List of etcd endpoints for Ondat"
-  type        = list(string)
-  default     = []
-}
-
-variable "ondat_etcd_ca" {
-  description = "CA content for Ondat etcd"
-  type        = string
-  default     = null
-}
-
-variable "ondat_etcd_cert" {
-  description = "Certificate content for Ondat etcd"
-  type        = string
-  default     = null
-}
-
-variable "ondat_etcd_key" {
-  type        = string
-  description = "Private key content for Ondat etcd"
-  default     = null
-  sensitive   = true
-}
-
-variable "ondat_admin_username" {
-  description = "Username for Ondat admin user"
-  type        = string
-  default     = "storageos"
-}
-
-variable "ondat_admin_password" {
-  description = "Password for Ondat admin user"
-  type        = string
-  default     = "storageos"
-  sensitive   = true
-}
-
 #-----------External DNS ADDON-------------
 variable "enable_external_dns" {
   description = "External DNS add-on"
@@ -384,12 +217,6 @@ variable "amazon_prometheus_workspace_endpoint" {
   default     = null
 }
 
-variable "amazon_prometheus_workspace_region" {
-  description = "AWS Managed Prometheus WorkSpace Region"
-  type        = string
-  default     = null
-}
-
 #-----------PROMETHEUS-------------
 variable "enable_prometheus" {
   description = "Enable Community Prometheus add-on"
@@ -425,144 +252,6 @@ variable "enable_metrics_server" {
 
 variable "metrics_server_helm_config" {
   description = "Metrics Server Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#---------KUBE STATE METRICS-----------
-variable "enable_kube_state_metrics" {
-  description = "Enable Kube State Metrics add-on"
-  type        = bool
-  default     = false
-}
-
-variable "kube_state_metrics_helm_config" {
-  description = "Kube State Metrics Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#-----------SYSDIG-------------
-variable "enable_sysdig_agent" {
-  description = "Enable Sysdig Agent add-on"
-  type        = bool
-  default     = false
-}
-
-variable "sysdig_agent_helm_config" {
-  description = "Sysdig Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#-----------TETRATE ISTIO-------------
-variable "enable_tetrate_istio" {
-  description = "Enable Tetrate Istio add-on"
-  type        = bool
-  default     = false
-}
-
-variable "tetrate_istio_distribution" {
-  description = "Istio distribution"
-  type        = string
-  default     = "TID"
-}
-
-variable "tetrate_istio_version" {
-  description = "Istio version"
-  type        = string
-  default     = ""
-}
-
-variable "tetrate_istio_install_base" {
-  description = "Install Istio `base` Helm Chart"
-  type        = bool
-  default     = true
-}
-
-variable "tetrate_istio_install_cni" {
-  description = "Install Istio `cni` Helm Chart"
-  type        = bool
-  default     = true
-}
-
-variable "tetrate_istio_install_istiod" {
-  description = "Install Istio `istiod` Helm Chart"
-  type        = bool
-  default     = true
-}
-
-variable "tetrate_istio_install_gateway" {
-  description = "Install Istio `gateway` Helm Chart"
-  type        = bool
-  default     = true
-}
-
-variable "tetrate_istio_base_helm_config" {
-  description = "Istio `base` Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "tetrate_istio_cni_helm_config" {
-  description = "Istio `cni` Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "tetrate_istio_istiod_helm_config" {
-  description = "Istio `istiod` Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "tetrate_istio_gateway_helm_config" {
-  description = "Istio `gateway` Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#-----------THANOS-------------
-variable "enable_thanos" {
-  description = "Enable Thanos add-on"
-  type        = bool
-  default     = false
-}
-
-variable "thanos_helm_config" {
-  description = "Thanos Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "thanos_irsa_policies" {
-  description = "Additional IAM policies for a IAM role for service accounts"
-  type        = list(string)
-  default     = []
-}
-
-#-----------TRAEFIK-------------
-variable "enable_traefik" {
-  description = "Enable Traefik add-on"
-  type        = bool
-  default     = false
-}
-
-variable "traefik_helm_config" {
-  description = "Traefik Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#-----------AGONES-------------
-variable "enable_agones" {
-  description = "Enable Agones GamServer add-on"
-  type        = bool
-  default     = false
-}
-
-variable "agones_helm_config" {
-  description = "Agones GameServer Helm Chart config"
   type        = any
   default     = {}
 }
@@ -604,6 +293,7 @@ variable "aws_fsx_csi_driver_irsa_policies" {
   type        = list(string)
   default     = []
 }
+
 #-----------AWS LB Ingress Controller-------------
 variable "enable_aws_load_balancer_controller" {
   description = "Enable AWS Load Balancer Controller add-on"
@@ -626,44 +316,6 @@ variable "enable_ingress_nginx" {
 
 variable "ingress_nginx_helm_config" {
   description = "Ingress Nginx Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#-----------Spark History Server-------------
-variable "enable_spark_history_server" {
-  description = "Enable Spark History Server add-on"
-  type        = bool
-  default     = false
-}
-
-variable "spark_history_server_helm_config" {
-  description = "Spark History Server Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "spark_history_server_s3a_path" {
-  description = "s3a path with prefix for Spark history server e.g., s3a://<bucket_name>/<spark_event_logs>"
-  type        = string
-  default     = ""
-}
-
-variable "spark_history_server_irsa_policies" {
-  description = "Additional IAM policies for a IAM role for service accounts"
-  type        = list(string)
-  default     = []
-}
-
-#-----------SPARK K8S OPERATOR-------------
-variable "enable_spark_k8s_operator" {
-  description = "Enable Spark on K8s Operator add-on"
-  type        = bool
-  default     = false
-}
-
-variable "spark_k8s_operator_helm_config" {
-  description = "Spark on K8s Operator Helm Chart config"
   type        = any
   default     = {}
 }
@@ -768,6 +420,12 @@ variable "cert_manager_domain_names" {
   default     = []
 }
 
+variable "cert_manager_kubernetes_svc_image_pull_secrets" {
+  description = "list(string) of kubernetes imagePullSecrets"
+  type        = list(string)
+  default     = []
+}
+
 variable "cert_manager_install_letsencrypt_issuers" {
   description = "Install Let's Encrypt Cluster Issuers"
   type        = bool
@@ -778,36 +436,6 @@ variable "cert_manager_letsencrypt_email" {
   description = "Email address for expiration emails from Let's Encrypt"
   type        = string
   default     = ""
-}
-
-variable "enable_cert_manager_csi_driver" {
-  description = "Enable Cert Manager CSI Driver add-on"
-  type        = bool
-  default     = false
-}
-
-variable "cert_manager_csi_driver_helm_config" {
-  description = "Cert Manager CSI Driver Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "cert_manager_kubernetes_svc_image_pull_secrets" {
-  description = "list(string) of kubernetes imagePullSecrets"
-  type        = list(string)
-  default     = []
-}
-
-variable "enable_cert_manager_istio_csr" {
-  description = "Enable Cert Manager istio-csr add-on"
-  type        = bool
-  default     = false
-}
-
-variable "cert_manager_istio_csr_helm_config" {
-  description = "Cert Manager Istio CSR Helm Chart config"
-  type        = any
-  default     = {}
 }
 
 #-----------Argo workflows ADDON-------------
@@ -929,51 +557,6 @@ variable "sqs_queue_kms_data_key_reuse_period_seconds" {
   default     = null
 }
 
-#-----------KEDA ADDON-------------
-variable "enable_keda" {
-  description = "Enable KEDA Event-based autoscaler add-on"
-  type        = bool
-  default     = false
-}
-
-variable "keda_helm_config" {
-  description = "KEDA Event-based autoscaler add-on config"
-  type        = any
-  default     = {}
-}
-
-variable "keda_irsa_policies" {
-  description = "Additional IAM policies for a IAM role for service accounts"
-  type        = list(string)
-  default     = []
-}
-
-#-----------Kubernetes Dashboard ADDON-------------
-variable "enable_kubernetes_dashboard" {
-  description = "Enable Kubernetes Dashboard add-on"
-  type        = bool
-  default     = false
-}
-
-variable "kubernetes_dashboard_helm_config" {
-  description = "Kubernetes Dashboard Helm Chart config"
-  type        = any
-  default     = null
-}
-
-#-----------HashiCorp Vault-------------
-variable "enable_vault" {
-  description = "Enable HashiCorp Vault add-on"
-  type        = bool
-  default     = false
-}
-
-variable "vault_helm_config" {
-  description = "HashiCorp Vault Helm Chart config"
-  type        = any
-  default     = null
-}
-
 #------Vertical Pod Autoscaler(VPA) ADDON--------
 variable "enable_vpa" {
   description = "Enable Vertical Pod Autoscaler add-on"
@@ -983,19 +566,6 @@ variable "enable_vpa" {
 
 variable "vpa_helm_config" {
   description = "VPA Helm Chart config"
-  type        = any
-  default     = null
-}
-
-#-----------Apache YuniKorn ADDON-------------
-variable "enable_yunikorn" {
-  description = "Enable Apache YuniKorn K8s scheduler add-on"
-  type        = bool
-  default     = false
-}
-
-variable "yunikorn_helm_config" {
-  description = "YuniKorn Helm Chart config"
   type        = any
   default     = null
 }
@@ -1075,55 +645,6 @@ variable "velero_backup_s3_bucket" {
   default     = ""
 }
 
-#-----------AWS Observability patterns-------------
-variable "enable_adot_collector_java" {
-  description = "Enable metrics for JMX workloads"
-  type        = bool
-  default     = false
-}
-
-variable "adot_collector_java_helm_config" {
-  description = "ADOT Collector Java Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "enable_adot_collector_haproxy" {
-  description = "Enable metrics for HAProxy workloads"
-  type        = bool
-  default     = false
-}
-
-variable "adot_collector_haproxy_helm_config" {
-  description = "ADOT Collector HAProxy Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "enable_adot_collector_memcached" {
-  description = "Enable metrics for Memcached workloads"
-  type        = bool
-  default     = false
-}
-
-variable "adot_collector_memcached_helm_config" {
-  description = "ADOT Collector Memcached Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "enable_adot_collector_nginx" {
-  description = "Enable metrics for Nginx workloads"
-  type        = bool
-  default     = false
-}
-
-variable "adot_collector_nginx_helm_config" {
-  description = "ADOT Collector Nginx Helm Chart config"
-  type        = any
-  default     = {}
-}
-
 #-----------AWS CSI Secrets Store Provider-------------
 variable "enable_secrets_store_csi_driver_provider_aws" {
   type        = bool
@@ -1199,71 +720,6 @@ variable "grafana_irsa_policies" {
   default     = []
 }
 
-#-----------KUBERAY OPERATOR-------------
-variable "enable_kuberay_operator" {
-  description = "Enable KubeRay Operator add-on"
-  type        = bool
-  default     = false
-}
-
-variable "kuberay_operator_helm_config" {
-  description = "KubeRay Operator Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#----------- Reloader Addon-------------
-variable "enable_reloader" {
-  description = "Enable Reloader add-on"
-  type        = bool
-  default     = false
-}
-
-variable "reloader_helm_config" {
-  description = "Reloader Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#-----------Apache Airflow ADDON-------------
-variable "enable_airflow" {
-  description = "Enable Airflow add-on"
-  type        = bool
-  default     = false
-}
-
-variable "airflow_helm_config" {
-  description = "Apache Airflow v2 Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#-----Apache Kafka Strimzi Operator------
-variable "enable_strimzi_kafka_operator" {
-  description = "Enable Kafka add-on"
-  type        = bool
-  default     = false
-}
-
-variable "strimzi_kafka_operator_helm_config" {
-  description = "Kafka Strimzi Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#-----------Datadog Operator-------------
-variable "enable_datadog_operator" {
-  description = "Enable Datadog Operator add-on"
-  type        = bool
-  default     = false
-}
-
-variable "datadog_operator_helm_config" {
-  description = "Datadog Operator Helm Chart config"
-  type        = any
-  default     = {}
-}
-
 #-----------Promtail ADDON-------------
 variable "enable_promtail" {
   description = "Enable Promtail add-on"
@@ -1277,117 +733,6 @@ variable "promtail_helm_config" {
   default     = {}
 }
 
-#-----------Calico ADDON-------------
-variable "enable_calico" {
-  description = "Enable Calico add-on"
-  type        = bool
-  default     = false
-}
-
-variable "calico_helm_config" {
-  description = "Calico add-on config"
-  type        = any
-  default     = {}
-}
-
-#-----------Kubecost ADDON-------------
-variable "enable_kubecost" {
-  description = "Enable Kubecost add-on"
-  type        = bool
-  default     = false
-}
-
-variable "kubecost_helm_config" {
-  description = "Kubecost Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#-----------Kyverno ADDON-------------
-
-variable "enable_kyverno" {
-  description = "Enable Kyverno add-on"
-  type        = bool
-  default     = false
-}
-
-variable "enable_kyverno_policies" {
-  description = "Enable Kyverno policies. Requires `enable_kyverno` to be `true`"
-  type        = bool
-  default     = false
-}
-
-variable "enable_kyverno_policy_reporter" {
-  description = "Enable Kyverno UI. Requires `enable_kyverno` to be `true`"
-  type        = bool
-  default     = false
-}
-
-variable "kyverno_helm_config" {
-  description = "Kyverno Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "kyverno_policies_helm_config" {
-  description = "Kyverno policies Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "kyverno_policy_reporter_helm_config" {
-  description = "Kyverno UI Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#-----------SMB CSI driver ADDON-------------
-variable "enable_smb_csi_driver" {
-  description = "Enable SMB CSI driver add-on"
-  type        = bool
-  default     = false
-}
-
-variable "smb_csi_driver_helm_config" {
-  description = "SMB CSI driver Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-
-#-----------Chaos Mesh ADDON-------------
-variable "enable_chaos_mesh" {
-  description = "Enable Chaos Mesh add-on"
-  type        = bool
-  default     = false
-}
-
-variable "chaos_mesh_helm_config" {
-  description = "Chaos Mesh Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#-----------Cilium ADDON-------------
-variable "enable_cilium" {
-  description = "Enable Cilium add-on"
-  type        = bool
-  default     = false
-}
-
-variable "cilium_helm_config" {
-  description = "Cilium Helm Chart config"
-  type        = any
-  default     = {}
-
-}
-
-variable "cilium_enable_wireguard" {
-  description = "Enable wireguard encryption"
-  type        = bool
-  default     = false
-}
-
 #-----------Gatekeeper ADDON-------------
 variable "enable_gatekeeper" {
   description = "Enable Gatekeeper add-on"
@@ -1397,78 +742,6 @@ variable "enable_gatekeeper" {
 
 variable "gatekeeper_helm_config" {
   description = "Gatekeeper Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#-----------Kubernetes Portworx ADDON-------------
-variable "enable_portworx" {
-  description = "Enable Kubernetes Dashboard add-on"
-  type        = bool
-  default     = false
-}
-
-variable "portworx_helm_config" {
-  description = "Kubernetes Portworx Helm Chart config"
-  type        = any
-  default     = null
-}
-
-#-----------Local volume provisioner ADDON-------------
-variable "enable_local_volume_provisioner" {
-  description = "Enable Local volume provisioner add-on"
-  type        = bool
-  default     = false
-}
-
-variable "local_volume_provisioner_helm_config" {
-  description = "Local volume provisioner Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#-----------NVIDIA DEVICE PLUGIN-----------------------
-variable "enable_nvidia_device_plugin" {
-  description = "Enable NVIDIA device plugin add-on"
-  type        = bool
-  default     = false
-}
-
-variable "nvidia_device_plugin_helm_config" {
-  description = "NVIDIA device plugin Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#-----------App 2048-----------------------
-variable "enable_app_2048" {
-  description = "Enable sample app 2048"
-  type        = bool
-  default     = false
-}
-
-#----------- EMR on EKS -----------------------
-variable "enable_emr_on_eks" {
-  description = "Enable EMR on EKS add-on"
-  type        = bool
-  default     = false
-}
-
-variable "emr_on_eks_config" {
-  description = "EMR on EKS Helm configuration values"
-  type        = any
-  default     = {}
-}
-
-#-----------Consul addon-----------------------
-variable "enable_consul" {
-  description = "Enable consul add-on"
-  type        = bool
-  default     = false
-}
-
-variable "consul_helm_config" {
-  description = "Consul Helm Chart config"
   type        = any
   default     = {}
 }
