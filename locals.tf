@@ -18,8 +18,8 @@ locals {
     metricsServer             = var.enable_metrics_server ? module.metrics_server[0].argocd_gitops_config : null
     prometheus                = var.enable_prometheus ? module.prometheus[0].argocd_gitops_config : null
     vpa                       = var.enable_vpa ? module.vpa[0].argocd_gitops_config : null
-    argoRollouts              = var.enable_argo_rollouts ? module.argo_rollouts[0].argocd_gitops_config : null
-    argoWorkflows             = var.enable_argo_workflows ? module.argo_workflows[0].argocd_gitops_config : null
+    argoRollouts              = var.enable_argo_rollouts && var.enable_argo_rollouts_gitops ? { enable = true } : null
+    argoWorkflows             = var.enable_argo_workflows && var.enable_argo_workflows_gitops ? { enable = true } : null
     karpenter                 = var.enable_karpenter ? module.karpenter[0].argocd_gitops_config : null
     kubePrometheusStack       = var.enable_kube_prometheus_stack ? module.kube_prometheus_stack[0].argocd_gitops_config : null
     awsCloudWatchMetrics      = var.enable_aws_cloudwatch_metrics ? module.aws_cloudwatch_metrics[0].argocd_gitops_config : null

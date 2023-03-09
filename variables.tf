@@ -445,10 +445,16 @@ variable "enable_argo_workflows" {
   default     = false
 }
 
-variable "argo_workflows_helm_config" {
-  description = "Argo workflows Helm Chart config"
+variable "enable_argo_workflows_gitops" {
+  description = "Enable Argo Workflows using GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "argo_workflows" {
+  description = "Argo Workflows addon configuration values"
   type        = any
-  default     = null
+  default     = {}
 }
 
 #-----------Argo Rollouts ADDON-------------
@@ -458,10 +464,16 @@ variable "enable_argo_rollouts" {
   default     = false
 }
 
-variable "argo_rollouts_helm_config" {
-  description = "Argo Rollouts Helm Chart config"
+variable "enable_argo_rollouts_gitops" {
+  description = "Enable Argo Rollouts using GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "argo_rollouts" {
+  description = "Argo Rollouts addon configuration values"
   type        = any
-  default     = null
+  default     = {}
 }
 
 #-----------ARGOCD ADDON-------------
