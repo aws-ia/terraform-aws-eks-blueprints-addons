@@ -16,6 +16,104 @@ data "aws_eks_cluster" "eks_cluster" {
   name = time_sleep.dataplane.triggers["eks_cluster_id"]
 }
 
+################################################################################
+# Argo Rollouts
+################################################################################
+
+module "argo_rollouts" {
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_argo_rollouts
+
+  # https://github.com/argoproj/argo-helm/tree/main/charts/argo-rollouts
+  name             = try(var.argo_rollouts.name, "argo-rollouts")
+  description      = try(var.argo_rollouts.description, "A Helm chart for Argo Rollouts")
+  namespace        = try(var.argo_rollouts.namespace, "argo-rollouts")
+  create_namespace = try(var.argo_rollouts.create_namespace, true)
+  chart            = "argo-rollouts"
+  chart_version    = try(var.argo_rollouts.chart_version, "2.22.3")
+  repository       = try(var.argo_rollouts.repository, "https://argoproj.github.io/argo-helm")
+  values           = try(var.argo_rollouts.values, [])
+
+  timeout                    = try(var.argo_rollouts.timeout, null)
+  repository_key_file        = try(var.argo_rollouts.repository_key_file, null)
+  repository_cert_file       = try(var.argo_rollouts.repository_cert_file, null)
+  repository_ca_file         = try(var.argo_rollouts.repository_ca_file, null)
+  repository_username        = try(var.argo_rollouts.repository_username, null)
+  repository_password        = try(var.argo_rollouts.repository_password, null)
+  devel                      = try(var.argo_rollouts.devel, null)
+  verify                     = try(var.argo_rollouts.verify, null)
+  keyring                    = try(var.argo_rollouts.keyring, null)
+  disable_webhooks           = try(var.argo_rollouts.disable_webhooks, null)
+  reuse_values               = try(var.argo_rollouts.reuse_values, null)
+  reset_values               = try(var.argo_rollouts.reset_values, null)
+  force_update               = try(var.argo_rollouts.force_update, null)
+  recreate_pods              = try(var.argo_rollouts.recreate_pods, null)
+  cleanup_on_fail            = try(var.argo_rollouts.cleanup_on_fail, null)
+  max_history                = try(var.argo_rollouts.max_history, null)
+  atomic                     = try(var.argo_rollouts.atomic, null)
+  skip_crds                  = try(var.argo_rollouts.skip_crds, null)
+  render_subchart_notes      = try(var.argo_rollouts.render_subchart_notes, null)
+  disable_openapi_validation = try(var.argo_rollouts.disable_openapi_validation, null)
+  wait                       = try(var.argo_rollouts.wait, null)
+  wait_for_jobs              = try(var.argo_rollouts.wait_for_jobs, null)
+  dependency_update          = try(var.argo_rollouts.dependency_update, null)
+  replace                    = try(var.argo_rollouts.replace, null)
+  lint                       = try(var.argo_rollouts.lint, null)
+
+  postrender    = try(var.argo_rollouts.postrender, [])
+  set           = try(var.argo_rollouts.set, [])
+  set_sensitive = try(var.argo_rollouts.set_sensitive, [])
+}
+
+module "argo_workflows" {
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_argo_workflows
+
+  # https://github.com/argoproj/argo-helm/tree/main/charts/argo-workflows
+  name             = try(var.argo_workflows.name, "argo-workflows")
+  description      = try(var.argo_workflows.description, "A Helm chart for Argo Workflows")
+  namespace        = try(var.argo_workflows.namespace, "argo-workflows")
+  create_namespace = try(var.argo_workflows.create_namespace, true)
+  chart            = "argo-workflows"
+  chart_version    = try(var.argo_workflows.chart_version, "2.22.13")
+  repository       = try(var.argo_workflows.repository, "https://argoproj.github.io/argo-helm")
+  values           = try(var.argo_workflows.values, [])
+
+  timeout                    = try(var.argo_workflows.timeout, null)
+  repository_key_file        = try(var.argo_workflows.repository_key_file, null)
+  repository_cert_file       = try(var.argo_workflows.repository_cert_file, null)
+  repository_ca_file         = try(var.argo_workflows.repository_ca_file, null)
+  repository_username        = try(var.argo_workflows.repository_username, null)
+  repository_password        = try(var.argo_workflows.repository_password, null)
+  devel                      = try(var.argo_workflows.devel, null)
+  verify                     = try(var.argo_workflows.verify, null)
+  keyring                    = try(var.argo_workflows.keyring, null)
+  disable_webhooks           = try(var.argo_workflows.disable_webhooks, null)
+  reuse_values               = try(var.argo_workflows.reuse_values, null)
+  reset_values               = try(var.argo_workflows.reset_values, null)
+  force_update               = try(var.argo_workflows.force_update, null)
+  recreate_pods              = try(var.argo_workflows.recreate_pods, null)
+  cleanup_on_fail            = try(var.argo_workflows.cleanup_on_fail, null)
+  max_history                = try(var.argo_workflows.max_history, null)
+  atomic                     = try(var.argo_workflows.atomic, null)
+  skip_crds                  = try(var.argo_workflows.skip_crds, null)
+  render_subchart_notes      = try(var.argo_workflows.render_subchart_notes, null)
+  disable_openapi_validation = try(var.argo_workflows.disable_openapi_validation, null)
+  wait                       = try(var.argo_workflows.wait, null)
+  wait_for_jobs              = try(var.argo_workflows.wait_for_jobs, null)
+  dependency_update          = try(var.argo_workflows.dependency_update, null)
+  replace                    = try(var.argo_workflows.replace, null)
+  lint                       = try(var.argo_workflows.lint, null)
+
+  postrender    = try(var.argo_workflows.postrender, [])
+  set           = try(var.argo_workflows.set, [])
+  set_sensitive = try(var.argo_workflows.set_sensitive, [])
+}
+
 #-----------------AWS Managed EKS Add-ons----------------------
 
 module "aws_vpc_cni" {
@@ -121,22 +219,6 @@ module "argocd" {
   applications  = var.argocd_applications
   addon_config  = { for k, v in local.argocd_addon_config : k => v if v != null }
   addon_context = local.addon_context
-}
-
-module "argo_rollouts" {
-  count             = var.enable_argo_rollouts ? 1 : 0
-  source            = "./modules/argo-rollouts"
-  helm_config       = var.argo_rollouts_helm_config
-  manage_via_gitops = var.argocd_manage_add_ons
-  addon_context     = local.addon_context
-}
-
-module "argo_workflows" {
-  count             = var.enable_argo_workflows ? 1 : 0
-  source            = "./modules/argo-workflows"
-  helm_config       = var.argo_workflows_helm_config
-  manage_via_gitops = var.argocd_manage_add_ons
-  addon_context     = local.addon_context
 }
 
 module "aws_efs_csi_driver" {

@@ -20,8 +20,8 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_argo_rollouts"></a> [argo\_rollouts](#module\_argo\_rollouts) | ./modules/argo-rollouts | n/a |
-| <a name="module_argo_workflows"></a> [argo\_workflows](#module\_argo\_workflows) | ./modules/argo-workflows | n/a |
+| <a name="module_argo_rollouts"></a> [argo\_rollouts](#module\_argo\_rollouts) | ./modules/eks-blueprints-addon | n/a |
+| <a name="module_argo_workflows"></a> [argo\_workflows](#module\_argo\_workflows) | ./modules/eks-blueprints-addon | n/a |
 | <a name="module_argocd"></a> [argocd](#module\_argocd) | ./modules/argocd | n/a |
 | <a name="module_aws_cloudwatch_metrics"></a> [aws\_cloudwatch\_metrics](#module\_aws\_cloudwatch\_metrics) | ./modules/aws-cloudwatch-metrics | n/a |
 | <a name="module_aws_coredns"></a> [aws\_coredns](#module\_aws\_coredns) | ./modules/aws-coredns | n/a |
@@ -73,8 +73,8 @@
 | <a name="input_amazon_eks_kube_proxy_config"></a> [amazon\_eks\_kube\_proxy\_config](#input\_amazon\_eks\_kube\_proxy\_config) | ConfigMap for Amazon EKS Kube-Proxy add-on | `any` | `{}` | no |
 | <a name="input_amazon_eks_vpc_cni_config"></a> [amazon\_eks\_vpc\_cni\_config](#input\_amazon\_eks\_vpc\_cni\_config) | ConfigMap of Amazon EKS VPC CNI add-on | `any` | `{}` | no |
 | <a name="input_amazon_prometheus_workspace_endpoint"></a> [amazon\_prometheus\_workspace\_endpoint](#input\_amazon\_prometheus\_workspace\_endpoint) | AWS Managed Prometheus WorkSpace Endpoint | `string` | `null` | no |
-| <a name="input_argo_rollouts_helm_config"></a> [argo\_rollouts\_helm\_config](#input\_argo\_rollouts\_helm\_config) | Argo Rollouts Helm Chart config | `any` | `null` | no |
-| <a name="input_argo_workflows_helm_config"></a> [argo\_workflows\_helm\_config](#input\_argo\_workflows\_helm\_config) | Argo workflows Helm Chart config | `any` | `null` | no |
+| <a name="input_argo_rollouts"></a> [argo\_rollouts](#input\_argo\_rollouts) | Argo Rollouts addon configuration values | `any` | `{}` | no |
+| <a name="input_argo_workflows"></a> [argo\_workflows](#input\_argo\_workflows) | Argo Workflows addon configuration values | `any` | `{}` | no |
 | <a name="input_argocd_applications"></a> [argocd\_applications](#input\_argocd\_applications) | Argo CD Applications config to bootstrap the cluster | `any` | `{}` | no |
 | <a name="input_argocd_helm_config"></a> [argocd\_helm\_config](#input\_argocd\_helm\_config) | Argo CD Kubernetes add-on config | `any` | `{}` | no |
 | <a name="input_argocd_manage_add_ons"></a> [argocd\_manage\_add\_ons](#input\_argocd\_manage\_add\_ons) | Enable managing add-on configuration via ArgoCD App of Apps | `bool` | `false` | no |
@@ -120,7 +120,9 @@
 | <a name="input_enable_amazon_eks_vpc_cni"></a> [enable\_amazon\_eks\_vpc\_cni](#input\_enable\_amazon\_eks\_vpc\_cni) | Enable VPC CNI add-on | `bool` | `false` | no |
 | <a name="input_enable_amazon_prometheus"></a> [enable\_amazon\_prometheus](#input\_enable\_amazon\_prometheus) | Enable AWS Managed Prometheus service | `bool` | `false` | no |
 | <a name="input_enable_argo_rollouts"></a> [enable\_argo\_rollouts](#input\_enable\_argo\_rollouts) | Enable Argo Rollouts add-on | `bool` | `false` | no |
+| <a name="input_enable_argo_rollouts_gitops"></a> [enable\_argo\_rollouts\_gitops](#input\_enable\_argo\_rollouts\_gitops) | Enable Argo Rollouts using GitOps add-on | `bool` | `false` | no |
 | <a name="input_enable_argo_workflows"></a> [enable\_argo\_workflows](#input\_enable\_argo\_workflows) | Enable Argo workflows add-on | `bool` | `false` | no |
+| <a name="input_enable_argo_workflows_gitops"></a> [enable\_argo\_workflows\_gitops](#input\_enable\_argo\_workflows\_gitops) | Enable Argo Workflows using GitOps add-on | `bool` | `false` | no |
 | <a name="input_enable_argocd"></a> [enable\_argocd](#input\_enable\_argocd) | Enable Argo CD Kubernetes add-on | `bool` | `false` | no |
 | <a name="input_enable_aws_cloudwatch_metrics"></a> [enable\_aws\_cloudwatch\_metrics](#input\_enable\_aws\_cloudwatch\_metrics) | Enable AWS CloudWatch Metrics add-on for Container Insights | `bool` | `false` | no |
 | <a name="input_enable_aws_efs_csi_driver"></a> [enable\_aws\_efs\_csi\_driver](#input\_enable\_aws\_efs\_csi\_driver) | Enable AWS EFS CSI driver add-on | `bool` | `false` | no |
@@ -193,7 +195,7 @@
 
 | Name | Description |
 |------|-------------|
-| <a name="output_argo_rollouts"></a> [argo\_rollouts](#output\_argo\_rollouts) | Map of attributes of the Helm release and IRSA created |
+| <a name="output_argo_rollouts"></a> [argo\_rollouts](#output\_argo\_rollouts) | Map of attributes of the Helm release created |
 | <a name="output_argo_workflows"></a> [argo\_workflows](#output\_argo\_workflows) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_argocd"></a> [argocd](#output\_argocd) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_aws_cloudwatch_metrics"></a> [aws\_cloudwatch\_metrics](#output\_aws\_cloudwatch\_metrics) | Map of attributes of the Helm release and IRSA created |

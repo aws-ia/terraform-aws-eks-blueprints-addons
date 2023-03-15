@@ -4,8 +4,8 @@ output "argocd" {
 }
 
 output "argo_rollouts" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.argo_rollouts[0], null)
+  description = "Map of attributes of the Helm release created"
+  value       = module.argo_rollouts
 }
 
 output "argo_workflows" {
