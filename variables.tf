@@ -542,7 +542,12 @@ variable "karpenter_enable_spot_termination_handling" {
 variable "karpenter_event_rule_name_prefix" {
   description = "Prefix used for karpenter event bridge rules"
   type        = string
-  default     = "Karpenter"
+  default     = ""
+
+  validation {
+    condition     = length(var.karpenter_event_rule_name_prefix) <= 14
+    error_message = "Maximum input length exceeded. Please enter no more than 14 characters."
+  }
 }
 
 variable "sqs_queue_managed_sse_enabled" {
