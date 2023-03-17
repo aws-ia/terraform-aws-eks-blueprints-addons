@@ -7,7 +7,7 @@ locals {
     name        = local.name
     chart       = local.name
     repository  = "https://cert-manager.github.io/aws-privateca-issuer"
-    version     = "1.2.2"
+    version     = "v1.2.4"
     namespace   = local.name
     description = "AWS PCA Issuer helm Chart deployment configuration"
   }

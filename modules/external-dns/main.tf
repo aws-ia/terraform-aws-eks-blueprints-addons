@@ -21,7 +21,7 @@ module "helm_addon" {
       name        = local.name
       chart       = local.name
       repository  = "https://charts.bitnami.com/bitnami"
-      version     = "6.11.2"
+      version     = "6.14.3"
       namespace   = local.name
       values = [
         <<-EOT

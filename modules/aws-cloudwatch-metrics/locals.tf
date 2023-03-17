@@ -8,7 +8,7 @@ locals {
     name        = local.name
     chart       = local.name
     repository  = "https://aws.github.io/eks-charts"
-    version     = "0.0.7"
+    version     = "0.0.8"
     namespace   = local.namespace
     values      = local.default_helm_values
     description = "aws-cloudwatch-metrics Helm Chart deployment configuration"
