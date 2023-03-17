@@ -97,19 +97,36 @@ module "eks_blueprints_addons" {
   # Wait on the node group(s) before provisioning addons
   data_plane_wait_arn = join(",", [for group in module.eks.eks_managed_node_groups : group.node_group_arn])
 
-  enable_amazon_eks_coredns            = true
-  enable_amazon_eks_vpc_cni            = true
-  enable_amazon_eks_kube_proxy         = true
-  enable_amazon_eks_aws_ebs_csi_driver = true
-  enable_aws_efs_csi_driver            = true
-  enable_argocd                        = true
-  enable_aws_cloudwatch_metrics        = true
-  enable_aws_for_fluentbit             = true
+  enable_amazon_eks_coredns                    = true
+  enable_amazon_eks_vpc_cni                    = true
+  enable_amazon_eks_kube_proxy                 = true
+  enable_amazon_eks_aws_ebs_csi_driver         = true
+  enable_aws_efs_csi_driver                    = true
+  enable_argocd                                = true
+  enable_aws_cloudwatch_metrics                = true
+  enable_aws_privateca_issuer                  = true
+  enable_cert_manager                          = true
+  enable_cluster_autoscaler                    = true
+  enable_secrets_store_csi_driver_provider_aws = true
+  # need route53 zone for this
+  #enable_external_dns = true
+  enable_gatekeeper    = true
+  enable_ingress_nginx = true
+
+  enable_aws_fsx_csi_driver           = true
+  enable_aws_load_balancer_controller = true
+  enable_metrics_server               = true
+  # TODO: Revolve conflicts with cert-manager
+  #enable_opentelemetry_operator = true
+  enable_prometheus = true
+  enable_promtail   = true
+  enable_vpa        = true
+
+  enable_aws_for_fluentbit = true
   # deletes log group on destroy
-  cw_log_group_skip_destroy            = false
-  enable_aws_fsx_csi_driver            = true
-  enable_aws_load_balancer_controller  = true
-  enable_aws_node_termination_handler  = true
+  aws_for_fluentbit_cw_log_group_skip_destroy = false
+
+  enable_aws_node_termination_handler = true
   #PSPs are deprecated in 1.25
   aws_node_termination_handler_helm_config = {
     set = [
@@ -119,27 +136,17 @@ module "eks_blueprints_addons" {
       }
     ]
   }
-  enable_aws_privateca_issuer                  = true
-  enable_cert_manager                          = true
-  enable_cluster_autoscaler                    = true
-  enable_secrets_store_csi_driver_provider_aws = true
-  # need route53 zone for this
-  #enable_external_dns = true
-  enable_gatekeeper    = true
-  enable_ingress_nginx = true
-  enable_karpenter     = true
+
+  enable_karpenter = true
+  # ECR login required
   karpenter_helm_config = {
     repository_username = data.aws_ecrpublic_authorization_token.token.user_name
     repository_password = data.aws_ecrpublic_authorization_token.token.password
   }
-  enable_metrics_server = true
-  # TODO: Revolve conflicts with cert-manager
-  #enable_opentelemetry_operator = true
-  enable_prometheus       = true
-  enable_promtail         = true
-  enable_velero           = true
+
+  enable_velero = true
+  # bucket is required
   velero_backup_s3_bucket = module.velero_backup_s3_bucket.s3_bucket_id
-  enable_vpa              = true
 
   tags = local.tags
 }
