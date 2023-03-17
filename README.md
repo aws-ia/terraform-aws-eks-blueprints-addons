@@ -1,5 +1,11 @@
 # EKS Blueprints Addons Terraform Module
 
+🚧 Currently under development 🚧
+
+See [here](https://github.com/aws-ia/terraform-aws-eks-blueprints/issues/1421) for more details on the changes to EKS Blueprints. While we work on incorprating the changes requested by users, we want to avoid unecessary disruptive changes. Therefore, we are working to incorporate as many changes as possible into the release of this module so that users only need to make this change once. Please feel free to try out the module as we develop it and leave any feedback, comments, requests. We look forward to providing an improved experience very soon! Thank you for your patience for for using EKS Blueprints!
+
+Please note: not all addons will be supported as they are today in the main EKS Blueprints repository. We will have guidance and documentation that explains the changes, how to migrate/upgrade, and demonstrates the different options for addons that are no longer natively supported in this project.
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
