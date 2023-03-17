@@ -1,4 +1,5 @@
 module "helm_addon" {
+  count  = !var.argocd_skip_install ? 1 : 0
   source = "../helm-addon"
 
   helm_config   = local.helm_config
@@ -8,7 +9,7 @@ module "helm_addon" {
 }
 
 resource "kubernetes_namespace_v1" "this" {
-  count = try(local.helm_config["create_namespace"], true) && local.helm_config["namespace"] != "kube-system" ? 1 : 0
+  count = length(var.addon_config) != 0 && try(local.helm_config["create_namespace"], true) && local.helm_config["namespace"] != "kube-system" ? 1 : 0
   metadata {
     name = local.helm_config["namespace"]
   }
@@ -67,9 +68,9 @@ resource "helm_release" "argocd_application" {
     name = "source.helm.values"
     value = yamlencode(merge(
       { repoUrl = each.value.repo_url },
-      each.value.values,
       local.global_application_values,
-      each.value.add_on_application ? var.addon_config : {}
+      each.value.values,
+      { for k, v in var.addon_config : k => v if each.value.add_on_application }
     ))
     type = "auto"
   }
@@ -78,6 +79,12 @@ resource "helm_release" "argocd_application" {
   set {
     name  = "destination.server"
     value = each.value.destination
+    type  = "string"
+  }
+
+  set {
+    name  = "namespace"
+    value = each.value.namespace
     type  = "string"
   }
 
@@ -121,8 +128,8 @@ resource "kubernetes_secret" "argocd_gitops" {
   for_each = { for k, v in var.applications : k => v if try(v.ssh_key_secret_name, null) != null }
 
   metadata {
-    name      = "${each.key}-repo-secret"
-    namespace = local.helm_config["namespace"]
+    name      = lookup(each.value, "git_secret_name", "${each.key}-repo-secret")
+    namespace = lookup(each.value, "git_secret_namespace", local.helm_config["namespace"])
     labels    = { "argocd.argoproj.io/secret-type" : "repository" }
   }
 
