@@ -2,18 +2,37 @@ data "aws_partition" "current" {}
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
-resource "time_sleep" "dataplane" {
-  create_duration = "10s"
+################################################################################
+# EKS Addons
+################################################################################
 
-  triggers = {
-    data_plane_wait_arn = var.data_plane_wait_arn # this waits for the data plane to be ready
-    eks_cluster_id      = var.eks_cluster_id      # this ties it to downstream resources
-  }
+data "aws_eks_addon_version" "this" {
+  for_each = var.eks_addons
+
+  addon_name         = try(each.value.name, each.key)
+  kubernetes_version = var.cluster_version
+  most_recent        = try(each.value.most_recent, true)
 }
 
-data "aws_eks_cluster" "eks_cluster" {
-  # this makes downstream resources wait for data plane to be ready
-  name = time_sleep.dataplane.triggers["eks_cluster_id"]
+resource "aws_eks_addon" "this" {
+  for_each = var.eks_addons
+
+  cluster_name = var.cluster_name
+  addon_name   = try(each.value.name, each.key)
+
+  addon_version            = try(each.value.addon_version, data.aws_eks_addon_version.this[each.key].version)
+  configuration_values     = try(each.value.configuration_values, null)
+  preserve                 = try(each.value.preserve, null)
+  resolve_conflicts        = try(each.value.resolve_conflicts, "OVERWRITE")
+  service_account_role_arn = try(each.value.service_account_role_arn, null)
+
+  timeouts {
+    create = try(each.value.timeouts.create, var.eks_addons_timeouts.create, null)
+    update = try(each.value.timeouts.update, var.eks_addons_timeouts.update, null)
+    delete = try(each.value.timeouts.delete, var.eks_addons_timeouts.delete, null)
+  }
+
+  tags = var.tags
 }
 
 ################################################################################
@@ -67,6 +86,10 @@ module "argo_rollouts" {
   set_sensitive = try(var.argo_rollouts.set_sensitive, [])
 }
 
+################################################################################
+# Argo Workflows
+################################################################################
+
 module "argo_workflows" {
   # source = "aws-ia/eks-blueprints-addon/aws"
   source = "./modules/eks-blueprints-addon"
@@ -112,102 +135,6 @@ module "argo_workflows" {
   postrender    = try(var.argo_workflows.postrender, [])
   set           = try(var.argo_workflows.set, [])
   set_sensitive = try(var.argo_workflows.set_sensitive, [])
-}
-
-#-----------------AWS Managed EKS Add-ons----------------------
-
-module "aws_vpc_cni" {
-  source = "./modules/aws-vpc-cni"
-
-  count = var.enable_amazon_eks_vpc_cni ? 1 : 0
-
-  enable_ipv6 = var.enable_ipv6
-  addon_config = merge(
-    {
-      kubernetes_version = local.eks_cluster_version
-    },
-    var.amazon_eks_vpc_cni_config,
-  )
-
-  addon_context = local.addon_context
-}
-
-module "aws_coredns" {
-  source = "./modules/aws-coredns"
-
-  count = var.enable_amazon_eks_coredns || var.enable_self_managed_coredns ? 1 : 0
-
-  addon_context = local.addon_context
-
-  # Amazon EKS CoreDNS addon
-  enable_amazon_eks_coredns = var.enable_amazon_eks_coredns
-  addon_config = merge(
-    {
-      kubernetes_version = local.eks_cluster_version
-    },
-    var.amazon_eks_coredns_config,
-  )
-
-  # Self-managed CoreDNS addon via Helm chart
-  enable_self_managed_coredns = var.enable_self_managed_coredns
-  helm_config = merge(
-    {
-      kubernetes_version = local.eks_cluster_version
-    },
-    var.self_managed_coredns_helm_config,
-    {
-      # Putting after because we don't want users to overwrite this - internal use only
-      image_registry = local.amazon_container_image_registry_uris[data.aws_region.current.name]
-    }
-  )
-
-  # CoreDNS cluster proportioanl autoscaler
-  enable_cluster_proportional_autoscaler      = var.enable_coredns_cluster_proportional_autoscaler
-  cluster_proportional_autoscaler_helm_config = var.coredns_cluster_proportional_autoscaler_helm_config
-
-  remove_default_coredns_deployment      = var.remove_default_coredns_deployment
-  eks_cluster_certificate_authority_data = data.aws_eks_cluster.eks_cluster.certificate_authority[0].data
-}
-
-module "aws_kube_proxy" {
-  source = "./modules/aws-kube-proxy"
-
-  count = var.enable_amazon_eks_kube_proxy ? 1 : 0
-
-  addon_config = merge(
-    {
-      kubernetes_version = local.eks_cluster_version
-    },
-    var.amazon_eks_kube_proxy_config,
-  )
-
-  addon_context = local.addon_context
-}
-
-module "aws_ebs_csi_driver" {
-  source = "./modules/aws-ebs-csi-driver"
-
-  count = var.enable_amazon_eks_aws_ebs_csi_driver || var.enable_self_managed_aws_ebs_csi_driver ? 1 : 0
-
-  # Amazon EKS aws-ebs-csi-driver addon
-  enable_amazon_eks_aws_ebs_csi_driver = var.enable_amazon_eks_aws_ebs_csi_driver
-  addon_config = merge(
-    {
-      kubernetes_version = local.eks_cluster_version
-    },
-    var.amazon_eks_aws_ebs_csi_driver_config,
-  )
-
-  addon_context = local.addon_context
-
-  # Self-managed aws-ebs-csi-driver addon via Helm chart
-  enable_self_managed_aws_ebs_csi_driver = var.enable_self_managed_aws_ebs_csi_driver
-  helm_config = merge(
-    {
-      kubernetes_version = local.eks_cluster_version
-    },
-    var.self_managed_aws_ebs_csi_driver_helm_config,
-  )
 }
 
 #-----------------Kubernetes Add-ons----------------------
@@ -298,7 +225,7 @@ module "cluster_autoscaler" {
 
   count = var.enable_cluster_autoscaler ? 1 : 0
 
-  eks_cluster_version = local.eks_cluster_version
+  eks_cluster_version = var.cluster_version
   helm_config         = var.cluster_autoscaler_helm_config
   manage_via_gitops   = var.argocd_manage_add_ons
   addon_context       = local.addon_context
@@ -438,7 +365,7 @@ module "opentelemetry_operator" {
   enable_amazon_eks_adot = var.enable_amazon_eks_adot
   addon_config = merge(
     {
-      kubernetes_version = var.eks_cluster_version
+      kubernetes_version = var.cluster_version
     },
     var.amazon_eks_adot_config,
   )

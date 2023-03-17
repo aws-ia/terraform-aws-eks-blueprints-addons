@@ -1,24 +1,50 @@
-variable "eks_cluster_id" {
-  description = "EKS Cluster Id"
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+}
+
+variable "cluster_name" {
+  description = "Name of the EKS cluster"
   type        = string
 }
 
-variable "data_plane_wait_arn" {
-  description = "Addon deployment will not proceed until this value is known. Set to node group/Fargate profile ARN to wait for data plane to be ready before provisioning addons"
+variable "cluster_endpoint" {
+  description = "Endpoint for your Kubernetes API server"
   type        = string
-  default     = ""
+}
+
+variable "cluster_version" {
+  description = "Kubernetes `<major>.<minor>` version to use for the EKS cluster (i.e.: `1.24`)"
+  type        = string
+}
+
+variable "cluster_oidc_issuer_url" {
+  description = "The URL of the cluster OpenID Connect identity provider"
+  type        = string
+}
+
+variable "oidc_provider_arn" {
+  description = "The ARN of the cluster OIDC Provider"
+  type        = string
+}
+
+variable "eks_addons" {
+  description = "Map of EKS addon configurations to enable for the cluster. Addon name can be the map keys or set with `name`"
+  type        = any
+  default     = {}
+}
+
+variable "eks_addons_timeouts" {
+  description = "Create, update, and delete timeout configurations for the EKS addons"
+  type        = map(string)
+  default     = {}
 }
 
 variable "auto_scaling_group_names" {
   description = "List of self-managed node groups autoscaling group names"
   type        = list(string)
   default     = []
-}
-
-variable "tags" {
-  description = "Additional tags (e.g. `map('BusinessUnit`,`XYZ`)"
-  type        = map(string)
-  default     = {}
 }
 
 variable "irsa_iam_role_path" {
@@ -33,128 +59,12 @@ variable "irsa_iam_permissions_boundary" {
   default     = ""
 }
 
-variable "eks_oidc_provider" {
-  description = "The OpenID Connect identity provider (issuer URL without leading `https://`)"
-  type        = string
-  default     = null
-}
-
-variable "eks_cluster_endpoint" {
-  description = "Endpoint for your Kubernetes API server"
-  type        = string
-  default     = null
-}
-
-variable "eks_cluster_version" {
-  description = "The Kubernetes version for the cluster"
-  type        = string
-  default     = null
-}
-
-#-----------EKS MANAGED ADD-ONS------------
-variable "enable_ipv6" {
-  description = "Enable Ipv6 network. Attaches new VPC CNI policy to the IRSA role"
-  type        = bool
-  default     = false
-}
-
-variable "amazon_eks_vpc_cni_config" {
-  description = "ConfigMap of Amazon EKS VPC CNI add-on"
-  type        = any
-  default     = {}
-}
-
-variable "enable_amazon_eks_coredns" {
-  description = "Enable Amazon EKS CoreDNS add-on"
-  type        = bool
-  default     = false
-}
-
-variable "amazon_eks_coredns_config" {
-  description = "Configuration for Amazon CoreDNS EKS add-on"
-  type        = any
-  default     = {}
-}
-
-variable "enable_self_managed_coredns" {
-  description = "Enable self-managed CoreDNS add-on"
-  type        = bool
-  default     = false
-}
-
-variable "self_managed_coredns_helm_config" {
-  description = "Self-managed CoreDNS Helm chart config"
-  type        = any
-  default     = {}
-}
-
-variable "remove_default_coredns_deployment" {
-  description = "Determines whether the default deployment of CoreDNS is removed and ownership of kube-dns passed to Helm"
-  type        = bool
-  default     = false
-}
-
-variable "enable_coredns_cluster_proportional_autoscaler" {
-  description = "Enable cluster-proportional-autoscaler for CoreDNS"
-  type        = bool
-  default     = true
-}
-
-variable "coredns_cluster_proportional_autoscaler_helm_config" {
-  description = "Helm provider config for the CoreDNS cluster-proportional-autoscaler"
-  default     = {}
-  type        = any
-}
-
-variable "amazon_eks_kube_proxy_config" {
-  description = "ConfigMap for Amazon EKS Kube-Proxy add-on"
-  type        = any
-  default     = {}
-}
-
-variable "amazon_eks_aws_ebs_csi_driver_config" {
-  description = "configMap for AWS EBS CSI Driver add-on"
-  type        = any
-  default     = {}
-}
-
-variable "enable_amazon_eks_vpc_cni" {
-  description = "Enable VPC CNI add-on"
-  type        = bool
-  default     = false
-}
-
-variable "enable_amazon_eks_kube_proxy" {
-  description = "Enable Kube Proxy add-on"
-  type        = bool
-  default     = false
-}
-
-variable "enable_amazon_eks_aws_ebs_csi_driver" {
-  description = "Enable EKS Managed AWS EBS CSI Driver add-on; enable_amazon_eks_aws_ebs_csi_driver and enable_self_managed_aws_ebs_csi_driver are mutually exclusive"
-  type        = bool
-  default     = false
-}
-
-variable "enable_self_managed_aws_ebs_csi_driver" {
-  description = "Enable self-managed aws-ebs-csi-driver add-on; enable_self_managed_aws_ebs_csi_driver and enable_amazon_eks_aws_ebs_csi_driver are mutually exclusive"
-  type        = bool
-  default     = false
-}
-
-variable "self_managed_aws_ebs_csi_driver_helm_config" {
-  description = "Self-managed aws-ebs-csi-driver Helm chart config"
-  type        = any
-  default     = {}
-}
-
 variable "custom_image_registry_uri" {
   description = "Custom image registry URI map of `{region = dkr.endpoint }`"
   type        = map(string)
   default     = {}
 }
 
-#-----------CLUSTER AUTOSCALER-------------
 variable "enable_cluster_autoscaler" {
   description = "Enable Cluster autoscaler add-on"
   type        = bool

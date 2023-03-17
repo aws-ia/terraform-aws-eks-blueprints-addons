@@ -89,18 +89,23 @@ module "eks" {
 module "eks_blueprints_addons" {
   source = "../../"
 
-  eks_cluster_id       = module.eks.cluster_name
-  eks_cluster_endpoint = module.eks.cluster_endpoint
-  eks_oidc_provider    = module.eks.oidc_provider
-  eks_cluster_version  = module.eks.cluster_version
+  cluster_name            = module.eks.cluster_name
+  cluster_endpoint        = module.eks.cluster_endpoint
+  cluster_version         = module.eks.cluster_version
+  cluster_oidc_issuer_url = module.eks.cluster_oidc_issuer_url
+  oidc_provider_arn       = module.eks.oidc_provider_arn
 
-  # Wait on the node group(s) before provisioning addons
-  data_plane_wait_arn = join(",", [for group in module.eks.eks_managed_node_groups : group.node_group_arn])
+  eks_addons = {
+    aws-ebs-csi-driver = {
+      service_account_role_arn = module.ebs_csi_driver_irsa.iam_role_arn
+    }
+    coredns = {}
+    vpc-cni = {
+      service_account_role_arn = module.vpc_cni_irsa.iam_role_arn
+    }
+    kube-proxy = {}
+  }
 
-  enable_amazon_eks_coredns                    = true
-  enable_amazon_eks_vpc_cni                    = true
-  enable_amazon_eks_kube_proxy                 = true
-  enable_amazon_eks_aws_ebs_csi_driver         = true
   enable_aws_efs_csi_driver                    = true
   enable_argocd                                = true
   enable_aws_cloudwatch_metrics                = true
@@ -222,6 +227,43 @@ module "velero_backup_s3_bucket" {
       apply_server_side_encryption_by_default = {
         sse_algorithm = "AES256"
       }
+    }
+  }
+
+  tags = local.tags
+}
+
+module "ebs_csi_driver_irsa" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "~> 5.14"
+
+  role_name = "ebs-csi-driver"
+
+  attach_ebs_csi_policy = true
+
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
+    }
+  }
+
+  tags = local.tags
+}
+
+module "vpc_cni_irsa" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "~> 5.14"
+
+  role_name = "vpc-cni"
+
+  attach_vpc_cni_policy = true
+  vpc_cni_enable_ipv4   = true
+
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:aws-node"]
     }
   }
 
