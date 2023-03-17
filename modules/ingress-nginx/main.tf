@@ -19,7 +19,7 @@ module "helm_addon" {
       name        = local.name
       chart       = local.name
       repository  = "https://kubernetes.github.io/ingress-nginx"
-      version     = "4.1.4"
+      version     = "4.5.2"
       namespace   = try(kubernetes_namespace_v1.this[0].metadata[0].name, local.namespace)
       description = "The NGINX HelmChart Ingress Controller deployment configuration"
     },

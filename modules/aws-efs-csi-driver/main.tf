@@ -14,7 +14,7 @@ module "helm_addon" {
     name        = local.name
     chart       = local.name
     repository  = "https://kubernetes-sigs.github.io/aws-efs-csi-driver/"
-    version     = "2.3.2"
+    version     = "2.4.1"
     namespace   = local.namespace
     description = "The AWS EFS CSI driver Helm chart deployment configuration"
     },

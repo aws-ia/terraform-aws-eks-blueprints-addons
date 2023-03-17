@@ -15,7 +15,7 @@ module "helm_addon" {
       chart            = "gatekeeper"
       description      = "gatekeeper Helm Chart deployment configuration"
       repository       = "https://open-policy-agent.github.io/gatekeeper/charts"
-      version          = "3.10.0"
+      version          = "3.11.0"
       namespace        = "gatekeeper-system"
       create_namespace = true
       values = [

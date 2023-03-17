@@ -357,6 +357,12 @@ variable "aws_for_fluentbit_cw_log_group_retention" {
   default     = 90
 }
 
+variable "aws_for_fluentbit_cw_log_group_skip_destroy" {
+  description = "Set to true if you do not wish the log group (and any logs it may contain) to be deleted at destroy time"
+  type        = bool
+  default     = true
+}
+
 variable "aws_for_fluentbit_cw_log_group_kms_key_arn" {
   description = "FluentBit CloudWatch Log group KMS Key"
   type        = string
