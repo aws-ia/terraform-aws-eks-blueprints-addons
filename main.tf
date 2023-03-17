@@ -240,16 +240,17 @@ module "aws_fsx_csi_driver" {
 }
 
 module "aws_for_fluent_bit" {
-  count                    = var.enable_aws_for_fluentbit ? 1 : 0
-  source                   = "./modules/aws-for-fluentbit"
-  helm_config              = var.aws_for_fluentbit_helm_config
-  irsa_policies            = var.aws_for_fluentbit_irsa_policies
-  create_cw_log_group      = var.aws_for_fluentbit_create_cw_log_group
-  cw_log_group_name        = var.aws_for_fluentbit_cw_log_group_name
-  cw_log_group_retention   = var.aws_for_fluentbit_cw_log_group_retention
-  cw_log_group_kms_key_arn = var.aws_for_fluentbit_cw_log_group_kms_key_arn
-  manage_via_gitops        = var.argocd_manage_add_ons
-  addon_context            = local.addon_context
+  count                     = var.enable_aws_for_fluentbit ? 1 : 0
+  source                    = "./modules/aws-for-fluentbit"
+  helm_config               = var.aws_for_fluentbit_helm_config
+  irsa_policies             = var.aws_for_fluentbit_irsa_policies
+  create_cw_log_group       = var.aws_for_fluentbit_create_cw_log_group
+  cw_log_group_name         = var.aws_for_fluentbit_cw_log_group_name
+  cw_log_group_retention    = var.aws_for_fluentbit_cw_log_group_retention
+  cw_log_group_skip_destroy = var.aws_for_fluentbit_cw_log_group_skip_destroy
+  cw_log_group_kms_key_arn  = var.aws_for_fluentbit_cw_log_group_kms_key_arn
+  manage_via_gitops         = var.argocd_manage_add_ons
+  addon_context             = local.addon_context
 }
 
 module "aws_cloudwatch_metrics" {
