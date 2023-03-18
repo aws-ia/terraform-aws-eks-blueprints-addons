@@ -88,7 +88,7 @@ resource "helm_release" "argocd_application" {
     })
   ]
 
-  depends_on = [module.helm_addon]
+  depends_on = [module.helm_addon, helm_release.argocd_project]
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
