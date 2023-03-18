@@ -4,7 +4,7 @@ resource "helm_release" "addon" {
   repository                 = try(var.helm_config["repository"], null)
   chart                      = var.helm_config["chart"]
   version                    = try(var.helm_config["version"], null)
-  timeout                    = try(var.helm_config["timeout"], 1200)
+  timeout                    = try(var.helm_config["timeout"], 180)
   values                     = try(var.helm_config["values"], null)
   create_namespace           = length(var.irsa_config) > 0 ? false : try(var.helm_config["create_namespace"], false)
   namespace                  = var.helm_config["namespace"]

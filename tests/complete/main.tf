@@ -89,11 +89,11 @@ module "eks" {
 module "eks_blueprints_addons" {
   source = "../../"
 
-  cluster_name            = module.eks.cluster_name
-  cluster_endpoint        = module.eks.cluster_endpoint
-  cluster_version         = module.eks.cluster_version
-  cluster_oidc_issuer_url = module.eks.cluster_oidc_issuer_url
-  oidc_provider_arn       = module.eks.oidc_provider_arn
+  cluster_name      = module.eks.cluster_name
+  cluster_endpoint  = module.eks.cluster_endpoint
+  cluster_version   = module.eks.cluster_version
+  oidc_provider     = module.eks.oidc_provider
+  oidc_provider_arn = module.eks.oidc_provider_arn
 
   eks_addons = {
     aws-ebs-csi-driver = {
@@ -108,7 +108,7 @@ module "eks_blueprints_addons" {
 
   enable_aws_efs_csi_driver                    = true
   enable_argocd                                = true
-  enable_aws_cloudwatch_metrics                = true
+  enable_cloudwatch_metrics                    = true
   enable_aws_privateca_issuer                  = true
   enable_cert_manager                          = true
   enable_cluster_autoscaler                    = true
