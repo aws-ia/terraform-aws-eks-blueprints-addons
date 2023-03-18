@@ -6,7 +6,7 @@ locals {
     name        = local.name
     chart       = local.name
     repository  = "https://grafana.github.io/helm-charts"
-    version     = "6.43.1"
+    version     = "6.52.4"
     namespace   = local.name
     values      = local.default_helm_values
     description = "Grafana Helm Chart deployment configuration"

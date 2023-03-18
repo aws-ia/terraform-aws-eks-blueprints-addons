@@ -7,7 +7,7 @@ locals {
     name        = local.name
     chart       = local.name
     repository  = "https://charts.jetstack.io"
-    version     = "v1.10.0"
+    version     = "v1.11.0"
     namespace   = local.name
     description = "Cert Manager Add-on"
     values      = local.default_helm_values

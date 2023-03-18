@@ -1,3 +1,8 @@
+output "eks_addons" {
+  description = "Map of attributes for each EKS addons enabled"
+  value       = aws_eks_addon.this
+}
+
 output "argocd" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = try(module.argocd[0], null)
@@ -18,16 +23,6 @@ output "aws_cloudwatch_metrics" {
   value       = try(module.aws_cloudwatch_metrics[0], null)
 }
 
-output "aws_coredns" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.aws_coredns[0], null)
-}
-
-output "aws_ebs_csi_driver" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.aws_ebs_csi_driver[0], null)
-}
-
 output "aws_efs_csi_driver" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = try(module.aws_efs_csi_driver[0], null)
@@ -43,11 +38,6 @@ output "aws_fsx_csi_driver" {
   value       = try(module.aws_fsx_csi_driver[0], null)
 }
 
-output "aws_kube_proxy" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.aws_kube_proxy[0], null)
-}
-
 output "aws_load_balancer_controller" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = try(module.aws_load_balancer_controller[0], null)
@@ -61,11 +51,6 @@ output "aws_node_termination_handler" {
 output "aws_privateca_issuer" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = try(module.aws_privateca_issuer[0], null)
-}
-
-output "aws_vpc_cni" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.aws_vpc_cni[0], null)
 }
 
 output "cert_manager" {

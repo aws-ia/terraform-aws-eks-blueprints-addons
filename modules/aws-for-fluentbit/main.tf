@@ -12,6 +12,7 @@ resource "aws_cloudwatch_log_group" "aws_for_fluent_bit" {
   name              = local.log_group_name
   retention_in_days = var.cw_log_group_retention
   kms_key_id        = var.cw_log_group_kms_key_arn
+  skip_destroy      = var.cw_log_group_skip_destroy
   tags              = var.addon_context.tags
 }
 

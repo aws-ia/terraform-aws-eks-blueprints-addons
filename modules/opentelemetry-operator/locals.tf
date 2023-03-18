@@ -12,7 +12,7 @@ locals {
     name        = "opentelemetry"
     repository  = "https://open-telemetry.github.io/opentelemetry-helm-charts"
     chart       = "opentelemetry-operator"
-    version     = "0.16.0"
+    version     = "0.24.3"
     namespace   = local.namespace
     description = "ADOT Operator helm chart"
   }

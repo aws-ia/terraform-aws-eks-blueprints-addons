@@ -20,9 +20,9 @@ module "helm_addon" {
       name        = local.name
       chart       = local.name
       repository  = "https://charts.fairwinds.com/stable"
-      version     = "1.5.0"
+      version     = "1.6.1"
       namespace   = try(kubernetes_namespace_v1.vpa[0].metadata[0].name, local.namespace)
-      description = "Kubernetes Vertical Pod Autoscaler"
+      description = "Kubernetes Vertical Pod Autoscaler (community chart)"
     },
     var.helm_config
   )

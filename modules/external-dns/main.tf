@@ -21,7 +21,7 @@ module "helm_addon" {
       name        = local.name
       chart       = local.name
       repository  = "https://charts.bitnami.com/bitnami"
-      version     = "6.11.2"
+      version     = "6.14.3"
       namespace   = local.name
       values = [
         <<-EOT
@@ -71,10 +71,4 @@ resource "aws_iam_policy" "external_dns" {
   path        = var.addon_context.irsa_iam_role_path
   policy      = data.aws_iam_policy_document.external_dns_iam_policy_document.json
   tags        = var.addon_context.tags
-}
-
-# TODO - remove at next breaking change
-data "aws_route53_zone" "selected" {
-  name         = var.domain_name
-  private_zone = var.private_zone
 }
