@@ -68,8 +68,8 @@ resource "helm_release" "argocd_application" {
     name = "source.helm.values"
     value = yamlencode(merge(
       { repoUrl = each.value.repo_url },
-      local.global_application_values,
       each.value.values,
+      local.global_application_values,
       { for k, v in var.addon_config : k => v if each.value.add_on_application }
     ))
     type = "auto"
