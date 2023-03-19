@@ -95,7 +95,7 @@ locals {
   partition  = data.aws_partition.current.partition
 
   role_name           = try(coalesce(var.role_name, var.name), "")
-  role_name_condition = var.role_name_use_prefix ? local.role_name : "${local.role_name}-*"
+  role_name_condition = var.role_name_use_prefix ? "${local.role_name}-*" : local.role_name
 }
 
 data "aws_iam_policy_document" "this" {
