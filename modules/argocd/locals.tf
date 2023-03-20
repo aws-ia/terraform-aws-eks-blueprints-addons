@@ -15,6 +15,7 @@ locals {
     values           = local.default_helm_values
     description      = "The ArgoCD Helm Chart deployment configuration"
     wait             = false
+    timeout          = 1200
   }
 
   helm_config = merge(
