@@ -2,6 +2,12 @@ data "aws_partition" "current" {}
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
+locals {
+  account_id = data.aws_caller_identity.current.account_id
+  partition  = data.aws_partition.current.partition
+  region     = data.aws_region.current.name
+}
+
 ################################################################################
 # EKS Addons
 ################################################################################
@@ -84,6 +90,8 @@ module "argo_rollouts" {
   postrender    = try(var.argo_rollouts.postrender, [])
   set           = try(var.argo_rollouts.set, [])
   set_sensitive = try(var.argo_rollouts.set_sensitive, [])
+
+  tags = var.tags
 }
 
 ################################################################################
@@ -135,6 +143,95 @@ module "argo_workflows" {
   postrender    = try(var.argo_workflows.postrender, [])
   set           = try(var.argo_workflows.set, [])
   set_sensitive = try(var.argo_workflows.set_sensitive, [])
+
+  tags = var.tags
+}
+
+################################################################################
+# Cloudwatch Metrics
+################################################################################
+
+locals {
+  cloudwatch_metrics_service_account = try(var.cloudwatch_metrics.service_account_name, "aws-cloudwatch-metrics")
+}
+
+module "cloudwatch_metrics" {
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_cloudwatch_metrics
+
+  # https://github.com/argoproj/argo-helm/tree/main/charts/argo-workflows
+  name             = try(var.cloudwatch_metrics.name, "aws-cloudwatch-metrics")
+  description      = try(var.cloudwatch_metrics.description, "A Helm chart to deploy aws-cloudwatch-metrics project")
+  namespace        = try(var.cloudwatch_metrics.namespace, "amazon-cloudwatch")
+  create_namespace = try(var.cloudwatch_metrics.create_namespace, true)
+  chart            = "aws-cloudwatch-metrics"
+  chart_version    = try(var.cloudwatch_metrics.chart_version, "0.0.8")
+  repository       = try(var.cloudwatch_metrics.repository, "https://aws.github.io/eks-charts")
+  values           = try(var.cloudwatch_metrics.values, [])
+
+  timeout                    = try(var.cloudwatch_metrics.timeout, null)
+  repository_key_file        = try(var.cloudwatch_metrics.repository_key_file, null)
+  repository_cert_file       = try(var.cloudwatch_metrics.repository_cert_file, null)
+  repository_ca_file         = try(var.cloudwatch_metrics.repository_ca_file, null)
+  repository_username        = try(var.cloudwatch_metrics.repository_username, null)
+  repository_password        = try(var.cloudwatch_metrics.repository_password, null)
+  devel                      = try(var.cloudwatch_metrics.devel, null)
+  verify                     = try(var.cloudwatch_metrics.verify, null)
+  keyring                    = try(var.cloudwatch_metrics.keyring, null)
+  disable_webhooks           = try(var.cloudwatch_metrics.disable_webhooks, null)
+  reuse_values               = try(var.cloudwatch_metrics.reuse_values, null)
+  reset_values               = try(var.cloudwatch_metrics.reset_values, null)
+  force_update               = try(var.cloudwatch_metrics.force_update, null)
+  recreate_pods              = try(var.cloudwatch_metrics.recreate_pods, null)
+  cleanup_on_fail            = try(var.cloudwatch_metrics.cleanup_on_fail, null)
+  max_history                = try(var.cloudwatch_metrics.max_history, null)
+  atomic                     = try(var.cloudwatch_metrics.atomic, null)
+  skip_crds                  = try(var.cloudwatch_metrics.skip_crds, null)
+  render_subchart_notes      = try(var.cloudwatch_metrics.render_subchart_notes, null)
+  disable_openapi_validation = try(var.cloudwatch_metrics.disable_openapi_validation, null)
+  wait                       = try(var.cloudwatch_metrics.wait, null)
+  wait_for_jobs              = try(var.cloudwatch_metrics.wait_for_jobs, null)
+  dependency_update          = try(var.cloudwatch_metrics.dependency_update, null)
+  replace                    = try(var.cloudwatch_metrics.replace, null)
+  lint                       = try(var.cloudwatch_metrics.lint, null)
+
+  postrender = try(var.cloudwatch_metrics.postrender, [])
+  set = concat([
+    {
+      name  = "clusterName"
+      value = var.cluster_name
+      }, {
+      name  = "serviceAccount.name"
+      value = local.cloudwatch_metrics_service_account
+    }],
+    try(var.cloudwatch_metrics.set, [])
+  )
+  set_sensitive = try(var.cloudwatch_metrics.set_sensitive, [])
+
+  # IAM role for service account (IRSA)
+  set_irsa_name                 = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+  create_role                   = try(var.cloudwatch_metrics.create_role, true)
+  role_name                     = try(var.cloudwatch_metrics.role_name, "aws-cloudwatch-metrics")
+  role_name_use_prefix          = try(var.cloudwatch_metrics.role_name_use_prefix, true)
+  role_path                     = try(var.cloudwatch_metrics.role_path, "/")
+  role_permissions_boundary_arn = try(var.cloudwatch_metrics.role_permissions_boundary_arn, null)
+  role_description              = try(var.cloudwatch_metrics.role_description, "IRSA for aws-cloudwatch-metrics project")
+
+  role_policy_arns = try(var.cloudwatch_metrics.role_policy_arns,
+    { CloudWatchAgentServerPolicy = "arn:${local.partition}:iam::aws:policy/CloudWatchAgentServerPolicy" }
+  )
+
+  oidc_providers = {
+    this = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.cloudwatch_metrics_service_account
+    }
+  }
+
+  tags = var.tags
 }
 
 #-----------------Kubernetes Add-ons----------------------
@@ -178,15 +275,6 @@ module "aws_for_fluent_bit" {
   cw_log_group_kms_key_arn  = var.aws_for_fluentbit_cw_log_group_kms_key_arn
   manage_via_gitops         = var.argocd_manage_add_ons
   addon_context             = local.addon_context
-}
-
-module "aws_cloudwatch_metrics" {
-  count             = var.enable_aws_cloudwatch_metrics ? 1 : 0
-  source            = "./modules/aws-cloudwatch-metrics"
-  helm_config       = var.aws_cloudwatch_metrics_helm_config
-  irsa_policies     = var.aws_cloudwatch_metrics_irsa_policies
-  manage_via_gitops = var.argocd_manage_add_ons
-  addon_context     = local.addon_context
 }
 
 module "aws_load_balancer_controller" {

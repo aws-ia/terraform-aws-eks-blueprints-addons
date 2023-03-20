@@ -7,10 +7,6 @@ resource "kubernetes_namespace_v1" "irsa" {
   metadata {
     name = var.kubernetes_namespace
   }
-
-  timeouts {
-    delete = "15m"
-  }
 }
 
 resource "kubernetes_secret_v1" "irsa" {

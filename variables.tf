@@ -19,8 +19,8 @@ variable "cluster_version" {
   type        = string
 }
 
-variable "cluster_oidc_issuer_url" {
-  description = "The URL of the cluster OpenID Connect identity provider"
+variable "oidc_provider" {
+  description = "The OpenID Connect identity provider (issuer URL without leading `https://`)"
   type        = string
 }
 
@@ -28,6 +28,10 @@ variable "oidc_provider_arn" {
   description = "The ARN of the cluster OIDC Provider"
   type        = string
 }
+
+################################################################################
+# EKS Addons
+################################################################################
 
 variable "eks_addons" {
   description = "Map of EKS addon configurations to enable for the cluster. Addon name can be the map keys or set with `name`"
@@ -40,6 +44,102 @@ variable "eks_addons_timeouts" {
   type        = map(string)
   default     = {}
 }
+
+################################################################################
+# ArgoCD
+################################################################################
+
+variable "enable_argocd" {
+  description = "Enable Argo CD Kubernetes add-on"
+  type        = bool
+  default     = false
+}
+
+variable "argocd_helm_config" {
+  description = "Argo CD Kubernetes add-on config"
+  type        = any
+  default     = {}
+}
+
+variable "argocd_applications" {
+  description = "Argo CD Applications config to bootstrap the cluster"
+  type        = any
+  default     = {}
+}
+
+variable "argocd_manage_add_ons" {
+  description = "Enable managing add-on configuration via ArgoCD App of Apps"
+  type        = bool
+  default     = false
+}
+
+################################################################################
+# Argo Workflows
+################################################################################
+
+variable "enable_argo_workflows" {
+  description = "Enable Argo workflows add-on"
+  type        = bool
+  default     = false
+}
+
+variable "enable_argo_workflows_gitops" {
+  description = "Enable Argo Workflows using GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "argo_workflows" {
+  description = "Argo Workflows addon configuration values"
+  type        = any
+  default     = {}
+}
+
+################################################################################
+# Argo Rollouts
+################################################################################
+
+variable "enable_argo_rollouts" {
+  description = "Enable Argo Rollouts add-on"
+  type        = bool
+  default     = false
+}
+
+variable "enable_argo_rollouts_gitops" {
+  description = "Enable Argo Rollouts using GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "argo_rollouts" {
+  description = "Argo Rollouts addon configuration values"
+  type        = any
+  default     = {}
+}
+
+################################################################################
+# Cloudwatch Metrics
+################################################################################
+
+variable "enable_cloudwatch_metrics" {
+  description = "Enable AWS Cloudwatch Metrics add-on for Container Insights"
+  type        = bool
+  default     = false
+}
+
+variable "enable_cloudwatch_metrics_gitops" {
+  description = "Enable Cloudwatch Metrics using GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "cloudwatch_metrics" {
+  description = "Cloudwatch Metrics addon configuration values"
+  type        = any
+  default     = {}
+}
+
+
 
 variable "auto_scaling_group_names" {
   description = "List of self-managed node groups autoscaling group names"
@@ -267,25 +367,6 @@ variable "aws_for_fluentbit_cw_log_group_kms_key_arn" {
   default     = null
 }
 
-#-----------AWS CloudWatch Metrics-------------
-variable "enable_aws_cloudwatch_metrics" {
-  description = "Enable AWS CloudWatch Metrics add-on for Container Insights"
-  type        = bool
-  default     = false
-}
-
-variable "aws_cloudwatch_metrics_helm_config" {
-  description = "AWS CloudWatch Metrics Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "aws_cloudwatch_metrics_irsa_policies" {
-  description = "Additional IAM policies for a IAM role for service accounts"
-  type        = list(string)
-  default     = []
-}
-
 #-----------FARGATE FLUENT BIT-------------
 variable "enable_fargate_fluentbit" {
   description = "Enable Fargate FluentBit add-on"
@@ -340,69 +421,6 @@ variable "cert_manager_letsencrypt_email" {
   description = "Email address for expiration emails from Let's Encrypt"
   type        = string
   default     = ""
-}
-
-#-----------Argo workflows ADDON-------------
-variable "enable_argo_workflows" {
-  description = "Enable Argo workflows add-on"
-  type        = bool
-  default     = false
-}
-
-variable "enable_argo_workflows_gitops" {
-  description = "Enable Argo Workflows using GitOps add-on"
-  type        = bool
-  default     = false
-}
-
-variable "argo_workflows" {
-  description = "Argo Workflows addon configuration values"
-  type        = any
-  default     = {}
-}
-
-#-----------Argo Rollouts ADDON-------------
-variable "enable_argo_rollouts" {
-  description = "Enable Argo Rollouts add-on"
-  type        = bool
-  default     = false
-}
-
-variable "enable_argo_rollouts_gitops" {
-  description = "Enable Argo Rollouts using GitOps add-on"
-  type        = bool
-  default     = false
-}
-
-variable "argo_rollouts" {
-  description = "Argo Rollouts addon configuration values"
-  type        = any
-  default     = {}
-}
-
-#-----------ARGOCD ADDON-------------
-variable "enable_argocd" {
-  description = "Enable Argo CD Kubernetes add-on"
-  type        = bool
-  default     = false
-}
-
-variable "argocd_helm_config" {
-  description = "Argo CD Kubernetes add-on config"
-  type        = any
-  default     = {}
-}
-
-variable "argocd_applications" {
-  description = "Argo CD Applications config to bootstrap the cluster"
-  type        = any
-  default     = {}
-}
-
-variable "argocd_manage_add_ons" {
-  description = "Enable managing add-on configuration via ArgoCD App of Apps"
-  type        = bool
-  default     = false
 }
 
 #-----------AWS NODE TERMINATION HANDLER-------------
