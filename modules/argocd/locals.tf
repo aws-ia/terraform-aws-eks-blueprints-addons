@@ -9,7 +9,7 @@ locals {
     name             = local.name
     chart            = local.name
     repository       = "https://argoproj.github.io/argo-helm"
-    version          = "5.27.0"
+    version          = "5.27.1" # ArgoCD v2.6.6
     namespace        = local.namespace
     create_namespace = true
     values           = local.default_helm_values
