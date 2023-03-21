@@ -61,6 +61,12 @@ variable "argocd_helm_config" {
   default     = {}
 }
 
+variable "argocd_projects" {
+  description = "Argo CD Project config to bootstrap the cluster"
+  type        = any
+  default     = {}
+}
+
 variable "argocd_applications" {
   description = "Argo CD Applications config to bootstrap the cluster"
   type        = any
@@ -421,75 +427,6 @@ variable "cert_manager_letsencrypt_email" {
   description = "Email address for expiration emails from Let's Encrypt"
   type        = string
   default     = ""
-}
-
-#-----------Argo workflows ADDON-------------
-variable "enable_argo_workflows" {
-  description = "Enable Argo workflows add-on"
-  type        = bool
-  default     = false
-}
-
-variable "enable_argo_workflows_gitops" {
-  description = "Enable Argo Workflows using GitOps add-on"
-  type        = bool
-  default     = false
-}
-
-variable "argo_workflows" {
-  description = "Argo Workflows addon configuration values"
-  type        = any
-  default     = {}
-}
-
-#-----------Argo Rollouts ADDON-------------
-variable "enable_argo_rollouts" {
-  description = "Enable Argo Rollouts add-on"
-  type        = bool
-  default     = false
-}
-
-variable "enable_argo_rollouts_gitops" {
-  description = "Enable Argo Rollouts using GitOps add-on"
-  type        = bool
-  default     = false
-}
-
-variable "argo_rollouts" {
-  description = "Argo Rollouts addon configuration values"
-  type        = any
-  default     = {}
-}
-
-#-----------ARGOCD ADDON-------------
-variable "enable_argocd" {
-  description = "Enable Argo CD Kubernetes add-on"
-  type        = bool
-  default     = false
-}
-
-variable "argocd_helm_config" {
-  description = "Argo CD Kubernetes add-on config"
-  type        = any
-  default     = {}
-}
-
-variable "argocd_applications" {
-  description = "Argo CD Applications config to bootstrap the cluster"
-  type        = any
-  default     = {}
-}
-
-variable "argocd_projects" {
-  description = "Argo CD Project config to bootstrap the cluster"
-  type        = any
-  default     = {}
-}
-
-variable "argocd_manage_add_ons" {
-  description = "Enable managing add-on configuration via ArgoCD App of Apps"
-  type        = bool
-  default     = false
 }
 
 #-----------AWS NODE TERMINATION HANDLER-------------
