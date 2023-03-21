@@ -288,12 +288,6 @@ variable "oidc_providers" {
   default     = {}
 }
 
-variable "tags" {
-  description = "A map of tags to add the the IAM role"
-  type        = map(any)
-  default     = {}
-}
-
 variable "force_detach_policies" {
   description = "Whether policies should be detached from this role when destroying"
   type        = bool
@@ -316,4 +310,10 @@ variable "allow_self_assume_role" {
   description = "Determines whether to allow the role to be [assume itself](https://aws.amazon.com/blogs/security/announcing-an-update-to-iam-role-trust-policy-behavior/)"
   type        = bool
   default     = false
+}
+
+variable "tags" {
+  description = "A map of tags to add the the IAM role"
+  type        = map(any)
+  default     = {}
 }

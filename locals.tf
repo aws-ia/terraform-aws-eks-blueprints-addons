@@ -17,22 +17,25 @@ locals {
     argoWorkflows             = var.enable_argo_workflows && var.enable_argo_workflows_gitops ? { enable = true } : null
     karpenter                 = var.enable_karpenter ? module.karpenter[0].argocd_gitops_config : null
     kubePrometheusStack       = var.enable_kube_prometheus_stack ? module.kube_prometheus_stack[0].argocd_gitops_config : null
-    awsCloudWatchMetrics      = var.enable_aws_cloudwatch_metrics ? module.aws_cloudwatch_metrics[0].argocd_gitops_config : null
-    externalDns               = var.enable_external_dns ? module.external_dns[0].argocd_gitops_config : null
-    externalSecrets           = var.enable_external_secrets ? module.external_secrets[0].argocd_gitops_config : null
-    velero                    = var.enable_velero ? module.velero[0].argocd_gitops_config : null
-    promtail                  = var.enable_promtail ? module.promtail[0].argocd_gitops_config : null
-    gatekeeper                = var.enable_gatekeeper ? module.gatekeeper[0].argocd_gitops_config : null
+    awsCloudWatchMetrics = var.enable_cloudwatch_metrics && var.enable_cloudwatch_metrics_gitops ? {
+      enable             = true
+      serviceAccountName = local.cloudwatch_metrics_service_account
+    } : null
+    externalDns     = var.enable_external_dns ? module.external_dns[0].argocd_gitops_config : null
+    externalSecrets = var.enable_external_secrets ? module.external_secrets[0].argocd_gitops_config : null
+    velero          = var.enable_velero ? module.velero[0].argocd_gitops_config : null
+    promtail        = var.enable_promtail ? module.promtail[0].argocd_gitops_config : null
+    gatekeeper      = var.enable_gatekeeper ? module.gatekeeper[0].argocd_gitops_config : null
   }
 
   addon_context = {
-    aws_caller_identity_account_id = data.aws_caller_identity.current.account_id
+    aws_caller_identity_account_id = local.account_id
     aws_caller_identity_arn        = data.aws_caller_identity.current.arn
-    aws_partition_id               = data.aws_partition.current.partition
-    aws_region_name                = data.aws_region.current.name
+    aws_partition_id               = local.partition
+    aws_region_name                = local.region
     aws_eks_cluster_endpoint       = var.cluster_endpoint
     eks_cluster_id                 = var.cluster_name
-    eks_oidc_issuer_url            = var.cluster_oidc_issuer_url
+    eks_oidc_issuer_url            = var.oidc_provider
     eks_oidc_provider_arn          = var.oidc_provider_arn
     tags                           = var.tags
     irsa_iam_role_path             = var.irsa_iam_role_path

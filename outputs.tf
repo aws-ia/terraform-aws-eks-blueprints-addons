@@ -4,8 +4,13 @@ output "eks_addons" {
 }
 
 output "argocd" {
-  description = "Map of attributes of the Helm release and IRSA created"
+  description = "Map of attributes of the Helm release created"
   value       = try(module.argocd[0], null)
+}
+
+output "argocd_addon_config" {
+  description = "ArgoCD addon config options"
+  value       = local.argocd_addon_config
 }
 
 output "argo_rollouts" {
@@ -14,13 +19,13 @@ output "argo_rollouts" {
 }
 
 output "argo_workflows" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.argo_workflows[0], null)
+  description = "Map of attributes of the Helm release created"
+  value       = module.argo_workflows
 }
 
-output "aws_cloudwatch_metrics" {
+output "cloudwatch_metrics" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.aws_cloudwatch_metrics[0], null)
+  value       = module.cloudwatch_metrics
 }
 
 output "aws_efs_csi_driver" {
