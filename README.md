@@ -183,6 +183,7 @@ Please note: not all addons will be supported as they are today in the main EKS 
 | <a name="output_argo_rollouts"></a> [argo\_rollouts](#output\_argo\_rollouts) | Map of attributes of the Helm release created |
 | <a name="output_argo_workflows"></a> [argo\_workflows](#output\_argo\_workflows) | Map of attributes of the Helm release created |
 | <a name="output_argocd"></a> [argocd](#output\_argocd) | Map of attributes of the Helm release created |
+| <a name="output_argocd_addon_config"></a> [argocd\_addon\_config](#output\_argocd\_addon\_config) | ArgoCD addon config options |
 | <a name="output_aws_efs_csi_driver"></a> [aws\_efs\_csi\_driver](#output\_aws\_efs\_csi\_driver) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_aws_for_fluent_bit"></a> [aws\_for\_fluent\_bit](#output\_aws\_for\_fluent\_bit) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_aws_fsx_csi_driver"></a> [aws\_fsx\_csi\_driver](#output\_aws\_fsx\_csi\_driver) | Map of attributes of the Helm release and IRSA created |

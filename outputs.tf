@@ -8,6 +8,11 @@ output "argocd" {
   value       = try(module.argocd[0], null)
 }
 
+output "argocd_addon_config" {
+  description = "ArgoCD addon config options"
+  value       = local.argocd_addon_config
+}
+
 output "argo_rollouts" {
   description = "Map of attributes of the Helm release created"
   value       = module.argo_rollouts
