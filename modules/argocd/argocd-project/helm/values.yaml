@@ -30,6 +30,7 @@ roles:
 destinations:
   - namespace: "*"
     server: "https://kubernetes.default.svc"
+
 sourceRepos:
   - "*"
 syncWindows:

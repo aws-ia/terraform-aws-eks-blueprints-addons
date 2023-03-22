@@ -108,7 +108,7 @@ resource "helm_release" "argocd_project" {
   name      = each.key
   chart     = "${path.module}/argocd-project/helm"
   version   = "1.0.0"
-  namespace = local.helm_config["namespace"]
+  namespace = each.value.namespace
 
   # Application Meta.
   set {
@@ -132,7 +132,7 @@ resource "helm_release" "argocd_project" {
       "namespaceResourceWhitelist" = lookup(each.value, "namespace_resource_whitelist", [])
       "roles"                      = lookup(each.value, "roles", [])
       "syncWindows"                = lookup(each.value, "sync_windows", [])
-      "sourceRepos"                = lookup(each.value, "repo_urls", [])
+      "sourceRepos"                = lookup(each.value, "source_repos", [])
     })
   ]
 

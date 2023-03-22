@@ -51,7 +51,8 @@ locals {
         server    = "https://kubernetes.default.svc"
       }
     ]
-    repo_urls    = ["*"]
+
+    source_repos = ["*"]
     roles        = []
     sync_windows = []
   }
