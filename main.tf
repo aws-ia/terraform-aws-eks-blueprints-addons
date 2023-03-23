@@ -315,7 +315,7 @@ resource "aws_iam_policy" "aws_efs_csi_driver" {
 
   name        = "${var.cluster_name}-efs-csi-driver"
   description = "IAM Policy for AWS EFS CSI Driver"
-  policy      = data.aws_iam_policy_document.aws_efs_csi_driver.json
+  policy      = data.aws_iam_policy_document.aws_efs_csi_driver[0].json
   tags        = var.tags
 }
 
