@@ -31,6 +31,7 @@ locals {
     values             = {}
     type               = "helm"
     add_on_application = false
+    use_recurse        = false
   }
 
   global_application_values = {
