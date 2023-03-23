@@ -106,7 +106,7 @@ module "eks_blueprints_addons" {
     kube-proxy = {}
   }
 
-  enable_aws_efs_csi_driver                    = true
+  enable_efs_csi_driver                        = true
   enable_argocd                                = true
   enable_cloudwatch_metrics                    = true
   enable_aws_privateca_issuer                  = true
