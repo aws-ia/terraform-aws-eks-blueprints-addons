@@ -243,8 +243,9 @@ locals {
 }
 
 data "aws_iam_policy_document" "aws_efs_csi_driver" {
+  count = var.enable_efs_csi_driver ? 1 : 0
+
   statement {
-    count = var.enable_efs_csi_driver ? 1 : 0
     sid       = "AllowDescribeAvailabilityZones"
     effect    = "Allow"
     resources = ["*"]
