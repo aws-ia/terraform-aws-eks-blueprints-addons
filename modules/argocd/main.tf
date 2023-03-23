@@ -96,12 +96,6 @@ resource "helm_release" "argocd_application" {
     })
   ]
 
-  set {
-    name  = "source.useRecurse"
-    value = each.value.use_recurse
-    type  = "boolean"
-  }
-
   depends_on = [module.helm_addon]
 }
 
