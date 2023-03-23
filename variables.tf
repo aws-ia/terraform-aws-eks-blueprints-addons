@@ -255,25 +255,26 @@ variable "metrics_server_helm_config" {
 }
 
 #-----------AWS EFS CSI DRIVER ADDON-------------
-variable "enable_aws_efs_csi_driver" {
-  description = "Enable AWS EFS CSI driver add-on"
+
+variable "enable_efs_csi_driver" {
+  description = "Enable AWS EFS CSI Driver add-on"
   type        = bool
   default     = false
 }
 
-variable "aws_efs_csi_driver_helm_config" {
-  description = "AWS EFS CSI driver Helm Chart config"
+variable "enable_efs_csi_driver_gitops" {
+  description = "Enable EFS CSI Driver using GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "efs_csi_driver" {
+  description = "EFS CSI Driver addon configuration values"
   type        = any
   default     = {}
 }
 
-variable "aws_efs_csi_driver_irsa_policies" {
-  description = "Additional IAM policies for a IAM role for service accounts"
-  type        = list(string)
-  default     = []
-}
-
-#-----------AWS EFS CSI DRIVER ADDON-------------
+#-----------AWS FSX CSI DRIVER ADDON-------------
 variable "enable_aws_fsx_csi_driver" {
   description = "Enable AWS FSx CSI driver add-on"
   type        = bool
