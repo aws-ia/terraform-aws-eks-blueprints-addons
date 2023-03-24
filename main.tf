@@ -161,7 +161,7 @@ module "cloudwatch_metrics" {
 
   create = var.enable_cloudwatch_metrics
 
-  # https://github.com/argoproj/argo-helm/tree/main/charts/argo-workflows
+  # https://github.com/aws/eks-charts/tree/master/stable/aws-cloudwatch-metrics
   name             = try(var.cloudwatch_metrics.name, "aws-cloudwatch-metrics")
   description      = try(var.cloudwatch_metrics.description, "A Helm chart to deploy aws-cloudwatch-metrics project")
   namespace        = try(var.cloudwatch_metrics.namespace, "amazon-cloudwatch")
@@ -234,6 +234,174 @@ module "cloudwatch_metrics" {
   tags = var.tags
 }
 
+################################################################################
+# EFS CSI DRIVER
+################################################################################
+
+locals {
+  efs_csi_driver_service_account = try(var.efs_csi_driver.service_account_name, "efs-csi-controller-sa")
+}
+
+data "aws_iam_policy_document" "aws_efs_csi_driver" {
+  count = var.enable_efs_csi_driver ? 1 : 0
+
+  statement {
+    sid       = "AllowDescribeAvailabilityZones"
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "ec2:DescribeAvailabilityZones",
+    ]
+  }
+
+  statement {
+    sid    = "AllowDescribeFileSystems"
+    effect = "Allow"
+    resources = [
+      "arn:${local.partition}:elasticfilesystem:${local.region}:${local.account_id}:file-system/*",
+      "arn:${local.partition}:elasticfilesystem:${local.region}:${local.account_id}:access-point/*"
+    ]
+
+    actions = [
+      "elasticfilesystem:DescribeAccessPoints",
+      "elasticfilesystem:DescribeFileSystems",
+      "elasticfilesystem:DescribeMountTargets"
+    ]
+  }
+
+  statement {
+    sid       = "AllowCreateAccessPoint"
+    effect    = "Allow"
+    resources = ["arn:${local.partition}:elasticfilesystem:${local.region}:${local.account_id}:file-system/*"]
+    actions   = ["elasticfilesystem:CreateAccessPoint"]
+
+    condition {
+      test     = "StringLike"
+      variable = "aws:RequestTag/efs.csi.aws.com/cluster"
+      values   = ["true"]
+    }
+  }
+
+  statement {
+    sid       = "AllowDeleteAccessPoint"
+    effect    = "Allow"
+    resources = ["arn:${local.partition}:elasticfilesystem:${local.region}:${local.account_id}:access-point/*"]
+    actions   = ["elasticfilesystem:DeleteAccessPoint"]
+
+    condition {
+      test     = "StringLike"
+      variable = "aws:ResourceTag/efs.csi.aws.com/cluster"
+      values   = ["true"]
+    }
+  }
+
+  statement {
+    actions = [
+      "elasticfilesystem:ClientRootAccess",
+      "elasticfilesystem:ClientWrite",
+      "elasticfilesystem:ClientMount",
+    ]
+    resources = ["arn:${local.partition}:elasticfilesystem:${local.region}:${local.account_id}:file-system/*"]
+    condition {
+      test     = "Bool"
+      variable = "elasticfilesystem:AccessedViaMountTarget"
+      values   = ["true"]
+    }
+  }
+}
+
+resource "aws_iam_policy" "aws_efs_csi_driver" {
+  count = var.enable_efs_csi_driver ? 1 : 0
+
+  name        = "${var.cluster_name}-efs-csi-driver"
+  description = "IAM Policy for AWS EFS CSI Driver"
+  policy      = data.aws_iam_policy_document.aws_efs_csi_driver[0].json
+  tags        = var.tags
+}
+
+module "efs_csi_driver" {
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_efs_csi_driver
+
+  # https://github.com/kubernetes-sigs/aws-efs-csi-driver/tree/master/charts/aws-efs-csi-driver
+  name             = try(var.efs_csi_driver.name, "aws-efs-csi-driver")
+  description      = try(var.efs_csi_driver.description, "A Helm chart to deploy aws-efs-csi-driver")
+  namespace        = try(var.efs_csi_driver.namespace, "kube-system")
+  create_namespace = try(var.efs_csi_driver.create_namespace, false)
+  chart            = "aws-efs-csi-driver"
+  chart_version    = try(var.efs_csi_driver.chart_version, "2.4.1")
+  repository       = try(var.efs_csi_driver.repository, "https://kubernetes-sigs.github.io/aws-efs-csi-driver/")
+  values           = try(var.efs_csi_driver.values, [])
+
+  timeout                    = try(var.efs_csi_driver.timeout, null)
+  repository_key_file        = try(var.efs_csi_driver.repository_key_file, null)
+  repository_cert_file       = try(var.efs_csi_driver.repository_cert_file, null)
+  repository_ca_file         = try(var.efs_csi_driver.repository_ca_file, null)
+  repository_username        = try(var.efs_csi_driver.repository_username, null)
+  repository_password        = try(var.efs_csi_driver.repository_password, null)
+  devel                      = try(var.efs_csi_driver.devel, null)
+  verify                     = try(var.efs_csi_driver.verify, null)
+  keyring                    = try(var.efs_csi_driver.keyring, null)
+  disable_webhooks           = try(var.efs_csi_driver.disable_webhooks, null)
+  reuse_values               = try(var.efs_csi_driver.reuse_values, null)
+  reset_values               = try(var.efs_csi_driver.reset_values, null)
+  force_update               = try(var.efs_csi_driver.force_update, null)
+  recreate_pods              = try(var.efs_csi_driver.recreate_pods, null)
+  cleanup_on_fail            = try(var.efs_csi_driver.cleanup_on_fail, null)
+  max_history                = try(var.efs_csi_driver.max_history, null)
+  atomic                     = try(var.efs_csi_driver.atomic, null)
+  skip_crds                  = try(var.efs_csi_driver.skip_crds, null)
+  render_subchart_notes      = try(var.efs_csi_driver.render_subchart_notes, null)
+  disable_openapi_validation = try(var.efs_csi_driver.disable_openapi_validation, null)
+  wait                       = try(var.efs_csi_driver.wait, null)
+  wait_for_jobs              = try(var.efs_csi_driver.wait_for_jobs, null)
+  dependency_update          = try(var.efs_csi_driver.dependency_update, null)
+  replace                    = try(var.efs_csi_driver.replace, null)
+  lint                       = try(var.efs_csi_driver.lint, null)
+
+  postrender = try(var.efs_csi_driver.postrender, [])
+  set = concat([
+    {
+      name  = "clusterName"
+      value = var.cluster_name
+      }, {
+      name  = "controller.serviceAccount.name"
+      value = local.cloudwatch_metrics_service_account
+    }],
+    try(var.cloudwatch_metrics.set, [])
+  )
+  set_sensitive = try(var.efs_csi_driver.set_sensitive, [])
+
+  # IAM role for service account (IRSA)
+  create_role                   = try(var.efs_csi_driver.create_role, true)
+  role_name                     = try(var.efs_csi_driver.role_name, "aws-efs-csi-driver")
+  role_name_use_prefix          = try(var.efs_csi_driver.role_name_use_prefix, true)
+  role_path                     = try(var.efs_csi_driver.role_path, "/")
+  role_permissions_boundary_arn = try(var.efs_csi_driver.role_permissions_boundary_arn, null)
+  role_description              = try(var.efs_csi_driver.role_description, "IRSA for aws-efs-csi-driver project")
+
+  role_policy_arns = try(var.efs_csi_driver.role_policy_arns,
+    { EfsCsiDriverPolicy = "arn:${local.partition}:iam::${local.account_id}:policy/${var.cluster_name}-efs-csi-driver" }
+  )
+
+  oidc_providers = {
+    this = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.efs_csi_driver_service_account
+    }
+  }
+
+  tags = var.tags
+
+  depends_on = [
+    aws_iam_policy.aws_efs_csi_driver
+  ]
+}
+
 #-----------------Kubernetes Add-ons----------------------
 
 module "argocd" {
@@ -244,15 +412,6 @@ module "argocd" {
   projects      = var.argocd_projects
   addon_config  = { for k, v in local.argocd_addon_config : k => v if v != null }
   addon_context = local.addon_context
-}
-
-module "aws_efs_csi_driver" {
-  count             = var.enable_aws_efs_csi_driver ? 1 : 0
-  source            = "./modules/aws-efs-csi-driver"
-  helm_config       = var.aws_efs_csi_driver_helm_config
-  irsa_policies     = var.aws_efs_csi_driver_irsa_policies
-  manage_via_gitops = var.argocd_manage_add_ons
-  addon_context     = local.addon_context
 }
 
 module "aws_fsx_csi_driver" {

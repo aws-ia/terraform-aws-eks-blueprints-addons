@@ -1,7 +1,10 @@
 locals {
   # Configuration for managing add-ons via ArgoCD.
   argocd_addon_config = {
-    awsEfsCsiDriver           = var.enable_aws_efs_csi_driver ? module.aws_efs_csi_driver[0].argocd_gitops_config : null
+    awsEfsCsiDriver = var.enable_efs_csi_driver && var.enable_efs_csi_driver_gitops ? {
+      enable             = true
+      serviceAccountName = local.efs_csi_driver_service_account
+    } : null
     awsFSxCsiDriver           = var.enable_aws_fsx_csi_driver ? module.aws_fsx_csi_driver[0].argocd_gitops_config : null
     awsForFluentBit           = var.enable_aws_for_fluentbit ? module.aws_for_fluent_bit[0].argocd_gitops_config : null
     awsLoadBalancerController = var.enable_aws_load_balancer_controller ? module.aws_load_balancer_controller[0].argocd_gitops_config : null
