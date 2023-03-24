@@ -91,6 +91,8 @@ data "aws_partition" "current" {}
 data "aws_caller_identity" "current" {}
 
 locals {
+  create_role = var.create && var.create_role
+
   account_id = data.aws_caller_identity.current.account_id
   partition  = data.aws_partition.current.partition
 
@@ -99,7 +101,7 @@ locals {
 }
 
 data "aws_iam_policy_document" "this" {
-  count = var.create_role && length(var.role_policy_arns) > 0 ? 1 : 0
+  count = local.create_role && length(var.role_policy_arns) > 0 ? 1 : 0
 
   dynamic "statement" {
     # https://aws.amazon.com/blogs/security/announcing-an-update-to-iam-role-trust-policy-behavior/
@@ -152,7 +154,7 @@ data "aws_iam_policy_document" "this" {
 }
 
 resource "aws_iam_role" "this" {
-  count = var.create_role ? 1 : 0
+  count = local.create_role ? 1 : 0
 
   name        = var.role_name_use_prefix ? null : local.role_name
   name_prefix = var.role_name_use_prefix ? "${local.role_name}-" : null
@@ -168,7 +170,7 @@ resource "aws_iam_role" "this" {
 }
 
 resource "aws_iam_role_policy_attachment" "this" {
-  for_each = { for k, v in var.role_policy_arns : k => v if var.create_role }
+  for_each = { for k, v in var.role_policy_arns : k => v if local.create_role }
 
   role       = aws_iam_role.this[0].name
   policy_arn = each.value

@@ -1,8 +1,11 @@
 name: 'Stale Issue/PR'
+
 on:
   workflow_dispatch:
   schedule:
     - cron: '0 0 * * *'
+
+permissions: read-all
 
 jobs:
   stale:

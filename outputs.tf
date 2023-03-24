@@ -28,7 +28,7 @@ output "cloudwatch_metrics" {
   value       = module.cloudwatch_metrics
 }
 
-output "aws_efs_csi_driver" {
+output "efs_csi_driver" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = module.efs_csi_driver
 }
