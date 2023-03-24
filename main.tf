@@ -384,7 +384,7 @@ module "efs_csi_driver" {
   role_description              = try(var.efs_csi_driver.role_description, "IRSA for aws-efs-csi-driver project")
 
   role_policy_arns = try(var.efs_csi_driver.role_policy_arns,
-    { EfsCsiDriverPolicy = aws_iam_policy.efs_csi_driver[0].arn }
+    { EfsCsiDriverPolicy = try(aws_iam_policy.efs_csi_driver[0].arn, null) }
   )
 
   oidc_providers = {
