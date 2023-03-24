@@ -242,7 +242,7 @@ locals {
   efs_csi_driver_service_account = try(var.efs_csi_driver.service_account_name, "efs-csi-controller-sa")
 }
 
-data "aws_iam_policy_document" "aws_efs_csi_driver" {
+data "aws_iam_policy_document" "efs_csi_driver" {
   count = var.enable_efs_csi_driver ? 1 : 0
 
   statement {
@@ -311,12 +311,12 @@ data "aws_iam_policy_document" "aws_efs_csi_driver" {
   }
 }
 
-resource "aws_iam_policy" "aws_efs_csi_driver" {
+resource "aws_iam_policy" "efs_csi_driver" {
   count = var.enable_efs_csi_driver ? 1 : 0
 
   name        = "${var.cluster_name}-efs-csi-driver"
   description = "IAM Policy for AWS EFS CSI Driver"
-  policy      = data.aws_iam_policy_document.aws_efs_csi_driver[0].json
+  policy      = data.aws_iam_policy_document.efs_csi_driver[0].json
   tags        = var.tags
 }
 
@@ -369,7 +369,7 @@ module "efs_csi_driver" {
       value = var.cluster_name
       }, {
       name  = "controller.serviceAccount.name"
-      value = local.cloudwatch_metrics_service_account
+      value = local.efs_csi_driver_service_account
     }],
     try(var.cloudwatch_metrics.set, [])
   )
@@ -384,7 +384,7 @@ module "efs_csi_driver" {
   role_description              = try(var.efs_csi_driver.role_description, "IRSA for aws-efs-csi-driver project")
 
   role_policy_arns = try(var.efs_csi_driver.role_policy_arns,
-    { EfsCsiDriverPolicy = "arn:${local.partition}:iam::${local.account_id}:policy/${var.cluster_name}-efs-csi-driver" }
+    { EfsCsiDriverPolicy = aws_iam_policy.efs_csi_driver[0].arn }
   )
 
   oidc_providers = {
@@ -396,10 +396,6 @@ module "efs_csi_driver" {
   }
 
   tags = var.tags
-
-  depends_on = [
-    aws_iam_policy.aws_efs_csi_driver
-  ]
 }
 
 #-----------------Kubernetes Add-ons----------------------
