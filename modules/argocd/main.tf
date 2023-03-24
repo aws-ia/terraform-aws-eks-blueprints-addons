@@ -132,6 +132,7 @@ resource "helm_release" "argocd_project" {
       "namespaceResourceWhitelist" = lookup(each.value, "namespace_resource_whitelist", [])
       "roles"                      = lookup(each.value, "roles", [])
       "syncWindows"                = lookup(each.value, "sync_windows", [])
+      "sourceNamespaces"           = lookup(each.value, "source_namespaces", [])
       "sourceRepos"                = lookup(each.value, "source_repos", [])
     })
   ]

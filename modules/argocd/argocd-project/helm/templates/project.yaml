@@ -28,6 +28,11 @@ spec:
     {{- toYaml . | nindent 4  }}
   {{- end }}
 
+  {{- with .Values.sourceNamespaces }}
+  sourceNamespaces:
+    {{- toYaml . | nindent 4  }}
+  {{- end }}
+
   # Allow manifests to deploy from any Git repos
   {{- with .Values.sourceRepos }}
   sourceRepos:

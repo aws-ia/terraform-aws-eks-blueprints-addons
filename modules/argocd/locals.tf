@@ -52,6 +52,7 @@ locals {
         server    = "https://kubernetes.default.svc"
       }
     ]
+    source_namespaces = []
 
     source_repos = ["*"]
     roles        = []
