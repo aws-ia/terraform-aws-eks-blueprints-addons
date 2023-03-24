@@ -220,7 +220,7 @@ module "cloudwatch_metrics" {
   role_description              = try(var.cloudwatch_metrics.role_description, "IRSA for aws-cloudwatch-metrics project")
 
   role_policy_arns = try(var.cloudwatch_metrics.role_policy_arns,
-    { CloudWatchAgentServerPolicy = "arn:${local.partition}:iam::aws:policy/CloudWatchAgentServerPolicy" }
+    { CloudWatchAgentServerPolicy = try("arn:${local.partition}:iam::aws:policy/CloudWatchAgentServerPolicy", null) }
   )
 
   oidc_providers = {
@@ -384,7 +384,7 @@ module "efs_csi_driver" {
   role_description              = try(var.efs_csi_driver.role_description, "IRSA for aws-efs-csi-driver project")
 
   role_policy_arns = try(var.efs_csi_driver.role_policy_arns,
-    { EfsCsiDriverPolicy = try(aws_iam_policy.efs_csi_driver[0].arn, null) }
+    { EfsCsiDriverPolicy = try("arn:${local.partition}:iam::${local.account_id}:policy/${var.cluster_name}-efs-csi-driver", null) }
   )
 
   oidc_providers = {
