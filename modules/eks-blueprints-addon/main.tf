@@ -101,7 +101,7 @@ locals {
 }
 
 data "aws_iam_policy_document" "this" {
-  count = local.create_role && length(var.role_policy_arns) > 0 ? 1 : 0
+  count = local.create_role ? 1 : 0
 
   dynamic "statement" {
     # https://aws.amazon.com/blogs/security/announcing-an-update-to-iam-role-trust-policy-behavior/
