@@ -1,10 +1,10 @@
 data "aws_iam_policy_document" "external_secrets" {
   statement {
-    actions = ["ssm:GetParameter"]
-    resources = concat(
-      var.external_secrets_ssm_parameter_arns,
-      ["arn:${var.addon_context.aws_partition_id}:ssm:${var.addon_context.aws_region_name}:${var.addon_context.aws_caller_identity_account_id}:parameter/*"]
-    )
+    actions = [
+      "ssm:DescribeParameters",
+      "ssm:GetParameter"
+    ]
+    resources = var.external_secrets_ssm_parameter_arns
   }
 
   statement {
@@ -14,15 +14,6 @@ data "aws_iam_policy_document" "external_secrets" {
       "secretsmanager:DescribeSecret",
       "secretsmanager:ListSecretVersionIds",
     ]
-    resources = concat(
-      var.external_secrets_secrets_manager_arns,
-      ["arn:${var.addon_context.aws_partition_id}:secretsmanager:${var.addon_context.aws_region_name}:${var.addon_context.aws_caller_identity_account_id}:secret:*"]
-    )
-  }
-
-  statement {
-    # it seems `ssm:DescribeParameters` needs wildcard on resources.
-    actions   = ["ssm:DescribeParameters"]
-    resources = ["arn:${var.addon_context.aws_partition_id}:ssm:${var.addon_context.aws_region_name}:${var.addon_context.aws_caller_identity_account_id}:*"]
+    resources = var.external_secrets_secrets_manager_arns
   }
 }
