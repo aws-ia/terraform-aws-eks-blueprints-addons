@@ -100,7 +100,7 @@ locals {
   role_name_condition = var.role_name_use_prefix ? "${local.role_name}-*" : local.role_name
 }
 
-data "aws_iam_policy_document" "this" {
+data "aws_iam_policy_document" "assume" {
   count = local.create_role ? 1 : 0
 
   dynamic "statement" {
@@ -161,17 +161,94 @@ resource "aws_iam_role" "this" {
   path        = var.role_path
   description = var.role_description
 
-  assume_role_policy    = data.aws_iam_policy_document.this[0].json
+  assume_role_policy    = data.aws_iam_policy_document.assume[0].json
   max_session_duration  = var.max_session_duration
   permissions_boundary  = var.role_permissions_boundary_arn
-  force_detach_policies = var.force_detach_policies
+  force_detach_policies = true
+
+  tags = var.tags
+}
+
+resource "aws_iam_role_policy_attachment" "additional" {
+  for_each = { for k, v in var.role_policies : k => v if local.create_role }
+
+  role       = aws_iam_role.this[0].name
+  policy_arn = each.value
+}
+
+################################################################################
+# IAM Policy
+################################################################################
+
+locals {
+  create_policy = local.create_role && var.create_policy && (length(var.policy_statements) > 0 || length(var.source_policy_documents) > 0 || length(var.override_policy_documents) > 0)
+
+  policy_name = coalesce(var.policy_name, local.role_name)
+}
+
+data "aws_iam_policy_document" "this" {
+  count = local.create_policy ? 1 : 0
+
+  source_policy_documents   = var.source_policy_documents
+  override_policy_documents = var.override_policy_documents
+
+  dynamic "statement" {
+    for_each = var.policy_statements
+
+    content {
+      sid           = try(statement.value.sid, null)
+      actions       = try(statement.value.actions, null)
+      not_actions   = try(statement.value.not_actions, null)
+      effect        = try(statement.value.effect, null)
+      resources     = try(statement.value.resources, null)
+      not_resources = try(statement.value.not_resources, null)
+
+      dynamic "principals" {
+        for_each = try(statement.value.principals, [])
+
+        content {
+          type        = principals.value.type
+          identifiers = principals.value.identifiers
+        }
+      }
+
+      dynamic "not_principals" {
+        for_each = try(statement.value.not_principals, [])
+
+        content {
+          type        = not_principals.value.type
+          identifiers = not_principals.value.identifiers
+        }
+      }
+
+      dynamic "condition" {
+        for_each = try(statement.value.conditions, [])
+
+        content {
+          test     = condition.value.test
+          values   = condition.value.values
+          variable = condition.value.variable
+        }
+      }
+    }
+  }
+}
+
+resource "aws_iam_policy" "this" {
+  count = local.create_policy ? 1 : 0
+
+  name        = var.policy_name_use_prefix ? null : local.policy_name
+  name_prefix = var.policy_name_use_prefix ? "${local.policy_name}-" : null
+  path        = coalesce(var.policy_path, var.role_path)
+  description = try(coalesce(var.policy_description, var.role_description), null)
+  policy      = data.aws_iam_policy_document.this[0].json
 
   tags = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "this" {
-  for_each = { for k, v in var.role_policy_arns : k => v if local.create_role }
+  count = local.create_policy ? 1 : 0
 
   role       = aws_iam_role.this[0].name
-  policy_arn = each.value
+  policy_arn = aws_iam_policy.this[0].arn
 }

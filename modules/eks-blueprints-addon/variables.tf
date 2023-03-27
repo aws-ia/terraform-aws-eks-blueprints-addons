@@ -4,6 +4,12 @@ variable "create" {
   default     = true
 }
 
+variable "tags" {
+  description = "A map of tags to add to all resources"
+  type        = map(string)
+  default     = {}
+}
+
 ################################################################################
 # Helm Release
 ################################################################################
@@ -241,7 +247,7 @@ variable "set_irsa_name" {
 ################################################################################
 
 variable "create_role" {
-  description = "Whether to create a role"
+  description = "Determines whether to create an IAM role"
   type        = bool
   default     = false
 }
@@ -276,8 +282,8 @@ variable "role_description" {
   default     = null
 }
 
-variable "role_policy_arns" {
-  description = "ARNs of any policies to attach to the IAM role"
+variable "role_policies" {
+  description = "Policies to attach to the IAM role in `{'static_name' = 'policy_arn'}` format"
   type        = map(string)
   default     = {}
 }
@@ -286,12 +292,6 @@ variable "oidc_providers" {
   description = "Map of OIDC providers where each provider map should contain the `provider_arn`, and `service_accounts`"
   type        = any
   default     = {}
-}
-
-variable "force_detach_policies" {
-  description = "Whether policies should be detached from this role when destroying"
-  type        = bool
-  default     = true
 }
 
 variable "max_session_duration" {
@@ -312,8 +312,54 @@ variable "allow_self_assume_role" {
   default     = false
 }
 
-variable "tags" {
-  description = "A map of tags to add the the IAM role"
-  type        = map(any)
-  default     = {}
+################################################################################
+# IAM Policy
+################################################################################
+
+variable "create_policy" {
+  description = "Whether to create an IAM policy that is attached to the IAM role created"
+  type        = bool
+  default     = true
+}
+
+variable "source_policy_documents" {
+  description = "List of IAM policy documents that are merged together into the exported document. Statements must have unique `sid`s"
+  type        = list(string)
+  default     = []
+}
+
+variable "override_policy_documents" {
+  description = "List of IAM policy documents that are merged together into the exported document. In merging, statements with non-blank `sid`s will override statements with the same `sid`"
+  type        = list(string)
+  default     = []
+}
+
+variable "policy_statements" {
+  description = "List of IAM policy [statements](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document#statement)"
+  type        = any
+  default     = []
+}
+
+variable "policy_name" {
+  description = "Name of IAM policy"
+  type        = string
+  default     = null
+}
+
+variable "policy_name_use_prefix" {
+  description = "Determines whether the IAM policy name (`policy_name`) is used as a prefix"
+  type        = bool
+  default     = true
+}
+
+variable "policy_path" {
+  description = "Path of IAM policy"
+  type        = string
+  default     = null
+}
+
+variable "policy_description" {
+  description = "IAM policy description"
+  type        = string
+  default     = null
 }
