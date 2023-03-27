@@ -218,10 +218,8 @@ module "cloudwatch_metrics" {
   role_path                     = try(var.cloudwatch_metrics.role_path, "/")
   role_permissions_boundary_arn = try(var.cloudwatch_metrics.role_permissions_boundary_arn, null)
   role_description              = try(var.cloudwatch_metrics.role_description, "IRSA for aws-cloudwatch-metrics project")
-
-  role_policy_arns = merge(
-    try(var.cloudwatch_metrics.role_policy_arns, {}),
-    { CloudWatchAgentServerPolicy = try("arn:${local.partition}:iam::aws:policy/CloudWatchAgentServerPolicy", null) }
+  role_policies = lookup(var.cloudwatch_metrics, "role_policies",
+    { CloudWatchAgentServerPolicy = "arn:${local.partition}:iam::aws:policy/CloudWatchAgentServerPolicy" }
   )
 
   oidc_providers = {
@@ -241,6 +239,12 @@ module "cloudwatch_metrics" {
 
 locals {
   efs_csi_driver_service_account = try(var.efs_csi_driver.service_account_name, "efs-csi-controller-sa")
+  efs_arns = lookup(var.efs_csi_driver, "efs_arns",
+    ["arn:${local.partition}:elasticfilesystem:${local.region}:${local.account_id}:file-system/*"],
+  )
+  efs_access_point_arns = lookup(var.efs_csi_driver, "efs_access_point_arns",
+    ["arn:${local.partition}:elasticfilesystem:${local.region}:${local.account_id}:access-point/*"]
+  )
 }
 
 data "aws_iam_policy_document" "efs_csi_driver" {
@@ -248,34 +252,27 @@ data "aws_iam_policy_document" "efs_csi_driver" {
 
   statement {
     sid       = "AllowDescribeAvailabilityZones"
-    effect    = "Allow"
+    actions   = ["ec2:DescribeAvailabilityZones"]
     resources = ["*"]
-
-    actions = [
-      "ec2:DescribeAvailabilityZones",
-    ]
   }
 
   statement {
-    sid    = "AllowDescribeFileSystems"
-    effect = "Allow"
-    resources = [
-      "arn:${local.partition}:elasticfilesystem:${local.region}:${local.account_id}:file-system/*",
-      "arn:${local.partition}:elasticfilesystem:${local.region}:${local.account_id}:access-point/*"
-    ]
-
+    sid = "AllowDescribeFileSystems"
     actions = [
       "elasticfilesystem:DescribeAccessPoints",
       "elasticfilesystem:DescribeFileSystems",
       "elasticfilesystem:DescribeMountTargets"
     ]
+    resources = flatten([
+      local.efs_arns,
+      local.efs_access_point_arns,
+    ])
   }
 
   statement {
     sid       = "AllowCreateAccessPoint"
-    effect    = "Allow"
-    resources = ["arn:${local.partition}:elasticfilesystem:${local.region}:${local.account_id}:file-system/*"]
     actions   = ["elasticfilesystem:CreateAccessPoint"]
+    resources = local.efs_arns
 
     condition {
       test     = "StringLike"
@@ -286,9 +283,8 @@ data "aws_iam_policy_document" "efs_csi_driver" {
 
   statement {
     sid       = "AllowDeleteAccessPoint"
-    effect    = "Allow"
-    resources = ["arn:${local.partition}:elasticfilesystem:${local.region}:${local.account_id}:access-point/*"]
     actions   = ["elasticfilesystem:DeleteAccessPoint"]
+    resources = local.efs_access_point_arns
 
     condition {
       test     = "StringLike"
@@ -298,27 +294,20 @@ data "aws_iam_policy_document" "efs_csi_driver" {
   }
 
   statement {
+    sid = "ClientReadWrite"
     actions = [
       "elasticfilesystem:ClientRootAccess",
       "elasticfilesystem:ClientWrite",
       "elasticfilesystem:ClientMount",
     ]
-    resources = ["arn:${local.partition}:elasticfilesystem:${local.region}:${local.account_id}:file-system/*"]
+    resources = local.efs_arns
+
     condition {
       test     = "Bool"
       variable = "elasticfilesystem:AccessedViaMountTarget"
       values   = ["true"]
     }
   }
-}
-
-resource "aws_iam_policy" "efs_csi_driver" {
-  count = var.enable_efs_csi_driver ? 1 : 0
-
-  name        = "${var.cluster_name}-efs-csi-driver"
-  description = "IAM Policy for AWS EFS CSI Driver"
-  policy      = data.aws_iam_policy_document.efs_csi_driver[0].json
-  tags        = var.tags
 }
 
 module "efs_csi_driver" {
@@ -381,13 +370,20 @@ module "efs_csi_driver" {
   role_name                     = try(var.efs_csi_driver.role_name, "aws-efs-csi-driver")
   role_name_use_prefix          = try(var.efs_csi_driver.role_name_use_prefix, true)
   role_path                     = try(var.efs_csi_driver.role_path, "/")
-  role_permissions_boundary_arn = try(var.efs_csi_driver.role_permissions_boundary_arn, null)
+  role_permissions_boundary_arn = lookup(var.efs_csi_driver, "role_permissions_boundary_arn", null)
   role_description              = try(var.efs_csi_driver.role_description, "IRSA for aws-efs-csi-driver project")
+  role_policies                 = lookup(var.efs_csi_driver, "role_policies", {})
 
-  role_policy_arns = merge(
-    try(var.efs_csi_driver.role_policy_arns, {}),
-    { EfsCsiDriverPolicy = try(aws_iam_policy.efs_csi_driver[0].arn, null) }
-  )
+  source_policy_documents = compact(concat(
+    data.aws_iam_policy_document.efs_csi_driver[*].json,
+    lookup(var.efs_csi_driver, "source_policy_documents", [])
+  ))
+  override_policy_documents = lookup(var.efs_csi_driver, "override_policy_documents", [])
+  policy_statements         = lookup(var.efs_csi_driver, "policy_statements", [])
+  policy_name               = try(var.efs_csi_driver.policy_name, null)
+  policy_name_use_prefix    = try(var.efs_csi_driver.policy_name_use_prefix, true)
+  policy_path               = try(var.efs_csi_driver.policy_path, null)
+  policy_description        = try(var.efs_csi_driver.policy_description, "IAM Policy for AWS EFS CSI Driver")
 
   oidc_providers = {
     this = {
