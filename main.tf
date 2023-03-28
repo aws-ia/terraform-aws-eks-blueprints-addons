@@ -510,7 +510,7 @@ module "external_secrets" {
       name  = "serviceAccount.name"
       value = local.external_secrets_service_account
     }],
-    try(var.efs_csi_driver.set, [])
+    try(var.external_secrets.set, [])
   )
   set_sensitive = try(var.external_secrets.set_sensitive, [])
 
