@@ -639,13 +639,23 @@ variable "external_secrets_irsa_policies" {
 variable "external_secrets_ssm_parameter_arns" {
   description = "List of Systems Manager Parameter ARNs that contain secrets to mount using External Secrets"
   type        = list(string)
-  default     = ["arn:aws:ssm:*:*:parameter/*"]
+  default     = []
+
+  validation {
+    condition     = length(var.external_secrets_ssm_parameter_arns) > 0
+    error_message = "Must contain at least parameter store ARN"
+  }
 }
 
 variable "external_secrets_secrets_manager_arns" {
   description = "List of Secrets Manager ARNs that contain secrets to mount using External Secrets"
   type        = list(string)
-  default     = ["arn:aws:secretsmanager:*:*:secret:*"]
+  default     = []
+
+  validation {
+    condition     = length(var.external_secrets_secrets_manager_arns) > 0
+    error_message = "Must contain at least one secrets manager ARN"
+  }
 }
 
 #-----------Grafana ADDON-------------
