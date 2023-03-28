@@ -24,11 +24,14 @@ locals {
       enable             = true
       serviceAccountName = local.cloudwatch_metrics_service_account
     } : null
-    externalDns     = var.enable_external_dns ? module.external_dns[0].argocd_gitops_config : null
-    externalSecrets = var.enable_external_secrets ? module.external_secrets[0].argocd_gitops_config : null
-    velero          = var.enable_velero ? module.velero[0].argocd_gitops_config : null
-    promtail        = var.enable_promtail ? module.promtail[0].argocd_gitops_config : null
-    gatekeeper      = var.enable_gatekeeper ? module.gatekeeper[0].argocd_gitops_config : null
+    externalDns = var.enable_external_dns ? module.external_dns[0].argocd_gitops_config : null
+    externalSecrets = var.enable_external_secrets ? {
+      enable             = true
+      serviceAccountName = local.external_secrets_service_account
+    } : null
+    velero     = var.enable_velero ? module.velero[0].argocd_gitops_config : null
+    promtail   = var.enable_promtail ? module.promtail[0].argocd_gitops_config : null
+    gatekeeper = var.enable_gatekeeper ? module.gatekeeper[0].argocd_gitops_config : null
   }
 
   addon_context = {

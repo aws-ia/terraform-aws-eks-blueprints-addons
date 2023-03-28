@@ -361,7 +361,7 @@ module "efs_csi_driver" {
       name  = "controller.serviceAccount.name"
       value = local.efs_csi_driver_service_account
     }],
-    try(var.cloudwatch_metrics.set, [])
+    try(var.efs_csi_driver.set, [])
   )
   set_sensitive = try(var.efs_csi_driver.set_sensitive, [])
 
@@ -390,6 +390,156 @@ module "efs_csi_driver" {
       provider_arn = var.oidc_provider_arn
       # namespace is inherited from chart
       service_account = local.efs_csi_driver_service_account
+    }
+  }
+
+  tags = var.tags
+}
+
+################################################################################
+# External Secrets
+################################################################################
+
+locals {
+  external_secrets_service_account = try(var.external_secrets.service_account_name, "external-secrets-sa")
+}
+
+# https://github.com/external-secrets/kubernetes-external-secrets#add-a-secret
+data "aws_iam_policy_document" "external_secrets" {
+  count = var.enable_external_secrets ? 1 : 0
+
+  dynamic "statement" {
+    for_each = length(var.external_secrets_ssm_parameter_arns) > 0 ? [1] : []
+
+    content {
+      actions   = ["ssm:DescribeParameters"]
+      resources = ["*"]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = length(var.external_secrets_ssm_parameter_arns) > 0 ? [1] : []
+
+    content {
+      actions = [
+        "ssm:GetParameter",
+        "ssm:GetParameters",
+      ]
+      resources = var.external_secrets_ssm_parameter_arns
+    }
+  }
+
+  dynamic "statement" {
+    for_each = length(var.external_secrets_secrets_manager_arns) > 0 ? [1] : []
+
+    content {
+      actions   = ["secretsmanager:ListSecrets"]
+      resources = ["*"]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = length(var.external_secrets_secrets_manager_arns) > 0 ? [1] : []
+
+    content {
+      actions = [
+        "secretsmanager:GetResourcePolicy",
+        "secretsmanager:GetSecretValue",
+        "secretsmanager:DescribeSecret",
+        "secretsmanager:ListSecretVersionIds",
+      ]
+      resources = var.external_secrets_secrets_manager_arns
+    }
+  }
+
+  dynamic "statement" {
+    for_each = length(var.external_secrets_kms_key_arns) > 0 ? [1] : []
+
+    content {
+      actions   = ["kms:Decrypt"]
+      resources = var.external_secrets_kms_key_arns
+    }
+  }
+}
+
+module "external_secrets" {
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_external_secrets
+
+  # https://github.com/external-secrets/external-secrets/blob/main/deploy/charts/external-secrets/Chart.yaml
+  name             = try(var.external_secrets.name, "external-secrets")
+  description      = try(var.external_secrets.description, "A Helm chart to deploy external-secrets")
+  namespace        = try(var.external_secrets.namespace, "external-secrets")
+  create_namespace = try(var.external_secrets.create_namespace, true)
+  chart            = "external-secrets"
+  chart_version    = try(var.external_secrets.chart_version, "0.8.1")
+  repository       = try(var.external_secrets.repository, "https://kubernetes-sigs.github.io/aws-efs-csi-driver/")
+  values           = try(var.external_secrets.values, [])
+
+  timeout                    = try(var.external_secrets.timeout, null)
+  repository_key_file        = try(var.external_secrets.repository_key_file, null)
+  repository_cert_file       = try(var.external_secrets.repository_cert_file, null)
+  repository_ca_file         = try(var.external_secrets.repository_ca_file, null)
+  repository_username        = try(var.external_secrets.repository_username, null)
+  repository_password        = try(var.external_secrets.repository_password, null)
+  devel                      = try(var.external_secrets.devel, null)
+  verify                     = try(var.external_secrets.verify, null)
+  keyring                    = try(var.external_secrets.keyring, null)
+  disable_webhooks           = try(var.external_secrets.disable_webhooks, null)
+  reuse_values               = try(var.external_secrets.reuse_values, null)
+  reset_values               = try(var.external_secrets.reset_values, null)
+  force_update               = try(var.external_secrets.force_update, null)
+  recreate_pods              = try(var.external_secrets.recreate_pods, null)
+  cleanup_on_fail            = try(var.external_secrets.cleanup_on_fail, null)
+  max_history                = try(var.external_secrets.max_history, null)
+  atomic                     = try(var.external_secrets.atomic, null)
+  skip_crds                  = try(var.external_secrets.skip_crds, null)
+  render_subchart_notes      = try(var.external_secrets.render_subchart_notes, null)
+  disable_openapi_validation = try(var.external_secrets.disable_openapi_validation, null)
+  wait                       = try(var.external_secrets.wait, null)
+  wait_for_jobs              = try(var.external_secrets.wait_for_jobs, null)
+  dependency_update          = try(var.external_secrets.dependency_update, null)
+  replace                    = try(var.external_secrets.replace, null)
+  lint                       = try(var.external_secrets.lint, null)
+
+  postrender = try(var.external_secrets.postrender, [])
+  set = concat([
+    {
+      name  = "serviceAccount.name"
+      value = local.external_secrets_service_account
+    }],
+    try(var.efs_csi_driver.set, [])
+  )
+  set_sensitive = try(var.external_secrets.set_sensitive, [])
+
+  # IAM role for service account (IRSA)
+  set_irsa_name                 = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+  create_role                   = try(var.external_secrets.create_role, true)
+  role_name                     = try(var.external_secrets.role_name, "external-secrets")
+  role_name_use_prefix          = try(var.external_secrets.role_name_use_prefix, true)
+  role_path                     = try(var.external_secrets.role_path, "/")
+  role_permissions_boundary_arn = lookup(var.external_secrets, "role_permissions_boundary_arn", null)
+  role_description              = try(var.external_secrets.role_description, "IRSA for external-secrets operator")
+  role_policies                 = lookup(var.external_secrets, "role_policies", {})
+
+  source_policy_documents = compact(concat(
+    data.aws_iam_policy_document.external_secrets[*].json,
+    lookup(var.external_secrets, "source_policy_documents", [])
+  ))
+  override_policy_documents = lookup(var.external_secrets, "override_policy_documents", [])
+  policy_statements         = lookup(var.external_secrets, "policy_statements", [])
+  policy_name               = try(var.external_secrets.policy_name, null)
+  policy_name_use_prefix    = try(var.external_secrets.policy_name_use_prefix, true)
+  policy_path               = try(var.external_secrets.policy_path, null)
+  policy_description        = try(var.external_secrets.policy_description, "IAM Policy for external-secrets operator")
+
+  oidc_providers = {
+    this = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.external_secrets_service_account
     }
   }
 
@@ -616,19 +766,6 @@ module "opentelemetry_operator" {
   helm_config                   = var.opentelemetry_operator_helm_config
 
   addon_context = local.addon_context
-}
-
-module "external_secrets" {
-  source = "./modules/external-secrets"
-
-  count = var.enable_external_secrets ? 1 : 0
-
-  helm_config                           = var.external_secrets_helm_config
-  manage_via_gitops                     = var.argocd_manage_add_ons
-  addon_context                         = local.addon_context
-  irsa_policies                         = var.external_secrets_irsa_policies
-  external_secrets_ssm_parameter_arns   = var.external_secrets_ssm_parameter_arns
-  external_secrets_secrets_manager_arns = var.external_secrets_secrets_manager_arns
 }
 
 module "promtail" {

@@ -139,6 +139,40 @@ variable "cloudwatch_metrics" {
   default     = {}
 }
 
+################################################################################
+# Cloudwatch Metrics
+################################################################################
+
+variable "enable_external_secrets" {
+  description = "Enable External Secrets operator add-on"
+  type        = bool
+  default     = false
+}
+
+variable "external_secrets" {
+  description = "External Secrets addon configuration values"
+  type        = any
+  default     = {}
+}
+
+variable "external_secrets_ssm_parameter_arns" {
+  description = "List of Systems Manager Parameter ARNs that contain secrets to mount using External Secrets"
+  type        = list(string)
+  default     = ["arn:aws:ssm:*:*:parameter/*"]
+}
+
+variable "external_secrets_secrets_manager_arns" {
+  description = "List of Secrets Manager ARNs that contain secrets to mount using External Secrets"
+  type        = list(string)
+  default     = ["arn:aws:secretsmanager:*:*:secret:*"]
+}
+
+variable "external_secrets_kms_key_arns" {
+  description = "List of KMS Key ARNs that are used by Secrets Manager that contain secrets to mount using External Secrets"
+  type        = list(string)
+  default     = ["arn:aws:kms:*:*:key/*"]
+}
+
 
 
 variable "auto_scaling_group_names" {
@@ -615,45 +649,6 @@ variable "secrets_store_csi_driver_helm_config" {
   type        = any
   default     = null
   description = "CSI Secrets Store Provider Helm Configurations"
-}
-
-#-----------EXTERNAL SECRETS OPERATOR-----------
-variable "enable_external_secrets" {
-  type        = bool
-  default     = false
-  description = "Enable External Secrets operator add-on"
-}
-
-variable "external_secrets_helm_config" {
-  type        = any
-  default     = {}
-  description = "External Secrets operator Helm Chart config"
-}
-
-variable "external_secrets_irsa_policies" {
-  description = "Additional IAM policies for a IAM role for service accounts"
-  type        = list(string)
-  default     = []
-}
-
-variable "external_secrets_ssm_parameter_arns" {
-  description = "List of Systems Manager Parameter ARNs that contain secrets to mount using External Secrets"
-  type        = list(string)
-
-  validation {
-    condition     = length(var.external_secrets_ssm_parameter_arns) > 0
-    error_message = "Must contain at least parameter store ARN"
-  }
-}
-
-variable "external_secrets_secrets_manager_arns" {
-  description = "List of Secrets Manager ARNs that contain secrets to mount using External Secrets"
-  type        = list(string)
-
-  validation {
-    condition     = length(var.external_secrets_secrets_manager_arns) > 0
-    error_message = "Must contain at least one secrets manager ARN"
-  }
 }
 
 #-----------Grafana ADDON-------------
