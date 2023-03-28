@@ -639,7 +639,6 @@ variable "external_secrets_irsa_policies" {
 variable "external_secrets_ssm_parameter_arns" {
   description = "List of Systems Manager Parameter ARNs that contain secrets to mount using External Secrets"
   type        = list(string)
-  default     = []
 
   validation {
     condition     = length(var.external_secrets_ssm_parameter_arns) > 0
@@ -650,7 +649,6 @@ variable "external_secrets_ssm_parameter_arns" {
 variable "external_secrets_secrets_manager_arns" {
   description = "List of Secrets Manager ARNs that contain secrets to mount using External Secrets"
   type        = list(string)
-  default     = []
 
   validation {
     condition     = length(var.external_secrets_secrets_manager_arns) > 0
