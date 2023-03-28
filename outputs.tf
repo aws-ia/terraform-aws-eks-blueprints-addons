@@ -33,6 +33,11 @@ output "efs_csi_driver" {
   value       = module.efs_csi_driver
 }
 
+output "external_secrets" {
+  description = "Map of attributes of the Helm release and IRSA created"
+  value       = module.external_secrets
+}
+
 output "aws_for_fluent_bit" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = try(module.aws_for_fluent_bit[0], null)
@@ -76,11 +81,6 @@ output "csi_secrets_store_provider_aws" {
 output "external_dns" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = try(module.external_dns[0], null)
-}
-
-output "external_secrets" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.external_secrets[0], null)
 }
 
 output "fargate_fluentbit" {

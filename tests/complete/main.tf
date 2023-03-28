@@ -115,8 +115,9 @@ module "eks_blueprints_addons" {
   enable_secrets_store_csi_driver_provider_aws = true
   # need route53 zone for this
   #enable_external_dns = true
-  enable_gatekeeper    = true
-  enable_ingress_nginx = true
+  enable_external_secrets = true
+  enable_gatekeeper       = true
+  enable_ingress_nginx    = true
 
   enable_aws_fsx_csi_driver           = true
   enable_aws_load_balancer_controller = true
