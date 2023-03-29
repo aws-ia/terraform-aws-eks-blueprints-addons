@@ -34,6 +34,31 @@ locals {
     use_recurse        = false
   }
 
+  default_argocd_project = {
+    namespace   = local.helm_config["namespace"]
+    name        = "default"
+    description = "Example Project"
+    cluster_resource_whitelist = [
+      {
+        group = "*"
+        kind  = "*"
+      }
+    ]
+    namespace_resource_blacklist = []
+    namespace_resource_whitelist = []
+    destinations = [
+      {
+        namespace = "*"
+        server    = "https://kubernetes.default.svc"
+      }
+    ]
+    source_namespaces = []
+
+    source_repos = ["*"]
+    roles        = []
+    sync_windows = []
+  }
+
   global_application_values = {
     region      = var.addon_context.aws_region_name
     account     = var.addon_context.aws_caller_identity_account_id

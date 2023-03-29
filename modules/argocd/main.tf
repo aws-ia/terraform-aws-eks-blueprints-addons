@@ -96,6 +96,47 @@ resource "helm_release" "argocd_application" {
     })
   ]
 
+  depends_on = [module.helm_addon, helm_release.argocd_project]
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# ArgoCD Projects Bootstrapping
+# ---------------------------------------------------------------------------------------------------------------------
+resource "helm_release" "argocd_project" {
+  for_each = { for k, v in var.projects : k => merge(local.default_argocd_project, v) }
+
+  name      = each.key
+  chart     = "${path.module}/argocd-project/helm"
+  version   = "1.0.0"
+  namespace = each.value.namespace
+
+  # Application Meta.
+  set {
+    name  = "name"
+    value = each.key
+    type  = "string"
+  }
+
+  set {
+    name  = "description"
+    value = each.value.description
+    type  = "string"
+  }
+
+  values = [
+    # ArgoCD Project Spec
+    yamlencode({
+      "destinations"               = lookup(each.value, "destinations", [])
+      "clusterResourceWhitelist"   = lookup(each.value, "cluster_resource_whitelist", [])
+      "namespaceResourceBlacklist" = lookup(each.value, "namespace_resource_blacklist", [])
+      "namespaceResourceWhitelist" = lookup(each.value, "namespace_resource_whitelist", [])
+      "roles"                      = lookup(each.value, "roles", [])
+      "syncWindows"                = lookup(each.value, "sync_windows", [])
+      "sourceNamespaces"           = lookup(each.value, "source_namespaces", [])
+      "sourceRepos"                = lookup(each.value, "source_repos", [])
+    })
+  ]
+
   depends_on = [module.helm_addon]
 }
 

@@ -37,6 +37,7 @@ Application definitions, configurations, and environments should be declarative 
 | Name | Type |
 |------|------|
 | [helm_release.argocd_application](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
+| [helm_release.argocd_project](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) | resource |
 | [kubectl_manifest.argocd_kustomize_application](https://registry.terraform.io/providers/gavinbunney/kubectl/latest/docs/resources/manifest) | resource |
 | [kubernetes_namespace_v1.this](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/namespace_v1) | resource |
 | [kubernetes_secret.argocd_gitops](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
@@ -52,6 +53,7 @@ Application definitions, configurations, and environments should be declarative 
 | <a name="input_applications"></a> [applications](#input\_applications) | ArgoCD Application config used to bootstrap a cluster. | `any` | `{}` | no |
 | <a name="input_argocd_skip_install"></a> [argocd\_skip\_install](#input\_argocd\_skip\_install) | Skips Installation of ArgoCD addon/controller | `bool` | `false` | no |
 | <a name="input_helm_config"></a> [helm\_config](#input\_helm\_config) | ArgoCD Helm Chart Config values | `any` | `{}` | no |
+| <a name="input_projects"></a> [projects](#input\_projects) | ArgoCD Project config used to bootstrap a cluster. | `any` | `{}` | no |
 
 ## Outputs
 

@@ -61,6 +61,12 @@ variable "argocd_helm_config" {
   default     = {}
 }
 
+variable "argocd_projects" {
+  description = "Argo CD Project config to bootstrap the cluster"
+  type        = any
+  default     = {}
+}
+
 variable "argocd_applications" {
   description = "Argo CD Applications config to bootstrap the cluster"
   type        = any
