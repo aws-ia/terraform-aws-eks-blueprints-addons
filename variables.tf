@@ -340,8 +340,14 @@ variable "enable_aws_load_balancer_controller" {
   default     = false
 }
 
-variable "aws_load_balancer_controller_helm_config" {
-  description = "AWS Load Balancer Controller Helm Chart config"
+variable "enable_aws_load_balancer_controller_gitops" {
+  description = "AWS Load Balancer Controllerusing GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "aws_load_balancer_controller" {
+  description = "AWS Loadbalancer Controller addon configuration values"
   type        = any
   default     = {}
 }

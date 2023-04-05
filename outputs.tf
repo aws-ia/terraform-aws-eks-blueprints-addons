@@ -50,7 +50,7 @@ output "aws_fsx_csi_driver" {
 
 output "aws_load_balancer_controller" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.aws_load_balancer_controller[0], null)
+  value       = module.aws_load_balancer_controller
 }
 
 output "aws_node_termination_handler" {

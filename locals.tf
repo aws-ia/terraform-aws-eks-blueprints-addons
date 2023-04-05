@@ -7,7 +7,10 @@ locals {
     } : null
     awsFSxCsiDriver           = var.enable_aws_fsx_csi_driver ? module.aws_fsx_csi_driver[0].argocd_gitops_config : null
     awsForFluentBit           = var.enable_aws_for_fluentbit ? module.aws_for_fluent_bit[0].argocd_gitops_config : null
-    awsLoadBalancerController = var.enable_aws_load_balancer_controller ? module.aws_load_balancer_controller[0].argocd_gitops_config : null
+    awsLoadBalancerController = var.enable_aws_load_balancer_controller && var.enable_aws_load_balancer_controller_gitops ? {
+      enable             = true
+      serviceAccountName = local.aws_load_balancer_controller_service_account
+    } : null
     awsNodeTerminationHandler = var.enable_aws_node_termination_handler ? module.aws_node_termination_handler[0].argocd_gitops_config : null
     certManager               = var.enable_cert_manager ? module.cert_manager[0].argocd_gitops_config : null
     clusterAutoscaler         = var.enable_cluster_autoscaler ? module.cluster_autoscaler[0].argocd_gitops_config : null
