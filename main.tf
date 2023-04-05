@@ -546,6 +546,416 @@ module "external_secrets" {
   tags = var.tags
 }
 
+################################################################################
+# AWS Load Balancer Controller
+################################################################################
+
+locals {
+  aws_load_balancer_controller_name = "aws-load-balancer-controller"
+  aws_load_balancer_controller_service_account = try(var.aws_load_balancer_controller.service_account_name, "${local.aws_load_balancer_controller_name}-sa")
+}
+
+data "aws_iam_policy_document" "aws_load_balancer_controller" {
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+    actions   = ["iam:CreateServiceLinkedRole"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "iam:AWSServiceName"
+      values   = ["elasticloadbalancing.amazonaws.com"]
+    }
+  }
+
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "ec2:DescribeAccountAttributes",
+      "ec2:DescribeAddresses",
+      "ec2:DescribeAvailabilityZones",
+      "ec2:DescribeCoipPools",
+      "ec2:DescribeInstances",
+      "ec2:DescribeInternetGateways",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DescribeSecurityGroups",
+      "ec2:DescribeSubnets",
+      "ec2:DescribeTags",
+      "ec2:DescribeVpcPeeringConnections",
+      "ec2:DescribeVpcs",
+      "ec2:GetCoipPoolUsage",
+      "elasticloadbalancing:DescribeListenerCertificates",
+      "elasticloadbalancing:DescribeListeners",
+      "elasticloadbalancing:DescribeLoadBalancerAttributes",
+      "elasticloadbalancing:DescribeLoadBalancers",
+      "elasticloadbalancing:DescribeRules",
+      "elasticloadbalancing:DescribeSSLPolicies",
+      "elasticloadbalancing:DescribeTags",
+      "elasticloadbalancing:DescribeTargetGroupAttributes",
+      "elasticloadbalancing:DescribeTargetGroups",
+      "elasticloadbalancing:DescribeTargetHealth",
+    ]
+  }
+
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "acm:DescribeCertificate",
+      "acm:ListCertificates",
+      "cognito-idp:DescribeUserPoolClient",
+      "iam:GetServerCertificate",
+      "iam:ListServerCertificates",
+      "shield:CreateProtection",
+      "shield:DeleteProtection",
+      "shield:DescribeProtection",
+      "shield:GetSubscriptionState",
+      "waf-regional:AssociateWebACL",
+      "waf-regional:DisassociateWebACL",
+      "waf-regional:GetWebACL",
+      "waf-regional:GetWebACLForResource",
+      "wafv2:AssociateWebACL",
+      "wafv2:DisassociateWebACL",
+      "wafv2:GetWebACL",
+      "wafv2:GetWebACLForResource",
+    ]
+  }
+
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "ec2:AuthorizeSecurityGroupIngress",
+      "ec2:RevokeSecurityGroupIngress",
+    ]
+  }
+
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+    actions   = ["ec2:CreateSecurityGroup"]
+  }
+
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["arn:${var.addon_context.aws_partition_id}:ec2:*:*:security-group/*"]
+    actions   = ["ec2:CreateTags"]
+
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "ec2:CreateAction"
+      values   = ["CreateSecurityGroup"]
+    }
+  }
+
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["arn:${var.addon_context.aws_partition_id}:ec2:*:*:security-group/*"]
+
+    actions = [
+      "ec2:CreateTags",
+      "ec2:DeleteTags",
+    ]
+
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/ingress.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    sid    = ""
+    effect = "Allow"
+
+    resources = [
+      "arn:${var.addon_context.aws_partition_id}:elasticloadbalancing:*:*:loadbalancer/app/*/*",
+      "arn:${var.addon_context.aws_partition_id}:elasticloadbalancing:*:*:loadbalancer/net/*/*",
+      "arn:${var.addon_context.aws_partition_id}:elasticloadbalancing:*:*:targetgroup/*/*",
+    ]
+
+    actions = [
+      "elasticloadbalancing:AddTags",
+      "elasticloadbalancing:DeleteTargetGroup",
+      "elasticloadbalancing:RemoveTags",
+    ]
+
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/ingress.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["arn:${var.addon_context.aws_partition_id}:ec2:*:*:security-group/*"]
+
+    actions = [
+      "ec2:CreateTags",
+      "ec2:DeleteTags",
+    ]
+
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["true"]
+    }
+  }
+
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "ec2:AuthorizeSecurityGroupIngress",
+      "ec2:DeleteSecurityGroup",
+      "ec2:RevokeSecurityGroupIngress",
+    ]
+
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "elasticloadbalancing:CreateLoadBalancer",
+      "elasticloadbalancing:CreateTargetGroup",
+    ]
+
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "elasticloadbalancing:CreateListener",
+      "elasticloadbalancing:CreateRule",
+      "elasticloadbalancing:DeleteListener",
+      "elasticloadbalancing:DeleteRule",
+    ]
+  }
+
+  statement {
+    sid    = ""
+    effect = "Allow"
+
+    resources = [
+      "arn:${var.addon_context.aws_partition_id}:elasticloadbalancing:*:*:loadbalancer/app/*/*",
+      "arn:${var.addon_context.aws_partition_id}:elasticloadbalancing:*:*:loadbalancer/net/*/*",
+      "arn:${var.addon_context.aws_partition_id}:elasticloadbalancing:*:*:targetgroup/*/*",
+    ]
+
+    actions = [
+      "elasticloadbalancing:AddTags",
+      "elasticloadbalancing:RemoveTags",
+    ]
+
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["true"]
+    }
+
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    sid    = ""
+    effect = "Allow"
+
+    resources = [
+      "arn:${var.addon_context.aws_partition_id}:elasticloadbalancing:*:*:listener/net/*/*/*",
+      "arn:${var.addon_context.aws_partition_id}:elasticloadbalancing:*:*:listener/app/*/*/*",
+      "arn:${var.addon_context.aws_partition_id}:elasticloadbalancing:*:*:listener-rule/net/*/*/*",
+      "arn:${var.addon_context.aws_partition_id}:elasticloadbalancing:*:*:listener-rule/app/*/*/*",
+    ]
+
+    actions = [
+      "elasticloadbalancing:AddTags",
+      "elasticloadbalancing:RemoveTags",
+    ]
+  }
+
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "elasticloadbalancing:DeleteLoadBalancer",
+      "elasticloadbalancing:DeleteTargetGroup",
+      "elasticloadbalancing:ModifyLoadBalancerAttributes",
+      "elasticloadbalancing:ModifyTargetGroup",
+      "elasticloadbalancing:ModifyTargetGroupAttributes",
+      "elasticloadbalancing:SetIpAddressType",
+      "elasticloadbalancing:SetSecurityGroups",
+      "elasticloadbalancing:SetSubnets",
+    ]
+
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["arn:${var.addon_context.aws_partition_id}:elasticloadbalancing:*:*:targetgroup/*/*"]
+
+    actions = [
+      "elasticloadbalancing:DeregisterTargets",
+      "elasticloadbalancing:RegisterTargets",
+    ]
+  }
+
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["*"]
+
+    actions = [
+      "elasticloadbalancing:AddListenerCertificates",
+      "elasticloadbalancing:ModifyListener",
+      "elasticloadbalancing:ModifyRule",
+      "elasticloadbalancing:RemoveListenerCertificates",
+      "elasticloadbalancing:SetWebAcl",
+    ]
+  }
+}
+
+module "aws_load_balancer_controller" {
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_aws_load_balancer_controller
+
+  # https://github.com/aws/eks-charts/blob/master/stable/aws-load-balancer-controller/Chart.yaml
+  name             = try(var.aws_load_balancer_controller.name, local.aws_load_balancer_controller_name)
+  description      = try(var.aws_load_balancer_controller.description, "A Helm chart to deploy aws-load-balancer-controller for ingress resources")
+  namespace        = try(var.aws_load_balancer_controller.namespace, "kube-system")
+  # namespace creation is false here as kube-system already exists by default
+  create_namespace = try(var.aws_load_balancer_controller.create_namespace, false)
+  chart            = local.aws_load_balancer_controller_name
+  chart_version    = try(var.aws_load_balancer_controller.chart_version, "1.4.8")
+  repository       = try(var.aws_load_balancer_controller.repository, "https://aws.github.io/eks-charts")
+  values           = try(var.aws_load_balancer_controller.values, [])
+
+  timeout                    = try(var.aws_load_balancer_controller.timeout, null)
+  repository_key_file        = try(var.aws_load_balancer_controller.repository_key_file, null)
+  repository_cert_file       = try(var.aws_load_balancer_controller.repository_cert_file, null)
+  repository_ca_file         = try(var.aws_load_balancer_controller.repository_ca_file, null)
+  repository_username        = try(var.aws_load_balancer_controller.repository_username, null)
+  repository_password        = try(var.aws_load_balancer_controller.repository_password, null)
+  devel                      = try(var.aws_load_balancer_controller.devel, null)
+  verify                     = try(var.aws_load_balancer_controller.verify, null)
+  keyring                    = try(var.aws_load_balancer_controller.keyring, null)
+  disable_webhooks           = try(var.aws_load_balancer_controller.disable_webhooks, null)
+  reuse_values               = try(var.aws_load_balancer_controller.reuse_values, null)
+  reset_values               = try(var.aws_load_balancer_controller.reset_values, null)
+  force_update               = try(var.aws_load_balancer_controller.force_update, null)
+  recreate_pods              = try(var.aws_load_balancer_controller.recreate_pods, null)
+  cleanup_on_fail            = try(var.aws_load_balancer_controller.cleanup_on_fail, null)
+  max_history                = try(var.aws_load_balancer_controller.max_history, null)
+  atomic                     = try(var.aws_load_balancer_controller.atomic, null)
+  skip_crds                  = try(var.aws_load_balancer_controller.skip_crds, null)
+  render_subchart_notes      = try(var.aws_load_balancer_controller.render_subchart_notes, null)
+  disable_openapi_validation = try(var.aws_load_balancer_controller.disable_openapi_validation, null)
+  wait                       = try(var.aws_load_balancer_controller.wait, null)
+  wait_for_jobs              = try(var.aws_load_balancer_controller.wait_for_jobs, null)
+  dependency_update          = try(var.aws_load_balancer_controller.dependency_update, null)
+  replace                    = try(var.aws_load_balancer_controller.replace, null)
+  lint                       = try(var.aws_load_balancer_controller.lint, null)
+
+  postrender = try(var.aws_load_balancer_controller.postrender, [])
+  set = concat([
+    {
+      name  = "clusterName"
+      value = var.cluster_name
+      }, {
+      name  = "controller.serviceAccount.name"
+      value = local.aws_load_balancer_controller_service_account
+    }],
+    try(var.aws_load_balancer_controller.set, [])
+  )
+  set_sensitive = try(var.aws_load_balancer_controller.set_sensitive, [])
+
+  # IAM role for service account (IRSA)
+  create_role                   = try(var.aws_load_balancer_controller.create_role, true)
+  role_name                     = try(var.aws_load_balancer_controller.role_name, local.aws_load_balancer_controller_name)
+  role_name_use_prefix          = try(var.aws_load_balancer_controller.role_name_use_prefix, true)
+  role_path                     = try(var.aws_load_balancer_controller.role_path, "/")
+  role_permissions_boundary_arn = lookup(var.aws_load_balancer_controller, "role_permissions_boundary_arn", null)
+  role_description              = try(var.aws_load_balancer_controller.role_description, "IRSA for aws-load-balancer-controller project")
+  role_policies                 = lookup(var.aws_load_balancer_controller, "role_policies", {})
+
+  source_policy_documents = compact(concat(
+    data.aws_iam_policy_document.aws_load_balancer_controller[*].json,
+    lookup(var.aws_load_balancer_controller, "source_policy_documents", [])
+  ))
+  override_policy_documents = lookup(var.aws_load_balancer_controller, "override_policy_documents", [])
+  policy_statements         = lookup(var.aws_load_balancer_controller, "policy_statements", [])
+  policy_name               = try(var.aws_load_balancer_controller.policy_name, null)
+  policy_name_use_prefix    = try(var.aws_load_balancer_controller.policy_name_use_prefix, true)
+  policy_path               = try(var.aws_load_balancer_controller.policy_path, null)
+  policy_description        = try(var.aws_load_balancer_controller.policy_description, "IAM Policy for AWS Load Balancer Controller")
+
+  oidc_providers = {
+    this = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.aws_load_balancer_controller_service_account
+    }
+  }
+
+  tags = var.tags
+}
+
 #-----------------Kubernetes Add-ons----------------------
 
 module "argocd" {
