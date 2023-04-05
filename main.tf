@@ -991,14 +991,6 @@ module "aws_for_fluent_bit" {
   addon_context             = local.addon_context
 }
 
-module "aws_load_balancer_controller" {
-  count             = var.enable_aws_load_balancer_controller ? 1 : 0
-  source            = "./modules/aws-load-balancer-controller"
-  helm_config       = var.aws_load_balancer_controller_helm_config
-  manage_via_gitops = var.argocd_manage_add_ons
-  addon_context     = merge(local.addon_context, { default_repository = local.amazon_container_image_registry_uris[data.aws_region.current.name] })
-}
-
 module "aws_node_termination_handler" {
   count                   = var.enable_aws_node_termination_handler && (length(var.auto_scaling_group_names) > 0 || var.enable_karpenter) ? 1 : 0
   source                  = "./modules/aws-node-termination-handler"
