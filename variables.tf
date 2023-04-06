@@ -199,12 +199,6 @@ variable "irsa_iam_permissions_boundary" {
   default     = ""
 }
 
-variable "custom_image_registry_uri" {
-  description = "Custom image registry URI map of `{region = dkr.endpoint }`"
-  type        = map(string)
-  default     = {}
-}
-
 variable "enable_cluster_autoscaler" {
   description = "Enable Cluster autoscaler add-on"
   type        = bool
