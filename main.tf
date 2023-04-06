@@ -880,9 +880,6 @@ module "aws_load_balancer_controller" {
   postrender = try(var.aws_load_balancer_controller.postrender, [])
   set = concat([
     {
-      name  = "clusterName"
-      value = var.cluster_name
-      }, {
       name  = "controller.serviceAccount.name"
       value = local.aws_load_balancer_controller_service_account
     }],
@@ -892,7 +889,8 @@ module "aws_load_balancer_controller" {
 
   # IAM role for service account (IRSA)
   create_role                   = try(var.aws_load_balancer_controller.create_role, true)
-  role_name                     = try(var.aws_load_balancer_controller.role_name, local.aws_load_balancer_controller_name)
+  set_irsa_name                 = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+  role_name                     = try(var.aws_load_balancer_controller.role_name, "alb-controller")
   role_name_use_prefix          = try(var.aws_load_balancer_controller.role_name_use_prefix, true)
   role_path                     = try(var.aws_load_balancer_controller.role_path, "/")
   role_permissions_boundary_arn = lookup(var.aws_load_balancer_controller, "role_permissions_boundary_arn", null)
