@@ -557,8 +557,6 @@ locals {
 
 data "aws_iam_policy_document" "aws_load_balancer_controller" {
   statement {
-    sid       = ""
-    effect    = "Allow"
     resources = ["*"]
     actions   = ["iam:CreateServiceLinkedRole"]
 
@@ -570,8 +568,6 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
   }
 
   statement {
-    sid       = ""
-    effect    = "Allow"
     resources = ["*"]
 
     actions = [
@@ -602,8 +598,6 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
   }
 
   statement {
-    sid       = ""
-    effect    = "Allow"
     resources = ["*"]
 
     actions = [
@@ -628,8 +622,6 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
   }
 
   statement {
-    sid       = ""
-    effect    = "Allow"
     resources = ["*"]
 
     actions = [
@@ -639,16 +631,14 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
   }
 
   statement {
-    sid       = ""
-    effect    = "Allow"
     resources = ["*"]
+
     actions   = ["ec2:CreateSecurityGroup"]
   }
 
   statement {
-    sid       = ""
-    effect    = "Allow"
     resources = ["arn:${local.partition}:ec2:*:*:security-group/*"]
+
     actions   = ["ec2:CreateTags"]
 
     condition {
@@ -665,8 +655,6 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
   }
 
   statement {
-    sid       = ""
-    effect    = "Allow"
     resources = ["arn:${local.partition}:ec2:*:*:security-group/*"]
 
     actions = [
@@ -682,9 +670,6 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
   }
 
   statement {
-    sid    = ""
-    effect = "Allow"
-
     resources = [
       "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/app/*/*",
       "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/net/*/*",
@@ -705,8 +690,6 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
   }
 
   statement {
-    sid       = ""
-    effect    = "Allow"
     resources = ["arn:${local.partition}:ec2:*:*:security-group/*"]
 
     actions = [
@@ -728,8 +711,6 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
   }
 
   statement {
-    sid       = ""
-    effect    = "Allow"
     resources = ["*"]
 
     actions = [
@@ -746,8 +727,6 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
   }
 
   statement {
-    sid       = ""
-    effect    = "Allow"
     resources = ["*"]
 
     actions = [
@@ -763,8 +742,6 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
   }
 
   statement {
-    sid       = ""
-    effect    = "Allow"
     resources = ["*"]
 
     actions = [
@@ -776,9 +753,6 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
   }
 
   statement {
-    sid    = ""
-    effect = "Allow"
-
     resources = [
       "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/app/*/*",
       "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/net/*/*",
@@ -804,9 +778,6 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
   }
 
   statement {
-    sid    = ""
-    effect = "Allow"
-
     resources = [
       "arn:${local.partition}:elasticloadbalancing:*:*:listener/net/*/*/*",
       "arn:${local.partition}:elasticloadbalancing:*:*:listener/app/*/*/*",
@@ -821,8 +792,6 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
   }
 
   statement {
-    sid       = ""
-    effect    = "Allow"
     resources = ["*"]
 
     actions = [
@@ -844,8 +813,6 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
   }
 
   statement {
-    sid       = ""
-    effect    = "Allow"
     resources = ["arn:${local.partition}:elasticloadbalancing:*:*:targetgroup/*/*"]
 
     actions = [
@@ -855,8 +822,6 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
   }
 
   statement {
-    sid       = ""
-    effect    = "Allow"
     resources = ["*"]
 
     actions = [
