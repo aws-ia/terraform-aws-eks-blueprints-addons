@@ -551,7 +551,7 @@ module "external_secrets" {
 ################################################################################
 
 locals {
-  aws_load_balancer_controller_name = "aws-load-balancer-controller"
+  aws_load_balancer_controller_name            = "aws-load-balancer-controller"
   aws_load_balancer_controller_service_account = try(var.aws_load_balancer_controller.service_account_name, "${local.aws_load_balancer_controller_name}-sa")
 }
 
@@ -633,13 +633,13 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
   statement {
     resources = ["*"]
 
-    actions   = ["ec2:CreateSecurityGroup"]
+    actions = ["ec2:CreateSecurityGroup"]
   }
 
   statement {
     resources = ["arn:${local.partition}:ec2:*:*:security-group/*"]
 
-    actions   = ["ec2:CreateTags"]
+    actions = ["ec2:CreateTags"]
 
     condition {
       test     = "Null"
@@ -841,9 +841,9 @@ module "aws_load_balancer_controller" {
   create = var.enable_aws_load_balancer_controller
 
   # https://github.com/aws/eks-charts/blob/master/stable/aws-load-balancer-controller/Chart.yaml
-  name             = try(var.aws_load_balancer_controller.name, local.aws_load_balancer_controller_name)
-  description      = try(var.aws_load_balancer_controller.description, "A Helm chart to deploy aws-load-balancer-controller for ingress resources")
-  namespace        = try(var.aws_load_balancer_controller.namespace, "kube-system")
+  name        = try(var.aws_load_balancer_controller.name, local.aws_load_balancer_controller_name)
+  description = try(var.aws_load_balancer_controller.description, "A Helm chart to deploy aws-load-balancer-controller for ingress resources")
+  namespace   = try(var.aws_load_balancer_controller.namespace, "kube-system")
   # namespace creation is false here as kube-system already exists by default
   create_namespace = try(var.aws_load_balancer_controller.create_namespace, false)
   chart            = local.aws_load_balancer_controller_name
