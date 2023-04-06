@@ -124,6 +124,28 @@ variable "argo_rollouts" {
 }
 
 ################################################################################
+# Cluster Autoscaler
+################################################################################
+
+variable "enable_cluster_autoscaler" {
+  description = "Enable Cluster autoscaler add-on"
+  type        = bool
+  default     = false
+}
+
+variable "enable_cluster_autoscaler_gitops" {
+  description = "Enable Cluster Autoscaler using GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "cluster_autoscaler" {
+  description = "Cluster Autoscaler addon configuration values"
+  type        = any
+  default     = {}
+}
+
+################################################################################
 # Cloudwatch Metrics
 ################################################################################
 
@@ -146,7 +168,7 @@ variable "cloudwatch_metrics" {
 }
 
 ################################################################################
-# Cloudwatch Metrics
+# External Secrets
 ################################################################################
 
 variable "enable_external_secrets" {
@@ -197,18 +219,6 @@ variable "irsa_iam_permissions_boundary" {
   description = "IAM permissions boundary for IRSA roles"
   type        = string
   default     = ""
-}
-
-variable "enable_cluster_autoscaler" {
-  description = "Enable Cluster autoscaler add-on"
-  type        = bool
-  default     = false
-}
-
-variable "cluster_autoscaler_helm_config" {
-  description = "Cluster Autoscaler Helm Chart config"
-  type        = any
-  default     = {}
 }
 
 #-----------External DNS ADDON-------------
