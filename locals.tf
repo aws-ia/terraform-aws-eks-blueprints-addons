@@ -32,7 +32,7 @@ locals {
     } : null
     externalDns = var.enable_external_dns && var.enable_external_dns_gitops ? {
       enable             = true
-      serviceAccountName = local.service_account
+      serviceAccountName = local.external_dns_service_account
     } : null
     externalSecrets = var.enable_external_secrets ? {
       enable             = true
