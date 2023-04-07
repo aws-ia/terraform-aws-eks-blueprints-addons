@@ -13,11 +13,12 @@ module "helm_addon" {
 
   helm_config = merge(
     {
-      name       = local.name
-      chart      = local.name
-      repository = "https://prometheus-community.github.io/helm-charts"
-      version    = "45.7.1"
-      namespace  = local.namespace
+      name             = local.name
+      chart            = local.name
+      repository       = "https://prometheus-community.github.io/helm-charts"
+      version          = "45.7.1"
+      namespace        = local.namespace
+      create_namespace = local.namespace != "kube-system" ? try(var.helm_config.create_namespace, true) : false
       values = [templatefile("${path.module}/values.yaml", {
         aws_region = var.addon_context.aws_region_name
       })]
