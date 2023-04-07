@@ -30,7 +30,10 @@ locals {
       enable             = true
       serviceAccountName = local.cloudwatch_metrics_service_account
     } : null
-    externalDns = var.enable_external_dns ? module.external_dns[0].argocd_gitops_config : null
+    externalDns = var.enable_external_dns && var.enable_external_dns_gitops ? {
+      enable             = true
+      serviceAccountName = local.external_dns_service_account
+    } : null
     externalSecrets = var.enable_external_secrets ? {
       enable             = true
       serviceAccountName = local.external_secrets_service_account
