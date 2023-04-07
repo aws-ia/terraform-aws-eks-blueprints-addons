@@ -7,12 +7,6 @@ locals {
   }
 }
 
-resource "kubernetes_namespace_v1" "prometheus" {
-  metadata {
-    name = local.namespace
-  }
-}
-
 # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/Chart.yaml
 module "helm_addon" {
   source = "../helm-addon"
@@ -23,7 +17,7 @@ module "helm_addon" {
       chart      = local.name
       repository = "https://prometheus-community.github.io/helm-charts"
       version    = "45.7.1"
-      namespace  = kubernetes_namespace_v1.prometheus.metadata[0].name
+      namespace  = local.namespace
       values = [templatefile("${path.module}/values.yaml", {
         aws_region = var.addon_context.aws_region_name
       })]
