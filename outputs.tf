@@ -70,7 +70,7 @@ output "cert_manager" {
 
 output "cluster_autoscaler" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.cluster_autoscaler[0], null)
+  value       = module.cluster_autoscaler
 }
 
 output "csi_secrets_store_provider_aws" {
@@ -80,7 +80,7 @@ output "csi_secrets_store_provider_aws" {
 
 output "external_dns" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.external_dns[0], null)
+  value       = module.external_dns
 }
 
 output "fargate_fluentbit" {

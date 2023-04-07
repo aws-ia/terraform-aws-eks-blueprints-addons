@@ -201,6 +201,33 @@ variable "external_secrets_kms_key_arns" {
   default     = ["arn:aws:kms:*:*:key/*"]
 }
 
+################################################################################
+# External DNS
+################################################################################
+
+variable "enable_external_dns" {
+  description = "Enable external-dns operator add-on"
+  type        = bool
+  default     = false
+}
+
+variable "external_dns" {
+  description = "external-dns addon configuration values"
+  type        = any
+  default     = {}
+}
+
+variable "enable_external_dns_gitops" {
+  description = "Enable external-dns using GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "external_dns_route53_zone_arns" {
+  description = "List of Route53 zones ARNs which external-dns will have access to create/manage records (if using Route53)"
+  type        = list(string)
+  default     = []
+}
 
 
 variable "auto_scaling_group_names" {
@@ -219,31 +246,6 @@ variable "irsa_iam_permissions_boundary" {
   description = "IAM permissions boundary for IRSA roles"
   type        = string
   default     = ""
-}
-
-#-----------External DNS ADDON-------------
-variable "enable_external_dns" {
-  description = "External DNS add-on"
-  type        = bool
-  default     = false
-}
-
-variable "external_dns_helm_config" {
-  description = "External DNS Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "external_dns_irsa_policies" {
-  description = "Additional IAM policies for a IAM role for service accounts"
-  type        = list(string)
-  default     = []
-}
-
-variable "external_dns_route53_zone_arns" {
-  description = "List of Route53 zones ARNs which external-dns will have access to create/manage records"
-  type        = list(string)
-  default     = []
 }
 
 #-----------Amazon Managed Service for Prometheus-------------
