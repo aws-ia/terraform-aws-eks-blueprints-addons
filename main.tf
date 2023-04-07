@@ -560,7 +560,7 @@ data "aws_iam_policy_document" "external_dns" {
 
   statement {
     actions   = ["route53:ChangeResourceRecordSets"]
-    resources = var.route53_zone_arns
+    resources = var.external_dns_route53_zone_arns
   }
 
   statement {
