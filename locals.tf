@@ -12,7 +12,10 @@ locals {
       serviceAccountName = local.aws_load_balancer_controller_service_account
     } : null
     awsNodeTerminationHandler = var.enable_aws_node_termination_handler ? module.aws_node_termination_handler[0].argocd_gitops_config : null
-    certManager               = var.enable_cert_manager ? module.cert_manager[0].argocd_gitops_config : null
+    certManager = var.enable_cert_manager && var.enable_cert_manager_gitops ? {
+      enable             = true
+      serviceAccountName = local.cert_manager_service_account
+    } : null
     clusterAutoscaler = var.enable_cluster_autoscaler && var.enable_cluster_autoscaler_gitops ? {
       enable             = true
       serviceAccountName = local.cluster_autoscaler_service_account

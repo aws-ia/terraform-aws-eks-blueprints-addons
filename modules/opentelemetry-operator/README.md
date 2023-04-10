@@ -18,9 +18,6 @@ is a custom controller, which introduces new object types through Custom Resourc
 Definition (CRD), an extension mechanism in Kubernetes.
 In this case, the CRD that is managed by the OpenTelemetry Operator is the Collector.
 
-> :warning: We do install [cert-manager](https://cert-manager.io/) as a [hard requirement](https://docs.aws.amazon.com/eks/latest/userguide/opentelemetry.html) for
-the ADOT Operator.
-
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
@@ -41,7 +38,6 @@ the ADOT Operator.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cert_manager"></a> [cert\_manager](#module\_cert\_manager) | ../cert-manager | n/a |
 | <a name="module_helm_addon"></a> [helm\_addon](#module\_helm\_addon) | ../helm-addon | n/a |
 
 ## Resources
