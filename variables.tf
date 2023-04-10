@@ -124,6 +124,34 @@ variable "argo_rollouts" {
 }
 
 ################################################################################
+# Cert Manager
+################################################################################
+
+variable "enable_cert_manager" {
+  description = "Enable cert-manager add-on"
+  type        = bool
+  default     = false
+}
+
+variable "enable_cert_manager_gitops" {
+  description = "Enable cert-manager using GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "cert_manager" {
+  description = "cert-manager addon configuration values"
+  type        = any
+  default     = {}
+}
+
+variable "cert_manager_route53_hosted_zone_arns" {
+  description = "List of Route53 Hosted Zone ARNs that are used by cert-manager to create DNS records"
+  type        = list(string)
+  default     = ["arn:aws:route53:::hostedzone/*"]
+}
+
+################################################################################
 # Cluster Autoscaler
 ################################################################################
 
@@ -431,49 +459,6 @@ variable "fargate_fluentbit_addon_config" {
   description = "Fargate fluentbit add-on config"
   type        = any
   default     = {}
-}
-
-#-----------CERT MANAGER-------------
-variable "enable_cert_manager" {
-  description = "Enable Cert Manager add-on"
-  type        = bool
-  default     = false
-}
-
-variable "cert_manager_helm_config" {
-  description = "Cert Manager Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "cert_manager_irsa_policies" {
-  description = "Additional IAM policies for a IAM role for service accounts"
-  type        = list(string)
-  default     = []
-}
-
-variable "cert_manager_domain_names" {
-  description = "Domain names of the Route53 hosted zone to use with cert-manager"
-  type        = list(string)
-  default     = []
-}
-
-variable "cert_manager_kubernetes_svc_image_pull_secrets" {
-  description = "list(string) of kubernetes imagePullSecrets"
-  type        = list(string)
-  default     = []
-}
-
-variable "cert_manager_install_letsencrypt_issuers" {
-  description = "Install Let's Encrypt Cluster Issuers"
-  type        = bool
-  default     = true
-}
-
-variable "cert_manager_letsencrypt_email" {
-  description = "Email address for expiration emails from Let's Encrypt"
-  type        = string
-  default     = ""
 }
 
 #-----------AWS NODE TERMINATION HANDLER-------------

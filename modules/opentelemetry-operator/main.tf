@@ -1,12 +1,3 @@
-module "cert_manager" {
-  source = "../cert-manager"
-
-  # https://docs.aws.amazon.com/eks/latest/userguide/adot-reqts.html
-  # certmanaager v1.6.0 onwards is not supported yet
-  helm_config   = { version = "v1.5.0" }
-  addon_context = var.addon_context
-}
-
 resource "kubernetes_namespace_v1" "adot" {
   count = local.create_namespace ? 1 : 0
 
@@ -49,8 +40,6 @@ resource "aws_eks_addon" "adot" {
       ClusterRoleVersion = try(kubernetes_cluster_role_v1.adot[0].metadata[0].resource_version, "")
     }
   )
-
-  depends_on = [module.cert_manager]
 }
 
 resource "kubernetes_role_v1" "adot" {
@@ -306,13 +295,10 @@ resource "kubernetes_cluster_role_binding_v1" "adot" {
 
 }
 
-
 module "helm_addon" {
   source = "../helm-addon"
   count  = var.enable_opentelemetry_operator ? 1 : 0
 
   helm_config   = local.helm_config
   addon_context = var.addon_context
-
-  depends_on = [module.cert_manager]
 }
