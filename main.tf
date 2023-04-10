@@ -992,6 +992,9 @@ module "aws_load_balancer_controller" {
     {
       name  = "controller.serviceAccount.name"
       value = local.aws_load_balancer_controller_service_account
+      }, {
+      name  = "clusterName"
+      value = var.cluster_name
     }],
     try(var.aws_load_balancer_controller.set, [])
   )
