@@ -64,10 +64,10 @@ resource "helm_release" "this" {
   }
 
   dynamic "set" {
-    for_each = { for k, v in { "name" = var.set_irsa_name } : k => v if var.create && var.create_role && var.set_irsa_name != "" }
-
+    for_each = { for k, v in toset(var.set_irsa_names) : k => v if var.create && var.create_role }
+    iterator = each
     content {
-      name  = set.value
+      name  = each.value
       value = aws_iam_role.this[0].arn
     }
   }

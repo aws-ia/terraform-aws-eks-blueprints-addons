@@ -373,22 +373,23 @@ variable "efs_csi_driver" {
 }
 
 #-----------AWS FSX CSI DRIVER ADDON-------------
-variable "enable_aws_fsx_csi_driver" {
-  description = "Enable AWS FSx CSI driver add-on"
+
+variable "enable_fsx_csi_driver" {
+  description = "Enable AWS FSX CSI Driver add-on"
   type        = bool
   default     = false
 }
 
-variable "aws_fsx_csi_driver_helm_config" {
-  description = "AWS FSx CSI driver Helm Chart config"
-  type        = any
-  default     = {}
+variable "enable_fsx_csi_driver_gitops" {
+  description = "Enable FSX CSI Driver using GitOps add-on"
+  type        = bool
+  default     = false
 }
 
-variable "aws_fsx_csi_driver_irsa_policies" {
-  description = "Additional IAM policies for a IAM role for service accounts"
-  type        = list(string)
-  default     = []
+variable "fsx_csi_driver" {
+  description = "FSX CSI Driver addon configuration values"
+  type        = any
+  default     = {}
 }
 
 #-----------AWS LB Ingress Controller-------------

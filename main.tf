@@ -233,7 +233,7 @@ module "cert_manager" {
   set_sensitive = try(var.cert_manager.set_sensitive, [])
 
   # IAM role for service account (IRSA)
-  set_irsa_name                 = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
   create_role                   = local.create_cert_manager_irsa && try(var.cert_manager.create_role, true)
   role_name                     = try(var.cert_manager.role_name, "cert-manager")
   role_name_use_prefix          = try(var.cert_manager.role_name_use_prefix, true)
@@ -328,7 +328,7 @@ module "cloudwatch_metrics" {
   set_sensitive = try(var.cloudwatch_metrics.set_sensitive, [])
 
   # IAM role for service account (IRSA)
-  set_irsa_name                 = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
   create_role                   = try(var.cloudwatch_metrics.create_role, true)
   role_name                     = try(var.cloudwatch_metrics.role_name, "aws-cloudwatch-metrics")
   role_name_use_prefix          = try(var.cloudwatch_metrics.role_name_use_prefix, true)
@@ -483,6 +483,10 @@ module "efs_csi_driver" {
   set_sensitive = try(var.efs_csi_driver.set_sensitive, [])
 
   # IAM role for service account (IRSA)
+  set_irsa_names = [
+    "controller.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn",
+    "node.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+  ]
   create_role                   = try(var.efs_csi_driver.create_role, true)
   role_name                     = try(var.efs_csi_driver.role_name, "aws-efs-csi-driver")
   role_name_use_prefix          = try(var.efs_csi_driver.role_name_use_prefix, true)
@@ -592,7 +596,7 @@ module "external_secrets" {
   create_namespace = try(var.external_secrets.create_namespace, true)
   chart            = "external-secrets"
   chart_version    = try(var.external_secrets.chart_version, "0.8.1")
-  repository       = try(var.external_secrets.repository, "https://kubernetes-sigs.github.io/aws-efs-csi-driver/")
+  repository       = try(var.external_secrets.repository, "https://charts.external-secrets.io")
   values           = try(var.external_secrets.values, [])
 
   timeout                    = try(var.external_secrets.timeout, null)
@@ -632,7 +636,7 @@ module "external_secrets" {
   set_sensitive = try(var.external_secrets.set_sensitive, [])
 
   # IAM role for service account (IRSA)
-  set_irsa_name                 = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
   create_role                   = try(var.external_secrets.create_role, true)
   role_name                     = try(var.external_secrets.role_name, "external-secrets")
   role_name_use_prefix          = try(var.external_secrets.role_name_use_prefix, true)
@@ -742,7 +746,7 @@ module "external_dns" {
   set_sensitive = try(var.external_dns.set_sensitive, [])
 
   # IAM role for service account (IRSA)
-  set_irsa_name                 = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
   create_role                   = try(var.external_dns.create_role, true) && length(var.external_dns_route53_zone_arns) > 0
   role_name                     = try(var.external_dns.role_name, "external-dns")
   role_name_use_prefix          = try(var.external_dns.role_name_use_prefix, true)
@@ -1119,7 +1123,7 @@ module "aws_load_balancer_controller" {
 
   # IAM role for service account (IRSA)
   create_role                   = try(var.aws_load_balancer_controller.create_role, true)
-  set_irsa_name                 = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
   role_name                     = try(var.aws_load_balancer_controller.role_name, "alb-controller")
   role_name_use_prefix          = try(var.aws_load_balancer_controller.role_name_use_prefix, true)
   role_path                     = try(var.aws_load_balancer_controller.role_path, "/")
@@ -1273,7 +1277,7 @@ module "cluster_autoscaler" {
   set_sensitive = try(var.cluster_autoscaler.set_sensitive, [])
 
   # IAM role for service account (IRSA)
-  set_irsa_name                 = "rbac.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+  set_irsa_names                = ["rbac.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
   create_role                   = try(var.cluster_autoscaler.create_role, true)
   role_name                     = try(var.cluster_autoscaler.role_name, "cluster-autoscaler")
   role_name_use_prefix          = try(var.cluster_autoscaler.role_name_use_prefix, true)
@@ -1302,6 +1306,163 @@ module "cluster_autoscaler" {
   }
 
   tags = var.tags
+}
+
+################################################################################
+# FSX CSI DRIVER
+################################################################################
+
+locals {
+  fsx_csi_driver_service_account = try(var.fsx_csi_driver.service_account_name, "fsx-csi-controller-sa")
+}
+
+data "aws_iam_policy_document" "fsx_csi_driver" {
+  statement {
+    sid       = "AllowCreateServiceLinkedRoles"
+    effect    = "Allow"
+    resources = ["arn:${local.partition}:iam::*:role/aws-service-role/s3.data-source.lustre.fsx.amazonaws.com/*"]
+
+    actions = [
+      "iam:CreateServiceLinkedRole",
+      "iam:AttachRolePolicy",
+      "iam:PutRolePolicy",
+    ]
+  }
+
+  statement {
+    sid       = "AllowCreateServiceLinkedRole"
+    effect    = "Allow"
+    resources = ["arn:${local.partition}:iam::${local.account_id}:role/*"]
+    actions   = ["iam:CreateServiceLinkedRole"]
+
+    condition {
+      test     = "StringLike"
+      variable = "iam:AWSServiceName"
+      values   = ["fsx.amazonaws.com"]
+    }
+  }
+
+  statement {
+    sid       = "AllowListBuckets"
+    effect    = "Allow"
+    resources = ["arn:${local.partition}:s3:::*"]
+
+    actions = [
+      "s3:ListBucket"
+    ]
+  }
+
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["arn:${local.partition}:fsx:${local.region}:${local.account_id}:file-system/*"]
+
+    actions = [
+      "fsx:CreateFileSystem",
+      "fsx:DeleteFileSystem",
+      "fsx:UpdateFileSystem",
+    ]
+  }
+
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["arn:${local.partition}:fsx:${local.region}:${local.account_id}:*"]
+
+    actions = [
+      "fsx:DescribeFileSystems",
+      "fsx:TagResource"
+    ]
+  }
+}
+
+module "fsx_csi_driver" {
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_fsx_csi_driver
+
+  # https://github.com/kubernetes-sigs/aws-fsx-csi-driver/tree/master/charts/aws-fsx-csi-driver
+  name             = try(var.fsx_csi_driver.name, "aws-fsx-csi-driver")
+  description      = try(var.fsx_csi_driver.description, "A Helm chart for AWS FSx for Lustre CSI Driver")
+  namespace        = try(var.fsx_csi_driver.namespace, "kube-system")
+  create_namespace = try(var.fsx_csi_driver.create_namespace, false)
+  chart            = "aws-fsx-csi-driver"
+  chart_version    = try(var.fsx_csi_driver.chart_version, "1.5.1")
+  repository       = try(var.fsx_csi_driver.repository, "https://kubernetes-sigs.github.io/aws-fsx-csi-driver/")
+  values           = try(var.fsx_csi_driver.values, [])
+
+  timeout                    = try(var.fsx_csi_driver.timeout, null)
+  repository_key_file        = try(var.fsx_csi_driver.repository_key_file, null)
+  repository_cert_file       = try(var.fsx_csi_driver.repository_cert_file, null)
+  repository_ca_file         = try(var.fsx_csi_driver.repository_ca_file, null)
+  repository_username        = try(var.fsx_csi_driver.repository_username, null)
+  repository_password        = try(var.fsx_csi_driver.repository_password, null)
+  devel                      = try(var.fsx_csi_driver.devel, null)
+  verify                     = try(var.fsx_csi_driver.verify, null)
+  keyring                    = try(var.fsx_csi_driver.keyring, null)
+  disable_webhooks           = try(var.fsx_csi_driver.disable_webhooks, null)
+  reuse_values               = try(var.fsx_csi_driver.reuse_values, null)
+  reset_values               = try(var.fsx_csi_driver.reset_values, null)
+  force_update               = try(var.fsx_csi_driver.force_update, null)
+  recreate_pods              = try(var.fsx_csi_driver.recreate_pods, null)
+  cleanup_on_fail            = try(var.fsx_csi_driver.cleanup_on_fail, null)
+  max_history                = try(var.fsx_csi_driver.max_history, null)
+  atomic                     = try(var.fsx_csi_driver.atomic, null)
+  skip_crds                  = try(var.fsx_csi_driver.skip_crds, null)
+  render_subchart_notes      = try(var.fsx_csi_driver.render_subchart_notes, null)
+  disable_openapi_validation = try(var.fsx_csi_driver.disable_openapi_validation, null)
+  wait                       = try(var.fsx_csi_driver.wait, null)
+  wait_for_jobs              = try(var.fsx_csi_driver.wait_for_jobs, null)
+  dependency_update          = try(var.fsx_csi_driver.dependency_update, null)
+  replace                    = try(var.fsx_csi_driver.replace, null)
+  lint                       = try(var.fsx_csi_driver.lint, null)
+
+  postrender = try(var.fsx_csi_driver.postrender, [])
+  set = concat([
+    {
+      name  = "controller.serviceAccount.name"
+      value = local.fsx_csi_driver_service_account
+    },
+    {
+      name  = "node.serviceAccount.name"
+      value = local.fsx_csi_driver_service_account
+    }],
+    try(var.fsx_csi_driver.set, [])
+  )
+  set_sensitive = try(var.fsx_csi_driver.set_sensitive, [])
+
+  # IAM role for service account (IRSA)
+  set_irsa_names = [
+    "controller.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn",
+    "node.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+  ]
+  create_role                   = try(var.fsx_csi_driver.create_role, true)
+  role_name                     = try(var.fsx_csi_driver.role_name, "aws-fsx-csi-driver")
+  role_name_use_prefix          = try(var.fsx_csi_driver.role_name_use_prefix, true)
+  role_path                     = try(var.fsx_csi_driver.role_path, "/")
+  role_permissions_boundary_arn = lookup(var.fsx_csi_driver, "role_permissions_boundary_arn", null)
+  role_description              = try(var.fsx_csi_driver.role_description, "IRSA for aws-fsx-csi-driver")
+  role_policies                 = lookup(var.fsx_csi_driver, "role_policies", {})
+
+  source_policy_documents = compact(concat(
+    data.aws_iam_policy_document.fsx_csi_driver[*].json,
+    lookup(var.fsx_csi_driver, "source_policy_documents", [])
+  ))
+  override_policy_documents = lookup(var.fsx_csi_driver, "override_policy_documents", [])
+  policy_statements         = lookup(var.fsx_csi_driver, "policy_statements", [])
+  policy_name               = try(var.fsx_csi_driver.policy_name, "aws-fsx-csi-driver")
+  policy_name_use_prefix    = try(var.fsx_csi_driver.policy_name_use_prefix, true)
+  policy_path               = try(var.fsx_csi_driver.policy_path, null)
+  policy_description        = try(var.fsx_csi_driver.policy_description, "IAM Policy for AWS FSX CSI Driver")
+
+  oidc_providers = {
+    this = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.fsx_csi_driver_service_account
+    }
+  }
 }
 
 ################################################################################
@@ -1362,7 +1523,6 @@ module "secrets_store_csi_driver" {
   tags = var.tags
 }
 
-
 #-----------------Kubernetes Add-ons----------------------
 
 module "argocd" {
@@ -1373,15 +1533,6 @@ module "argocd" {
   projects      = var.argocd_projects
   addon_config  = { for k, v in local.argocd_addon_config : k => v if v != null }
   addon_context = local.addon_context
-}
-
-module "aws_fsx_csi_driver" {
-  count             = var.enable_aws_fsx_csi_driver ? 1 : 0
-  source            = "./modules/aws-fsx-csi-driver"
-  helm_config       = var.aws_fsx_csi_driver_helm_config
-  irsa_policies     = var.aws_fsx_csi_driver_irsa_policies
-  manage_via_gitops = var.argocd_manage_add_ons
-  addon_context     = local.addon_context
 }
 
 module "aws_for_fluent_bit" {
