@@ -4,9 +4,10 @@ locals {
 }
 
 module "secrets_store_csi_driver" {
-  source = "../secrets-store-csi-driver"
+  #source = "../secrets-store-csi-driver"
+  source = "/"
 
-  addon_context = var.addon_context
+  #addon_context = var.addon_context
 }
 
 resource "kubernetes_namespace_v1" "csi_secrets_store_provider_aws" {

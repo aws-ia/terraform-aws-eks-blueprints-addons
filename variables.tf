@@ -276,6 +276,30 @@ variable "irsa_iam_permissions_boundary" {
   default     = ""
 }
 
+################################################################################
+# Secrets Store CSI Driver
+################################################################################
+
+variable "enable_secrets_store_csi_driver" {
+  type        = bool
+  default     = false
+  description = "Enable CSI Secrets Store Provider"
+}
+
+variable "enable_secrets_store_csi_driver_gitops" {
+  description = "Enable CSI Secrets Store Provider GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "secrets_store_csi_driver" {
+  type        = any
+  default     = {}
+  description = "CSI Secrets Store Provider add-on configurations"
+}
+
+
+
 #-----------Amazon Managed Service for Prometheus-------------
 variable "enable_amazon_prometheus" {
   description = "Enable AWS Managed Prometheus service"
@@ -639,19 +663,6 @@ variable "csi_secrets_store_provider_aws_helm_config" {
   type        = any
   default     = null
   description = "CSI Secrets Store Provider AWS Helm Configurations"
-}
-
-#-----------CSI Secrets Store Provider-------------
-variable "enable_secrets_store_csi_driver" {
-  type        = bool
-  default     = false
-  description = "Enable CSI Secrets Store Provider"
-}
-
-variable "secrets_store_csi_driver_helm_config" {
-  type        = any
-  default     = null
-  description = "CSI Secrets Store Provider Helm Configurations"
 }
 
 #-----------Grafana ADDON-------------

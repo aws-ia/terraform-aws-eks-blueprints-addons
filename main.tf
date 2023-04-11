@@ -1304,6 +1304,76 @@ module "cluster_autoscaler" {
   tags = var.tags
 }
 
+################################################################################
+# Secrets Store CSI Driver
+################################################################################
+
+locals {
+  secrets_store_csi_driver_name            = "secrets-store-csi-driver"
+  secrets_store_csi_driver_service_account = try(var.secrets_store_csi_driver.service_account_name, "${local.secrets_store_csi_driver_name}-sa")
+}
+
+# resource policy
+# count = var.enable_secrets_store_csi_driver ? 1 : 0
+
+module "secrets_store_csi_driver" {
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_secrets_store_csi_driver
+
+  # https://github.com/kubernetes-sigs/secrets-store-csi-driver/blob/main/charts/secrets-store-csi-driver/Chart.yaml
+  name             = try(var.secrets_store_csi_driver.name, local.secrets_store_csi_driver_name)
+  description      = try(var.secrets_store_csi_driver.description, "A Helm chart to install the Secrets Store CSI Driver")
+  namespace        = try(var.secrets_store_csi_driver.namespace, "kube-system")
+  create_namespace = try(var.secrets_store_csi_driver.create_namespace, false)
+  chart            = "secrets-store-csi-driver"
+  chart_version    = try(var.secrets_store_csi_driver.chart_version, "1.3.2")
+  repository       = try(var.secrets_store_csi_driver.repository, "https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts")
+  values           = try(var.secrets_store_csi_driver.values, [])
+
+  timeout                    = try(var.secrets_store_csi_driver.timeout, null)
+  repository_key_file        = try(var.secrets_store_csi_driver.repository_key_file, null)
+  repository_cert_file       = try(var.secrets_store_csi_driver.repository_cert_file, null)
+  repository_ca_file         = try(var.secrets_store_csi_driver.repository_ca_file, null)
+  repository_username        = try(var.secrets_store_csi_driver.repository_username, null)
+  repository_password        = try(var.secrets_store_csi_driver.repository_password, null)
+  devel                      = try(var.secrets_store_csi_driver.devel, null)
+  verify                     = try(var.secrets_store_csi_driver.verify, null)
+  keyring                    = try(var.secrets_store_csi_driver.keyring, null)
+  disable_webhooks           = try(var.secrets_store_csi_driver.disable_webhooks, null)
+  reuse_values               = try(var.secrets_store_csi_driver.reuse_values, null)
+  reset_values               = try(var.secrets_store_csi_driver.reset_values, null)
+  force_update               = try(var.secrets_store_csi_driver.force_update, null)
+  recreate_pods              = try(var.secrets_store_csi_driver.recreate_pods, null)
+  cleanup_on_fail            = try(var.secrets_store_csi_driver.cleanup_on_fail, null)
+  max_history                = try(var.secrets_store_csi_driver.max_history, null)
+  atomic                     = try(var.secrets_store_csi_driver.atomic, null)
+  skip_crds                  = try(var.secrets_store_csi_driver.skip_crds, null)
+  render_subchart_notes      = try(var.secrets_store_csi_driver.render_subchart_notes, null)
+  disable_openapi_validation = try(var.secrets_store_csi_driver.disable_openapi_validation, null)
+  wait                       = try(var.secrets_store_csi_driver.wait, null)
+  wait_for_jobs              = try(var.secrets_store_csi_driver.wait_for_jobs, null)
+  dependency_update          = try(var.secrets_store_csi_driver.dependency_update, null)
+  replace                    = try(var.secrets_store_csi_driver.replace, null)
+  lint                       = try(var.secrets_store_csi_driver.lint, null)
+
+  postrender    = try(var.secrets_store_csi_driver.postrender, [])
+  set           = try(var.secrets_store_csi_driver.set, [])
+  set_sensitive = try(var.secrets_store_csi_driver.set_sensitive, [])
+
+  oidc_providers = {
+    this = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.secrets_store_csi_driver_service_account
+    }
+  }
+
+  tags = var.tags
+}
+
+
 #-----------------Kubernetes Add-ons----------------------
 
 module "argocd" {
@@ -1429,14 +1499,6 @@ module "csi_secrets_store_provider_aws" {
   count             = var.enable_secrets_store_csi_driver_provider_aws ? 1 : 0
   source            = "./modules/csi-secrets-store-provider-aws"
   helm_config       = var.csi_secrets_store_provider_aws_helm_config
-  manage_via_gitops = var.argocd_manage_add_ons
-  addon_context     = local.addon_context
-}
-
-module "secrets_store_csi_driver" {
-  count             = var.enable_secrets_store_csi_driver ? 1 : 0
-  source            = "./modules/secrets-store-csi-driver"
-  helm_config       = var.secrets_store_csi_driver_helm_config
   manage_via_gitops = var.argocd_manage_add_ons
   addon_context     = local.addon_context
 }

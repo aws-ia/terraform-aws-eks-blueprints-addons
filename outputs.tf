@@ -135,7 +135,7 @@ output "promtail" {
 
 output "secrets_store_csi_driver" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.secrets_store_csi_driver[0], null)
+  value       = module.secrets_store_csi_driver[0]
 }
 
 output "velero" {
