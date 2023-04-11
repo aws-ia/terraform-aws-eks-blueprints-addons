@@ -1313,9 +1313,6 @@ locals {
   secrets_store_csi_driver_service_account = try(var.secrets_store_csi_driver.service_account_name, "${local.secrets_store_csi_driver_name}-sa")
 }
 
-# resource policy
-# count = var.enable_secrets_store_csi_driver ? 1 : 0
-
 module "secrets_store_csi_driver" {
   # source = "aws-ia/eks-blueprints-addon/aws"
   source = "./modules/eks-blueprints-addon"

@@ -281,9 +281,9 @@ variable "irsa_iam_permissions_boundary" {
 ################################################################################
 
 variable "enable_secrets_store_csi_driver" {
+  description = "Enable CSI Secrets Store Provider"
   type        = bool
   default     = false
-  description = "Enable CSI Secrets Store Provider"
 }
 
 variable "enable_secrets_store_csi_driver_gitops" {
@@ -293,9 +293,9 @@ variable "enable_secrets_store_csi_driver_gitops" {
 }
 
 variable "secrets_store_csi_driver" {
+  description = "CSI Secrets Store Provider add-on configurations"
   type        = any
   default     = {}
-  description = "CSI Secrets Store Provider add-on configurations"
 }
 
 
