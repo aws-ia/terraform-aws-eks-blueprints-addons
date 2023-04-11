@@ -20,6 +20,10 @@ locals {
       enable             = true
       serviceAccountName = local.cluster_autoscaler_service_account
     } : null
+    secretsStoreCsiDriver = var.enable_secrets_store_csi_driver && var.enable_secrets_store_csi_driver_gitops ? {
+      enable             = true
+      serviceAccountName = local.secrets_store_csi_driver_service_account
+    } : null
     grafana             = var.enable_grafana ? module.grafana[0].argocd_gitops_config : null
     ingressNginx        = var.enable_ingress_nginx ? module.ingress_nginx[0].argocd_gitops_config : null
     metricsServer       = var.enable_metrics_server ? module.metrics_server[0].argocd_gitops_config : null
