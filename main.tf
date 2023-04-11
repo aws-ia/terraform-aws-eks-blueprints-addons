@@ -1359,14 +1359,6 @@ module "secrets_store_csi_driver" {
   set           = try(var.secrets_store_csi_driver.set, [])
   set_sensitive = try(var.secrets_store_csi_driver.set_sensitive, [])
 
-  oidc_providers = {
-    this = {
-      provider_arn = var.oidc_provider_arn
-      # namespace is inherited from chart
-      service_account = local.secrets_store_csi_driver_service_account
-    }
-  }
-
   tags = var.tags
 }
 
