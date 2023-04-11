@@ -97,13 +97,20 @@ module "eks_blueprints_addons" {
 
   eks_addons = {
     aws-ebs-csi-driver = {
+      most_recent              = true
       service_account_role_arn = module.ebs_csi_driver_irsa.iam_role_arn
     }
-    coredns = {}
+    coredns = {
+      preserve    = true
+      most_recent = true
+    }
     vpc-cni = {
+      most_recent              = true
       service_account_role_arn = module.vpc_cni_irsa.iam_role_arn
     }
-    kube-proxy = {}
+    kube-proxy = {
+      most_recent = true
+    }
   }
 
   enable_efs_csi_driver                        = true
@@ -229,7 +236,7 @@ module "ebs_csi_driver_irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "~> 5.14"
 
-  role_name = "ebs-csi-driver"
+  role_name_prefix = "${local.name}-ebs-csi-driver-"
 
   attach_ebs_csi_policy = true
 
@@ -247,7 +254,7 @@ module "vpc_cni_irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version = "~> 5.14"
 
-  role_name = "vpc-cni"
+  role_name_prefix = "${local.name}-vpc-cni-"
 
   attach_vpc_cni_policy = true
   vpc_cni_enable_ipv4   = true

@@ -237,9 +237,9 @@ variable "set_sensitive" {
 }
 
 variable "set_irsa_name" {
-  description = "Value annotation name where IRSA role ARN created by module will be assigned to the `value`"
-  type        = string
-  default     = ""
+  description = "Value annotations name where IRSA role ARN created by module will be assigned to the `value`"
+  type        = list(string)
+  default     = []
 }
 
 ################################################################################
