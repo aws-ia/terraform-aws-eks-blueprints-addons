@@ -120,6 +120,7 @@ module "eks_blueprints_addons" {
   enable_aws_privateca_issuer                  = true
   enable_cert_manager                          = true
   enable_cluster_autoscaler                    = true
+  enable_secrets_store_csi_driver              = true
   enable_secrets_store_csi_driver_provider_aws = true
   # need route53 zone for this
   #enable_external_dns = true

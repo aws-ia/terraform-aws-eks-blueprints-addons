@@ -3,12 +3,6 @@ locals {
   namespace = try(var.helm_config.namespace, "kube-system")
 }
 
-module "secrets_store_csi_driver" {
-  source = "../secrets-store-csi-driver"
-
-  addon_context = var.addon_context
-}
-
 resource "kubernetes_namespace_v1" "csi_secrets_store_provider_aws" {
   count = local.namespace == "kube-system" ? 0 : 1
 
@@ -38,6 +32,5 @@ module "helm_addon" {
 
   depends_on = [
     kubernetes_namespace_v1.csi_secrets_store_provider_aws,
-    module.secrets_store_csi_driver
   ]
 }
