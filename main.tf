@@ -233,7 +233,7 @@ module "cert_manager" {
   set_sensitive = try(var.cert_manager.set_sensitive, [])
 
   # IAM role for service account (IRSA)
-  set_irsa_name                 = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
   create_role                   = local.create_cert_manager_irsa && try(var.cert_manager.create_role, true)
   role_name                     = try(var.cert_manager.role_name, "cert-manager")
   role_name_use_prefix          = try(var.cert_manager.role_name_use_prefix, true)
@@ -328,7 +328,7 @@ module "cloudwatch_metrics" {
   set_sensitive = try(var.cloudwatch_metrics.set_sensitive, [])
 
   # IAM role for service account (IRSA)
-  set_irsa_name                 = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
   create_role                   = try(var.cloudwatch_metrics.create_role, true)
   role_name                     = try(var.cloudwatch_metrics.role_name, "aws-cloudwatch-metrics")
   role_name_use_prefix          = try(var.cloudwatch_metrics.role_name_use_prefix, true)
@@ -483,7 +483,7 @@ module "efs_csi_driver" {
   set_sensitive = try(var.efs_csi_driver.set_sensitive, [])
 
   # IAM role for service account (IRSA)
-  set_irsa_name = [
+  set_irsa_names = [
     "controller.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn",
     "node.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
   ]
@@ -636,7 +636,7 @@ module "external_secrets" {
   set_sensitive = try(var.external_secrets.set_sensitive, [])
 
   # IAM role for service account (IRSA)
-  set_irsa_name                 = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
   create_role                   = try(var.external_secrets.create_role, true)
   role_name                     = try(var.external_secrets.role_name, "external-secrets")
   role_name_use_prefix          = try(var.external_secrets.role_name_use_prefix, true)
@@ -746,7 +746,7 @@ module "external_dns" {
   set_sensitive = try(var.external_dns.set_sensitive, [])
 
   # IAM role for service account (IRSA)
-  set_irsa_name                 = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
   create_role                   = try(var.external_dns.create_role, true) && length(var.external_dns_route53_zone_arns) > 0
   role_name                     = try(var.external_dns.role_name, "external-dns")
   role_name_use_prefix          = try(var.external_dns.role_name_use_prefix, true)
@@ -1123,7 +1123,7 @@ module "aws_load_balancer_controller" {
 
   # IAM role for service account (IRSA)
   create_role                   = try(var.aws_load_balancer_controller.create_role, true)
-  set_irsa_name                 = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
   role_name                     = try(var.aws_load_balancer_controller.role_name, "alb-controller")
   role_name_use_prefix          = try(var.aws_load_balancer_controller.role_name_use_prefix, true)
   role_path                     = try(var.aws_load_balancer_controller.role_path, "/")
@@ -1277,7 +1277,7 @@ module "cluster_autoscaler" {
   set_sensitive = try(var.cluster_autoscaler.set_sensitive, [])
 
   # IAM role for service account (IRSA)
-  set_irsa_name                 = ["rbac.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  set_irsa_names                = ["rbac.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
   create_role                   = try(var.cluster_autoscaler.create_role, true)
   role_name                     = try(var.cluster_autoscaler.role_name, "cluster-autoscaler")
   role_name_use_prefix          = try(var.cluster_autoscaler.role_name_use_prefix, true)
@@ -1433,7 +1433,7 @@ module "fsx_csi_driver" {
   set_sensitive = try(var.fsx_csi_driver.set_sensitive, [])
 
   # IAM role for service account (IRSA)
-  set_irsa_name = [
+  set_irsa_names = [
     "controller.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn",
     "node.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
   ]

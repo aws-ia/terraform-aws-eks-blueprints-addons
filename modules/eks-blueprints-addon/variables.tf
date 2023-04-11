@@ -236,7 +236,7 @@ variable "set_sensitive" {
   default     = []
 }
 
-variable "set_irsa_name" {
+variable "set_irsa_names" {
   description = "Value annotations name where IRSA role ARN created by module will be assigned to the `value`"
   type        = list(string)
   default     = []
