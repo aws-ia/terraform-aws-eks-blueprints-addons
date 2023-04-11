@@ -1438,7 +1438,7 @@ module "fsx_csi_driver" {
     "node.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
   ]
   create_role                   = try(var.fsx_csi_driver.create_role, true)
-  role_name                     = try(var.fsx_csi_driver.role_name, "AmazonEKSFSxLustreCSIDriverFullAccess")
+  role_name                     = try(var.fsx_csi_driver.role_name, "aws-fsx-csi-driver")
   role_name_use_prefix          = try(var.fsx_csi_driver.role_name_use_prefix, true)
   role_path                     = try(var.fsx_csi_driver.role_path, "/")
   role_permissions_boundary_arn = lookup(var.fsx_csi_driver, "role_permissions_boundary_arn", null)
@@ -1451,7 +1451,7 @@ module "fsx_csi_driver" {
   ))
   override_policy_documents = lookup(var.fsx_csi_driver, "override_policy_documents", [])
   policy_statements         = lookup(var.fsx_csi_driver, "policy_statements", [])
-  policy_name               = try(var.fsx_csi_driver.policy_name, "AmazonFSxFullAccess")
+  policy_name               = try(var.fsx_csi_driver.policy_name, "aws-fsx-csi-driver")
   policy_name_use_prefix    = try(var.fsx_csi_driver.policy_name_use_prefix, true)
   policy_path               = try(var.fsx_csi_driver.policy_path, null)
   policy_description        = try(var.fsx_csi_driver.policy_description, "IAM Policy for AWS FSX CSI Driver")
