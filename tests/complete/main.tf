@@ -107,6 +107,7 @@ module "eks_blueprints_addons" {
   }
 
   enable_efs_csi_driver                        = true
+  enable_fsx_csi_driver                        = true
   enable_argocd                                = true
   enable_cloudwatch_metrics                    = true
   enable_aws_privateca_issuer                  = true
@@ -119,7 +120,6 @@ module "eks_blueprints_addons" {
   enable_gatekeeper       = true
   enable_ingress_nginx    = true
 
-  enable_aws_fsx_csi_driver           = true
   enable_aws_load_balancer_controller = true
   enable_metrics_server               = true
   # TODO: Revolve conflicts with cert-manager

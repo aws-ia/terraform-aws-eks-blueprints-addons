@@ -43,9 +43,9 @@ output "aws_for_fluent_bit" {
   value       = try(module.aws_for_fluent_bit[0], null)
 }
 
-output "aws_fsx_csi_driver" {
+output "fsx_csi_driver" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.aws_fsx_csi_driver[0], null)
+  value       = module.fsx_csi_driver
 }
 
 output "aws_load_balancer_controller" {
