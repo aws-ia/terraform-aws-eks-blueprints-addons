@@ -9,7 +9,10 @@ locals {
       enable             = true
       serviceAccountName = local.fsx_csi_driver_service_account
     } : null
-    awsForFluentBit = var.enable_aws_for_fluentbit ? module.aws_for_fluent_bit[0].argocd_gitops_config : null
+    awsForFluentBit = var.enable_aws_for_fluentbit && var.enable_aws_for_fluentbit_gitops ? {
+      enable             = true
+      serviceAccoutnName = local.aws_for_fluentbit_service_account
+    } : null
     awsLoadBalancerController = var.enable_aws_load_balancer_controller && var.enable_aws_load_balancer_controller_gitops ? {
       enable             = true
       serviceAccountName = local.aws_load_balancer_controller_service_account

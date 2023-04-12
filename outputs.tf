@@ -40,7 +40,7 @@ output "external_secrets" {
 
 output "aws_for_fluent_bit" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.aws_for_fluent_bit[0], null)
+  value       = module.aws_for_fluent_bit
 }
 
 output "fsx_csi_driver" {
