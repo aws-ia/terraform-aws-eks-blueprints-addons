@@ -138,7 +138,7 @@ module "eks_blueprints_addons" {
 
   enable_aws_for_fluentbit = true
   # deletes log group on destroy
-  aws_for_fluentbit_cw_log_group_skip_destroy = false
+  #aws_for_fluentbit_cw_log_group_skip_destroy = false
 
   enable_aws_node_termination_handler = true
   #PSPs are deprecated in 1.25
