@@ -1787,6 +1787,113 @@ module "secrets_store_csi_driver" {
   tags = var.tags
 }
 
+
+################################################################################
+# Private CA Issuer
+################################################################################
+locals {
+  aws_privateca_issuer_name            = "aws-privateca-issuer"
+  aws_privateca_issuer_service_account = try(var.aws_privateca_issuer.service_account_name, "${local.aws_privateca_issuer_name}-sa")
+}
+
+module "aws_privateca_issuer" {
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_aws_privateca_issuer
+
+  # https://github.com/cert-manager/aws-privateca-issuer/blob/main/charts/aws-pca-issuer/Chart.yaml
+  name             = try(var.aws_privateca_issuer.name, local.secrets_store_csi_driver_name)
+  description      = try(var.aws_privateca_issuer.description, "A Helm chart to install the AWS Private CA Issuer")
+  namespace        = try(var.aws_privateca_issuer.namespace, "kube-system")
+  create_namespace = try(var.aws_privateca_issuer.create_namespace, false)
+  chart            = "aws-privateca-issuer"
+  chart_version    = try(var.aws_privateca_issuer.chart_version, "v1.2.5")
+  repository       = try(var.aws_privateca_issuer.repository, "https://cert-manager.github.io/aws-privateca-issuer")
+  values           = try(var.aws_privateca_issuer.values, [])
+
+  timeout                    = try(var.aws_privateca_issuer.timeout, null)
+  repository_key_file        = try(var.aws_privateca_issuer.repository_key_file, null)
+  repository_cert_file       = try(var.aws_privateca_issuer.repository_cert_file, null)
+  repository_ca_file         = try(var.aws_privateca_issuer.repository_ca_file, null)
+  repository_username        = try(var.aws_privateca_issuer.repository_username, null)
+  repository_password        = try(var.aws_privateca_issuer.repository_password, null)
+  devel                      = try(var.aws_privateca_issuer.devel, null)
+  verify                     = try(var.aws_privateca_issuer.verify, null)
+  keyring                    = try(var.aws_privateca_issuer.keyring, null)
+  disable_webhooks           = try(var.aws_privateca_issuer.disable_webhooks, null)
+  reuse_values               = try(var.aws_privateca_issuer.reuse_values, null)
+  reset_values               = try(var.aws_privateca_issuer.reset_values, null)
+  force_update               = try(var.aws_privateca_issuer.force_update, null)
+  recreate_pods              = try(var.aws_privateca_issuer.recreate_pods, null)
+  cleanup_on_fail            = try(var.aws_privateca_issuer.cleanup_on_fail, null)
+  max_history                = try(var.aws_privateca_issuer.max_history, null)
+  atomic                     = try(var.aws_privateca_issuer.atomic, null)
+  skip_crds                  = try(var.aws_privateca_issuer.skip_crds, null)
+  render_subchart_notes      = try(var.aws_privateca_issuer.render_subchart_notes, null)
+  disable_openapi_validation = try(var.aws_privateca_issuer.disable_openapi_validation, null)
+  wait                       = try(var.aws_privateca_issuer.wait, null)
+  wait_for_jobs              = try(var.aws_privateca_issuer.wait_for_jobs, null)
+  dependency_update          = try(var.aws_privateca_issuer.dependency_update, null)
+  replace                    = try(var.aws_privateca_issuer.replace, null)
+  lint                       = try(var.aws_privateca_issuer.lint, null)
+
+  postrender = try(var.aws_privateca_issuer.postrender, [])
+  set = concat([
+    {
+      name  = "serviceAccount.name"
+      value = local.aws_privateca_issuer_service_account
+    }],
+    try(var.aws_privateca_issuer.set, [])
+  )
+  set_sensitive = try(var.aws_privateca_issuer.set_sensitive, [])
+
+  # IAM role for service account (IRSA)
+
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  create_role                   = try(var.aws_privateca_issuer.create_role, true)
+  role_name                     = try(var.aws_privateca_issuer.role_name, "aws-privateca-issuer")
+  role_name_use_prefix          = try(var.aws_privateca_issuer.role_name_use_prefix, true)
+  role_path                     = try(var.aws_privateca_issuer.role_path, "/")
+  role_permissions_boundary_arn = lookup(var.aws_privateca_issuer, "role_permissions_boundary_arn", null)
+  role_description              = try(var.aws_privateca_issuer.role_description, "IRSA for aws-privateca-issuer")
+  role_policies                 = lookup(var.aws_privateca_issuer, "role_policies", {})
+
+  source_policy_documents = compact(concat(
+    data.aws_iam_policy_document.aws_privateca_issuer[*].json,
+    lookup(var.aws_privateca_issuer, "source_policy_documents", [])
+  ))
+  override_policy_documents = lookup(var.aws_privateca_issuer, "override_policy_documents", [])
+  policy_statements         = lookup(var.aws_privateca_issuer, "policy_statements", [])
+  policy_name               = try(var.aws_privateca_issuer.policy_name, "aws-privateca-issuer")
+  policy_name_use_prefix    = try(var.aws_privateca_issuer.policy_name_use_prefix, true)
+  policy_path               = try(var.aws_privateca_issuer.policy_path, null)
+  policy_description        = try(var.aws_privateca_issuer.policy_description, "IAM Policy for AWS PCA Issuer")
+
+  oidc_providers = {
+    controller = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.aws_privateca_issuer_service_account
+    }
+  }
+
+  tags = var.tags
+
+}
+
+data "aws_iam_policy_document" "aws_privateca_issuer" {
+  statement {
+    effect    = "Allow"
+    resources = [try(var.aws_privateca_issuer.acmca_arn, "arn:${local.partition}:acm-pca:${local.region}:${local.account_id}:certificate-authority/*")]
+    actions = [
+      "acm-pca:DescribeCertificateAuthority",
+      "acm-pca:GetCertificate",
+      "acm-pca:IssueCertificate",
+    ]
+  }
+}
+
 #-----------------Kubernetes Add-ons----------------------
 
 module "argocd" {
@@ -1895,16 +2002,6 @@ module "csi_secrets_store_provider_aws" {
   helm_config       = var.csi_secrets_store_provider_aws_helm_config
   manage_via_gitops = var.argocd_manage_add_ons
   addon_context     = local.addon_context
-}
-
-module "aws_privateca_issuer" {
-  count                   = var.enable_aws_privateca_issuer ? 1 : 0
-  source                  = "./modules/aws-privateca-issuer"
-  helm_config             = var.aws_privateca_issuer_helm_config
-  manage_via_gitops       = var.argocd_manage_add_ons
-  addon_context           = local.addon_context
-  aws_privateca_acmca_arn = var.aws_privateca_acmca_arn
-  irsa_policies           = var.aws_privateca_issuer_irsa_policies
 }
 
 module "velero" {
