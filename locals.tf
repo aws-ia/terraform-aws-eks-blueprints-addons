@@ -14,7 +14,11 @@ locals {
       enable             = true
       serviceAccountName = local.aws_load_balancer_controller_service_account
     } : null
-    awsNodeTerminationHandler = var.enable_aws_node_termination_handler ? module.aws_node_termination_handler[0].argocd_gitops_config : null
+    awsNodeTerminationHandler = var.enable_aws_node_termination_handler && var.enable_aws_node_termination_handler_gitops ? {
+      enable             = true
+      serviceAccountName = local.aws_node_termination_handler_service_account
+      queueURL           = module.aws_node_termination_handler_sqs.queue_url
+    } : null
     certManager = var.enable_cert_manager && var.enable_cert_manager_gitops ? {
       enable             = true
       serviceAccountName = local.cert_manager_service_account

@@ -4,6 +4,7 @@ data "aws_region" "current" {}
 
 locals {
   account_id = data.aws_caller_identity.current.account_id
+  dns_suffix = data.aws_partition.current.dns_suffix
   partition  = data.aws_partition.current.partition
   region     = data.aws_region.current.name
 }
@@ -36,6 +37,255 @@ resource "aws_eks_addon" "this" {
     create = try(each.value.timeouts.create, var.eks_addons_timeouts.create, null)
     update = try(each.value.timeouts.update, var.eks_addons_timeouts.update, null)
     delete = try(each.value.timeouts.delete, var.eks_addons_timeouts.delete, null)
+  }
+
+  tags = var.tags
+}
+
+################################################################################
+# AWS Node Termination Handler
+################################################################################
+
+locals {
+  aws_node_termination_handler_service_account = try(var.aws_node_termination_handler.service_account_name, "aws-node-termination-handler-sa")
+  aws_node_termination_handler_events = {
+    autoscaling_terminate = {
+      name        = "ASGTerminiate"
+      description = "AWS node termiantion handler interrupt - Auto scaling instance terminate event"
+      event_pattern = {
+        source      = ["aws.autoscaling"]
+        detail-type = ["EC2 Instance-terminate Lifecycle Action"]
+      }
+    }
+    health_event = {
+      name        = "HealthEvent"
+      description = "AWS node termiantion handler interrupt - AWS health event"
+      event_pattern = {
+        source      = ["aws.health"]
+        detail-type = ["AWS Health Event"]
+      }
+    }
+    spot_interupt = {
+      name        = "SpotInterrupt"
+      description = "AWS node termiantion handler interrupt - EC2 spot instance interruption warning"
+      event_pattern = {
+        source      = ["aws.ec2"]
+        detail-type = ["EC2 Spot Instance Interruption Warning"]
+      }
+    }
+    instance_rebalance = {
+      name        = "InstanceRebalance"
+      description = "AWS node termiantion handler interrupt - EC2 instance rebalance recommendation"
+      event_pattern = {
+        source      = ["aws.ec2"]
+        detail-type = ["EC2 Instance Rebalance Recommendation"]
+      }
+    }
+    instance_state_change = {
+      name        = "InstanceStateChange"
+      description = "AWS node termiantion handler interrupt - EC2 instance state-change notification"
+      event_pattern = {
+        source      = ["aws.ec2"]
+        detail-type = ["EC2 Instance State-change Notification"]
+      }
+    }
+  }
+}
+
+module "aws_node_termination_handler_sqs" {
+  source  = "terraform-aws-modules/sqs/aws"
+  version = "4.0.1"
+
+  create = var.enable_aws_node_termination_handler
+
+  name = try(var.aws_node_termination_handler_sqs.queue_name, "aws-nth-${var.cluster_name}")
+
+  message_retention_seconds         = try(var.aws_node_termination_handler_sqs.message_retention_seconds, 300)
+  sqs_managed_sse_enabled           = try(var.aws_node_termination_handler_sqs.sse_enabled, true)
+  kms_master_key_id                 = try(var.aws_node_termination_handler_sqs.kms_master_key_id, null)
+  kms_data_key_reuse_period_seconds = try(var.aws_node_termination_handler_sqs.kms_data_key_reuse_period_seconds, null)
+
+  create_queue_policy = true
+  queue_policy_statements = {
+    account = {
+      sid     = "SendEventsToQueue"
+      actions = ["sqs:SendMessage"]
+      principals = [
+        {
+          type = "Service"
+          identifiers = [
+            "events.${local.dns_suffix}",
+            "sqs.${local.dns_suffix}",
+          ]
+        }
+      ]
+    }
+  }
+
+  tags = merge(var.tags, try(var.aws_node_termination_handler_sqs.tags, {}))
+}
+
+resource "aws_autoscaling_lifecycle_hook" "aws_node_termination_handler" {
+  for_each = { for k, v in var.aws_node_termination_handler_asg_arns : k => v if var.enable_aws_node_termination_handler }
+
+  name                   = "aws_node_termination_handler"
+  autoscaling_group_name = replace(each.value, "/^.*:autoScalingGroupName//", "")
+  default_result         = "CONTINUE"
+  heartbeat_timeout      = 300
+  lifecycle_transition   = "autoscaling:EC2_INSTANCE_TERMINATING"
+}
+
+resource "aws_autoscaling_group_tag" "aws_node_termination_handler" {
+  for_each = { for k, v in var.aws_node_termination_handler_asg_arns : k => v if var.enable_aws_node_termination_handler }
+
+  autoscaling_group_name = replace(each.value, "/^.*:autoScalingGroupName//", "")
+
+  tag {
+    key                 = "aws-node-termination-handler/managed"
+    value               = "true"
+    propagate_at_launch = true
+  }
+}
+
+resource "aws_cloudwatch_event_rule" "aws_node_termination_handler" {
+  for_each = { for k, v in local.aws_node_termination_handler_events : k => v if var.enable_aws_node_termination_handler }
+
+  name_prefix   = "NTH-${each.value.name}-"
+  description   = each.value.description
+  event_pattern = jsonencode(each.value.event_pattern)
+
+  tags = merge(
+    { "ClusterName" : var.cluster_name },
+    var.tags,
+  )
+}
+
+resource "aws_cloudwatch_event_target" "aws_node_termination_handler" {
+  for_each = { for k, v in local.aws_node_termination_handler_events : k => v if var.enable_aws_node_termination_handler }
+
+  rule      = aws_cloudwatch_event_rule.aws_node_termination_handler[each.key].name
+  target_id = "AWSNodeTerminationHandlerQueueTarget"
+  arn       = module.aws_node_termination_handler_sqs.queue_arn
+}
+
+data "aws_iam_policy_document" "aws_node_termination_handler" {
+  count = var.enable_aws_node_termination_handler ? 1 : 0
+
+  statement {
+    actions = [
+      "autoscaling:DescribeAutoScalingInstances",
+      "autoscaling:DescribeTags",
+      "ec2:DescribeInstances",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    actions   = ["autoscaling:CompleteLifecycleAction"]
+    resources = var.aws_node_termination_handler_asg_arns
+  }
+
+  statement {
+    actions = [
+      "sqs:DeleteMessage",
+      "sqs:ReceiveMessage",
+    ]
+    resources = [module.aws_node_termination_handler_sqs.queue_arn]
+  }
+}
+
+module "aws_node_termination_handler" {
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_aws_node_termination_handler
+
+  # https://github.com/aws/eks-charts/blob/master/stable/aws-node-termination-handler/Chart.yaml
+  name             = try(var.aws_node_termination_handler.name, "aws-node-termination-handler")
+  description      = try(var.aws_node_termination_handler.description, "A Helm chart to deploy AWS Node Termination Handler")
+  namespace        = try(var.aws_node_termination_handler.namespace, "aws-node-termination-handler")
+  create_namespace = try(var.aws_node_termination_handler.create_namespace, true)
+  chart            = "aws-node-termination-handler"
+  chart_version    = try(var.aws_node_termination_handler.chart_version, "0.21.0")
+  repository       = try(var.aws_node_termination_handler.repository, "https://aws.github.io/eks-charts")
+  values           = try(var.aws_node_termination_handler.values, [])
+
+  timeout                    = try(var.aws_node_termination_handler.timeout, null)
+  repository_key_file        = try(var.aws_node_termination_handler.repository_key_file, null)
+  repository_cert_file       = try(var.aws_node_termination_handler.repository_cert_file, null)
+  repository_ca_file         = try(var.aws_node_termination_handler.repository_ca_file, null)
+  repository_username        = try(var.aws_node_termination_handler.repository_username, null)
+  repository_password        = try(var.aws_node_termination_handler.repository_password, null)
+  devel                      = try(var.aws_node_termination_handler.devel, null)
+  verify                     = try(var.aws_node_termination_handler.verify, null)
+  keyring                    = try(var.aws_node_termination_handler.keyring, null)
+  disable_webhooks           = try(var.aws_node_termination_handler.disable_webhooks, null)
+  reuse_values               = try(var.aws_node_termination_handler.reuse_values, null)
+  reset_values               = try(var.aws_node_termination_handler.reset_values, null)
+  force_update               = try(var.aws_node_termination_handler.force_update, null)
+  recreate_pods              = try(var.aws_node_termination_handler.recreate_pods, null)
+  cleanup_on_fail            = try(var.aws_node_termination_handler.cleanup_on_fail, null)
+  max_history                = try(var.aws_node_termination_handler.max_history, null)
+  atomic                     = try(var.aws_node_termination_handler.atomic, null)
+  skip_crds                  = try(var.aws_node_termination_handler.skip_crds, null)
+  render_subchart_notes      = try(var.aws_node_termination_handler.render_subchart_notes, null)
+  disable_openapi_validation = try(var.aws_node_termination_handler.disable_openapi_validation, null)
+  wait                       = try(var.aws_node_termination_handler.wait, null)
+  wait_for_jobs              = try(var.aws_node_termination_handler.wait_for_jobs, null)
+  dependency_update          = try(var.aws_node_termination_handler.dependency_update, null)
+  replace                    = try(var.aws_node_termination_handler.replace, null)
+  lint                       = try(var.aws_node_termination_handler.lint, null)
+
+  postrender = try(var.aws_node_termination_handler.postrender, [])
+  set = concat(
+    [
+      {
+        name  = "serviceAccount.name"
+        value = local.aws_node_termination_handler_service_account
+      },
+      {
+        name  = "awsRegion"
+        value = local.region
+      },
+      { name  = "queueURL"
+        value = module.aws_node_termination_handler_sqs.queue_url
+      },
+      {
+        name  = "enableSqsTerminationDraining"
+        value = true
+      }
+    ],
+    try(var.aws_node_termination_handler.set, [])
+  )
+  set_sensitive = try(var.aws_node_termination_handler.set_sensitive, [])
+
+  # IAM role for service account (IRSA)
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  create_role                   = try(var.aws_node_termination_handler.create_role, true)
+  role_name                     = try(var.aws_node_termination_handler.role_name, "aws-node-termination-handler")
+  role_name_use_prefix          = try(var.aws_node_termination_handler.role_name_use_prefix, true)
+  role_path                     = try(var.aws_node_termination_handler.role_path, "/")
+  role_permissions_boundary_arn = lookup(var.aws_node_termination_handler, "role_permissions_boundary_arn", null)
+  role_description              = try(var.aws_node_termination_handler.role_description, "IRSA for AWS Node Termination Handler project")
+  role_policies                 = lookup(var.aws_node_termination_handler, "role_policies", {})
+
+  source_policy_documents = compact(concat(
+    data.aws_iam_policy_document.aws_node_termination_handler[*].json,
+    lookup(var.aws_node_termination_handler, "source_policy_documents", [])
+  ))
+  override_policy_documents = lookup(var.aws_node_termination_handler, "override_policy_documents", [])
+  policy_statements         = lookup(var.aws_node_termination_handler, "policy_statements", [])
+  policy_name               = try(var.aws_node_termination_handler.policy_name, null)
+  policy_name_use_prefix    = try(var.aws_node_termination_handler.policy_name_use_prefix, true)
+  policy_path               = try(var.aws_node_termination_handler.policy_path, null)
+  policy_description        = try(var.aws_node_termination_handler.policy_description, "IAM Policy for AWS Node Termination Handler")
+
+  oidc_providers = {
+    this = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.aws_node_termination_handler_service_account
+    }
   }
 
   tags = var.tags
@@ -338,6 +588,7 @@ module "cloudwatch_metrics" {
   role_policies = lookup(var.cloudwatch_metrics, "role_policies",
     { CloudWatchAgentServerPolicy = "arn:${local.partition}:iam::aws:policy/CloudWatchAgentServerPolicy" }
   )
+  create_policy = try(var.cloudwatch_metrics.create_policy, false)
 
   oidc_providers = {
     this = {
@@ -794,7 +1045,7 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
     condition {
       test     = "StringEquals"
       variable = "iam:AWSServiceName"
-      values   = ["elasticloadbalancing.amazonaws.com"]
+      values   = ["elasticloadbalancing.${local.dns_suffix}"]
     }
   }
 
@@ -1320,7 +1571,7 @@ data "aws_iam_policy_document" "fsx_csi_driver" {
   statement {
     sid       = "AllowCreateServiceLinkedRoles"
     effect    = "Allow"
-    resources = ["arn:${local.partition}:iam::*:role/aws-service-role/s3.data-source.lustre.fsx.amazonaws.com/*"]
+    resources = ["arn:${local.partition}:iam::*:role/aws-service-role/s3.data-source.lustre.fsx.${local.dns_suffix}/*"]
 
     actions = [
       "iam:CreateServiceLinkedRole",
@@ -1338,7 +1589,7 @@ data "aws_iam_policy_document" "fsx_csi_driver" {
     condition {
       test     = "StringLike"
       variable = "iam:AWSServiceName"
-      values   = ["fsx.amazonaws.com"]
+      values   = ["fsx.${local.dns_suffix}"]
     }
   }
 
@@ -1547,16 +1798,6 @@ module "aws_for_fluent_bit" {
   cw_log_group_kms_key_arn  = var.aws_for_fluentbit_cw_log_group_kms_key_arn
   manage_via_gitops         = var.argocd_manage_add_ons
   addon_context             = local.addon_context
-}
-
-module "aws_node_termination_handler" {
-  count                   = var.enable_aws_node_termination_handler && (length(var.auto_scaling_group_names) > 0 || var.enable_karpenter) ? 1 : 0
-  source                  = "./modules/aws-node-termination-handler"
-  helm_config             = var.aws_node_termination_handler_helm_config
-  manage_via_gitops       = var.argocd_manage_add_ons
-  irsa_policies           = var.aws_node_termination_handler_irsa_policies
-  autoscaling_group_names = var.auto_scaling_group_names
-  addon_context           = local.addon_context
 }
 
 module "fargate_fluentbit" {

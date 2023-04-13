@@ -69,6 +69,8 @@ module "eks" {
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
+  manage_aws_auth_configmap = true
+
   eks_managed_node_groups = {
     initial = {
       instance_types = ["m5.xlarge"]
@@ -76,6 +78,16 @@ module "eks" {
       min_size     = 2
       max_size     = 10
       desired_size = 2
+    }
+  }
+
+  self_managed_node_groups = {
+    default = {
+      instance_type = "m5.large"
+
+      min_size     = 1
+      max_size     = 3
+      desired_size = 1
     }
   }
 
@@ -140,16 +152,8 @@ module "eks_blueprints_addons" {
   # deletes log group on destroy
   aws_for_fluentbit_cw_log_group_skip_destroy = false
 
-  enable_aws_node_termination_handler = true
-  #PSPs are deprecated in 1.25
-  aws_node_termination_handler_helm_config = {
-    set = [
-      {
-        name  = "rbac.pspEnabled"
-        value = false
-      }
-    ]
-  }
+  enable_aws_node_termination_handler   = true
+  aws_node_termination_handler_asg_arns = [for asg in module.eks.self_managed_node_groups : asg.autoscaling_group_arn]
 
   enable_karpenter = true
   # ECR login required
