@@ -46,6 +46,40 @@ variable "eks_addons_timeouts" {
 }
 
 ################################################################################
+# AWS Node Termination Handler
+################################################################################
+
+variable "enable_aws_node_termination_handler" {
+  description = "Enable AWS Node Termination Handler add-on"
+  type        = bool
+  default     = false
+}
+
+variable "enable_aws_node_termination_handler_gitops" {
+  description = "Enable AWS Node Termination Handler using GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "aws_node_termination_handler" {
+  description = "AWS Node Termination Handler addon configuration values"
+  type        = any
+  default     = {}
+}
+
+variable "aws_node_termination_handler_sqs" {
+  description = "AWS Node Termination Handler SQS queue configuration values"
+  type        = any
+  default     = {}
+}
+
+variable "aws_node_termination_handler_asg_arns" {
+  description = "List of Auto Scaling group ARNs that AWS Node Termination Handler will monitor for EC2 events"
+  type        = list(string)
+  default     = []
+}
+
+################################################################################
 # ArgoCD
 ################################################################################
 
@@ -257,25 +291,6 @@ variable "external_dns_route53_zone_arns" {
   default     = []
 }
 
-
-variable "auto_scaling_group_names" {
-  description = "List of self-managed node groups autoscaling group names"
-  type        = list(string)
-  default     = []
-}
-
-variable "irsa_iam_role_path" {
-  description = "IAM role path for IRSA roles"
-  type        = string
-  default     = "/"
-}
-
-variable "irsa_iam_permissions_boundary" {
-  description = "IAM permissions boundary for IRSA roles"
-  type        = string
-  default     = ""
-}
-
 ################################################################################
 # Secrets Store CSI Driver
 ################################################################################
@@ -299,6 +314,19 @@ variable "secrets_store_csi_driver" {
 }
 
 
+
+
+variable "irsa_iam_role_path" {
+  description = "IAM role path for IRSA roles"
+  type        = string
+  default     = "/"
+}
+
+variable "irsa_iam_permissions_boundary" {
+  description = "IAM permissions boundary for IRSA roles"
+  type        = string
+  default     = ""
+}
 
 #-----------Amazon Managed Service for Prometheus-------------
 variable "enable_amazon_prometheus" {
@@ -484,25 +512,6 @@ variable "fargate_fluentbit_addon_config" {
   description = "Fargate fluentbit add-on config"
   type        = any
   default     = {}
-}
-
-#-----------AWS NODE TERMINATION HANDLER-------------
-variable "enable_aws_node_termination_handler" {
-  description = "Enable AWS Node Termination Handler add-on"
-  type        = bool
-  default     = false
-}
-
-variable "aws_node_termination_handler_helm_config" {
-  description = "AWS Node Termination Handler Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "aws_node_termination_handler_irsa_policies" {
-  description = "Additional IAM policies for a IAM role for service accounts"
-  type        = list(string)
-  default     = []
 }
 
 #-----------KARPENTER ADDON-------------
