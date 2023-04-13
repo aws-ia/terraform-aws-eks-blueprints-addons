@@ -1530,11 +1530,9 @@ module "secrets_store_csi_driver" {
 locals {
   aws_for_fluentbit_name            = "aws-for-fluent-bit"
   aws_for_fluentbit_service_account = try(var.aws_for_fluentbit.service_account_name, "${local.aws_for_fluentbit_name}-sa")
-  aws_for_fluentbit_values          = try(var.aws_for_fluentbit.values, [])
-  aws_for_fluentbit_decoded_values  = jsondecode(element(module.aws_for_fluent_bit.values, 0))
 }
 
-module "aws_for_fluent_bit" {
+module "aws_for_fluentbit" {
   #source                    = "aws-ia/eks-blueprints-addon/aws"
   source = "./modules/eks-blueprints-addon"
 
@@ -1549,7 +1547,7 @@ module "aws_for_fluent_bit" {
   chart            = "aws-for-fluent-bit"
   chart_version    = try(var.aws_for_fluentbit.chart_version, "0.1.24")
   repository       = try(var.aws_for_fluentbit.repository, "https://github.com/aws/eks-charts/")
-  values           = local.aws_for_fluentbit_values
+  values           = try(var.aws_for_fluentbit.values, [])
 
   timeout                    = try(var.aws_for_fluentbit.timeout, null)
   repository_key_file        = try(var.aws_for_fluentbit.repository_key_file, null)
@@ -1593,11 +1591,11 @@ module "aws_for_fluent_bit" {
     "node.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
   ]
   create_role                   = try(var.aws_for_fluentbit.create_role, true)
-  role_name                     = try(var.aws_for_fluentbit.role_name, "aws-fsx-csi-driver")
+  role_name                     = try(var.aws_for_fluentbit.role_name, "aws-for-fluent-bit")
   role_name_use_prefix          = try(var.aws_for_fluentbit.role_name_use_prefix, true)
   role_path                     = try(var.aws_for_fluentbit.role_path, "/")
   role_permissions_boundary_arn = lookup(var.aws_for_fluentbit, "role_permissions_boundary_arn", null)
-  role_description              = try(var.aws_for_fluentbit.role_description, "IRSA for aws-fsx-csi-driver")
+  role_description              = try(var.aws_for_fluentbit.role_description, "IRSA for aws-for-fluent-bit")
   role_policies                 = lookup(var.aws_for_fluentbit, "role_policies", {})
 
   source_policy_documents = compact(concat(
@@ -1606,10 +1604,10 @@ module "aws_for_fluent_bit" {
   ))
   override_policy_documents = lookup(var.aws_for_fluentbit, "override_policy_documents", [])
   policy_statements         = lookup(var.aws_for_fluentbit, "policy_statements", [])
-  policy_name               = try(var.aws_for_fluentbit.policy_name, "aws-fsx-csi-driver")
+  policy_name               = try(var.aws_for_fluentbit.policy_name, "aws-for-fluent-bit")
   policy_name_use_prefix    = try(var.aws_for_fluentbit.policy_name_use_prefix, true)
   policy_path               = try(var.aws_for_fluentbit.policy_path, null)
-  policy_description        = try(var.aws_for_fluentbit.policy_description, "IAM Policy for AWS FSX CSI Driver")
+  policy_description        = try(var.aws_for_fluentbit.policy_description, "IAM Policy for AWS Fluentbit")
 
   oidc_providers = {
     this = {
@@ -1622,7 +1620,7 @@ module "aws_for_fluent_bit" {
   tags = var.tags
 }
 
-resource "aws_cloudwatch_log_group" "aws_for_fluent_bit" {
+resource "aws_cloudwatch_log_group" "aws_for_fluentbit" {
   count = try(var.aws_for_fluentbit_cw_log_group.create, true) && var.enable_aws_for_fluentbit ? 1 : 0
 
   name              = try(var.aws_for_fluentbit_cw_log_group.name, null)
@@ -1630,44 +1628,33 @@ resource "aws_cloudwatch_log_group" "aws_for_fluent_bit" {
   retention_in_days = try(var.aws_for_fluentbit_cw_log_group.retention, 90)
   kms_key_id        = try(var.aws_for_fluentbit_cw_log_group.kms_key_arn, null)
   skip_destroy      = try(var.aws_for_fluentbit_cw_log_group.skip_destroy, false)
-  tags              = merge(var.tags, try(var.aws_for_fluentbit_cw_log_group.logs, {}))
+  tags              = merge(var.tags, try(var.aws_for_fluentbit_cw_log_group.tags, {}))
 }
 
 data "aws_iam_policy_document" "aws_for_fluentbit" {
-  dynamic "statement" {
-    for_each = try(local.aws_for_fluentbit_decoded_values, local.aws_for_fluentbit_values.cloudWatch.enabled, true) ? ["one"] : []
-    content {
-      sid    = "PutLogEvents"
-      effect = "Allow"
-      resources = [
-        try("arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${statement.cloudWatch.logGroupName}:log-stream:*", "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:*:log-stream:*")
-      ]
-      actions = [
-        "logs:PutLogEvents"
-      ]
-    }
+  statement {
+    sid       = "PutLogEvents"
+    effect    = "Allow"
+    resources = ["arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:*:log-stream:*"]
+    actions = [
+      "logs:PutLogEvents"
+    ]
   }
 
-  dynamic "statement" {
-    for_each = try(local.aws_for_fluentbit_decoded_values, local.aws_for_fluentbit_values.cloudWatch.enabled, true) ? ["one"] : []
-    content {
-      sid    = "CreateCWLogs"
-      effect = "Allow"
-      resources = [
-        try("arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${statement.cloudWatch.logGroupName}", "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:*")
-      ]
+  statement {
+    sid       = "CreateCWLogs"
+    effect    = "Allow"
+    resources = ["arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:*"]
 
-      actions = [
-        "logs:CreateLogGroup",
-        "logs:CreateLogStream",
-        "logs:DescribeLogGroups",
-        "logs:DescribeLogStreams",
-        "logs:PutRetentionPolicy",
-      ]
-    }
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:DescribeLogGroups",
+      "logs:DescribeLogStreams",
+      "logs:PutRetentionPolicy",
+    ]
   }
 }
-
 
 #-----------------Kubernetes Add-ons----------------------
 
