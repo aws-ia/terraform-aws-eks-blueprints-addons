@@ -355,7 +355,8 @@ module "cloudwatch_metrics" {
 ################################################################################
 
 locals {
-  efs_csi_driver_service_account = try(var.efs_csi_driver.service_account_name, "efs-csi-controller-sa")
+  efs_csi_driver_controller_service_account = try(var.efs_csi_driver.controller_service_account_name, "efs-csi-controller-sa")
+  efs_csi_driver_node_service_account       = try(var.efs_csi_driver.node_service_account_name, "efs-csi-node-sa")
   efs_arns = lookup(var.efs_csi_driver, "efs_arns",
     ["arn:${local.partition}:elasticfilesystem:${local.region}:${local.account_id}:file-system/*"],
   )
@@ -472,11 +473,12 @@ module "efs_csi_driver" {
   postrender = try(var.efs_csi_driver.postrender, [])
   set = concat([
     {
-      name  = "clusterName"
-      value = var.cluster_name
-      }, {
       name  = "controller.serviceAccount.name"
-      value = local.efs_csi_driver_service_account
+      value = local.efs_csi_driver_controller_service_account
+    },
+    {
+      name  = "node.serviceAccount.name"
+      value = local.efs_csi_driver_node_service_account
     }],
     try(var.efs_csi_driver.set, [])
   )
@@ -507,10 +509,15 @@ module "efs_csi_driver" {
   policy_description        = try(var.efs_csi_driver.policy_description, "IAM Policy for AWS EFS CSI Driver")
 
   oidc_providers = {
-    this = {
+    controller = {
       provider_arn = var.oidc_provider_arn
       # namespace is inherited from chart
-      service_account = local.efs_csi_driver_service_account
+      service_account = local.efs_csi_driver_controller_service_account
+    }
+    node = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.efs_csi_driver_node_service_account
     }
   }
 
@@ -1313,7 +1320,8 @@ module "cluster_autoscaler" {
 ################################################################################
 
 locals {
-  fsx_csi_driver_service_account = try(var.fsx_csi_driver.service_account_name, "fsx-csi-controller-sa")
+  fsx_csi_driver_controller_service_account = try(var.fsx_csi_driver.controller_service_account_name, "fsx-csi-controller-sa")
+  fsx_csi_driver_node_service_account       = try(var.fsx_csi_driver.node_service_account_name, "fsx-csi-node-sa")
 }
 
 data "aws_iam_policy_document" "fsx_csi_driver" {
@@ -1422,11 +1430,11 @@ module "fsx_csi_driver" {
   set = concat([
     {
       name  = "controller.serviceAccount.name"
-      value = local.fsx_csi_driver_service_account
+      value = local.fsx_csi_driver_controller_service_account
     },
     {
       name  = "node.serviceAccount.name"
-      value = local.fsx_csi_driver_service_account
+      value = local.fsx_csi_driver_node_service_account
     }],
     try(var.fsx_csi_driver.set, [])
   )
@@ -1457,10 +1465,15 @@ module "fsx_csi_driver" {
   policy_description        = try(var.fsx_csi_driver.policy_description, "IAM Policy for AWS FSX CSI Driver")
 
   oidc_providers = {
-    this = {
+    controller = {
       provider_arn = var.oidc_provider_arn
       # namespace is inherited from chart
-      service_account = local.fsx_csi_driver_service_account
+      service_account = local.fsx_csi_driver_controller_service_account
+    }
+    node = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.fsx_csi_driver_node_service_account
     }
   }
 }
