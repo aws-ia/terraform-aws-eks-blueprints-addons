@@ -60,7 +60,7 @@ locals {
 #tfsec:ignore:aws-eks-enable-control-plane-logging
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 19.10"
+  version = "~> 19.13"
 
   cluster_name                   = local.name
   cluster_version                = "1.26"
@@ -164,9 +164,13 @@ module "eks_blueprints_addons" {
 
   enable_karpenter = true
   # ECR login required
-  karpenter_helm_config = {
+  karpenter = {
     repository_username = data.aws_ecrpublic_authorization_token.token.user_name
     repository_password = data.aws_ecrpublic_authorization_token.token.password
+  }
+  karpenter_instance_profile = {
+    # Re-using the EKS managed node group IAM role for Karpenter nodes
+    iam_role_arn = module.eks.eks_managed_node_groups["initial"].iam_role_arn
   }
 
   enable_velero = true

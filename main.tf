@@ -7,6 +7,42 @@ locals {
   dns_suffix = data.aws_partition.current.dns_suffix
   partition  = data.aws_partition.current.partition
   region     = data.aws_region.current.name
+
+  # Used by Karpenter & AWS Node Termination Handler
+  ec2_events = {
+    health_event = {
+      name        = "HealthEvent"
+      description = "AWS health event"
+      event_pattern = {
+        source      = ["aws.health"]
+        detail-type = ["AWS Health Event"]
+      }
+    }
+    spot_interupt = {
+      name        = "SpotInterrupt"
+      description = "EC2 spot instance interruption warning"
+      event_pattern = {
+        source      = ["aws.ec2"]
+        detail-type = ["EC2 Spot Instance Interruption Warning"]
+      }
+    }
+    instance_rebalance = {
+      name        = "InstanceRebalance"
+      description = "EC2 instance rebalance recommendation"
+      event_pattern = {
+        source      = ["aws.ec2"]
+        detail-type = ["EC2 Instance Rebalance Recommendation"]
+      }
+    }
+    instance_state_change = {
+      name        = "InstanceStateChange"
+      description = "EC2 instance state-change notification"
+      event_pattern = {
+        source      = ["aws.ec2"]
+        detail-type = ["EC2 Instance State-change Notification"]
+      }
+    }
+  }
 }
 
 ################################################################################
@@ -48,48 +84,19 @@ resource "aws_eks_addon" "this" {
 
 locals {
   aws_node_termination_handler_service_account = try(var.aws_node_termination_handler.service_account_name, "aws-node-termination-handler-sa")
-  aws_node_termination_handler_events = {
-    autoscaling_terminate = {
-      name        = "ASGTerminiate"
-      description = "AWS node termiantion handler interrupt - Auto scaling instance terminate event"
-      event_pattern = {
-        source      = ["aws.autoscaling"]
-        detail-type = ["EC2 Instance-terminate Lifecycle Action"]
+  aws_node_termination_handler_events = merge(
+    {
+      autoscaling_terminate = {
+        name        = "ASGTerminiate"
+        description = "Auto scaling instance terminate event"
+        event_pattern = {
+          source      = ["aws.autoscaling"]
+          detail-type = ["EC2 Instance-terminate Lifecycle Action"]
+        }
       }
-    }
-    health_event = {
-      name        = "HealthEvent"
-      description = "AWS node termiantion handler interrupt - AWS health event"
-      event_pattern = {
-        source      = ["aws.health"]
-        detail-type = ["AWS Health Event"]
-      }
-    }
-    spot_interupt = {
-      name        = "SpotInterrupt"
-      description = "AWS node termiantion handler interrupt - EC2 spot instance interruption warning"
-      event_pattern = {
-        source      = ["aws.ec2"]
-        detail-type = ["EC2 Spot Instance Interruption Warning"]
-      }
-    }
-    instance_rebalance = {
-      name        = "InstanceRebalance"
-      description = "AWS node termiantion handler interrupt - EC2 instance rebalance recommendation"
-      event_pattern = {
-        source      = ["aws.ec2"]
-        detail-type = ["EC2 Instance Rebalance Recommendation"]
-      }
-    }
-    instance_state_change = {
-      name        = "InstanceStateChange"
-      description = "AWS node termiantion handler interrupt - EC2 instance state-change notification"
-      event_pattern = {
-        source      = ["aws.ec2"]
-        detail-type = ["EC2 Instance State-change Notification"]
-      }
-    }
-  }
+    },
+    local.ec2_events
+  )
 }
 
 module "aws_node_termination_handler_sqs" {
@@ -436,7 +443,7 @@ module "cert_manager" {
   create = var.enable_cert_manager
 
   # https://github.com/cert-manager/cert-manager/blob/master/deploy/charts/cert-manager/Chart.template.yaml
-  name             = try(var.cert_manager.name, "cert-mnager")
+  name             = try(var.cert_manager.name, "cert-manager")
   description      = try(var.cert_manager.description, "A Helm chart to deploy cert-manager")
   namespace        = try(var.cert_manager.namespace, "cert-manager")
   create_namespace = try(var.cert_manager.create_namespace, true)
@@ -1730,6 +1737,261 @@ module "fsx_csi_driver" {
 }
 
 ################################################################################
+# Karpenter
+################################################################################
+
+locals {
+  karpenter_service_account_name    = try(var.karpenter.service_account_name, "karpenter")
+  karpenter_enable_spot_termination = var.enable_karpenter && var.karpenter_enable_spot_termination
+  create_karpenter_instance_profile = try(var.karpenter_instance_profile.create, true)
+  karpenter_instance_profile_name   = local.create_karpenter_instance_profile ? aws_iam_instance_profile.karpenter[0].arn : var.karpenter_instance_profile.name
+}
+
+data "aws_iam_policy_document" "karpenter" {
+  count = var.enable_karpenter ? 1 : 0
+
+  statement {
+    actions = [
+      "ec2:DescribeAvailabilityZones",
+      "ec2:DescribeImages",
+      "ec2:DescribeInstances",
+      "ec2:DescribeInstanceTypeOfferings",
+      "ec2:DescribeInstanceTypes",
+      "ec2:DescribeLaunchTemplates",
+      "ec2:DescribeSecurityGroups",
+      "ec2:DescribeSpotPriceHistory",
+      "ec2:DescribeSubnets",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    actions = [
+      "ec2:CreateFleet",
+      "ec2:CreateLaunchTemplate",
+      "ec2:CreateTags",
+      "ec2:DeleteLaunchTemplate",
+      "ec2:RunInstances"
+    ]
+    resources = [
+      "arn:${local.partition}:ec2:${local.region}:${local.account_id}:*",
+      "arn:${local.partition}:ec2:${local.region}::image/*"
+    ]
+  }
+
+  statement {
+    actions   = ["iam:PassRole"]
+    resources = [var.karpenter_instance_profile.iam_role_arn]
+  }
+
+  statement {
+    actions   = ["pricing:GetProducts"]
+    resources = ["*"]
+  }
+
+  statement {
+    actions   = ["ssm:GetParameter"]
+    resources = ["arn:${local.partition}:ssm:${local.region}::parameter/*"]
+  }
+
+  statement {
+    actions   = ["eks:DescribeCluster"]
+    resources = ["arn:${local.partition}:eks:*:${local.account_id}:cluster/${var.cluster_name}"]
+  }
+
+  statement {
+    actions   = ["ec2:TerminateInstances"]
+    resources = ["arn:${local.partition}:ec2:${local.region}:${local.account_id}:instance/*"]
+
+    condition {
+      test     = "StringLike"
+      variable = "ec2:ResourceTag/Name"
+      values   = ["*karpenter*"]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = var.karpenter_enable_spot_termination ? [1] : []
+
+    content {
+      actions = [
+        "sqs:DeleteMessage",
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl",
+        "sqs:ReceiveMessage",
+      ]
+      resources = [module.karpenter_sqs.queue_arn]
+    }
+  }
+}
+
+module "karpenter_sqs" {
+  source  = "terraform-aws-modules/sqs/aws"
+  version = "4.0.1"
+
+  create = local.karpenter_enable_spot_termination
+
+  name = try(var.karpenter_sqs.queue_name, "karpenter-${var.cluster_name}")
+
+  message_retention_seconds         = try(var.karpenter_sqs.message_retention_seconds, 300)
+  sqs_managed_sse_enabled           = try(var.karpenter_sqs.sse_enabled, true)
+  kms_master_key_id                 = try(var.karpenter_sqs.kms_master_key_id, null)
+  kms_data_key_reuse_period_seconds = try(var.karpenter_sqs.kms_data_key_reuse_period_seconds, null)
+
+  create_queue_policy = true
+  queue_policy_statements = {
+    account = {
+      sid     = "SendEventsToQueue"
+      actions = ["sqs:SendMessage"]
+      principals = [
+        {
+          type = "Service"
+          identifiers = [
+            "events.${local.dns_suffix}",
+            "sqs.${local.dns_suffix}",
+          ]
+        }
+      ]
+    }
+  }
+
+  tags = merge(var.tags, try(var.karpenter_sqs.tags, {}))
+}
+
+resource "aws_cloudwatch_event_rule" "karpenter" {
+  for_each = { for k, v in local.ec2_events : k => v if local.karpenter_enable_spot_termination }
+
+  name_prefix   = "Karpenter-${each.value.name}-"
+  description   = each.value.description
+  event_pattern = jsonencode(each.value.event_pattern)
+
+  tags = merge(
+    { "ClusterName" : var.cluster_name },
+    var.tags,
+  )
+}
+
+resource "aws_cloudwatch_event_target" "karpenter" {
+  for_each = { for k, v in local.ec2_events : k => v if local.karpenter_enable_spot_termination }
+
+  rule      = aws_cloudwatch_event_rule.karpenter[each.key].name
+  target_id = "KarpenterQueueTarget"
+  arn       = module.karpenter_sqs.queue_arn
+}
+
+resource "aws_iam_instance_profile" "karpenter" {
+  count = var.enable_karpenter && local.create_karpenter_instance_profile ? 1 : 0
+
+  name_prefix = try(var.karpenter_instance_profile.name_prefix, "karpenter-")
+  path        = try(var.karpenter_instance_profile.path, null)
+  role        = var.karpenter_instance_profile.iam_role_arn
+
+  tags = merge(var.tags, try(var.karpenter_instance_profile.tags, {}))
+}
+
+module "karpenter" {
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_karpenter
+
+  # https://github.com/aws/karpenter/blob/main/charts/karpenter/Chart.yaml
+  name             = try(var.karpenter.name, "karpenter")
+  description      = try(var.karpenter.description, "A Helm chart to deploy Karpenter")
+  namespace        = try(var.karpenter.namespace, "karpenter")
+  create_namespace = try(var.karpenter.create_namespace, true)
+  chart            = "karpenter"
+  chart_version    = try(var.karpenter.chart_version, "v0.27.2")
+  repository       = try(var.karpenter.repository, "oci://public.ecr.aws/karpenter")
+  values           = try(var.karpenter.values, [])
+
+  timeout                    = try(var.karpenter.timeout, null)
+  repository_key_file        = try(var.karpenter.repository_key_file, null)
+  repository_cert_file       = try(var.karpenter.repository_cert_file, null)
+  repository_ca_file         = try(var.karpenter.repository_ca_file, null)
+  repository_username        = try(var.karpenter.repository_username, null)
+  repository_password        = try(var.karpenter.repository_password, null)
+  devel                      = try(var.karpenter.devel, null)
+  verify                     = try(var.karpenter.verify, null)
+  keyring                    = try(var.karpenter.keyring, null)
+  disable_webhooks           = try(var.karpenter.disable_webhooks, null)
+  reuse_values               = try(var.karpenter.reuse_values, null)
+  reset_values               = try(var.karpenter.reset_values, null)
+  force_update               = try(var.karpenter.force_update, null)
+  recreate_pods              = try(var.karpenter.recreate_pods, null)
+  cleanup_on_fail            = try(var.karpenter.cleanup_on_fail, null)
+  max_history                = try(var.karpenter.max_history, null)
+  atomic                     = try(var.karpenter.atomic, null)
+  skip_crds                  = try(var.karpenter.skip_crds, null)
+  render_subchart_notes      = try(var.karpenter.render_subchart_notes, null)
+  disable_openapi_validation = try(var.karpenter.disable_openapi_validation, null)
+  wait                       = try(var.karpenter.wait, null)
+  wait_for_jobs              = try(var.karpenter.wait_for_jobs, null)
+  dependency_update          = try(var.karpenter.dependency_update, null)
+  replace                    = try(var.karpenter.replace, null)
+  lint                       = try(var.karpenter.lint, null)
+
+  postrender = try(var.karpenter.postrender, [])
+  set = concat(
+    [
+      {
+        name  = "settings.aws.clusterName"
+        value = var.cluster_name
+      },
+      {
+        name  = "settings.aws.clusterEndpoint"
+        value = var.cluster_endpoint
+      },
+      {
+        name  = "settings.aws.defaultInstanceProfile"
+        value = local.karpenter_instance_profile_name
+      },
+      {
+        name  = "settings.aws.interruptionQueueName"
+        value = module.karpenter_sqs.queue_name
+      },
+      {
+        name  = "serviceAccount.name"
+        value = local.karpenter_service_account_name
+      },
+    ],
+    try(var.karpenter.set, [])
+  )
+  set_sensitive = try(var.karpenter.set_sensitive, [])
+
+  # IAM role for service account (IRSA)
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  create_role                   = try(var.karpenter.create_role, true)
+  role_name                     = try(var.karpenter.role_name, "karpenter")
+  role_name_use_prefix          = try(var.karpenter.role_name_use_prefix, true)
+  role_path                     = try(var.karpenter.role_path, "/")
+  role_permissions_boundary_arn = lookup(var.karpenter, "role_permissions_boundary_arn", null)
+  role_description              = try(var.karpenter.role_description, "IRSA for Karpenter")
+  role_policies                 = lookup(var.karpenter, "role_policies", {})
+
+  source_policy_documents = compact(concat(
+    data.aws_iam_policy_document.karpenter[*].json,
+    lookup(var.karpenter, "source_policy_documents", [])
+  ))
+  override_policy_documents = lookup(var.karpenter, "override_policy_documents", [])
+  policy_statements         = lookup(var.karpenter, "policy_statements", [])
+  policy_name               = try(var.karpenter.policy_name, null)
+  policy_name_use_prefix    = try(var.karpenter.policy_name_use_prefix, true)
+  policy_path               = try(var.karpenter.policy_path, null)
+  policy_description        = try(var.karpenter.policy_description, "IAM Policy for karpenter")
+
+  oidc_providers = {
+    this = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.karpenter_service_account_name
+    }
+  }
+
+  tags = var.tags
+}
+
+################################################################################
 # Secrets Store CSI Driver
 ################################################################################
 
@@ -1835,23 +2097,6 @@ module "ingress_nginx" {
   helm_config       = var.ingress_nginx_helm_config
   manage_via_gitops = var.argocd_manage_add_ons
   addon_context     = local.addon_context
-}
-
-module "karpenter" {
-  source = "./modules/karpenter"
-
-  count = var.enable_karpenter ? 1 : 0
-
-  helm_config                                 = var.karpenter_helm_config
-  irsa_policies                               = var.karpenter_irsa_policies
-  node_iam_instance_profile                   = var.karpenter_node_iam_instance_profile
-  enable_spot_termination                     = var.karpenter_enable_spot_termination_handling
-  rule_name_prefix                            = var.karpenter_event_rule_name_prefix
-  manage_via_gitops                           = var.argocd_manage_add_ons
-  addon_context                               = local.addon_context
-  sqs_queue_managed_sse_enabled               = var.sqs_queue_managed_sse_enabled
-  sqs_queue_kms_master_key_id                 = var.sqs_queue_kms_master_key_id
-  sqs_queue_kms_data_key_reuse_period_seconds = var.sqs_queue_kms_data_key_reuse_period_seconds
 }
 
 module "metrics_server" {
