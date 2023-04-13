@@ -63,7 +63,7 @@ module "eks" {
   version = "~> 19.10"
 
   cluster_name                   = local.name
-  cluster_version                = "1.25"
+  cluster_version                = "1.26"
   cluster_endpoint_public_access = true
 
   vpc_id     = module.vpc.vpc_id
@@ -109,6 +109,13 @@ module "eks_blueprints_addons" {
       service_account_role_arn = module.vpc_cni_irsa.iam_role_arn
     }
     kube-proxy = {
+      most_recent = true
+    }
+    adot = {
+      most_recent              = true
+      service_account_role_arn = module.adot_irsa.iam_role_arn
+    }
+    aws-guardduty-agent = {
       most_recent = true
     }
   }
@@ -264,6 +271,27 @@ module "vpc_cni_irsa" {
     main = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["kube-system:aws-node"]
+    }
+  }
+
+  tags = local.tags
+}
+
+module "adot_irsa" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "~> 5.14"
+
+  role_name_prefix = "${local.name}-adot-"
+
+  role_policy_arns = {
+    prometheus = "arn:aws:iam::aws:policy/AmazonPrometheusRemoteWriteAccess"
+    xray       = "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
+    cloudwatch = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+  }
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["opentelemetry-operator-system:opentelemetry-operator"]
     }
   }
 
