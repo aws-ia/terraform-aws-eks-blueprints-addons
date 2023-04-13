@@ -55,7 +55,7 @@ output "aws_load_balancer_controller" {
 
 output "aws_node_termination_handler" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.aws_node_termination_handler[0], null)
+  value       = module.aws_node_termination_handler
 }
 
 output "aws_privateca_issuer" {
