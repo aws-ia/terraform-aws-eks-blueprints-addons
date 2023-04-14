@@ -2049,6 +2049,145 @@ module "secrets_store_csi_driver" {
   tags = var.tags
 }
 
+################################################################################
+# AWS for Fluent-bit
+################################################################################
+
+locals {
+  aws_for_fluentbit_name            = "aws-for-fluent-bit"
+  aws_for_fluentbit_service_account = try(var.aws_for_fluentbit.service_account_name, "${local.aws_for_fluentbit_name}-sa")
+}
+
+module "aws_for_fluentbit" {
+  #source                    = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_aws_for_fluentbit
+
+  # https://github.com/aws/eks-charts/blob/master/stable/aws-for-fluent-bit/Chart.yaml
+
+  name             = try(var.aws_for_fluentbit.name, local.aws_for_fluentbit_name)
+  description      = try(var.aws_for_fluentbit.description, "A Helm chart to install the Fluent-bit Driver")
+  namespace        = try(var.aws_for_fluentbit.namespace, "kube-system")
+  create_namespace = try(var.aws_for_fluentbit.create_namespace, false)
+  chart            = "aws-for-fluent-bit"
+  chart_version    = try(var.aws_for_fluentbit.chart_version, "0.1.24")
+  repository       = try(var.aws_for_fluentbit.repository, "https://github.com/aws/eks-charts/")
+  values           = try(var.aws_for_fluentbit.values, [])
+
+  timeout                    = try(var.aws_for_fluentbit.timeout, null)
+  repository_key_file        = try(var.aws_for_fluentbit.repository_key_file, null)
+  repository_cert_file       = try(var.aws_for_fluentbit.repository_cert_file, null)
+  repository_ca_file         = try(var.aws_for_fluentbit.repository_ca_file, null)
+  repository_username        = try(var.aws_for_fluentbit.repository_username, null)
+  repository_password        = try(var.aws_for_fluentbit.repository_password, null)
+  devel                      = try(var.aws_for_fluentbit.devel, null)
+  verify                     = try(var.aws_for_fluentbit.verify, null)
+  keyring                    = try(var.aws_for_fluentbit.keyring, null)
+  disable_webhooks           = try(var.aws_for_fluentbit.disable_webhooks, null)
+  reuse_values               = try(var.aws_for_fluentbit.reuse_values, null)
+  reset_values               = try(var.aws_for_fluentbit.reset_values, null)
+  force_update               = try(var.aws_for_fluentbit.force_update, null)
+  recreate_pods              = try(var.aws_for_fluentbit.recreate_pods, null)
+  cleanup_on_fail            = try(var.aws_for_fluentbit.cleanup_on_fail, null)
+  max_history                = try(var.aws_for_fluentbit.max_history, null)
+  atomic                     = try(var.aws_for_fluentbit.atomic, null)
+  skip_crds                  = try(var.aws_for_fluentbit.skip_crds, null)
+  render_subchart_notes      = try(var.aws_for_fluentbit.render_subchart_notes, null)
+  disable_openapi_validation = try(var.aws_for_fluentbit.disable_openapi_validation, null)
+  wait                       = try(var.aws_for_fluentbit.wait, null)
+  wait_for_jobs              = try(var.aws_for_fluentbit.wait_for_jobs, null)
+  dependency_update          = try(var.aws_for_fluentbit.dependency_update, null)
+  replace                    = try(var.aws_for_fluentbit.replace, null)
+  lint                       = try(var.aws_for_fluentbit.lint, null)
+
+  postrender = try(var.aws_for_fluentbit.postrender, [])
+  set = concat([
+    {
+      name  = "serviceAccount.name"
+      value = local.aws_for_fluentbit_service_account
+    }],
+    try(var.aws_for_fluentbit.set, [])
+  )
+  set_sensitive = try(var.aws_for_fluentbit.set_sensitive, [])
+
+  # IAM role for service account (IRSA)
+  set_irsa_names = [
+    "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn",
+  ]
+  create_role                   = try(var.aws_for_fluentbit.create_role, true)
+  role_name                     = try(var.aws_for_fluentbit.role_name, "aws-for-fluent-bit")
+  role_name_use_prefix          = try(var.aws_for_fluentbit.role_name_use_prefix, true)
+  role_path                     = try(var.aws_for_fluentbit.role_path, "/")
+  role_permissions_boundary_arn = lookup(var.aws_for_fluentbit, "role_permissions_boundary_arn", null)
+  role_description              = try(var.aws_for_fluentbit.role_description, "IRSA for aws-for-fluent-bit")
+  role_policies                 = lookup(var.aws_for_fluentbit, "role_policies", {})
+
+  source_policy_documents = compact(concat(
+    data.aws_iam_policy_document.aws_for_fluentbit[*].json,
+    lookup(var.aws_for_fluentbit, "source_policy_documents", [])
+  ))
+  override_policy_documents = lookup(var.aws_for_fluentbit, "override_policy_documents", [])
+  policy_statements         = lookup(var.aws_for_fluentbit, "policy_statements", [])
+  policy_name               = try(var.aws_for_fluentbit.policy_name, "aws-for-fluent-bit")
+  policy_name_use_prefix    = try(var.aws_for_fluentbit.policy_name_use_prefix, true)
+  policy_path               = try(var.aws_for_fluentbit.policy_path, null)
+  policy_description        = try(var.aws_for_fluentbit.policy_description, "IAM Policy for AWS Fluentbit")
+
+  oidc_providers = {
+    this = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.aws_for_fluentbit_service_account
+    }
+  }
+
+  tags = var.tags
+}
+
+resource "aws_cloudwatch_log_group" "aws_for_fluentbit" {
+  count = try(var.aws_for_fluentbit_cw_log_group.create, true) && var.enable_aws_for_fluentbit ? 1 : 0
+
+  name              = try(var.aws_for_fluentbit_cw_log_group.name, null)
+  name_prefix       = try(var.aws_for_fluentbit_cw_log_group.name_prefix, "/${var.cluster_name}/aws-fluentbit-logs")
+  retention_in_days = try(var.aws_for_fluentbit_cw_log_group.retention, 90)
+  kms_key_id        = try(var.aws_for_fluentbit_cw_log_group.kms_key_arn, null)
+  skip_destroy      = try(var.aws_for_fluentbit_cw_log_group.skip_destroy, false)
+  tags              = merge(var.tags, try(var.aws_for_fluentbit_cw_log_group.tags, {}))
+}
+
+data "aws_iam_policy_document" "aws_for_fluentbit" {
+  count = try(var.aws_for_fluentbit_cw_log_group.create, true) && var.enable_aws_for_fluentbit ? 1 : 0
+  statement {
+    sid    = "PutLogEvents"
+    effect = "Allow"
+    resources = [
+      try("arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${var.aws_for_fluentbit_cw_log_group.name}:log-stream:*",
+        "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:*:log-stream:*"
+    )]
+
+    actions = [
+      "logs:PutLogEvents"
+    ]
+  }
+
+  statement {
+    sid    = "CreateCWLogs"
+    effect = "Allow"
+    resources = [
+      try("arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${var.aws_for_fluentbit_cw_log_group.name}",
+        "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:*"
+    )]
+
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:DescribeLogGroups",
+      "logs:DescribeLogStreams",
+      "logs:PutRetentionPolicy",
+    ]
+  }
+}
 
 ################################################################################
 # Private CA Issuer
@@ -2169,20 +2308,6 @@ module "argocd" {
   projects      = var.argocd_projects
   addon_config  = { for k, v in local.argocd_addon_config : k => v if v != null }
   addon_context = local.addon_context
-}
-
-module "aws_for_fluent_bit" {
-  count                     = var.enable_aws_for_fluentbit ? 1 : 0
-  source                    = "./modules/aws-for-fluentbit"
-  helm_config               = var.aws_for_fluentbit_helm_config
-  irsa_policies             = var.aws_for_fluentbit_irsa_policies
-  create_cw_log_group       = var.aws_for_fluentbit_create_cw_log_group
-  cw_log_group_name         = var.aws_for_fluentbit_cw_log_group_name
-  cw_log_group_retention    = var.aws_for_fluentbit_cw_log_group_retention
-  cw_log_group_skip_destroy = var.aws_for_fluentbit_cw_log_group_skip_destroy
-  cw_log_group_kms_key_arn  = var.aws_for_fluentbit_cw_log_group_kms_key_arn
-  manage_via_gitops         = var.argocd_manage_add_ons
-  addon_context             = local.addon_context
 }
 
 module "fargate_fluentbit" {

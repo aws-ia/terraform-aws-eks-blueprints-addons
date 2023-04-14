@@ -354,9 +354,35 @@ variable "secrets_store_csi_driver" {
 }
 
 ################################################################################
+# AWS for Fluentbit
+################################################################################
+variable "enable_aws_for_fluentbit" {
+  description = "Enable AWS for FluentBit add-on"
+  type        = bool
+  default     = false
+}
+
+variable "enable_aws_for_fluentbit_gitops" {
+  description = "Enable AWS for FluentBit add-on"
+  type        = bool
+  default     = false
+}
+
+variable "aws_for_fluentbit" {
+  description = "AWS Fluentbit add-on configurations"
+  type        = any
+  default     = {}
+}
+
+variable "aws_for_fluentbit_cw_log_group" {
+  description = "AWS Fluentbit CloudWatch Log Group configurations"
+  type        = any
+  default     = {}
+}
+
+################################################################################
 # AWS Private CA Issuer
 ################################################################################
-
 variable "enable_aws_privateca_issuer" {
   description = "Enable AWS PCA Issuer"
   type        = bool
@@ -374,8 +400,6 @@ variable "aws_privateca_issuer" {
   type        = any
   default     = {}
 }
-
-
 
 
 variable "irsa_iam_role_path" {
@@ -514,54 +538,6 @@ variable "ingress_nginx_helm_config" {
   default     = {}
 }
 
-#-----------AWS FOR FLUENT BIT-------------
-variable "enable_aws_for_fluentbit" {
-  description = "Enable AWS for FluentBit add-on"
-  type        = bool
-  default     = false
-}
-
-variable "aws_for_fluentbit_helm_config" {
-  description = "AWS for FluentBit Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "aws_for_fluentbit_irsa_policies" {
-  description = "Additional IAM policies for a IAM role for service accounts"
-  type        = list(string)
-  default     = []
-}
-
-variable "aws_for_fluentbit_create_cw_log_group" {
-  description = "Set to false to use existing CloudWatch log group supplied via the cw_log_group_name variable."
-  type        = bool
-  default     = true
-}
-
-variable "aws_for_fluentbit_cw_log_group_name" {
-  description = "FluentBit CloudWatch Log group name"
-  type        = string
-  default     = null
-}
-
-variable "aws_for_fluentbit_cw_log_group_retention" {
-  description = "FluentBit CloudWatch Log group retention period"
-  type        = number
-  default     = 90
-}
-
-variable "aws_for_fluentbit_cw_log_group_skip_destroy" {
-  description = "Set to true if you do not wish the log group (and any logs it may contain) to be deleted at destroy time"
-  type        = bool
-  default     = true
-}
-
-variable "aws_for_fluentbit_cw_log_group_kms_key_arn" {
-  description = "FluentBit CloudWatch Log group KMS Key"
-  type        = string
-  default     = null
-}
 
 #-----------FARGATE FLUENT BIT-------------
 variable "enable_fargate_fluentbit" {
