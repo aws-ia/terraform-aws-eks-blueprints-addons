@@ -402,6 +402,28 @@ variable "aws_privateca_issuer" {
 }
 
 
+################################################################################
+# Metrics Server
+################################################################################
+variable "enable_metrics_server" {
+  description = "Enable metrics server add-on"
+  type        = bool
+  default     = false
+}
+
+variable "enable_metrics_server_gitops" {
+  description = "Enable metrics GitOps server add-on"
+  type        = bool
+  default     = false
+}
+
+variable "metrics_server" {
+  description = "Metrics Server add-on configurations"
+  type        = any
+  default     = {}
+}
+
+
 variable "irsa_iam_role_path" {
   description = "IAM role path for IRSA roles"
   type        = string
@@ -449,19 +471,6 @@ variable "enable_kube_prometheus_stack" {
 
 variable "kube_prometheus_stack_helm_config" {
   description = "Community kube-prometheus-stack Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#-----------METRIC SERVER-------------
-variable "enable_metrics_server" {
-  description = "Enable metrics server add-on"
-  type        = bool
-  default     = false
-}
-
-variable "metrics_server_helm_config" {
-  description = "Metrics Server Helm Chart config"
   type        = any
   default     = {}
 }
