@@ -1578,17 +1578,16 @@ module "aws_for_fluentbit" {
   postrender = try(var.aws_for_fluentbit.postrender, [])
   set = concat([
     {
-      name  = "controller.serviceAccount.name"
+      name  = "serviceAccount.name"
       value = local.aws_for_fluentbit_service_account
-    },
+    }],
     try(var.aws_for_fluentbit.set, [])
-  ])
+  )
   set_sensitive = try(var.aws_for_fluentbit.set_sensitive, [])
 
   # IAM role for service account (IRSA)
   set_irsa_names = [
-    "controller.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn",
-    "node.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+    "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn",
   ]
   create_role                   = try(var.aws_for_fluentbit.create_role, true)
   role_name                     = try(var.aws_for_fluentbit.role_name, "aws-for-fluent-bit")
