@@ -33,14 +33,20 @@ locals {
       enable             = true
       serviceAccountName = local.secrets_store_csi_driver_service_account
     } : null
-    grafana             = var.enable_grafana ? module.grafana[0].argocd_gitops_config : null
-    ingressNginx        = var.enable_ingress_nginx ? module.ingress_nginx[0].argocd_gitops_config : null
-    metricsServer       = var.enable_metrics_server ? module.metrics_server[0].argocd_gitops_config : null
-    prometheus          = var.enable_prometheus ? module.prometheus[0].argocd_gitops_config : null
-    vpa                 = var.enable_vpa ? module.vpa[0].argocd_gitops_config : null
-    argoRollouts        = var.enable_argo_rollouts && var.enable_argo_rollouts_gitops ? { enable = true } : null
-    argoWorkflows       = var.enable_argo_workflows && var.enable_argo_workflows_gitops ? { enable = true } : null
-    karpenter           = var.enable_karpenter ? module.karpenter[0].argocd_gitops_config : null
+    grafana       = var.enable_grafana ? module.grafana[0].argocd_gitops_config : null
+    ingressNginx  = var.enable_ingress_nginx ? module.ingress_nginx[0].argocd_gitops_config : null
+    metricsServer = var.enable_metrics_server ? module.metrics_server[0].argocd_gitops_config : null
+    prometheus    = var.enable_prometheus ? module.prometheus[0].argocd_gitops_config : null
+    vpa           = var.enable_vpa ? module.vpa[0].argocd_gitops_config : null
+    argoRollouts  = var.enable_argo_rollouts && var.enable_argo_rollouts_gitops ? { enable = true } : null
+    argoWorkflows = var.enable_argo_workflows && var.enable_argo_workflows_gitops ? { enable = true } : null
+    karpenter = var.enable_karpenter && var.enable_karpenter_gitops ? {
+      enable                    = true
+      serviceAccountName        = local.karpenter_service_account_name
+      controllerClusterEndpoint = var.cluster_endpoint
+      awsDefaultInstanceProfile = local.karpenter_instance_profile_name
+      awsInterruptionQueueName  = module.karpenter_sqs.queue_name
+    } : null
     kubePrometheusStack = var.enable_kube_prometheus_stack ? module.kube_prometheus_stack[0].argocd_gitops_config : null
     awsCloudWatchMetrics = var.enable_cloudwatch_metrics && var.enable_cloudwatch_metrics_gitops ? {
       enable             = true
