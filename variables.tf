@@ -46,6 +46,40 @@ variable "eks_addons_timeouts" {
 }
 
 ################################################################################
+# AWS Node Termination Handler
+################################################################################
+
+variable "enable_aws_node_termination_handler" {
+  description = "Enable AWS Node Termination Handler add-on"
+  type        = bool
+  default     = false
+}
+
+variable "enable_aws_node_termination_handler_gitops" {
+  description = "Enable AWS Node Termination Handler using GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "aws_node_termination_handler" {
+  description = "AWS Node Termination Handler addon configuration values"
+  type        = any
+  default     = {}
+}
+
+variable "aws_node_termination_handler_sqs" {
+  description = "AWS Node Termination Handler SQS queue configuration values"
+  type        = any
+  default     = {}
+}
+
+variable "aws_node_termination_handler_asg_arns" {
+  description = "List of Auto Scaling group ARNs that AWS Node Termination Handler will monitor for EC2 events"
+  type        = list(string)
+  default     = []
+}
+
+################################################################################
 # ArgoCD
 ################################################################################
 
@@ -257,23 +291,44 @@ variable "external_dns_route53_zone_arns" {
   default     = []
 }
 
+################################################################################
+# Karpenter
+################################################################################
 
-variable "auto_scaling_group_names" {
-  description = "List of self-managed node groups autoscaling group names"
-  type        = list(string)
-  default     = []
+variable "enable_karpenter" {
+  description = "Enable Karpenter controller add-on"
+  type        = bool
+  default     = false
 }
 
-variable "irsa_iam_role_path" {
-  description = "IAM role path for IRSA roles"
-  type        = string
-  default     = "/"
+variable "karpenter" {
+  description = "Karpenter addon configuration values"
+  type        = any
+  default     = {}
 }
 
-variable "irsa_iam_permissions_boundary" {
-  description = "IAM permissions boundary for IRSA roles"
-  type        = string
-  default     = ""
+variable "enable_karpenter_gitops" {
+  description = "Enable Karpenter using GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "karpenter_enable_spot_termination" {
+  description = "Determines whether to enable native node termination handling"
+  type        = bool
+  default     = true
+}
+
+variable "karpenter_sqs" {
+  description = "Karpenter SQS queue for native node termination handling configuration values"
+  type        = any
+  default     = {}
+}
+
+variable "karpenter_instance_profile" {
+  description = "Karpenter instance profile configuration values"
+  type        = any
+  default     = {}
 }
 
 ################################################################################
@@ -294,6 +349,28 @@ variable "enable_secrets_store_csi_driver_gitops" {
 
 variable "secrets_store_csi_driver" {
   description = "CSI Secrets Store Provider add-on configurations"
+  type        = any
+  default     = {}
+}
+
+################################################################################
+# AWS Private CA Issuer
+################################################################################
+
+variable "enable_aws_privateca_issuer" {
+  description = "Enable AWS PCA Issuer"
+  type        = bool
+  default     = false
+}
+
+variable "enable_aws_privateca_issuer_gitops" {
+  description = "Enable AWS PCA Issuer GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "aws_privateca_issuer" {
+  description = "AWS PCA Issuer add-on configurations"
   type        = any
   default     = {}
 }
@@ -323,6 +400,18 @@ variable "aws_for_fluentbit_cw_log_group" {
   description = "AWS Fluentbit CloudWatch Log Group configurations"
   type        = any
   default     = {}
+}
+
+variable "irsa_iam_role_path" {
+  description = "IAM role path for IRSA roles"
+  type        = string
+  default     = "/"
+}
+
+variable "irsa_iam_permissions_boundary" {
+  description = "IAM permissions boundary for IRSA roles"
+  type        = string
+  default     = ""
 }
 
 #-----------Amazon Managed Service for Prometheus-------------
@@ -463,85 +552,6 @@ variable "fargate_fluentbit_addon_config" {
   default     = {}
 }
 
-#-----------AWS NODE TERMINATION HANDLER-------------
-variable "enable_aws_node_termination_handler" {
-  description = "Enable AWS Node Termination Handler add-on"
-  type        = bool
-  default     = false
-}
-
-variable "aws_node_termination_handler_helm_config" {
-  description = "AWS Node Termination Handler Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "aws_node_termination_handler_irsa_policies" {
-  description = "Additional IAM policies for a IAM role for service accounts"
-  type        = list(string)
-  default     = []
-}
-
-#-----------KARPENTER ADDON-------------
-variable "enable_karpenter" {
-  description = "Enable Karpenter autoscaler add-on"
-  type        = bool
-  default     = false
-}
-
-variable "karpenter_helm_config" {
-  description = "Karpenter autoscaler add-on config"
-  type        = any
-  default     = {}
-}
-
-variable "karpenter_irsa_policies" {
-  description = "Additional IAM policies for a IAM role for service accounts"
-  type        = list(string)
-  default     = []
-}
-
-variable "karpenter_node_iam_instance_profile" {
-  description = "Karpenter Node IAM Instance profile id"
-  type        = string
-  default     = ""
-}
-
-variable "karpenter_enable_spot_termination_handling" {
-  description = "Determines whether to enable native spot termination handling"
-  type        = bool
-  default     = false
-}
-
-variable "karpenter_event_rule_name_prefix" {
-  description = "Prefix used for karpenter event bridge rules"
-  type        = string
-  default     = ""
-
-  validation {
-    condition     = length(var.karpenter_event_rule_name_prefix) <= 14
-    error_message = "Maximum input length exceeded. Please enter no more than 14 characters."
-  }
-}
-
-variable "sqs_queue_managed_sse_enabled" {
-  description = "Enable server-side encryption (SSE) for a SQS queue"
-  type        = bool
-  default     = true
-}
-
-variable "sqs_queue_kms_master_key_id" {
-  description = "The ID of an AWS-managed customer master key (CMK) for Amazon SQS or a custom CMK"
-  type        = string
-  default     = null
-}
-
-variable "sqs_queue_kms_data_key_reuse_period_seconds" {
-  description = "The length of time, in seconds, for which Amazon SQS can reuse a data key to encrypt or decrypt messages before calling AWS KMS again"
-  type        = number
-  default     = null
-}
-
 #------Vertical Pod Autoscaler(VPA) ADDON--------
 variable "enable_vpa" {
   description = "Enable Vertical Pod Autoscaler add-on"
@@ -555,30 +565,6 @@ variable "vpa_helm_config" {
   default     = null
 }
 
-#-----------AWS PCA ISSUER-------------
-variable "enable_aws_privateca_issuer" {
-  description = "Enable PCA Issuer"
-  type        = bool
-  default     = false
-}
-
-variable "aws_privateca_issuer_helm_config" {
-  description = "PCA Issuer Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "aws_privateca_acmca_arn" {
-  description = "ARN of AWS ACM PCA"
-  type        = string
-  default     = ""
-}
-
-variable "aws_privateca_issuer_irsa_policies" {
-  description = "IAM policy ARNs for AWS ACM PCA IRSA"
-  type        = list(string)
-  default     = []
-}
 
 #-----------OPENTELEMETRY OPERATOR-------------
 variable "enable_opentelemetry_operator" {
