@@ -353,10 +353,10 @@ variable "secrets_store_csi_driver" {
   default     = {}
 }
 
-
 ################################################################################
 # AWS Private CA Issuer
 ################################################################################
+
 variable "enable_aws_privateca_issuer" {
   description = "Enable AWS PCA Issuer"
   type        = bool
@@ -375,7 +375,8 @@ variable "aws_privateca_issuer" {
   default     = {}
 }
 
-# --- #
+
+
 
 variable "irsa_iam_role_path" {
   description = "IAM role path for IRSA roles"

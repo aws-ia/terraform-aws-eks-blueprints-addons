@@ -2053,9 +2053,26 @@ module "secrets_store_csi_driver" {
 ################################################################################
 # Private CA Issuer
 ################################################################################
+
 locals {
   aws_privateca_issuer_name            = "aws-privateca-issuer"
   aws_privateca_issuer_service_account = try(var.aws_privateca_issuer.service_account_name, "${local.aws_privateca_issuer_name}-sa")
+}
+
+data "aws_iam_policy_document" "aws_privateca_issuer" {
+  count = var.enable_aws_privateca_issuer ? 1 : 0
+
+  statement {
+    actions = [
+      "acm-pca:DescribeCertificateAuthority",
+      "acm-pca:GetCertificate",
+      "acm-pca:IssueCertificate",
+    ]
+    resources = [
+      try(var.aws_privateca_issuer.acmca_arn,
+      "arn:${local.partition}:acm-pca:${local.region}:${local.account_id}:certificate-authority/*")
+    ]
+  }
 }
 
 module "aws_privateca_issuer" {
@@ -2111,14 +2128,13 @@ module "aws_privateca_issuer" {
   set_sensitive = try(var.aws_privateca_issuer.set_sensitive, [])
 
   # IAM role for service account (IRSA)
-
   set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
   create_role                   = try(var.aws_privateca_issuer.create_role, true)
   role_name                     = try(var.aws_privateca_issuer.role_name, "aws-privateca-issuer")
   role_name_use_prefix          = try(var.aws_privateca_issuer.role_name_use_prefix, true)
   role_path                     = try(var.aws_privateca_issuer.role_path, "/")
   role_permissions_boundary_arn = lookup(var.aws_privateca_issuer, "role_permissions_boundary_arn", null)
-  role_description              = try(var.aws_privateca_issuer.role_description, "IRSA for aws-privateca-issuer")
+  role_description              = try(var.aws_privateca_issuer.role_description, "IRSA for AWS Private CA Issuer")
   role_policies                 = lookup(var.aws_privateca_issuer, "role_policies", {})
 
   source_policy_documents = compact(concat(
@@ -2130,7 +2146,7 @@ module "aws_privateca_issuer" {
   policy_name               = try(var.aws_privateca_issuer.policy_name, "aws-privateca-issuer")
   policy_name_use_prefix    = try(var.aws_privateca_issuer.policy_name_use_prefix, true)
   policy_path               = try(var.aws_privateca_issuer.policy_path, null)
-  policy_description        = try(var.aws_privateca_issuer.policy_description, "IAM Policy for AWS PCA Issuer")
+  policy_description        = try(var.aws_privateca_issuer.policy_description, "IAM Policy for AWS Private CA Issuer")
 
   oidc_providers = {
     controller = {
@@ -2141,21 +2157,6 @@ module "aws_privateca_issuer" {
   }
 
   tags = var.tags
-
-}
-
-data "aws_iam_policy_document" "aws_privateca_issuer" {
-  count = var.enable_aws_privateca_issuer ? 1 : 0
-    
-  statement {
-    effect    = "Allow"
-    resources = [try(var.aws_privateca_issuer.acmca_arn, "arn:${local.partition}:acm-pca:${local.region}:${local.account_id}:certificate-authority/*")]
-    actions = [
-      "acm-pca:DescribeCertificateAuthority",
-      "acm-pca:GetCertificate",
-      "acm-pca:IssueCertificate",
-    ]
-  }
 }
 
 #-----------------Kubernetes Add-ons----------------------
