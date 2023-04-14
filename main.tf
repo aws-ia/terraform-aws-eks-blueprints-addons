@@ -1883,6 +1883,8 @@ module "aws_privateca_issuer" {
 }
 
 data "aws_iam_policy_document" "aws_privateca_issuer" {
+  count = var.enable_aws_privateca_issuer ? 1 : 0
+    
   statement {
     effect    = "Allow"
     resources = [try(var.aws_privateca_issuer.acmca_arn, "arn:${local.partition}:acm-pca:${local.region}:${local.account_id}:certificate-authority/*")]
