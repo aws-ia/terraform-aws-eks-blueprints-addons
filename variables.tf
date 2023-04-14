@@ -353,6 +353,28 @@ variable "secrets_store_csi_driver" {
   default     = {}
 }
 
+################################################################################
+# AWS Private CA Issuer
+################################################################################
+
+variable "enable_aws_privateca_issuer" {
+  description = "Enable AWS PCA Issuer"
+  type        = bool
+  default     = false
+}
+
+variable "enable_aws_privateca_issuer_gitops" {
+  description = "Enable AWS PCA Issuer GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "aws_privateca_issuer" {
+  description = "AWS PCA Issuer add-on configurations"
+  type        = any
+  default     = {}
+}
+
 
 
 
@@ -567,30 +589,6 @@ variable "vpa_helm_config" {
   default     = null
 }
 
-#-----------AWS PCA ISSUER-------------
-variable "enable_aws_privateca_issuer" {
-  description = "Enable PCA Issuer"
-  type        = bool
-  default     = false
-}
-
-variable "aws_privateca_issuer_helm_config" {
-  description = "PCA Issuer Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "aws_privateca_acmca_arn" {
-  description = "ARN of AWS ACM PCA"
-  type        = string
-  default     = ""
-}
-
-variable "aws_privateca_issuer_irsa_policies" {
-  description = "IAM policy ARNs for AWS ACM PCA IRSA"
-  type        = list(string)
-  default     = []
-}
 
 #-----------OPENTELEMETRY OPERATOR-------------
 variable "enable_opentelemetry_operator" {

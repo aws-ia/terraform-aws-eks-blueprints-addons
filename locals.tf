@@ -21,6 +21,10 @@ locals {
       serviceAccountName = local.aws_node_termination_handler_service_account
       queueURL           = module.aws_node_termination_handler_sqs.queue_url
     } : null
+    awsPrivateCaIssuer = var.enable_aws_privateca_issuer && var.enable_aws_privateca_issuer_gitops ? {
+      enable             = true
+      serviceAccountName = local.aws_privateca_issuer_service_account
+    } : null
     certManager = var.enable_cert_manager && var.enable_cert_manager_gitops ? {
       enable             = true
       serviceAccountName = local.cert_manager_service_account
