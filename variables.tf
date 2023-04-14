@@ -354,28 +354,6 @@ variable "secrets_store_csi_driver" {
 }
 
 ################################################################################
-# AWS Private CA Issuer
-################################################################################
-
-variable "enable_aws_privateca_issuer" {
-  description = "Enable AWS PCA Issuer"
-  type        = bool
-  default     = false
-}
-
-variable "enable_aws_privateca_issuer_gitops" {
-  description = "Enable AWS PCA Issuer GitOps add-on"
-  type        = bool
-  default     = false
-}
-
-variable "aws_privateca_issuer" {
-  description = "AWS PCA Issuer add-on configurations"
-  type        = any
-  default     = {}
-}
-
-################################################################################
 # AWS for Fluentbit
 ################################################################################
 variable "enable_aws_for_fluentbit" {
@@ -401,6 +379,28 @@ variable "aws_for_fluentbit_cw_log_group" {
   type        = any
   default     = {}
 }
+
+################################################################################
+# AWS Private CA Issuer
+################################################################################
+variable "enable_aws_privateca_issuer" {
+  description = "Enable AWS PCA Issuer"
+  type        = bool
+  default     = false
+}
+
+variable "enable_aws_privateca_issuer_gitops" {
+  description = "Enable AWS PCA Issuer GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "aws_privateca_issuer" {
+  description = "AWS PCA Issuer add-on configurations"
+  type        = any
+  default     = {}
+}
+
 
 variable "irsa_iam_role_path" {
   description = "IAM role path for IRSA roles"

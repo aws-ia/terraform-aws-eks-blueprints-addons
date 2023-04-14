@@ -2157,6 +2157,7 @@ resource "aws_cloudwatch_log_group" "aws_for_fluentbit" {
 }
 
 data "aws_iam_policy_document" "aws_for_fluentbit" {
+  count = try(var.aws_for_fluentbit_cw_log_group.create, true) && var.enable_aws_for_fluentbit ? 1 : 0
   statement {
     sid       = "PutLogEvents"
     effect    = "Allow"

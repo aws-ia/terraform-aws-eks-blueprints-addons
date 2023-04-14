@@ -156,8 +156,6 @@ module "eks_blueprints_addons" {
   enable_vpa        = true
 
   enable_aws_for_fluentbit = true
-  # deletes log group on destroy
-  #aws_for_fluentbit_cw_log_group_skip_destroy = false
 
   enable_aws_node_termination_handler   = true
   aws_node_termination_handler_asg_arns = [for asg in module.eks.self_managed_node_groups : asg.autoscaling_group_arn]
