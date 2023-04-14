@@ -292,6 +292,46 @@ variable "external_dns_route53_zone_arns" {
 }
 
 ################################################################################
+# Karpenter
+################################################################################
+
+variable "enable_karpenter" {
+  description = "Enable Karpenter controller add-on"
+  type        = bool
+  default     = false
+}
+
+variable "karpenter" {
+  description = "Karpenter addon configuration values"
+  type        = any
+  default     = {}
+}
+
+variable "enable_karpenter_gitops" {
+  description = "Enable Karpenter using GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "karpenter_enable_spot_termination" {
+  description = "Determines whether to enable native node termination handling"
+  type        = bool
+  default     = true
+}
+
+variable "karpenter_sqs" {
+  description = "Karpenter SQS queue for native node termination handling configuration values"
+  type        = any
+  default     = {}
+}
+
+variable "karpenter_instance_profile" {
+  description = "Karpenter instance profile configuration values"
+  type        = any
+  default     = {}
+}
+
+################################################################################
 # Secrets Store CSI Driver
 ################################################################################
 
@@ -533,66 +573,6 @@ variable "fargate_fluentbit_addon_config" {
   description = "Fargate fluentbit add-on config"
   type        = any
   default     = {}
-}
-
-#-----------KARPENTER ADDON-------------
-variable "enable_karpenter" {
-  description = "Enable Karpenter autoscaler add-on"
-  type        = bool
-  default     = false
-}
-
-variable "karpenter_helm_config" {
-  description = "Karpenter autoscaler add-on config"
-  type        = any
-  default     = {}
-}
-
-variable "karpenter_irsa_policies" {
-  description = "Additional IAM policies for a IAM role for service accounts"
-  type        = list(string)
-  default     = []
-}
-
-variable "karpenter_node_iam_instance_profile" {
-  description = "Karpenter Node IAM Instance profile id"
-  type        = string
-  default     = ""
-}
-
-variable "karpenter_enable_spot_termination_handling" {
-  description = "Determines whether to enable native spot termination handling"
-  type        = bool
-  default     = false
-}
-
-variable "karpenter_event_rule_name_prefix" {
-  description = "Prefix used for karpenter event bridge rules"
-  type        = string
-  default     = ""
-
-  validation {
-    condition     = length(var.karpenter_event_rule_name_prefix) <= 14
-    error_message = "Maximum input length exceeded. Please enter no more than 14 characters."
-  }
-}
-
-variable "sqs_queue_managed_sse_enabled" {
-  description = "Enable server-side encryption (SSE) for a SQS queue"
-  type        = bool
-  default     = true
-}
-
-variable "sqs_queue_kms_master_key_id" {
-  description = "The ID of an AWS-managed customer master key (CMK) for Amazon SQS or a custom CMK"
-  type        = string
-  default     = null
-}
-
-variable "sqs_queue_kms_data_key_reuse_period_seconds" {
-  description = "The length of time, in seconds, for which Amazon SQS can reuse a data key to encrypt or decrypt messages before calling AWS KMS again"
-  type        = number
-  default     = null
 }
 
 #------Vertical Pod Autoscaler(VPA) ADDON--------
