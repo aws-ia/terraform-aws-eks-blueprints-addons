@@ -2159,18 +2159,25 @@ resource "aws_cloudwatch_log_group" "aws_for_fluentbit" {
 data "aws_iam_policy_document" "aws_for_fluentbit" {
   count = try(var.aws_for_fluentbit_cw_log_group.create, true) && var.enable_aws_for_fluentbit ? 1 : 0
   statement {
-    sid       = "PutLogEvents"
-    effect    = "Allow"
-    resources = ["arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:*:log-stream:*"]
+    sid    = "PutLogEvents"
+    effect = "Allow"
+    resources = [
+      try("arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${var.aws_for_fluentbit_cw_log_group.name}:log-stream:*",
+        "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:*:log-stream:*"
+    )]
+
     actions = [
       "logs:PutLogEvents"
     ]
   }
 
   statement {
-    sid       = "CreateCWLogs"
-    effect    = "Allow"
-    resources = ["arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:*"]
+    sid    = "CreateCWLogs"
+    effect = "Allow"
+    resources = [
+      try("arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${var.aws_for_fluentbit_cw_log_group.name}",
+        "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:*"
+    )]
 
     actions = [
       "logs:CreateLogGroup",
