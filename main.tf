@@ -1469,7 +1469,7 @@ module "fsx_csi_driver" {
 # FSX NETAPP ONTAP CSI DRIVER
 ################################################################################
 
-module "fsx_csi_driver" {
+module "fsxn_csi_driver" {
   # source = "aws-ia/eks-blueprints-addon/aws"
   source = "./modules/eks-blueprints-addon"
 
