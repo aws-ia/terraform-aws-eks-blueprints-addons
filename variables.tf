@@ -383,6 +383,7 @@ variable "aws_for_fluentbit_cw_log_group" {
 ################################################################################
 # AWS Private CA Issuer
 ################################################################################
+
 variable "enable_aws_privateca_issuer" {
   description = "Enable AWS PCA Issuer"
   type        = bool
@@ -401,10 +402,10 @@ variable "aws_privateca_issuer" {
   default     = {}
 }
 
-
 ################################################################################
 # Metrics Server
 ################################################################################
+
 variable "enable_metrics_server" {
   description = "Enable metrics server add-on"
   type        = bool
