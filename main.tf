@@ -1466,6 +1466,58 @@ module "fsx_csi_driver" {
 }
 
 ################################################################################
+# FSX NETAPP ONTAP CSI DRIVER
+################################################################################
+
+module "fsx_csi_driver" {
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_fsxn_csi_driver
+
+  # https://netapp.github.io/trident-helm-chart
+  name             = try(var.fsxn_csi_driver.name, "trident-operator")
+  description      = try(var.fsxn_csi_driver.description, "Amazon FSx for NetApp ONTAP CSI storage provisioner using the Trident Operator.")
+  namespace        = try(var.fsxn_csi_driver.namespace, "trident")
+  create_namespace = try(var.fsxn_csi_driver.create_namespace, true)
+  chart            = "trident-operator"
+  chart_version    = try(var.fsxn_csi_driver.chart_version, "23.01.0")
+  repository       = try(var.fsxn_csi_driver.repository, "https://netapp.github.io/trident-helm-chart")
+  values           = try(var.fsxn_csi_driver.values, [])
+
+  timeout                    = try(var.fsxn_csi_driver.timeout, null)
+  repository_key_file        = try(var.fsxn_csi_driver.repository_key_file, null)
+  repository_cert_file       = try(var.fsxn_csi_driver.repository_cert_file, null)
+  repository_ca_file         = try(var.fsxn_csi_driver.repository_ca_file, null)
+  repository_username        = try(var.fsxn_csi_driver.repository_username, null)
+  repository_password        = try(var.fsxn_csi_driver.repository_password, null)
+  devel                      = try(var.fsxn_csi_driver.devel, null)
+  verify                     = try(var.fsxn_csi_driver.verify, null)
+  keyring                    = try(var.fsxn_csi_driver.keyring, null)
+  disable_webhooks           = try(var.fsxn_csi_driver.disable_webhooks, null)
+  reuse_values               = try(var.fsxn_csi_driver.reuse_values, null)
+  reset_values               = try(var.fsxn_csi_driver.reset_values, null)
+  force_update               = try(var.fsxn_csi_driver.force_update, null)
+  recreate_pods              = try(var.fsxn_csi_driver.recreate_pods, null)
+  cleanup_on_fail            = try(var.fsxn_csi_driver.cleanup_on_fail, null)
+  max_history                = try(var.fsxn_csi_driver.max_history, null)
+  atomic                     = try(var.fsxn_csi_driver.atomic, null)
+  skip_crds                  = try(var.fsxn_csi_driver.skip_crds, null)
+  render_subchart_notes      = try(var.fsxn_csi_driver.render_subchart_notes, null)
+  disable_openapi_validation = try(var.fsxn_csi_driver.disable_openapi_validation, null)
+  wait                       = try(var.fsxn_csi_driver.wait, null)
+  wait_for_jobs              = try(var.fsxn_csi_driver.wait_for_jobs, null)
+  dependency_update          = try(var.fsxn_csi_driver.dependency_update, null)
+  replace                    = try(var.fsxn_csi_driver.replace, null)
+  lint                       = try(var.fsxn_csi_driver.lint, null)
+
+  postrender = try(var.fsxn_csi_driver.postrender, [])
+  set = try(var.fsxn_csi_driver.set, [])
+  set_sensitive = try(var.fsxn_csi_driver.set_sensitive, [])
+  
+}
+
+################################################################################
 # Secrets Store CSI Driver
 ################################################################################
 
