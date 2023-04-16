@@ -1511,8 +1511,8 @@ module "fsxn_csi_driver" {
   replace                    = try(var.fsxn_csi_driver.replace, null)
   lint                       = try(var.fsxn_csi_driver.lint, null)
 
-  postrender = try(var.fsxn_csi_driver.postrender, [])
-  set = try(var.fsxn_csi_driver.set, [])
+  postrender    = try(var.fsxn_csi_driver.postrender, [])
+  set           = try(var.fsxn_csi_driver.set, [])
   set_sensitive = try(var.fsxn_csi_driver.set_sensitive, [])
   
 }
