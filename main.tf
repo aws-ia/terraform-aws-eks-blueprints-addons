@@ -1514,7 +1514,6 @@ module "fsxn_csi_driver" {
   postrender    = try(var.fsxn_csi_driver.postrender, [])
   set           = try(var.fsxn_csi_driver.set, [])
   set_sensitive = try(var.fsxn_csi_driver.set_sensitive, [])
-  
 }
 
 ################################################################################
