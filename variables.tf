@@ -424,7 +424,51 @@ variable "metrics_server" {
   default     = {}
 }
 
+################################################################################
+# Cluster Proportional Autoscaler
+################################################################################
 
+variable "enable_cluster_proportional_autoscaler" {
+  description = "Enable Cluster Proportional Autoscaler"
+  type        = bool
+  default     = false
+}
+
+variable "enable_cluster_proportional_autoscaler_gitops" {
+  description = "Enable Cluster Proportional Autoscaler GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "cluster_proportional_autoscaler" {
+  description = "Cluster Proportional Autoscaler add-on configurations"
+  type        = any
+  default     = {}
+}
+
+################################################################################
+# Ingress Nginx
+################################################################################
+
+variable "enable_ingress_nginx" {
+  description = "Enable Ingress Nginx"
+  type        = bool
+  default     = false
+}
+
+variable "enable_ingress_nginx_gitops" {
+  description = "Enable Ingress Nginx GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "ingress_nginx" {
+  description = "Ingress Nginx add-on configurations"
+  type        = any
+  default     = {}
+}
+
+#-------------------------------------------------------------------------------
 variable "irsa_iam_role_path" {
   description = "IAM role path for IRSA roles"
   type        = string
@@ -531,19 +575,6 @@ variable "enable_aws_load_balancer_controller_gitops" {
 
 variable "aws_load_balancer_controller" {
   description = "AWS Loadbalancer Controller addon configuration values"
-  type        = any
-  default     = {}
-}
-
-#-----------NGINX-------------
-variable "enable_ingress_nginx" {
-  description = "Enable Ingress Nginx add-on"
-  type        = bool
-  default     = false
-}
-
-variable "ingress_nginx_helm_config" {
-  description = "Ingress Nginx Helm Chart config"
   type        = any
   default     = {}
 }

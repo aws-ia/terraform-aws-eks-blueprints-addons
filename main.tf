@@ -1437,7 +1437,7 @@ locals {
   }
 }
 
-# 
+#
 data "aws_iam_policy_document" "cluster_autoscaler" {
   count = var.enable_cluster_autoscaler ? 1 : 0
 
@@ -2317,7 +2317,7 @@ module "metrics_server" {
   description      = try(var.metrics_server.description, "A Helm chart to install the Metrics Server")
   namespace        = try(var.metrics_server.namespace, "kube-system")
   create_namespace = try(var.metrics_server.create_namespace, false)
-  chart            = "secrets-store-csi-driver"
+  chart            = "metrics-server"
   chart_version    = try(var.metrics_server.chart_version, "3.10.0")
   repository       = try(var.metrics_server.repository, "https://kubernetes-sigs.github.io/metrics-server/")
   values           = try(var.metrics_server.values, [])
@@ -2408,6 +2408,63 @@ module "ingress_nginx" {
   postrender    = try(var.ingress_nginx.postrender, [])
   set           = try(var.ingress_nginx.set, [])
   set_sensitive = try(var.ingress_nginx.set_sensitive, [])
+
+  tags = var.tags
+}
+
+################################################################################
+# Cluster Proportional Autoscaler
+################################################################################
+
+locals {
+  cluster_proportional_autoscaler_name = "cluster-proportional-autoscaler"
+}
+
+module "cluster_proportional_autoscaler" {
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_cluster_proportional_autoscaler
+
+  # https://github.com/kubernetes-sigs/cluster-proportional-autoscaler/blob/master/charts/cluster-proportional-autoscaler/Chart.yaml
+  name             = try(var.cluster_proportional_autoscaler.name, local.cluster_proportional_autoscaler_name)
+  description      = try(var.cluster_proportional_autoscaler.description, "A Helm chart to install the Cluster Proportional Autoscaler")
+  namespace        = try(var.cluster_proportional_autoscaler.namespace, "kube-system")
+  create_namespace = try(var.cluster_proportional_autoscaler.create_namespace, false)
+  chart            = local.cluster_proportional_autoscaler_name
+  chart_version    = try(var.cluster_proportional_autoscaler.chart_version, "1.1.0")
+  repository       = try(var.cluster_proportional_autoscaler.repository, "https://kubernetes-sigs.github.io/cluster-proportional-autoscaler")
+  values           = try(var.cluster_proportional_autoscaler.values, [])
+
+  timeout                    = try(var.cluster_proportional_autoscaler.timeout, null)
+  repository_key_file        = try(var.cluster_proportional_autoscaler.repository_key_file, null)
+  repository_cert_file       = try(var.cluster_proportional_autoscaler.repository_cert_file, null)
+  repository_ca_file         = try(var.cluster_proportional_autoscaler.repository_ca_file, null)
+  repository_username        = try(var.cluster_proportional_autoscaler.repository_username, null)
+  repository_password        = try(var.cluster_proportional_autoscaler.repository_password, null)
+  devel                      = try(var.cluster_proportional_autoscaler.devel, null)
+  verify                     = try(var.cluster_proportional_autoscaler.verify, null)
+  keyring                    = try(var.cluster_proportional_autoscaler.keyring, null)
+  disable_webhooks           = try(var.cluster_proportional_autoscaler.disable_webhooks, null)
+  reuse_values               = try(var.cluster_proportional_autoscaler.reuse_values, null)
+  reset_values               = try(var.cluster_proportional_autoscaler.reset_values, null)
+  force_update               = try(var.cluster_proportional_autoscaler.force_update, null)
+  recreate_pods              = try(var.cluster_proportional_autoscaler.recreate_pods, null)
+  cleanup_on_fail            = try(var.cluster_proportional_autoscaler.cleanup_on_fail, null)
+  max_history                = try(var.cluster_proportional_autoscaler.max_history, null)
+  atomic                     = try(var.cluster_proportional_autoscaler.atomic, null)
+  skip_crds                  = try(var.cluster_proportional_autoscaler.skip_crds, null)
+  render_subchart_notes      = try(var.cluster_proportional_autoscaler.render_subchart_notes, null)
+  disable_openapi_validation = try(var.cluster_proportional_autoscaler.disable_openapi_validation, null)
+  wait                       = try(var.cluster_proportional_autoscaler.wait, null)
+  wait_for_jobs              = try(var.cluster_proportional_autoscaler.wait_for_jobs, null)
+  dependency_update          = try(var.cluster_proportional_autoscaler.dependency_update, null)
+  replace                    = try(var.cluster_proportional_autoscaler.replace, null)
+  lint                       = try(var.cluster_proportional_autoscaler.lint, null)
+
+  postrender    = try(var.cluster_proportional_autoscaler.postrender, [])
+  set           = try(var.cluster_proportional_autoscaler.set, [])
+  set_sensitive = try(var.cluster_proportional_autoscaler.set_sensitive, [])
 
   tags = var.tags
 }
