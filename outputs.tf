@@ -103,11 +103,6 @@ output "gatekeeper" {
   value       = try(module.gatekeeper[0], null)
 }
 
-output "grafana" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.grafana[0], null)
-}
-
 output "ingress_nginx" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = try(module.ingress_nginx[0], null)
@@ -126,16 +121,6 @@ output "kube_prometheus_stack" {
 output "opentelemetry_operator" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = try(module.opentelemetry_operator[0], null)
-}
-
-output "prometheus" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.prometheus[0], null)
-}
-
-output "promtail" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.promtail[0], null)
 }
 
 output "secrets_store_csi_driver" {

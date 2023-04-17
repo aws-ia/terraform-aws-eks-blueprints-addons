@@ -141,6 +141,7 @@ module "eks_blueprints_addons" {
   enable_cluster_autoscaler                    = true
   enable_secrets_store_csi_driver              = true
   enable_secrets_store_csi_driver_provider_aws = true
+  enable_kube_prometheus_stack                 = true
   # need route53 zone for this
   #enable_external_dns = true
   enable_external_secrets = true
@@ -151,9 +152,7 @@ module "eks_blueprints_addons" {
   enable_metrics_server               = true
   # TODO: Revolve conflicts with cert-manager
   #enable_opentelemetry_operator = true
-  enable_prometheus = true
-  enable_promtail   = true
-  enable_vpa        = true
+  enable_vpa = true
 
   enable_aws_for_fluentbit = true
 
@@ -168,7 +167,7 @@ module "eks_blueprints_addons" {
   }
   karpenter_instance_profile = {
     # Re-using the EKS managed node group IAM role for Karpenter nodes
-    iam_role_arn = module.eks.eks_managed_node_groups["initial"].iam_role_arn
+    iam_role_name = module.eks.eks_managed_node_groups["initial"].iam_role_name
   }
 
   enable_velero = true
@@ -300,6 +299,41 @@ module "adot_irsa" {
       namespace_service_accounts = ["opentelemetry-operator-system:opentelemetry-operator"]
     }
   }
+
+  tags = local.tags
+}
+
+resource "aws_security_group" "guardduty" {
+  name        = "guardduty_vpce_allow_tls"
+  description = "Allow TLS inbound traffic"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    description = "TLS from VPC"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = local.tags
+}
+
+
+resource "aws_vpc_endpoint" "guardduty" {
+  vpc_id              = module.vpc.vpc_id
+  service_name        = "com.amazonaws.${local.region}.guardduty-data"
+  subnet_ids          = module.vpc.private_subnets
+  vpc_endpoint_type   = "Interface"
+  security_group_ids  = [aws_security_group.guardduty.id]
+  private_dns_enabled = true
 
   tags = local.tags
 }
