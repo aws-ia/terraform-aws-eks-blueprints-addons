@@ -35,6 +35,7 @@ Please note: not all addons will be supported as they are today in the main EKS 
 | <a name="module_cert_manager"></a> [cert\_manager](#module\_cert\_manager) | ./modules/eks-blueprints-addon | n/a |
 | <a name="module_cloudwatch_metrics"></a> [cloudwatch\_metrics](#module\_cloudwatch\_metrics) | ./modules/eks-blueprints-addon | n/a |
 | <a name="module_cluster_autoscaler"></a> [cluster\_autoscaler](#module\_cluster\_autoscaler) | ./modules/eks-blueprints-addon | n/a |
+| <a name="module_cluster_proportional_autoscaler"></a> [cluster\_proportional\_autoscaler](#module\_cluster\_proportional\_autoscaler) | ./modules/eks-blueprints-addon | n/a |
 | <a name="module_csi_secrets_store_provider_aws"></a> [csi\_secrets\_store\_provider\_aws](#module\_csi\_secrets\_store\_provider\_aws) | ./modules/csi-secrets-store-provider-aws | n/a |
 | <a name="module_efs_csi_driver"></a> [efs\_csi\_driver](#module\_efs\_csi\_driver) | ./modules/eks-blueprints-addon | n/a |
 | <a name="module_external_dns"></a> [external\_dns](#module\_external\_dns) | ./modules/eks-blueprints-addon | n/a |
@@ -109,6 +110,7 @@ Please note: not all addons will be supported as they are today in the main EKS 
 | <a name="input_cluster_autoscaler"></a> [cluster\_autoscaler](#input\_cluster\_autoscaler) | Cluster Autoscaler addon configuration values | `any` | `{}` | no |
 | <a name="input_cluster_endpoint"></a> [cluster\_endpoint](#input\_cluster\_endpoint) | Endpoint for your Kubernetes API server | `string` | n/a | yes |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the EKS cluster | `string` | n/a | yes |
+| <a name="input_cluster_proportional_autoscaler"></a> [cluster\_proportional\_autoscaler](#input\_cluster\_proportional\_autoscaler) | Cluster Proportional Autoscaler add-on configurations | `any` | `{}` | no |
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Kubernetes `<major>.<minor>` version to use for the EKS cluster (i.e.: `1.24`) | `string` | n/a | yes |
 | <a name="input_csi_secrets_store_provider_aws_helm_config"></a> [csi\_secrets\_store\_provider\_aws\_helm\_config](#input\_csi\_secrets\_store\_provider\_aws\_helm\_config) | CSI Secrets Store Provider AWS Helm Configurations | `any` | `null` | no |
 | <a name="input_efs_csi_driver"></a> [efs\_csi\_driver](#input\_efs\_csi\_driver) | EFS CSI Driver addon configuration values | `any` | `{}` | no |
@@ -135,6 +137,8 @@ Please note: not all addons will be supported as they are today in the main EKS 
 | <a name="input_enable_cloudwatch_metrics_gitops"></a> [enable\_cloudwatch\_metrics\_gitops](#input\_enable\_cloudwatch\_metrics\_gitops) | Enable Cloudwatch Metrics using GitOps add-on | `bool` | `false` | no |
 | <a name="input_enable_cluster_autoscaler"></a> [enable\_cluster\_autoscaler](#input\_enable\_cluster\_autoscaler) | Enable Cluster autoscaler add-on | `bool` | `false` | no |
 | <a name="input_enable_cluster_autoscaler_gitops"></a> [enable\_cluster\_autoscaler\_gitops](#input\_enable\_cluster\_autoscaler\_gitops) | Enable Cluster Autoscaler using GitOps add-on | `bool` | `false` | no |
+| <a name="input_enable_cluster_proportional_autoscaler"></a> [enable\_cluster\_proportional\_autoscaler](#input\_enable\_cluster\_proportional\_autoscaler) | Enable Cluster Proportional Autoscaler | `bool` | `false` | no |
+| <a name="input_enable_cluster_proportional_autoscaler_gitops"></a> [enable\_cluster\_proportional\_autoscaler\_gitops](#input\_enable\_cluster\_proportional\_autoscaler\_gitops) | Enable Cluster Proportional Autoscaler GitOps add-on | `bool` | `false` | no |
 | <a name="input_enable_efs_csi_driver"></a> [enable\_efs\_csi\_driver](#input\_enable\_efs\_csi\_driver) | Enable AWS EFS CSI Driver add-on | `bool` | `false` | no |
 | <a name="input_enable_efs_csi_driver_gitops"></a> [enable\_efs\_csi\_driver\_gitops](#input\_enable\_efs\_csi\_driver\_gitops) | Enable EFS CSI Driver using GitOps add-on | `bool` | `false` | no |
 | <a name="input_enable_external_dns"></a> [enable\_external\_dns](#input\_enable\_external\_dns) | Enable external-dns operator add-on | `bool` | `false` | no |
@@ -206,6 +210,7 @@ Please note: not all addons will be supported as they are today in the main EKS 
 | <a name="output_cert_manager"></a> [cert\_manager](#output\_cert\_manager) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_cloudwatch_metrics"></a> [cloudwatch\_metrics](#output\_cloudwatch\_metrics) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_cluster_autoscaler"></a> [cluster\_autoscaler](#output\_cluster\_autoscaler) | Map of attributes of the Helm release and IRSA created |
+| <a name="output_cluster_proportional_autoscaler"></a> [cluster\_proportional\_autoscaler](#output\_cluster\_proportional\_autoscaler) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_csi_secrets_store_provider_aws"></a> [csi\_secrets\_store\_provider\_aws](#output\_csi\_secrets\_store\_provider\_aws) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_efs_csi_driver"></a> [efs\_csi\_driver](#output\_efs\_csi\_driver) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_eks_addons"></a> [eks\_addons](#output\_eks\_addons) | Map of attributes for each EKS addons enabled |
