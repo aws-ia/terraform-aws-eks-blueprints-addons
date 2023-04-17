@@ -1743,7 +1743,7 @@ locals {
   karpenter_service_account_name    = try(var.karpenter.service_account_name, "karpenter")
   karpenter_enable_spot_termination = var.enable_karpenter && var.karpenter_enable_spot_termination
   create_karpenter_instance_profile = try(var.karpenter_instance_profile.create, true)
-  karpenter_instance_profile_name   = try(aws_iam_instance_profile.karpenter[0].arn, var.karpenter_instance_profile.name, "")
+  karpenter_instance_profile_name   = try(aws_iam_instance_profile.karpenter[0].name, var.karpenter_instance_profile.name, "")
 }
 
 data "aws_iam_policy_document" "karpenter" {
@@ -1883,7 +1883,7 @@ resource "aws_iam_instance_profile" "karpenter" {
 
   name_prefix = try(var.karpenter_instance_profile.name_prefix, "karpenter-")
   path        = try(var.karpenter_instance_profile.path, null)
-  role        = var.karpenter_instance_profile.iam_role_arn
+  role        = var.karpenter_instance_profile.iam_role_name
 
   tags = merge(var.tags, try(var.karpenter_instance_profile.tags, {}))
 }
