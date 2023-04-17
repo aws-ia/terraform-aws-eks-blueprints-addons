@@ -43,11 +43,12 @@ locals {
       enable             = true
       serviceAccountName = local.secrets_store_csi_driver_service_account
     } : null
-    grafana      = var.enable_grafana ? module.grafana[0].argocd_gitops_config : null
-    ingressNginx = var.enable_ingress_nginx ? module.ingress_nginx[0].argocd_gitops_config : null
+    grafana = var.enable_grafana ? module.grafana[0].argocd_gitops_config : null
+    ingressNginx = var.enable_ingress_nginx && var.enable_ingress_nginx_gitops ? {
+      enable = true
+    } : null
     metricsServer = var.enable_metrics_server && var.enable_metrics_server_gitops ? {
-      enable             = true
-      serviceAccountName = local.metrics_server_service_account
+      enable = true
     } : null
     prometheus    = var.enable_prometheus ? module.prometheus[0].argocd_gitops_config : null
     vpa           = var.enable_vpa ? module.vpa[0].argocd_gitops_config : null

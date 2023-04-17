@@ -83,6 +83,11 @@ output "external_dns" {
   value       = module.external_dns
 }
 
+output "ingress_nginx" {
+  description = "Map of attributes of the Helm release and IRSA created"
+  value       = module.ingress_nginx
+}
+
 output "metrics_server" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = module.metrics_server
@@ -106,11 +111,6 @@ output "gatekeeper" {
 output "grafana" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = try(module.grafana[0], null)
-}
-
-output "ingress_nginx" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.ingress_nginx[0], null)
 }
 
 output "karpenter" {
