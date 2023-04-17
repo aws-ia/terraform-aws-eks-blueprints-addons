@@ -1437,7 +1437,6 @@ locals {
   }
 }
 
-#
 data "aws_iam_policy_document" "cluster_autoscaler" {
   count = var.enable_cluster_autoscaler ? 1 : 0
 
