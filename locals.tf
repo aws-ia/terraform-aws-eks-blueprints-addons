@@ -36,6 +36,9 @@ locals {
       enable             = true
       serviceAccountName = local.cluster_autoscaler_service_account
     } : null
+    clusterProportionalAutoscaler = var.enable_cluster_proportional_autoscaler && var.enable_cluster_proportional_autoscaler_gitops ? {
+      enable = true
+    } : null
     secretsStoreCsiDriver = var.enable_secrets_store_csi_driver && var.enable_secrets_store_csi_driver_gitops ? {
       enable             = true
       serviceAccountName = local.secrets_store_csi_driver_service_account
