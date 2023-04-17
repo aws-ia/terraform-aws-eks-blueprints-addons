@@ -447,6 +447,28 @@ variable "cluster_proportional_autoscaler" {
 }
 
 ################################################################################
+# Ingress Nginx
+################################################################################
+
+variable "enable_ingress_nginx" {
+  description = "Enable Ingress Nginx"
+  type        = bool
+  default     = false
+}
+
+variable "enable_ingress_nginx_gitops" {
+  description = "Enable Ingress Nginx GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "ingress_nginx" {
+  description = "Ingress Nginx add-on configurations"
+  type        = any
+  default     = {}
+}
+
+################################################################################
 # Kube Prometheus Stack
 ################################################################################
 
@@ -471,7 +493,6 @@ variable "kube_prometheus_stack" {
 ################################################################################
 # EFS CSI Driver
 ################################################################################
-
 
 variable "enable_efs_csi_driver" {
   description = "Enable AWS EFS CSI Driver add-on"
@@ -514,7 +535,7 @@ variable "fsx_csi_driver" {
 }
 
 ################################################################################
-# Kube Prometheus Stack
+# AWS Load Balancer Controller
 ################################################################################
 variable "enable_aws_load_balancer_controller" {
   description = "Enable AWS Load Balancer Controller add-on"
@@ -534,21 +555,18 @@ variable "aws_load_balancer_controller" {
   default     = {}
 }
 
-################################################################################
-# Ingress Nginx
-################################################################################
-variable "enable_ingress_nginx" {
-  description = "Enable Ingress Nginx add-on"
-  type        = bool
-  default     = false
+#-------------------------------------------------------------------------------
+variable "irsa_iam_role_path" {
+  description = "IAM role path for IRSA roles"
+  type        = string
+  default     = "/"
 }
 
-variable "ingress_nginx_helm_config" {
-  description = "Ingress Nginx Helm Chart config"
-  type        = any
-  default     = {}
+variable "irsa_iam_permissions_boundary" {
+  description = "IAM permissions boundary for IRSA roles"
+  type        = string
+  default     = ""
 }
-
 
 #-----------FARGATE FLUENT BIT-------------
 variable "enable_fargate_fluentbit" {
@@ -651,17 +669,4 @@ variable "gatekeeper_helm_config" {
   description = "Gatekeeper Helm Chart config"
   type        = any
   default     = {}
-}
-
-#-------------------------------------------------------------------------------
-variable "irsa_iam_role_path" {
-  description = "IAM role path for IRSA roles"
-  type        = string
-  default     = "/"
-}
-
-variable "irsa_iam_permissions_boundary" {
-  description = "IAM permissions boundary for IRSA roles"
-  type        = string
-  default     = ""
 }

@@ -1423,7 +1423,7 @@ module "aws_load_balancer_controller" {
 ################################################################################
 
 locals {
-  cluster_autoscaler_service_account = try(var.cluster_autoscaler.service_account_name, "external-secrets-sa")
+  cluster_autoscaler_service_account = try(var.cluster_autoscaler.service_account_name, "cluster-autoscaler-sa")
 
   # Lookup map to pull latest cluster-autoscaler patch version given the cluster version
   cluster_autoscaler_image_tag = {
@@ -1437,7 +1437,6 @@ locals {
   }
 }
 
-# https://github.com/external-secrets/kubernetes-external-secrets#add-a-secret
 data "aws_iam_policy_document" "cluster_autoscaler" {
   count = var.enable_cluster_autoscaler ? 1 : 0
 
@@ -1481,7 +1480,7 @@ module "cluster_autoscaler" {
 
   create = var.enable_cluster_autoscaler
 
-  # https://github.com/external-secrets/external-secrets/blob/main/deploy/charts/external-secrets/Chart.yaml
+  # https://github.com/kubernetes/autoscaler/blob/master/charts/cluster-autoscaler/Chart.yaml
   name             = try(var.cluster_autoscaler.name, "cluster-autoscaler")
   description      = try(var.cluster_autoscaler.description, "A Helm chart to deploy cluster-autoscaler")
   namespace        = try(var.cluster_autoscaler.namespace, "kube-system")
@@ -2307,8 +2306,7 @@ module "aws_privateca_issuer" {
 ################################################################################
 
 locals {
-  metrics_server_name            = "metrics-server"
-  metrics_server_service_account = try(var.metrics_server.service_account_name, "${local.metrics_server_name}-sa")
+  metrics_server_name = "metrics-server"
 }
 
 module "metrics_server" {
@@ -2356,6 +2354,63 @@ module "metrics_server" {
   postrender    = try(var.metrics_server.postrender, [])
   set           = try(var.metrics_server.set, [])
   set_sensitive = try(var.metrics_server.set_sensitive, [])
+
+  tags = var.tags
+}
+
+################################################################################
+# Ingress Nginx
+################################################################################
+
+locals {
+  ingress_nginx_name = "ingress-nginx"
+}
+
+module "ingress_nginx" {
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_ingress_nginx
+
+  # https://github.com/kubernetes/ingress-nginx/blob/main/charts/ingress-nginx/Chart.yaml
+  name             = try(var.ingress_nginx.name, local.ingress_nginx_name)
+  description      = try(var.ingress_nginx.description, "A Helm chart to install the Ingress Nginx")
+  namespace        = try(var.ingress_nginx.namespace, "ingress-nginx")
+  create_namespace = try(var.ingress_nginx.create_namespace, false)
+  chart            = local.ingress_nginx_name
+  chart_version    = try(var.ingress_nginx.chart_version, "4.6.0")
+  repository       = try(var.ingress_nginx.repository, "https://kubernetes.github.io/ingress-nginx")
+  values           = try(var.ingress_nginx.values, [])
+
+  timeout                    = try(var.ingress_nginx.timeout, null)
+  repository_key_file        = try(var.ingress_nginx.repository_key_file, null)
+  repository_cert_file       = try(var.ingress_nginx.repository_cert_file, null)
+  repository_ca_file         = try(var.ingress_nginx.repository_ca_file, null)
+  repository_username        = try(var.ingress_nginx.repository_username, null)
+  repository_password        = try(var.ingress_nginx.repository_password, null)
+  devel                      = try(var.ingress_nginx.devel, null)
+  verify                     = try(var.ingress_nginx.verify, null)
+  keyring                    = try(var.ingress_nginx.keyring, null)
+  disable_webhooks           = try(var.ingress_nginx.disable_webhooks, null)
+  reuse_values               = try(var.ingress_nginx.reuse_values, null)
+  reset_values               = try(var.ingress_nginx.reset_values, null)
+  force_update               = try(var.ingress_nginx.force_update, null)
+  recreate_pods              = try(var.ingress_nginx.recreate_pods, null)
+  cleanup_on_fail            = try(var.ingress_nginx.cleanup_on_fail, null)
+  max_history                = try(var.ingress_nginx.max_history, null)
+  atomic                     = try(var.ingress_nginx.atomic, null)
+  skip_crds                  = try(var.ingress_nginx.skip_crds, null)
+  render_subchart_notes      = try(var.ingress_nginx.render_subchart_notes, null)
+  disable_openapi_validation = try(var.ingress_nginx.disable_openapi_validation, null)
+  wait                       = try(var.ingress_nginx.wait, null)
+  wait_for_jobs              = try(var.ingress_nginx.wait_for_jobs, null)
+  dependency_update          = try(var.ingress_nginx.dependency_update, null)
+  replace                    = try(var.ingress_nginx.replace, null)
+  lint                       = try(var.ingress_nginx.lint, null)
+
+  postrender    = try(var.ingress_nginx.postrender, [])
+  set           = try(var.ingress_nginx.set, [])
+  set_sensitive = try(var.ingress_nginx.set_sensitive, [])
 
   tags = var.tags
 }
@@ -2501,14 +2556,6 @@ module "fargate_fluentbit" {
   source        = "./modules/fargate-fluentbit"
   addon_config  = var.fargate_fluentbit_addon_config
   addon_context = local.addon_context
-}
-
-module "ingress_nginx" {
-  count             = var.enable_ingress_nginx ? 1 : 0
-  source            = "./modules/ingress-nginx"
-  helm_config       = var.ingress_nginx_helm_config
-  manage_via_gitops = var.argocd_manage_add_ons
-  addon_context     = local.addon_context
 }
 
 module "vpa" {
