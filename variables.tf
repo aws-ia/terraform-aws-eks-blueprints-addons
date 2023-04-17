@@ -568,12 +568,6 @@ variable "enable_fsxn_csi_driver" {
   default     = false
 }
 
-variable "enable_fsxn_csi_driver_gitops" {
-  description = "Enable FSX NETAPP ONTAP CSI Driver using GitOps add-on"
-  type        = bool
-  default     = false
-}
-
 variable "fsxn_csi_driver" {
   description = "FSX NETAPP ONTAP CSI Driver addon configuration values"
   type        = any
