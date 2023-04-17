@@ -46,6 +46,40 @@ variable "eks_addons_timeouts" {
 }
 
 ################################################################################
+# AWS Node Termination Handler
+################################################################################
+
+variable "enable_aws_node_termination_handler" {
+  description = "Enable AWS Node Termination Handler add-on"
+  type        = bool
+  default     = false
+}
+
+variable "enable_aws_node_termination_handler_gitops" {
+  description = "Enable AWS Node Termination Handler using GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "aws_node_termination_handler" {
+  description = "AWS Node Termination Handler addon configuration values"
+  type        = any
+  default     = {}
+}
+
+variable "aws_node_termination_handler_sqs" {
+  description = "AWS Node Termination Handler SQS queue configuration values"
+  type        = any
+  default     = {}
+}
+
+variable "aws_node_termination_handler_asg_arns" {
+  description = "List of Auto Scaling group ARNs that AWS Node Termination Handler will monitor for EC2 events"
+  type        = list(string)
+  default     = []
+}
+
+################################################################################
 # ArgoCD
 ################################################################################
 
@@ -257,23 +291,44 @@ variable "external_dns_route53_zone_arns" {
   default     = []
 }
 
+################################################################################
+# Karpenter
+################################################################################
 
-variable "auto_scaling_group_names" {
-  description = "List of self-managed node groups autoscaling group names"
-  type        = list(string)
-  default     = []
+variable "enable_karpenter" {
+  description = "Enable Karpenter controller add-on"
+  type        = bool
+  default     = false
 }
 
-variable "irsa_iam_role_path" {
-  description = "IAM role path for IRSA roles"
-  type        = string
-  default     = "/"
+variable "karpenter" {
+  description = "Karpenter addon configuration values"
+  type        = any
+  default     = {}
 }
 
-variable "irsa_iam_permissions_boundary" {
-  description = "IAM permissions boundary for IRSA roles"
-  type        = string
-  default     = ""
+variable "enable_karpenter_gitops" {
+  description = "Enable Karpenter using GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "karpenter_enable_spot_termination" {
+  description = "Determines whether to enable native node termination handling"
+  type        = bool
+  default     = true
+}
+
+variable "karpenter_sqs" {
+  description = "Karpenter SQS queue for native node termination handling configuration values"
+  type        = any
+  default     = {}
+}
+
+variable "karpenter_instance_profile" {
+  description = "Karpenter instance profile configuration values"
+  type        = any
+  default     = {}
 }
 
 ################################################################################
@@ -298,7 +353,133 @@ variable "secrets_store_csi_driver" {
   default     = {}
 }
 
+################################################################################
+# AWS for Fluentbit
+################################################################################
+variable "enable_aws_for_fluentbit" {
+  description = "Enable AWS for FluentBit add-on"
+  type        = bool
+  default     = false
+}
 
+variable "enable_aws_for_fluentbit_gitops" {
+  description = "Enable AWS for FluentBit add-on"
+  type        = bool
+  default     = false
+}
+
+variable "aws_for_fluentbit" {
+  description = "AWS Fluentbit add-on configurations"
+  type        = any
+  default     = {}
+}
+
+variable "aws_for_fluentbit_cw_log_group" {
+  description = "AWS Fluentbit CloudWatch Log Group configurations"
+  type        = any
+  default     = {}
+}
+
+################################################################################
+# AWS Private CA Issuer
+################################################################################
+
+variable "enable_aws_privateca_issuer" {
+  description = "Enable AWS PCA Issuer"
+  type        = bool
+  default     = false
+}
+
+variable "enable_aws_privateca_issuer_gitops" {
+  description = "Enable AWS PCA Issuer GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "aws_privateca_issuer" {
+  description = "AWS PCA Issuer add-on configurations"
+  type        = any
+  default     = {}
+}
+
+################################################################################
+# Metrics Server
+################################################################################
+
+variable "enable_metrics_server" {
+  description = "Enable metrics server add-on"
+  type        = bool
+  default     = false
+}
+
+variable "enable_metrics_server_gitops" {
+  description = "Enable metrics GitOps server add-on"
+  type        = bool
+  default     = false
+}
+
+variable "metrics_server" {
+  description = "Metrics Server add-on configurations"
+  type        = any
+  default     = {}
+}
+
+################################################################################
+# Cluster Proportional Autoscaler
+################################################################################
+
+variable "enable_cluster_proportional_autoscaler" {
+  description = "Enable Cluster Proportional Autoscaler"
+  type        = bool
+  default     = false
+}
+
+variable "enable_cluster_proportional_autoscaler_gitops" {
+  description = "Enable Cluster Proportional Autoscaler GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "cluster_proportional_autoscaler" {
+  description = "Cluster Proportional Autoscaler add-on configurations"
+  type        = any
+  default     = {}
+}
+
+################################################################################
+# Ingress Nginx
+################################################################################
+
+variable "enable_ingress_nginx" {
+  description = "Enable Ingress Nginx"
+  type        = bool
+  default     = false
+}
+
+variable "enable_ingress_nginx_gitops" {
+  description = "Enable Ingress Nginx GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "ingress_nginx" {
+  description = "Ingress Nginx add-on configurations"
+  type        = any
+  default     = {}
+}
+
+#-------------------------------------------------------------------------------
+variable "irsa_iam_role_path" {
+  description = "IAM role path for IRSA roles"
+  type        = string
+  default     = "/"
+}
+
+variable "irsa_iam_permissions_boundary" {
+  description = "IAM permissions boundary for IRSA roles"
+  type        = string
+  default     = ""
+}
 
 #-----------Amazon Managed Service for Prometheus-------------
 variable "enable_amazon_prometheus" {
@@ -335,19 +516,6 @@ variable "enable_kube_prometheus_stack" {
 
 variable "kube_prometheus_stack_helm_config" {
   description = "Community kube-prometheus-stack Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#-----------METRIC SERVER-------------
-variable "enable_metrics_server" {
-  description = "Enable metrics server add-on"
-  type        = bool
-  default     = false
-}
-
-variable "metrics_server_helm_config" {
-  description = "Metrics Server Helm Chart config"
   type        = any
   default     = {}
 }
@@ -431,67 +599,6 @@ variable "aws_load_balancer_controller" {
   default     = {}
 }
 
-#-----------NGINX-------------
-variable "enable_ingress_nginx" {
-  description = "Enable Ingress Nginx add-on"
-  type        = bool
-  default     = false
-}
-
-variable "ingress_nginx_helm_config" {
-  description = "Ingress Nginx Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#-----------AWS FOR FLUENT BIT-------------
-variable "enable_aws_for_fluentbit" {
-  description = "Enable AWS for FluentBit add-on"
-  type        = bool
-  default     = false
-}
-
-variable "aws_for_fluentbit_helm_config" {
-  description = "AWS for FluentBit Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "aws_for_fluentbit_irsa_policies" {
-  description = "Additional IAM policies for a IAM role for service accounts"
-  type        = list(string)
-  default     = []
-}
-
-variable "aws_for_fluentbit_create_cw_log_group" {
-  description = "Set to false to use existing CloudWatch log group supplied via the cw_log_group_name variable."
-  type        = bool
-  default     = true
-}
-
-variable "aws_for_fluentbit_cw_log_group_name" {
-  description = "FluentBit CloudWatch Log group name"
-  type        = string
-  default     = null
-}
-
-variable "aws_for_fluentbit_cw_log_group_retention" {
-  description = "FluentBit CloudWatch Log group retention period"
-  type        = number
-  default     = 90
-}
-
-variable "aws_for_fluentbit_cw_log_group_skip_destroy" {
-  description = "Set to true if you do not wish the log group (and any logs it may contain) to be deleted at destroy time"
-  type        = bool
-  default     = true
-}
-
-variable "aws_for_fluentbit_cw_log_group_kms_key_arn" {
-  description = "FluentBit CloudWatch Log group KMS Key"
-  type        = string
-  default     = null
-}
 
 #-----------FARGATE FLUENT BIT-------------
 variable "enable_fargate_fluentbit" {
@@ -504,85 +611,6 @@ variable "fargate_fluentbit_addon_config" {
   description = "Fargate fluentbit add-on config"
   type        = any
   default     = {}
-}
-
-#-----------AWS NODE TERMINATION HANDLER-------------
-variable "enable_aws_node_termination_handler" {
-  description = "Enable AWS Node Termination Handler add-on"
-  type        = bool
-  default     = false
-}
-
-variable "aws_node_termination_handler_helm_config" {
-  description = "AWS Node Termination Handler Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "aws_node_termination_handler_irsa_policies" {
-  description = "Additional IAM policies for a IAM role for service accounts"
-  type        = list(string)
-  default     = []
-}
-
-#-----------KARPENTER ADDON-------------
-variable "enable_karpenter" {
-  description = "Enable Karpenter autoscaler add-on"
-  type        = bool
-  default     = false
-}
-
-variable "karpenter_helm_config" {
-  description = "Karpenter autoscaler add-on config"
-  type        = any
-  default     = {}
-}
-
-variable "karpenter_irsa_policies" {
-  description = "Additional IAM policies for a IAM role for service accounts"
-  type        = list(string)
-  default     = []
-}
-
-variable "karpenter_node_iam_instance_profile" {
-  description = "Karpenter Node IAM Instance profile id"
-  type        = string
-  default     = ""
-}
-
-variable "karpenter_enable_spot_termination_handling" {
-  description = "Determines whether to enable native spot termination handling"
-  type        = bool
-  default     = false
-}
-
-variable "karpenter_event_rule_name_prefix" {
-  description = "Prefix used for karpenter event bridge rules"
-  type        = string
-  default     = ""
-
-  validation {
-    condition     = length(var.karpenter_event_rule_name_prefix) <= 14
-    error_message = "Maximum input length exceeded. Please enter no more than 14 characters."
-  }
-}
-
-variable "sqs_queue_managed_sse_enabled" {
-  description = "Enable server-side encryption (SSE) for a SQS queue"
-  type        = bool
-  default     = true
-}
-
-variable "sqs_queue_kms_master_key_id" {
-  description = "The ID of an AWS-managed customer master key (CMK) for Amazon SQS or a custom CMK"
-  type        = string
-  default     = null
-}
-
-variable "sqs_queue_kms_data_key_reuse_period_seconds" {
-  description = "The length of time, in seconds, for which Amazon SQS can reuse a data key to encrypt or decrypt messages before calling AWS KMS again"
-  type        = number
-  default     = null
 }
 
 #------Vertical Pod Autoscaler(VPA) ADDON--------
@@ -598,30 +626,6 @@ variable "vpa_helm_config" {
   default     = null
 }
 
-#-----------AWS PCA ISSUER-------------
-variable "enable_aws_privateca_issuer" {
-  description = "Enable PCA Issuer"
-  type        = bool
-  default     = false
-}
-
-variable "aws_privateca_issuer_helm_config" {
-  description = "PCA Issuer Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "aws_privateca_acmca_arn" {
-  description = "ARN of AWS ACM PCA"
-  type        = string
-  default     = ""
-}
-
-variable "aws_privateca_issuer_irsa_policies" {
-  description = "IAM policy ARNs for AWS ACM PCA IRSA"
-  type        = list(string)
-  default     = []
-}
 
 #-----------OPENTELEMETRY OPERATOR-------------
 variable "enable_opentelemetry_operator" {

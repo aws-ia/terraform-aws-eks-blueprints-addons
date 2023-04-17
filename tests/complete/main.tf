@@ -60,7 +60,7 @@ locals {
 #tfsec:ignore:aws-eks-enable-control-plane-logging
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 19.10"
+  version = "~> 19.13"
 
   cluster_name                   = local.name
   cluster_version                = "1.25"
@@ -69,6 +69,8 @@ module "eks" {
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
+  manage_aws_auth_configmap = true
+
   eks_managed_node_groups = {
     initial = {
       instance_types = ["m5.xlarge"]
@@ -76,6 +78,16 @@ module "eks" {
       min_size     = 2
       max_size     = 10
       desired_size = 2
+    }
+  }
+
+  self_managed_node_groups = {
+    default = {
+      instance_type = "m5.large"
+
+      min_size     = 1
+      max_size     = 3
+      desired_size = 1
     }
   }
 
@@ -111,6 +123,13 @@ module "eks_blueprints_addons" {
     kube-proxy = {
       most_recent = true
     }
+    adot = {
+      most_recent              = true
+      service_account_role_arn = module.adot_irsa.iam_role_arn
+    }
+    aws-guardduty-agent = {
+      most_recent = true
+    }
   }
 
   enable_efs_csi_driver                        = true
@@ -137,25 +156,19 @@ module "eks_blueprints_addons" {
   enable_vpa        = true
 
   enable_aws_for_fluentbit = true
-  # deletes log group on destroy
-  aws_for_fluentbit_cw_log_group_skip_destroy = false
 
-  enable_aws_node_termination_handler = true
-  #PSPs are deprecated in 1.25
-  aws_node_termination_handler_helm_config = {
-    set = [
-      {
-        name  = "rbac.pspEnabled"
-        value = false
-      }
-    ]
-  }
+  enable_aws_node_termination_handler   = true
+  aws_node_termination_handler_asg_arns = [for asg in module.eks.self_managed_node_groups : asg.autoscaling_group_arn]
 
   enable_karpenter = true
   # ECR login required
-  karpenter_helm_config = {
+  karpenter = {
     repository_username = data.aws_ecrpublic_authorization_token.token.user_name
     repository_password = data.aws_ecrpublic_authorization_token.token.password
+  }
+  karpenter_instance_profile = {
+    # Re-using the EKS managed node group IAM role for Karpenter nodes
+    iam_role_arn = module.eks.eks_managed_node_groups["initial"].iam_role_arn
   }
 
   enable_velero = true
@@ -264,6 +277,27 @@ module "vpc_cni_irsa" {
     main = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["kube-system:aws-node"]
+    }
+  }
+
+  tags = local.tags
+}
+
+module "adot_irsa" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version = "~> 5.14"
+
+  role_name_prefix = "${local.name}-adot-"
+
+  role_policy_arns = {
+    prometheus = "arn:aws:iam::aws:policy/AmazonPrometheusRemoteWriteAccess"
+    xray       = "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
+    cloudwatch = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+  }
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["opentelemetry-operator-system:opentelemetry-operator"]
     }
   }
 
