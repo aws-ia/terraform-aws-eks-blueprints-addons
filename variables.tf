@@ -425,7 +425,7 @@ variable "metrics_server" {
 }
 
 ################################################################################
-# AWS Private CA Issuer
+# Cluster Proportional Autoscaler
 ################################################################################
 
 variable "enable_cluster_proportional_autoscaler" {
