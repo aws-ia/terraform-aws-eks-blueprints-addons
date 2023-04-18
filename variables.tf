@@ -468,59 +468,31 @@ variable "ingress_nginx" {
   default     = {}
 }
 
-#-------------------------------------------------------------------------------
-variable "irsa_iam_role_path" {
-  description = "IAM role path for IRSA roles"
-  type        = string
-  default     = "/"
-}
+################################################################################
+# Kube Prometheus Stack
+################################################################################
 
-variable "irsa_iam_permissions_boundary" {
-  description = "IAM permissions boundary for IRSA roles"
-  type        = string
-  default     = ""
-}
-
-#-----------Amazon Managed Service for Prometheus-------------
-variable "enable_amazon_prometheus" {
-  description = "Enable AWS Managed Prometheus service"
-  type        = bool
-  default     = false
-}
-
-variable "amazon_prometheus_workspace_endpoint" {
-  description = "AWS Managed Prometheus WorkSpace Endpoint"
-  type        = string
-  default     = null
-}
-
-#-----------PROMETHEUS-------------
-variable "enable_prometheus" {
-  description = "Enable Community Prometheus add-on"
-  type        = bool
-  default     = false
-}
-
-variable "prometheus_helm_config" {
-  description = "Community Prometheus Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-#-----------KUBE-PROMETHEUS-STACK-------------
 variable "enable_kube_prometheus_stack" {
-  description = "Enable Community kube-prometheus-stack add-on"
+  description = "Enable Kube Prometheus Stack"
   type        = bool
   default     = false
 }
 
-variable "kube_prometheus_stack_helm_config" {
-  description = "Community kube-prometheus-stack Helm Chart config"
+variable "enable_kube_prometheus_stack_gitops" {
+  description = "Enable Kube Prometheus Stack GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "kube_prometheus_stack" {
+  description = "Kube Prometheus Stack add-on configurations"
   type        = any
   default     = {}
 }
 
-#-----------AWS EFS CSI DRIVER ADDON-------------
+################################################################################
+# EFS CSI Driver
+################################################################################
 
 variable "enable_efs_csi_driver" {
   description = "Enable AWS EFS CSI Driver add-on"
@@ -540,7 +512,9 @@ variable "efs_csi_driver" {
   default     = {}
 }
 
-#-----------AWS FSX CSI DRIVER ADDON-------------
+################################################################################
+# FSx CSI Driver
+################################################################################
 
 variable "enable_fsx_csi_driver" {
   description = "Enable AWS FSX CSI Driver add-on"
@@ -560,7 +534,9 @@ variable "fsx_csi_driver" {
   default     = {}
 }
 
-#-----------AWS LB Ingress Controller-------------
+################################################################################
+# AWS Load Balancer Controller
+################################################################################
 variable "enable_aws_load_balancer_controller" {
   description = "Enable AWS Load Balancer Controller add-on"
   type        = bool
@@ -579,6 +555,18 @@ variable "aws_load_balancer_controller" {
   default     = {}
 }
 
+#-------------------------------------------------------------------------------
+variable "irsa_iam_role_path" {
+  description = "IAM role path for IRSA roles"
+  type        = string
+  default     = "/"
+}
+
+variable "irsa_iam_permissions_boundary" {
+  description = "IAM permissions boundary for IRSA roles"
+  type        = string
+  default     = ""
+}
 
 #-----------FARGATE FLUENT BIT-------------
 variable "enable_fargate_fluentbit" {
@@ -668,37 +656,6 @@ variable "csi_secrets_store_provider_aws_helm_config" {
   type        = any
   default     = null
   description = "CSI Secrets Store Provider AWS Helm Configurations"
-}
-
-#-----------Grafana ADDON-------------
-variable "enable_grafana" {
-  description = "Enable Grafana add-on"
-  type        = bool
-  default     = false
-}
-variable "grafana_helm_config" {
-  description = "Kubernetes Grafana Helm Chart config"
-  type        = any
-  default     = null
-}
-
-variable "grafana_irsa_policies" {
-  description = "IAM policy ARNs for grafana IRSA"
-  type        = list(string)
-  default     = []
-}
-
-#-----------Promtail ADDON-------------
-variable "enable_promtail" {
-  description = "Enable Promtail add-on"
-  type        = bool
-  default     = false
-}
-
-variable "promtail_helm_config" {
-  description = "Promtail Helm Chart config"
-  type        = any
-  default     = {}
 }
 
 #-----------Gatekeeper ADDON-------------
