@@ -2053,7 +2053,8 @@ module "secrets_store_csi_driver" {
 ################################################################################
 
 locals {
-  csi_secrets_store_provider_aws_name      = "secrets-store-csi-driver-provider-aws"
+  csi_secrets_store_provider_aws_name            = "secrets-store-csi-driver-provider-aws"
+  csi_secrets_store_provider_aws_service_account = try(var.csi_secrets_store_provider_aws_name.service_account_name, "${local.csi_secrets_store_provider_aws_name}-sa")
 }
 
 module "csi_secrets_store_provider_aws" {
@@ -2065,7 +2066,7 @@ module "csi_secrets_store_provider_aws" {
 
   # https://github.com/aws/eks-charts/blob/master/stable/csi-secrets-store-provider-aws/Chart.yaml
   name             = try(var.csi_secrets_store_provider_aws.name, local.csi_secrets_store_provider_aws_name)
-  description      = try(var.csi_secrets_store_provider_aws.description, "A Helm chart to install the Secrets Store CSI Driver and the AWS Key Management Service Provider inside a Kubernetes cluster.)
+  description      = try(var.csi_secrets_store_provider_aws.description, "A Helm chart to install the Secrets Store CSI Driver and the AWS Key Management Service Provider inside a Kubernetes cluster.")
   namespace        = try(var.csi_secrets_store_provider_aws.namespace, "kube-system")
   create_namespace = try(var.csi_secrets_store_provider_aws.create_namespace, false)
   chart            = "secrets-store-csi-driver-provider-aws"
