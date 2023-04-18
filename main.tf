@@ -1746,6 +1746,10 @@ locals {
   karpenter_instance_profile_name   = try(aws_iam_instance_profile.karpenter[0].arn, var.karpenter_instance_profile.name, "")
 }
 
+data "aws_iam_role" "karpenter" {
+  name = var.karpenter_instance_profile.iam_role_name
+}
+
 data "aws_iam_policy_document" "karpenter" {
   count = var.enable_karpenter ? 1 : 0
 
@@ -1780,7 +1784,7 @@ data "aws_iam_policy_document" "karpenter" {
 
   statement {
     actions   = ["iam:PassRole"]
-    resources = [var.karpenter_instance_profile.iam_role_arn]
+    resources = [data.aws_iam_role.karpenter.arn]
   }
 
   statement {
@@ -1883,7 +1887,7 @@ resource "aws_iam_instance_profile" "karpenter" {
 
   name_prefix = try(var.karpenter_instance_profile.name_prefix, "karpenter-")
   path        = try(var.karpenter_instance_profile.path, null)
-  role        = var.karpenter_instance_profile.iam_role_arn
+  role        = var.karpenter_instance_profile.iam_role_name
 
   tags = merge(var.tags, try(var.karpenter_instance_profile.tags, {}))
 }
@@ -2010,7 +2014,7 @@ module "secrets_store_csi_driver" {
   description      = try(var.secrets_store_csi_driver.description, "A Helm chart to install the Secrets Store CSI Driver")
   namespace        = try(var.secrets_store_csi_driver.namespace, "kube-system")
   create_namespace = try(var.secrets_store_csi_driver.create_namespace, false)
-  chart            = "secrets-store-csi-driver"
+  chart            = local.secrets_store_csi_driver_name
   chart_version    = try(var.secrets_store_csi_driver.chart_version, "1.3.2")
   repository       = try(var.secrets_store_csi_driver.repository, "https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts")
   values           = try(var.secrets_store_csi_driver.values, [])
@@ -2071,7 +2075,7 @@ module "aws_for_fluentbit" {
   create_namespace = try(var.aws_for_fluentbit.create_namespace, false)
   chart            = "aws-for-fluent-bit"
   chart_version    = try(var.aws_for_fluentbit.chart_version, "0.1.24")
-  repository       = try(var.aws_for_fluentbit.repository, "https://github.com/aws/eks-charts/")
+  repository       = try(var.aws_for_fluentbit.repository, "https://aws.github.io/eks-charts")
   values           = try(var.aws_for_fluentbit.values, [])
 
   timeout                    = try(var.aws_for_fluentbit.timeout, null)
@@ -2468,6 +2472,73 @@ module "cluster_proportional_autoscaler" {
   tags = var.tags
 }
 
+################################################################################
+# Kube Prometheus stack
+################################################################################
+
+locals {
+  kube_prometheus_stack_name = "kube-prometheus-stack"
+}
+
+# During destroy CRDs created by this chart are not removed by default and
+# should be manually cleaned up:
+# kubectl delete crd alertmanagerconfigs.monitoring.coreos.com
+# kubectl delete crd alertmanagers.monitoring.coreos.com
+# kubectl delete crd podmonitors.monitoring.coreos.com
+# kubectl delete crd probes.monitoring.coreos.com
+# kubectl delete crd prometheuses.monitoring.coreos.com
+# kubectl delete crd prometheusrules.monitoring.coreos.com
+# kubectl delete crd servicemonitors.monitoring.coreos.com
+# kubectl delete crd thanosrulers.monitoring.coreos.com
+module "kube_prometheus_stack" {
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_kube_prometheus_stack
+
+  # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/Chart.yaml
+  name             = try(var.kube_prometheus_stack.name, local.kube_prometheus_stack_name)
+  description      = try(var.kube_prometheus_stack.description, "A Helm chart to install the Kube Prometheus Stack")
+  namespace        = try(var.kube_prometheus_stack.namespace, "kube-prometheus-stack")
+  create_namespace = try(var.kube_prometheus_stack.create_namespace, true)
+  chart            = local.kube_prometheus_stack_name
+  chart_version    = try(var.kube_prometheus_stack.chart_version, "45.10.1")
+  repository       = try(var.kube_prometheus_stack.repository, "https://prometheus-community.github.io/helm-charts")
+  values           = try(var.kube_prometheus_stack.values, [])
+
+  timeout                    = try(var.kube_prometheus_stack.timeout, null)
+  repository_key_file        = try(var.kube_prometheus_stack.repository_key_file, null)
+  repository_cert_file       = try(var.kube_prometheus_stack.repository_cert_file, null)
+  repository_ca_file         = try(var.kube_prometheus_stack.repository_ca_file, null)
+  repository_username        = try(var.kube_prometheus_stack.repository_username, null)
+  repository_password        = try(var.kube_prometheus_stack.repository_password, null)
+  devel                      = try(var.kube_prometheus_stack.devel, null)
+  verify                     = try(var.kube_prometheus_stack.verify, null)
+  keyring                    = try(var.kube_prometheus_stack.keyring, null)
+  disable_webhooks           = try(var.kube_prometheus_stack.disable_webhooks, null)
+  reuse_values               = try(var.kube_prometheus_stack.reuse_values, null)
+  reset_values               = try(var.kube_prometheus_stack.reset_values, null)
+  force_update               = try(var.kube_prometheus_stack.force_update, null)
+  recreate_pods              = try(var.kube_prometheus_stack.recreate_pods, null)
+  cleanup_on_fail            = try(var.kube_prometheus_stack.cleanup_on_fail, null)
+  max_history                = try(var.kube_prometheus_stack.max_history, null)
+  atomic                     = try(var.kube_prometheus_stack.atomic, null)
+  skip_crds                  = try(var.kube_prometheus_stack.skip_crds, null)
+  render_subchart_notes      = try(var.kube_prometheus_stack.render_subchart_notes, null)
+  disable_openapi_validation = try(var.kube_prometheus_stack.disable_openapi_validation, null)
+  wait                       = try(var.kube_prometheus_stack.wait, null)
+  wait_for_jobs              = try(var.kube_prometheus_stack.wait_for_jobs, null)
+  dependency_update          = try(var.kube_prometheus_stack.dependency_update, null)
+  replace                    = try(var.kube_prometheus_stack.replace, null)
+  lint                       = try(var.kube_prometheus_stack.lint, null)
+
+  postrender    = try(var.kube_prometheus_stack.postrender, [])
+  set           = try(var.kube_prometheus_stack.set, [])
+  set_sensitive = try(var.kube_prometheus_stack.set_sensitive, [])
+
+  tags = var.tags
+}
+
 #-----------------Kubernetes Add-ons----------------------
 
 module "argocd" {
@@ -2485,34 +2556,6 @@ module "fargate_fluentbit" {
   source        = "./modules/fargate-fluentbit"
   addon_config  = var.fargate_fluentbit_addon_config
   addon_context = local.addon_context
-}
-
-module "grafana" {
-  count             = var.enable_grafana ? 1 : 0
-  source            = "./modules/grafana"
-  helm_config       = var.grafana_helm_config
-  irsa_policies     = var.grafana_irsa_policies
-  manage_via_gitops = var.argocd_manage_add_ons
-  addon_context     = local.addon_context
-}
-
-module "kube_prometheus_stack" {
-  count             = var.enable_kube_prometheus_stack ? 1 : 0
-  source            = "./modules/kube-prometheus-stack"
-  helm_config       = var.kube_prometheus_stack_helm_config
-  manage_via_gitops = var.argocd_manage_add_ons
-  addon_context     = local.addon_context
-}
-
-module "prometheus" {
-  count       = var.enable_prometheus ? 1 : 0
-  source      = "./modules/prometheus"
-  helm_config = var.prometheus_helm_config
-  #AWS Managed Prometheus Workspace
-  enable_amazon_prometheus             = var.enable_amazon_prometheus
-  amazon_prometheus_workspace_endpoint = var.amazon_prometheus_workspace_endpoint
-  manage_via_gitops                    = var.argocd_manage_add_ons
-  addon_context                        = local.addon_context
 }
 
 module "vpa" {
@@ -2560,16 +2603,6 @@ module "opentelemetry_operator" {
   helm_config                   = var.opentelemetry_operator_helm_config
 
   addon_context = local.addon_context
-}
-
-module "promtail" {
-  source = "./modules/promtail"
-
-  count = var.enable_promtail ? 1 : 0
-
-  helm_config       = var.promtail_helm_config
-  manage_via_gitops = var.argocd_manage_add_ons
-  addon_context     = local.addon_context
 }
 
 module "gatekeeper" {
