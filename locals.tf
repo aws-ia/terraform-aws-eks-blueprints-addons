@@ -54,7 +54,6 @@ locals {
     metricsServer = var.enable_metrics_server && var.enable_metrics_server_gitops ? {
       enable = true
     } : null
-    prometheus    = var.enable_prometheus ? module.prometheus[0].argocd_gitops_config : null
     vpa           = var.enable_vpa ? module.vpa[0].argocd_gitops_config : null
     argoRollouts  = var.enable_argo_rollouts && var.enable_argo_rollouts_gitops ? { enable = true } : null
     argoWorkflows = var.enable_argo_workflows && var.enable_argo_workflows_gitops ? { enable = true } : null
@@ -65,7 +64,9 @@ locals {
       awsDefaultInstanceProfile = local.karpenter_instance_profile_name
       awsInterruptionQueueName  = module.karpenter_sqs.queue_name
     } : null
-    kubePrometheusStack = var.enable_kube_prometheus_stack ? module.kube_prometheus_stack[0].argocd_gitops_config : null
+    kubePrometheusStack = var.enable_kube_prometheus_stack && var.enable_kube_prometheus_stack_gitops ? {
+      enable = true
+    } : null
     awsCloudWatchMetrics = var.enable_cloudwatch_metrics && var.enable_cloudwatch_metrics_gitops ? {
       enable             = true
       serviceAccountName = local.cloudwatch_metrics_service_account
@@ -79,7 +80,6 @@ locals {
       serviceAccountName = local.external_secrets_service_account
     } : null
     velero     = var.enable_velero ? module.velero[0].argocd_gitops_config : null
-    promtail   = var.enable_promtail ? module.promtail[0].argocd_gitops_config : null
     gatekeeper = var.enable_gatekeeper ? module.gatekeeper[0].argocd_gitops_config : null
   }
 
