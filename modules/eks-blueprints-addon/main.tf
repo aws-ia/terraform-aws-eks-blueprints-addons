@@ -64,10 +64,10 @@ resource "helm_release" "this" {
   }
 
   dynamic "set" {
-    for_each = { for k, v in { "name" = var.set_irsa_name } : k => v if var.create && var.create_role && var.set_irsa_name != "" }
-
+    for_each = { for k, v in toset(var.set_irsa_names) : k => v if var.create && var.create_role }
+    iterator = each
     content {
-      name  = set.value
+      name  = each.value
       value = aws_iam_role.this[0].arn
     }
   }
@@ -181,7 +181,7 @@ resource "aws_iam_role_policy_attachment" "additional" {
 ################################################################################
 
 locals {
-  create_policy = local.create_role && var.create_policy && (length(var.policy_statements) > 0 || length(var.source_policy_documents) > 0 || length(var.override_policy_documents) > 0)
+  create_policy = local.create_role && var.create_policy
 
   policy_name = coalesce(var.policy_name, local.role_name)
 }

@@ -38,14 +38,14 @@ output "external_secrets" {
   value       = module.external_secrets
 }
 
-output "aws_for_fluent_bit" {
+output "aws_for_fluentbit" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.aws_for_fluent_bit[0], null)
+  value       = module.aws_for_fluentbit
 }
 
-output "aws_fsx_csi_driver" {
+output "fsx_csi_driver" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.aws_fsx_csi_driver[0], null)
+  value       = module.fsx_csi_driver
 }
 
 output "aws_load_balancer_controller" {
@@ -55,17 +55,17 @@ output "aws_load_balancer_controller" {
 
 output "aws_node_termination_handler" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.aws_node_termination_handler[0], null)
+  value       = module.aws_node_termination_handler
 }
 
 output "aws_privateca_issuer" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.aws_privateca_issuer[0], null)
+  value       = module.aws_privateca_issuer
 }
 
 output "cert_manager" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.cert_manager[0], null)
+  value       = module.cert_manager
 }
 
 output "cluster_autoscaler" {
@@ -75,12 +75,27 @@ output "cluster_autoscaler" {
 
 output "csi_secrets_store_provider_aws" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.csi_secrets_store_provider_aws[0], null)
+  value       = module.csi_secrets_store_provider_aws
 }
 
 output "external_dns" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = module.external_dns
+}
+
+output "ingress_nginx" {
+  description = "Map of attributes of the Helm release and IRSA created"
+  value       = module.ingress_nginx
+}
+
+output "metrics_server" {
+  description = "Map of attributes of the Helm release and IRSA created"
+  value       = module.metrics_server
+}
+
+output "cluster_proportional_autoscaler" {
+  description = "Map of attributes of the Helm release and IRSA created"
+  value       = module.cluster_proportional_autoscaler
 }
 
 output "fargate_fluentbit" {
@@ -98,24 +113,14 @@ output "grafana" {
   value       = try(module.grafana[0], null)
 }
 
-output "ingress_nginx" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.ingress_nginx[0], null)
-}
-
 output "karpenter" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.karpenter[0], null)
+  value       = module.karpenter
 }
 
 output "kube_prometheus_stack" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = try(module.kube_prometheus_stack[0], null)
-}
-
-output "metrics_server" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.metrics_server[0], null)
 }
 
 output "opentelemetry_operator" {
