@@ -42,7 +42,7 @@ Please note: not all addons will be supported as they are today in the main EKS 
 | <a name="module_external_secrets"></a> [external\_secrets](#module\_external\_secrets) | ./modules/eks-blueprints-addon | n/a |
 | <a name="module_fargate_fluentbit"></a> [fargate\_fluentbit](#module\_fargate\_fluentbit) | ./modules/fargate-fluentbit | n/a |
 | <a name="module_fsx_csi_driver"></a> [fsx\_csi\_driver](#module\_fsx\_csi\_driver) | ./modules/eks-blueprints-addon | n/a |
-| <a name="module_gatekeeper"></a> [gatekeeper](#module\_gatekeeper) | ./modules/gatekeeper | n/a |
+| <a name="module_gatekeeper"></a> [gatekeeper](#module\_gatekeeper) | ./modules/eks-blueprints-addon | n/a |
 | <a name="module_grafana"></a> [grafana](#module\_grafana) | ./modules/grafana | n/a |
 | <a name="module_ingress_nginx"></a> [ingress\_nginx](#module\_ingress\_nginx) | ./modules/eks-blueprints-addon | n/a |
 | <a name="module_karpenter"></a> [karpenter](#module\_karpenter) | ./modules/eks-blueprints-addon | n/a |
@@ -148,6 +148,7 @@ Please note: not all addons will be supported as they are today in the main EKS 
 | <a name="input_enable_fsx_csi_driver"></a> [enable\_fsx\_csi\_driver](#input\_enable\_fsx\_csi\_driver) | Enable AWS FSX CSI Driver add-on | `bool` | `false` | no |
 | <a name="input_enable_fsx_csi_driver_gitops"></a> [enable\_fsx\_csi\_driver\_gitops](#input\_enable\_fsx\_csi\_driver\_gitops) | Enable FSX CSI Driver using GitOps add-on | `bool` | `false` | no |
 | <a name="input_enable_gatekeeper"></a> [enable\_gatekeeper](#input\_enable\_gatekeeper) | Enable Gatekeeper add-on | `bool` | `false` | no |
+| <a name="input_enable_gatekeeper_gitops"></a> [enable\_gatekeeper\_gitops](#input\_enable\_gatekeeper\_gitops) | Enable Gatekeeper GitOps add-on | `bool` | `false` | no |
 | <a name="input_enable_grafana"></a> [enable\_grafana](#input\_enable\_grafana) | Enable Grafana add-on | `bool` | `false` | no |
 | <a name="input_enable_ingress_nginx"></a> [enable\_ingress\_nginx](#input\_enable\_ingress\_nginx) | Enable Ingress Nginx | `bool` | `false` | no |
 | <a name="input_enable_ingress_nginx_gitops"></a> [enable\_ingress\_nginx\_gitops](#input\_enable\_ingress\_nginx\_gitops) | Enable Ingress Nginx GitOps add-on | `bool` | `false` | no |
@@ -172,6 +173,7 @@ Please note: not all addons will be supported as they are today in the main EKS 
 | <a name="input_external_secrets_ssm_parameter_arns"></a> [external\_secrets\_ssm\_parameter\_arns](#input\_external\_secrets\_ssm\_parameter\_arns) | List of Systems Manager Parameter ARNs that contain secrets to mount using External Secrets | `list(string)` | <pre>[<br>  "arn:aws:ssm:*:*:parameter/*"<br>]</pre> | no |
 | <a name="input_fargate_fluentbit_addon_config"></a> [fargate\_fluentbit\_addon\_config](#input\_fargate\_fluentbit\_addon\_config) | Fargate fluentbit add-on config | `any` | `{}` | no |
 | <a name="input_fsx_csi_driver"></a> [fsx\_csi\_driver](#input\_fsx\_csi\_driver) | FSX CSI Driver addon configuration values | `any` | `{}` | no |
+| <a name="input_gatekeeper"></a> [gatekeeper](#input\_gatekeeper) | Gatekeeper add-on configuration | `bool` | `false` | no |
 | <a name="input_gatekeeper_helm_config"></a> [gatekeeper\_helm\_config](#input\_gatekeeper\_helm\_config) | Gatekeeper Helm Chart config | `any` | `{}` | no |
 | <a name="input_grafana_helm_config"></a> [grafana\_helm\_config](#input\_grafana\_helm\_config) | Kubernetes Grafana Helm Chart config | `any` | `null` | no |
 | <a name="input_grafana_irsa_policies"></a> [grafana\_irsa\_policies](#input\_grafana\_irsa\_policies) | IAM policy ARNs for grafana IRSA | `list(string)` | `[]` | no |

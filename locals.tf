@@ -74,9 +74,12 @@ locals {
       enable             = true
       serviceAccountName = local.external_secrets_service_account
     } : null
-    velero     = var.enable_velero ? module.velero[0].argocd_gitops_config : null
-    promtail   = var.enable_promtail ? module.promtail[0].argocd_gitops_config : null
-    gatekeeper = var.enable_gatekeeper ? module.gatekeeper[0].argocd_gitops_config : null
+    velero   = var.enable_velero ? module.velero[0].argocd_gitops_config : null
+    promtail = var.enable_promtail ? module.promtail[0].argocd_gitops_config : null
+    gatekeeper = var.enable_gatekeeper && var.enable_gatekeeper_gitops ? {
+      enable = true
+    } : null
+
   }
 
   addon_context = {

@@ -468,6 +468,28 @@ variable "ingress_nginx" {
   default     = {}
 }
 
+################################################################################
+# Gatekeeper
+################################################################################
+
+variable "enable_gatekeeper" {
+  description = "Enable Gatekeeper add-on"
+  type        = bool
+  default     = false
+}
+
+variable "enable_gatekeeper_gitops" {
+  description = "Enable Gatekeeper GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "gatekeeper" {
+  description = "Gatekeeper add-on configuration"
+  type        = bool
+  default     = false
+}
+
 #-------------------------------------------------------------------------------
 variable "irsa_iam_role_path" {
   description = "IAM role path for IRSA roles"
@@ -699,13 +721,6 @@ variable "promtail_helm_config" {
   description = "Promtail Helm Chart config"
   type        = any
   default     = {}
-}
-
-#-----------Gatekeeper ADDON-------------
-variable "enable_gatekeeper" {
-  description = "Enable Gatekeeper add-on"
-  type        = bool
-  default     = false
 }
 
 variable "gatekeeper_helm_config" {
