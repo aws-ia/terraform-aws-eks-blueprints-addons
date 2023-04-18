@@ -386,8 +386,9 @@ variable "enable_aws_for_fluentbit" {
 
 variable "enable_aws_for_fluentbit_gitops" {
   description = "Enable AWS for FluentBit add-on"
-=======
-
+  type        = bool
+  default     = false
+}
 
 variable "aws_for_fluentbit" {
   description = "AWS Fluentbit add-on configurations"
