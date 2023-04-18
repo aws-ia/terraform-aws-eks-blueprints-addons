@@ -354,6 +354,28 @@ variable "secrets_store_csi_driver" {
 }
 
 ################################################################################
+# CSI Secrets Store Provider AWS
+################################################################################
+
+variable "enable_csi_secrets_store_provider_aws" {
+  description = "Enable AWS CSI Secrets Store Provider"
+  type        = bool
+  default     = false
+}
+
+variable "enable_csi_secrets_store_provider_aws_gitops" {
+  description = "Enable AWS CSI Secrets Store Provider GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "csi_secrets_store_provider_aws" {
+  description = "CSI Secrets Store Provider add-on configurations"
+  type        = any
+  default     = {}
+}
+
+################################################################################
 # AWS for Fluentbit
 ################################################################################
 variable "enable_aws_for_fluentbit" {
@@ -364,9 +386,8 @@ variable "enable_aws_for_fluentbit" {
 
 variable "enable_aws_for_fluentbit_gitops" {
   description = "Enable AWS for FluentBit add-on"
-  type        = bool
-  default     = false
-}
+=======
+
 
 variable "aws_for_fluentbit" {
   description = "AWS Fluentbit add-on configurations"
@@ -655,19 +676,6 @@ variable "velero_backup_s3_bucket" {
   description = "Bucket name for velero bucket"
   type        = string
   default     = ""
-}
-
-#-----------AWS CSI Secrets Store Provider-------------
-variable "enable_secrets_store_csi_driver_provider_aws" {
-  type        = bool
-  default     = false
-  description = "Enable AWS CSI Secrets Store Provider"
-}
-
-variable "csi_secrets_store_provider_aws_helm_config" {
-  type        = any
-  default     = null
-  description = "CSI Secrets Store Provider AWS Helm Configurations"
 }
 
 #-----------Grafana ADDON-------------

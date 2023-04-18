@@ -43,6 +43,10 @@ locals {
       enable             = true
       serviceAccountName = local.secrets_store_csi_driver_service_account
     } : null
+    csiSecretsStoreProviderAws = var.enable_csi_secrets_store_provider_aws && var.enable_csi_secrets_store_provider_aws_gitops ? {
+      enable             = true
+      serviceAccountName = local.csi_secrets_store_provider_aws_service_account
+    } : null    
     grafana = var.enable_grafana ? module.grafana[0].argocd_gitops_config : null
     ingressNginx = var.enable_ingress_nginx && var.enable_ingress_nginx_gitops ? {
       enable = true
