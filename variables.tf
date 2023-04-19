@@ -722,9 +722,3 @@ variable "promtail_helm_config" {
   type        = any
   default     = {}
 }
-
-variable "gatekeeper_helm_config" {
-  description = "Gatekeeper Helm Chart config"
-  type        = any
-  default     = {}
-}
