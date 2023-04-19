@@ -1376,7 +1376,7 @@ module "aws_load_balancer_controller" {
   postrender = try(var.aws_load_balancer_controller.postrender, [])
   set = concat([
     {
-      name  = "controller.serviceAccount.name"
+      name  = "serviceAccount.name"
       value = local.aws_load_balancer_controller_service_account
       }, {
       name  = "clusterName"
@@ -2436,7 +2436,7 @@ module "ingress_nginx" {
   name             = try(var.ingress_nginx.name, local.ingress_nginx_name)
   description      = try(var.ingress_nginx.description, "A Helm chart to install the Ingress Nginx")
   namespace        = try(var.ingress_nginx.namespace, "ingress-nginx")
-  create_namespace = try(var.ingress_nginx.create_namespace, false)
+  create_namespace = try(var.ingress_nginx.create_namespace, true)
   chart            = local.ingress_nginx_name
   chart_version    = try(var.ingress_nginx.chart_version, "4.6.0")
   repository       = try(var.ingress_nginx.repository, "https://kubernetes.github.io/ingress-nginx")
