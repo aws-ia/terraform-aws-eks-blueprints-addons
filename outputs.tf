@@ -118,11 +118,6 @@ output "kube_prometheus_stack" {
   value       = module.kube_prometheus_stack
 }
 
-output "opentelemetry_operator" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.opentelemetry_operator[0], null)
-}
-
 output "secrets_store_csi_driver" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = module.secrets_store_csi_driver

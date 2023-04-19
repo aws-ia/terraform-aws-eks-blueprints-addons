@@ -624,31 +624,6 @@ variable "fargate_fluentbit_addon_config" {
   default     = {}
 }
 
-#-----------OPENTELEMETRY OPERATOR-------------
-variable "enable_opentelemetry_operator" {
-  description = "Enable opentelemetry operator add-on"
-  type        = bool
-  default     = false
-}
-
-variable "opentelemetry_operator_helm_config" {
-  description = "Opentelemetry Operator Helm Chart config"
-  type        = any
-  default     = {}
-}
-
-variable "enable_amazon_eks_adot" {
-  description = "Enable Amazon EKS ADOT addon"
-  type        = bool
-  default     = false
-}
-
-variable "amazon_eks_adot_config" {
-  description = "Configuration for Amazon EKS ADOT add-on"
-  type        = any
-  default     = {}
-}
-
 #-----------Kubernetes Velero ADDON-------------
 variable "enable_velero" {
   description = "Enable Kubernetes Dashboard add-on"
