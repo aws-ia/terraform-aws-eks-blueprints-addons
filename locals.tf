@@ -80,6 +80,9 @@ locals {
     gatekeeper = var.enable_gatekeeper && var.enable_gatekeeper_gitops ? {
       enable = true
     } : null
+    fargateFluentbit = var.enable_fargate_fluentbit && var.enable_fargate_fluentbit_gitops ? {
+      enable = true
+    } : null
   }
 
   addon_context = {

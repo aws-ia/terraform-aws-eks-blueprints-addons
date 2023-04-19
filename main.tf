@@ -2556,8 +2556,8 @@ module "gatekeeper" {
   # https://github.com/open-policy-agent/gatekeeper/blob/master/charts/gatekeeper/Chart.yaml
   name             = try(var.gatekeeper.name, local.cluster_proportional_autoscaler_name)
   description      = try(var.gatekeeper.description, "A Helm chart to install Gatekeeper")
-  namespace        = try(var.gatekeeper.namespace, "gatekeeper-system")
-  create_namespace = try(var.gatekeeper.create_namespace, true)
+  namespace        = try(var.gatekeeper.namespace, "kube-system")
+  create_namespace = try(var.gatekeeper.create_namespace, false)
   chart            = local.gatekeeper_name
   chart_version    = try(var.gatekeeper.chart_version, "3.12.0")
   repository       = try(var.gatekeeper.repository, "https://open-policy-agent.github.io/gatekeeper/charts")
@@ -2653,6 +2653,87 @@ module "vpa" {
   tags = var.tags
 }
 
+
+################################################################################
+# Fargate Fluentbit
+################################################################################
+# Help on Fargate Logging with Fluentbit and CloudWatch
+# https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html
+locals {
+  fargate_fluentbit_name                 = "fargate_fluentbit"
+  fargate_fluentbit_cwlog_group          = "/${var.cluster_name}/fargate-fluentbit-logs"
+  fargate_fluentebit_cwlog_stream_prefix = "fargate-logs-"
+  default_config = {
+    output_conf  = <<-EOF
+    [OUTPUT]
+      Name cloudwatch_logs
+      Match *
+      region ${local.region}
+      log_group_name ${local.fargate_fluentbit_cwlog_group}
+      log_stream_prefix ${local.fargate_fluentbit_cwlog_stream_prefix}
+      auto_create_group true
+    EOF
+    filters_conf = <<-EOF
+    [FILTER]
+      Name parser
+      Match *
+      Key_Name log
+      Parser regex
+      Preserve_Key True
+      Reserve_Data True
+    EOF
+    parsers_conf = <<-EOF
+    [PARSER]
+      Name regex
+      Format regex
+      Regex ^(?<time>[^ ]+) (?<stream>[^ ]+) (?<logtag>[^ ]+) (?<message>.+)$
+      Time_Key time
+      Time_Format %Y-%m-%dT%H:%M:%S.%L%z
+      Time_Keep On
+      Decode_Field_As json message
+    EOF
+    flb_log_cw   = false
+  }
+
+  config = merge(
+    local.default_config,
+    var.fargate_fluentbit_config
+  )
+}
+
+resource "kubernetes_namespace" "aws_observability" {
+  count = var.enable_fargate_fluentbit ? 1 : 0
+  metadata {
+    name = "aws-observability"
+
+    labels = {
+      aws-observability = "enabled"
+    }
+  }
+  tags = var.tags
+}
+
+# fluent-bit-cloudwatch value as the name of the CloudWatch log group that is automatically created as soon as your apps start logging
+resource "kubernetes_config_map" "aws_logging" {
+  count = var.enable_fargate_fluentbit ? 1 : 0
+  metadata {
+    name      = "aws-logging"
+    namespace = kubernetes_namespace.aws_observability.id
+  }
+
+  data = {
+    "parsers.conf" = local.config["parsers_conf"]
+    "filters.conf" = local.config["filters_conf"]
+    "output.conf"  = local.config["output_conf"]
+    "flb_log_cw"   = local.config["flb_log_cw"]
+  }
+
+  tags = var.tags
+}
+
+addon_config  = var.fargate_fluentbit_addon_config
+addon_context = local.addon_context
+
 #-----------------Kubernetes Add-ons----------------------
 
 module "argocd" {
@@ -2662,13 +2743,6 @@ module "argocd" {
   applications  = var.argocd_applications
   projects      = var.argocd_projects
   addon_config  = { for k, v in local.argocd_addon_config : k => v if v != null }
-  addon_context = local.addon_context
-}
-
-module "fargate_fluentbit" {
-  count         = var.enable_fargate_fluentbit ? 1 : 0
-  source        = "./modules/fargate-fluentbit"
-  addon_config  = var.fargate_fluentbit_addon_config
   addon_context = local.addon_context
 }
 
@@ -2688,4 +2762,25 @@ module "velero" {
   addon_context     = local.addon_context
   irsa_policies     = var.velero_irsa_policies
   backup_s3_bucket  = var.velero_backup_s3_bucket
+}
+
+module "opentelemetry_operator" {
+  source = "./modules/opentelemetry-operator"
+
+  count = var.enable_amazon_eks_adot || var.enable_opentelemetry_operator ? 1 : 0
+
+  # Amazon EKS ADOT addon
+  enable_amazon_eks_adot = var.enable_amazon_eks_adot
+  addon_config = merge(
+    {
+      kubernetes_version = var.cluster_version
+    },
+    var.amazon_eks_adot_config,
+  )
+
+  # Self-managed OpenTelemetry Operator via Helm chart
+  enable_opentelemetry_operator = var.enable_opentelemetry_operator
+  helm_config                   = var.opentelemetry_operator_helm_config
+
+  addon_context = local.addon_context
 }
