@@ -80,7 +80,6 @@ locals {
     } : null
   }
 
-
   addon_context = {
     aws_caller_identity_account_id = local.account_id
     aws_caller_identity_arn        = data.aws_caller_identity.current.arn
