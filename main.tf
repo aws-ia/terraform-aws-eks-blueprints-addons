@@ -2540,9 +2540,65 @@ module "kube_prometheus_stack" {
 }
 
 ################################################################################
-# Vertical Pod Autoscaler
+# Gatekeeper
 ################################################################################
 
+locals {
+  gatekeeper_name = "gatekeeper"
+}
+
+module "gatekeeper" {
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_gatekeeper
+
+  # https://github.com/open-policy-agent/gatekeeper/blob/master/charts/gatekeeper/Chart.yaml
+  name             = try(var.gatekeeper.name, local.cluster_proportional_autoscaler_name)
+  description      = try(var.gatekeeper.description, "A Helm chart to install Gatekeeper")
+  namespace        = try(var.gatekeeper.namespace, "gatekeeper-system")
+  create_namespace = try(var.gatekeeper.create_namespace, true)
+  chart            = local.gatekeeper_name
+  chart_version    = try(var.gatekeeper.chart_version, "3.12.0")
+  repository       = try(var.gatekeeper.repository, "https://open-policy-agent.github.io/gatekeeper/charts")
+  values           = try(var.gatekeeper.values, [])
+
+  timeout                    = try(var.gatekeeper.timeout, null)
+  repository_key_file        = try(var.gatekeeper.repository_key_file, null)
+  repository_cert_file       = try(var.gatekeeper.repository_cert_file, null)
+  repository_ca_file         = try(var.gatekeeper.repository_ca_file, null)
+  repository_username        = try(var.gatekeeper.repository_username, null)
+  repository_password        = try(var.gatekeeper.repository_password, null)
+  devel                      = try(var.gatekeeper.devel, null)
+  verify                     = try(var.gatekeeper.verify, null)
+  keyring                    = try(var.gatekeeper.keyring, null)
+  disable_webhooks           = try(var.gatekeeper.disable_webhooks, null)
+  reuse_values               = try(var.gatekeeper.reuse_values, null)
+  reset_values               = try(var.gatekeeper.reset_values, null)
+  force_update               = try(var.gatekeeper.force_update, null)
+  recreate_pods              = try(var.gatekeeper.recreate_pods, null)
+  cleanup_on_fail            = try(var.gatekeeper.cleanup_on_fail, null)
+  max_history                = try(var.gatekeeper.max_history, null)
+  atomic                     = try(var.gatekeeper.atomic, null)
+  skip_crds                  = try(var.gatekeeper.skip_crds, null)
+  render_subchart_notes      = try(var.gatekeeper.render_subchart_notes, null)
+  disable_openapi_validation = try(var.gatekeeper.disable_openapi_validation, null)
+  wait                       = try(var.gatekeeper.wait, null)
+  wait_for_jobs              = try(var.gatekeeper.wait_for_jobs, null)
+  dependency_update          = try(var.gatekeeper.dependency_update, null)
+  replace                    = try(var.gatekeeper.replace, null)
+  lint                       = try(var.gatekeeper.lint, null)
+
+  postrender    = try(var.gatekeeper.postrender, [])
+  set           = try(var.gatekeeper.set, [])
+  set_sensitive = try(var.gatekeeper.set_sensitive, [])
+
+  tags = var.tags
+}
+
+################################################################################
+# Vertical Pod Autoscaler
+################################################################################
 locals {
   vpa_name = "vpa"
 }
@@ -2653,14 +2709,4 @@ module "opentelemetry_operator" {
   helm_config                   = var.opentelemetry_operator_helm_config
 
   addon_context = local.addon_context
-}
-
-module "gatekeeper" {
-  source = "./modules/gatekeeper"
-
-  count = var.enable_gatekeeper ? 1 : 0
-
-  helm_config       = var.gatekeeper_helm_config
-  manage_via_gitops = var.argocd_manage_add_ons
-  addon_context     = local.addon_context
 }

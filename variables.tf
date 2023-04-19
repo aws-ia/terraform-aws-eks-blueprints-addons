@@ -491,6 +491,28 @@ variable "kube_prometheus_stack" {
 }
 
 ################################################################################
+# Gatekeeper
+################################################################################
+
+variable "enable_gatekeeper" {
+  description = "Enable Gatekeeper add-on"
+  type        = bool
+  default     = false
+}
+
+variable "enable_gatekeeper_gitops" {
+  description = "Enable Gatekeeper GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "gatekeeper" {
+  description = "Gatekeeper add-on configuration"
+  type        = bool
+  default     = false
+}
+
+################################################################################
 # EFS CSI Driver
 ################################################################################
 
@@ -663,17 +685,4 @@ variable "csi_secrets_store_provider_aws_helm_config" {
   type        = any
   default     = null
   description = "CSI Secrets Store Provider AWS Helm Configurations"
-}
-
-#-----------Gatekeeper ADDON-------------
-variable "enable_gatekeeper" {
-  description = "Enable Gatekeeper add-on"
-  type        = bool
-  default     = false
-}
-
-variable "gatekeeper_helm_config" {
-  description = "Gatekeeper Helm Chart config"
-  type        = any
-  default     = {}
 }
