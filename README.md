@@ -51,7 +51,7 @@ Please note: not all addons will be supported as they are today in the main EKS 
 | <a name="module_opentelemetry_operator"></a> [opentelemetry\_operator](#module\_opentelemetry\_operator) | ./modules/opentelemetry-operator | n/a |
 | <a name="module_secrets_store_csi_driver"></a> [secrets\_store\_csi\_driver](#module\_secrets\_store\_csi\_driver) | ./modules/eks-blueprints-addon | n/a |
 | <a name="module_velero"></a> [velero](#module\_velero) | ./modules/velero | n/a |
-| <a name="module_vpa"></a> [vpa](#module\_vpa) | ./modules/vpa | n/a |
+| <a name="module_vpa"></a> [vpa](#module\_vpa) | ./modules/eks-blueprints-addon | n/a |
 
 ## Resources
 
@@ -122,7 +122,7 @@ Please note: not all addons will be supported as they are today in the main EKS 
 | <a name="input_enable_aws_for_fluentbit"></a> [enable\_aws\_for\_fluentbit](#input\_enable\_aws\_for\_fluentbit) | Enable AWS for FluentBit add-on | `bool` | `false` | no |
 | <a name="input_enable_aws_for_fluentbit_gitops"></a> [enable\_aws\_for\_fluentbit\_gitops](#input\_enable\_aws\_for\_fluentbit\_gitops) | Enable AWS for FluentBit add-on | `bool` | `false` | no |
 | <a name="input_enable_aws_load_balancer_controller"></a> [enable\_aws\_load\_balancer\_controller](#input\_enable\_aws\_load\_balancer\_controller) | Enable AWS Load Balancer Controller add-on | `bool` | `false` | no |
-| <a name="input_enable_aws_load_balancer_controller_gitops"></a> [enable\_aws\_load\_balancer\_controller\_gitops](#input\_enable\_aws\_load\_balancer\_controller\_gitops) | AWS Load Balancer Controllerusing GitOps add-on | `bool` | `false` | no |
+| <a name="input_enable_aws_load_balancer_controller_gitops"></a> [enable\_aws\_load\_balancer\_controller\_gitops](#input\_enable\_aws\_load\_balancer\_controller\_gitops) | AWS Load Balancer Controller using GitOps add-on | `bool` | `false` | no |
 | <a name="input_enable_aws_node_termination_handler"></a> [enable\_aws\_node\_termination\_handler](#input\_enable\_aws\_node\_termination\_handler) | Enable AWS Node Termination Handler add-on | `bool` | `false` | no |
 | <a name="input_enable_aws_node_termination_handler_gitops"></a> [enable\_aws\_node\_termination\_handler\_gitops](#input\_enable\_aws\_node\_termination\_handler\_gitops) | Enable AWS Node Termination Handler using GitOps add-on | `bool` | `false` | no |
 | <a name="input_enable_aws_privateca_issuer"></a> [enable\_aws\_privateca\_issuer](#input\_enable\_aws\_privateca\_issuer) | Enable AWS PCA Issuer | `bool` | `false` | no |
@@ -159,6 +159,7 @@ Please note: not all addons will be supported as they are today in the main EKS 
 | <a name="input_enable_secrets_store_csi_driver_provider_aws"></a> [enable\_secrets\_store\_csi\_driver\_provider\_aws](#input\_enable\_secrets\_store\_csi\_driver\_provider\_aws) | Enable AWS CSI Secrets Store Provider | `bool` | `false` | no |
 | <a name="input_enable_velero"></a> [enable\_velero](#input\_enable\_velero) | Enable Kubernetes Dashboard add-on | `bool` | `false` | no |
 | <a name="input_enable_vpa"></a> [enable\_vpa](#input\_enable\_vpa) | Enable Vertical Pod Autoscaler add-on | `bool` | `false` | no |
+| <a name="input_enable_vpa_gitops"></a> [enable\_vpa\_gitops](#input\_enable\_vpa\_gitops) | Vertical Pod Autoscaler using GitOps add-on | `bool` | `false` | no |
 | <a name="input_external_dns"></a> [external\_dns](#input\_external\_dns) | external-dns addon configuration values | `any` | `{}` | no |
 | <a name="input_external_dns_route53_zone_arns"></a> [external\_dns\_route53\_zone\_arns](#input\_external\_dns\_route53\_zone\_arns) | List of Route53 zones ARNs which external-dns will have access to create/manage records (if using Route53) | `list(string)` | `[]` | no |
 | <a name="input_external_secrets"></a> [external\_secrets](#input\_external\_secrets) | External Secrets addon configuration values | `any` | `{}` | no |
@@ -185,7 +186,7 @@ Please note: not all addons will be supported as they are today in the main EKS 
 | <a name="input_velero_backup_s3_bucket"></a> [velero\_backup\_s3\_bucket](#input\_velero\_backup\_s3\_bucket) | Bucket name for velero bucket | `string` | `""` | no |
 | <a name="input_velero_helm_config"></a> [velero\_helm\_config](#input\_velero\_helm\_config) | Kubernetes Velero Helm Chart config | `any` | `null` | no |
 | <a name="input_velero_irsa_policies"></a> [velero\_irsa\_policies](#input\_velero\_irsa\_policies) | IAM policy ARNs for velero IRSA | `list(string)` | `[]` | no |
-| <a name="input_vpa_helm_config"></a> [vpa\_helm\_config](#input\_vpa\_helm\_config) | VPA Helm Chart config | `any` | `null` | no |
+| <a name="input_vpa"></a> [vpa](#input\_vpa) | Vertical Pod Autoscaler addon configuration values | `any` | `{}` | no |
 
 ## Outputs
 
