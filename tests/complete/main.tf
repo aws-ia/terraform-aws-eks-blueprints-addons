@@ -169,8 +169,6 @@ module "eks_blueprints_addons" {
   # bucket is required
   velero_backup_s3_bucket = module.velero_backup_s3_bucket.s3_bucket_id
 
-  # TODO: Revolve conflicts with cert-manager
-  #enable_opentelemetry_operator = true
   tags = local.tags
 }
 

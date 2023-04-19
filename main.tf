@@ -2634,27 +2634,6 @@ module "velero" {
   backup_s3_bucket  = var.velero_backup_s3_bucket
 }
 
-module "opentelemetry_operator" {
-  source = "./modules/opentelemetry-operator"
-
-  count = var.enable_amazon_eks_adot || var.enable_opentelemetry_operator ? 1 : 0
-
-  # Amazon EKS ADOT addon
-  enable_amazon_eks_adot = var.enable_amazon_eks_adot
-  addon_config = merge(
-    {
-      kubernetes_version = var.cluster_version
-    },
-    var.amazon_eks_adot_config,
-  )
-
-  # Self-managed OpenTelemetry Operator via Helm chart
-  enable_opentelemetry_operator = var.enable_opentelemetry_operator
-  helm_config                   = var.opentelemetry_operator_helm_config
-
-  addon_context = local.addon_context
-}
-
 module "gatekeeper" {
   source = "./modules/gatekeeper"
 
