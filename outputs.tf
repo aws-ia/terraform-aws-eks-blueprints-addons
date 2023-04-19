@@ -135,5 +135,5 @@ output "velero" {
 
 output "vpa" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.vpa[0], null)
+  value       = module.vpa
 }

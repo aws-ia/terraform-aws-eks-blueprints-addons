@@ -2539,6 +2539,64 @@ module "kube_prometheus_stack" {
   tags = var.tags
 }
 
+################################################################################
+# Vertical Pod Autoscaler
+################################################################################
+
+locals {
+  vpa_name = "vpa"
+}
+
+module "vpa" {
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_vpa
+
+  # https://github.com/FairwindsOps/charts/blob/master/stable/vpa/Chart.yaml
+  # (there is no offical helm chart for VPA)
+  name             = try(var.vpa.name, local.vpa_name)
+  description      = try(var.vpa.description, "A Helm chart to install the Vertical Pod Autoscaler")
+  namespace        = try(var.vpa.namespace, "vpa")
+  create_namespace = try(var.vpa.create_namespace, true)
+  chart            = local.vpa_name
+  chart_version    = try(var.vpa.chart_version, "1.7.2")
+  repository       = try(var.vpa.repository, "https://charts.fairwinds.com/stable")
+  values           = try(var.vpa.values, [])
+
+  timeout                    = try(var.vpa.timeout, null)
+  repository_key_file        = try(var.vpa.repository_key_file, null)
+  repository_cert_file       = try(var.vpa.repository_cert_file, null)
+  repository_ca_file         = try(var.vpa.repository_ca_file, null)
+  repository_username        = try(var.vpa.repository_username, null)
+  repository_password        = try(var.vpa.repository_password, null)
+  devel                      = try(var.vpa.devel, null)
+  verify                     = try(var.vpa.verify, null)
+  keyring                    = try(var.vpa.keyring, null)
+  disable_webhooks           = try(var.vpa.disable_webhooks, null)
+  reuse_values               = try(var.vpa.reuse_values, null)
+  reset_values               = try(var.vpa.reset_values, null)
+  force_update               = try(var.vpa.force_update, null)
+  recreate_pods              = try(var.vpa.recreate_pods, null)
+  cleanup_on_fail            = try(var.vpa.cleanup_on_fail, null)
+  max_history                = try(var.vpa.max_history, null)
+  atomic                     = try(var.vpa.atomic, null)
+  skip_crds                  = try(var.vpa.skip_crds, null)
+  render_subchart_notes      = try(var.vpa.render_subchart_notes, null)
+  disable_openapi_validation = try(var.vpa.disable_openapi_validation, null)
+  wait                       = try(var.vpa.wait, null)
+  wait_for_jobs              = try(var.vpa.wait_for_jobs, null)
+  dependency_update          = try(var.vpa.dependency_update, null)
+  replace                    = try(var.vpa.replace, null)
+  lint                       = try(var.vpa.lint, null)
+
+  postrender    = try(var.vpa.postrender, [])
+  set           = try(var.vpa.set, [])
+  set_sensitive = try(var.vpa.set_sensitive, [])
+
+  tags = var.tags
+}
+
 #-----------------Kubernetes Add-ons----------------------
 
 module "argocd" {
@@ -2556,14 +2614,6 @@ module "fargate_fluentbit" {
   source        = "./modules/fargate-fluentbit"
   addon_config  = var.fargate_fluentbit_addon_config
   addon_context = local.addon_context
-}
-
-module "vpa" {
-  count             = var.enable_vpa ? 1 : 0
-  source            = "./modules/vpa"
-  helm_config       = var.vpa_helm_config
-  manage_via_gitops = var.argocd_manage_add_ons
-  addon_context     = local.addon_context
 }
 
 module "csi_secrets_store_provider_aws" {
