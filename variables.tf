@@ -544,13 +544,34 @@ variable "enable_aws_load_balancer_controller" {
 }
 
 variable "enable_aws_load_balancer_controller_gitops" {
-  description = "AWS Load Balancer Controllerusing GitOps add-on"
+  description = "AWS Load Balancer Controller using GitOps add-on"
   type        = bool
   default     = false
 }
 
 variable "aws_load_balancer_controller" {
   description = "AWS Loadbalancer Controller addon configuration values"
+  type        = any
+  default     = {}
+}
+
+################################################################################
+# Vertical Pod Autoscaler
+################################################################################
+variable "enable_vpa" {
+  description = "Enable Vertical Pod Autoscaler add-on"
+  type        = bool
+  default     = false
+}
+
+variable "enable_vpa_gitops" {
+  description = "Vertical Pod Autoscaler using GitOps add-on"
+  type        = bool
+  default     = false
+}
+
+variable "vpa" {
+  description = "Vertical Pod Autoscaler addon configuration values"
   type        = any
   default     = {}
 }
@@ -580,20 +601,6 @@ variable "fargate_fluentbit_addon_config" {
   type        = any
   default     = {}
 }
-
-#------Vertical Pod Autoscaler(VPA) ADDON--------
-variable "enable_vpa" {
-  description = "Enable Vertical Pod Autoscaler add-on"
-  type        = bool
-  default     = false
-}
-
-variable "vpa_helm_config" {
-  description = "VPA Helm Chart config"
-  type        = any
-  default     = null
-}
-
 
 #-----------OPENTELEMETRY OPERATOR-------------
 variable "enable_opentelemetry_operator" {

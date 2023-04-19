@@ -49,7 +49,9 @@ locals {
     metricsServer = var.enable_metrics_server && var.enable_metrics_server_gitops ? {
       enable = true
     } : null
-    vpa           = var.enable_vpa ? module.vpa[0].argocd_gitops_config : null
+    vpa = var.enable_vpa && var.enable_vpa_gitops ? {
+      enable = true
+    } : null
     argoRollouts  = var.enable_argo_rollouts && var.enable_argo_rollouts_gitops ? { enable = true } : null
     argoWorkflows = var.enable_argo_workflows && var.enable_argo_workflows_gitops ? { enable = true } : null
     karpenter = var.enable_karpenter && var.enable_karpenter_gitops ? {
