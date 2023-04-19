@@ -2556,8 +2556,8 @@ module "gatekeeper" {
   # https://github.com/open-policy-agent/gatekeeper/blob/master/charts/gatekeeper/Chart.yaml
   name             = try(var.gatekeeper.name, local.cluster_proportional_autoscaler_name)
   description      = try(var.gatekeeper.description, "A Helm chart to install Gatekeeper")
-  namespace        = try(var.gatekeeper.namespace, "kube-system")
-  create_namespace = try(var.gatekeeper.create_namespace, false)
+  namespace        = try(var.gatekeeper.namespace, "gatekeeper-system")
+  create_namespace = try(var.gatekeeper.create_namespace, true)
   chart            = local.gatekeeper_name
   chart_version    = try(var.gatekeeper.chart_version, "3.12.0")
   repository       = try(var.gatekeeper.repository, "https://open-policy-agent.github.io/gatekeeper/charts")
