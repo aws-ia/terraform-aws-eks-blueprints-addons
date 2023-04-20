@@ -100,7 +100,7 @@ output "cluster_proportional_autoscaler" {
 
 output "fargate_fluentbit" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.fargate_fluentbit[0], null)
+  value       = local.fargate_fluentbit_config
 }
 
 output "gatekeeper" {
