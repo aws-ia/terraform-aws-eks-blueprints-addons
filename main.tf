@@ -352,6 +352,63 @@ module "argo_rollouts" {
 }
 
 ################################################################################
+# ArgoCD
+################################################################################
+locals {
+  argocd_name = "argo-cd"
+}
+
+module "argocd" {
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_argocd
+
+  # https://github.com/argoproj/argo-helm/blob/main/charts/argo-cd/Chart.yaml
+  # (there is no offical helm chart for argocd)
+  name             = try(var.argocd.name, local.argocd_name)
+  description      = try(var.argocd.description, "A Helm chart to install the ArgoCD")
+  namespace        = try(var.argocd.namespace, "argocd")
+  create_namespace = try(var.argocd.create_namespace, true)
+  chart            = local.argocd_name
+  chart_version    = try(var.argocd.chart_version, "5.29.1")
+  repository       = try(var.argocd.repository, "https://argoproj.github.io/argo-helm")
+  values           = try(var.argocd.values, [])
+
+  timeout                    = try(var.argocd.timeout, null)
+  repository_key_file        = try(var.argocd.repository_key_file, null)
+  repository_cert_file       = try(var.argocd.repository_cert_file, null)
+  repository_ca_file         = try(var.argocd.repository_ca_file, null)
+  repository_username        = try(var.argocd.repository_username, null)
+  repository_password        = try(var.argocd.repository_password, null)
+  devel                      = try(var.argocd.devel, null)
+  verify                     = try(var.argocd.verify, null)
+  keyring                    = try(var.argocd.keyring, null)
+  disable_webhooks           = try(var.argocd.disable_webhooks, null)
+  reuse_values               = try(var.argocd.reuse_values, null)
+  reset_values               = try(var.argocd.reset_values, null)
+  force_update               = try(var.argocd.force_update, null)
+  recreate_pods              = try(var.argocd.recreate_pods, null)
+  cleanup_on_fail            = try(var.argocd.cleanup_on_fail, null)
+  max_history                = try(var.argocd.max_history, null)
+  atomic                     = try(var.argocd.atomic, null)
+  skip_crds                  = try(var.argocd.skip_crds, null)
+  render_subchart_notes      = try(var.argocd.render_subchart_notes, null)
+  disable_openapi_validation = try(var.argocd.disable_openapi_validation, null)
+  wait                       = try(var.argocd.wait, null)
+  wait_for_jobs              = try(var.argocd.wait_for_jobs, null)
+  dependency_update          = try(var.argocd.dependency_update, null)
+  replace                    = try(var.argocd.replace, null)
+  lint                       = try(var.argocd.lint, null)
+
+  postrender    = try(var.argocd.postrender, [])
+  set           = try(var.argocd.set, [])
+  set_sensitive = try(var.argocd.set_sensitive, [])
+
+  tags = var.tags
+}
+
+################################################################################
 # Argo Workflows
 ################################################################################
 
@@ -1999,8 +2056,7 @@ module "karpenter" {
 ################################################################################
 
 locals {
-  secrets_store_csi_driver_name            = "secrets-store-csi-driver"
-  secrets_store_csi_driver_service_account = try(var.secrets_store_csi_driver.service_account_name, "${local.secrets_store_csi_driver_name}-sa")
+  secrets_store_csi_driver_name = "secrets-store-csi-driver"
 }
 
 module "secrets_store_csi_driver" {
@@ -2716,30 +2772,18 @@ resource "kubernetes_config_map_v1" "aws_logging" {
 
 #-----------------Kubernetes Add-ons----------------------
 
-module "argocd" {
-  count         = var.enable_argocd ? 1 : 0
-  source        = "./modules/argocd"
-  helm_config   = var.argocd_helm_config
-  applications  = var.argocd_applications
-  projects      = var.argocd_projects
-  addon_config  = { for k, v in local.argocd_addon_config : k => v if v != null }
+module "csi_secrets_store_provider_aws" {
+  count         = var.enable_secrets_store_csi_driver_provider_aws ? 1 : 0
+  source        = "./modules/csi-secrets-store-provider-aws"
+  helm_config   = var.csi_secrets_store_provider_aws_helm_config
   addon_context = local.addon_context
 }
 
-module "csi_secrets_store_provider_aws" {
-  count             = var.enable_secrets_store_csi_driver_provider_aws ? 1 : 0
-  source            = "./modules/csi-secrets-store-provider-aws"
-  helm_config       = var.csi_secrets_store_provider_aws_helm_config
-  manage_via_gitops = var.argocd_manage_add_ons
-  addon_context     = local.addon_context
-}
-
 module "velero" {
-  count             = var.enable_velero ? 1 : 0
-  source            = "./modules/velero"
-  helm_config       = var.velero_helm_config
-  manage_via_gitops = var.argocd_manage_add_ons
-  addon_context     = local.addon_context
-  irsa_policies     = var.velero_irsa_policies
-  backup_s3_bucket  = var.velero_backup_s3_bucket
+  count            = var.enable_velero ? 1 : 0
+  source           = "./modules/velero"
+  helm_config      = var.velero_helm_config
+  addon_context    = local.addon_context
+  irsa_policies    = var.velero_irsa_policies
+  backup_s3_bucket = var.velero_backup_s3_bucket
 }
