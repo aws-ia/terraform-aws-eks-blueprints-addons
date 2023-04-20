@@ -470,12 +470,6 @@ variable "enable_fargate_fluentbit" {
   default     = false
 }
 
-variable "enable_fargate_fluentbit_gitops" {
-  description = "Enable Fargate FluentBit GitOps add-on"
-  type        = bool
-  default     = false
-}
-
 variable "fargate_fluentbit" {
   description = "Fargate fluentbit add-on config"
   type        = any
