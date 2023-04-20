@@ -614,7 +614,7 @@ variable "enable_fargate_fluentbit_gitops" {
   default     = false
 }
 
-variable "fargate_fluentbit_config" {
+variable "fargate_fluentbit" {
   description = "Fargate fluentbit add-on config"
   type        = any
   default     = {}

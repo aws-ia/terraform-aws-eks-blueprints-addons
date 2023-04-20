@@ -100,7 +100,7 @@ output "cluster_proportional_autoscaler" {
 
 output "fargate_fluentbit" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = local.fargate_fluentbit_config
+  value       = kubernetes_config_map_v1.aws_logging
 }
 
 output "gatekeeper" {
