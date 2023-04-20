@@ -55,12 +55,6 @@ variable "enable_aws_node_termination_handler" {
   default     = false
 }
 
-variable "enable_aws_node_termination_handler_gitops" {
-  description = "Enable AWS Node Termination Handler using GitOps add-on"
-  type        = bool
-  default     = false
-}
-
 variable "aws_node_termination_handler" {
   description = "AWS Node Termination Handler addon configuration values"
   type        = any
@@ -89,28 +83,10 @@ variable "enable_argocd" {
   default     = false
 }
 
-variable "argocd_helm_config" {
-  description = "Argo CD Kubernetes add-on config"
+variable "argocd" {
+  description = "ArgoCD addon configuration values"
   type        = any
   default     = {}
-}
-
-variable "argocd_projects" {
-  description = "Argo CD Project config to bootstrap the cluster"
-  type        = any
-  default     = {}
-}
-
-variable "argocd_applications" {
-  description = "Argo CD Applications config to bootstrap the cluster"
-  type        = any
-  default     = {}
-}
-
-variable "argocd_manage_add_ons" {
-  description = "Enable managing add-on configuration via ArgoCD App of Apps"
-  type        = bool
-  default     = false
 }
 
 ################################################################################
@@ -119,12 +95,6 @@ variable "argocd_manage_add_ons" {
 
 variable "enable_argo_workflows" {
   description = "Enable Argo workflows add-on"
-  type        = bool
-  default     = false
-}
-
-variable "enable_argo_workflows_gitops" {
-  description = "Enable Argo Workflows using GitOps add-on"
   type        = bool
   default     = false
 }
@@ -145,12 +115,6 @@ variable "enable_argo_rollouts" {
   default     = false
 }
 
-variable "enable_argo_rollouts_gitops" {
-  description = "Enable Argo Rollouts using GitOps add-on"
-  type        = bool
-  default     = false
-}
-
 variable "argo_rollouts" {
   description = "Argo Rollouts addon configuration values"
   type        = any
@@ -163,12 +127,6 @@ variable "argo_rollouts" {
 
 variable "enable_cert_manager" {
   description = "Enable cert-manager add-on"
-  type        = bool
-  default     = false
-}
-
-variable "enable_cert_manager_gitops" {
-  description = "Enable cert-manager using GitOps add-on"
   type        = bool
   default     = false
 }
@@ -195,12 +153,6 @@ variable "enable_cluster_autoscaler" {
   default     = false
 }
 
-variable "enable_cluster_autoscaler_gitops" {
-  description = "Enable Cluster Autoscaler using GitOps add-on"
-  type        = bool
-  default     = false
-}
-
 variable "cluster_autoscaler" {
   description = "Cluster Autoscaler addon configuration values"
   type        = any
@@ -213,12 +165,6 @@ variable "cluster_autoscaler" {
 
 variable "enable_cloudwatch_metrics" {
   description = "Enable AWS Cloudwatch Metrics add-on for Container Insights"
-  type        = bool
-  default     = false
-}
-
-variable "enable_cloudwatch_metrics_gitops" {
-  description = "Enable Cloudwatch Metrics using GitOps add-on"
   type        = bool
   default     = false
 }
@@ -279,12 +225,6 @@ variable "external_dns" {
   default     = {}
 }
 
-variable "enable_external_dns_gitops" {
-  description = "Enable external-dns using GitOps add-on"
-  type        = bool
-  default     = false
-}
-
 variable "external_dns_route53_zone_arns" {
   description = "List of Route53 zones ARNs which external-dns will have access to create/manage records (if using Route53)"
   type        = list(string)
@@ -305,12 +245,6 @@ variable "karpenter" {
   description = "Karpenter addon configuration values"
   type        = any
   default     = {}
-}
-
-variable "enable_karpenter_gitops" {
-  description = "Enable Karpenter using GitOps add-on"
-  type        = bool
-  default     = false
 }
 
 variable "karpenter_enable_spot_termination" {
@@ -341,12 +275,6 @@ variable "enable_secrets_store_csi_driver" {
   default     = false
 }
 
-variable "enable_secrets_store_csi_driver_gitops" {
-  description = "Enable CSI Secrets Store Provider GitOps add-on"
-  type        = bool
-  default     = false
-}
-
 variable "secrets_store_csi_driver" {
   description = "CSI Secrets Store Provider add-on configurations"
   type        = any
@@ -357,12 +285,6 @@ variable "secrets_store_csi_driver" {
 # AWS for Fluentbit
 ################################################################################
 variable "enable_aws_for_fluentbit" {
-  description = "Enable AWS for FluentBit add-on"
-  type        = bool
-  default     = false
-}
-
-variable "enable_aws_for_fluentbit_gitops" {
   description = "Enable AWS for FluentBit add-on"
   type        = bool
   default     = false
@@ -390,12 +312,6 @@ variable "enable_aws_privateca_issuer" {
   default     = false
 }
 
-variable "enable_aws_privateca_issuer_gitops" {
-  description = "Enable AWS PCA Issuer GitOps add-on"
-  type        = bool
-  default     = false
-}
-
 variable "aws_privateca_issuer" {
   description = "AWS PCA Issuer add-on configurations"
   type        = any
@@ -408,12 +324,6 @@ variable "aws_privateca_issuer" {
 
 variable "enable_metrics_server" {
   description = "Enable metrics server add-on"
-  type        = bool
-  default     = false
-}
-
-variable "enable_metrics_server_gitops" {
-  description = "Enable metrics GitOps server add-on"
   type        = bool
   default     = false
 }
@@ -434,12 +344,6 @@ variable "enable_cluster_proportional_autoscaler" {
   default     = false
 }
 
-variable "enable_cluster_proportional_autoscaler_gitops" {
-  description = "Enable Cluster Proportional Autoscaler GitOps add-on"
-  type        = bool
-  default     = false
-}
-
 variable "cluster_proportional_autoscaler" {
   description = "Cluster Proportional Autoscaler add-on configurations"
   type        = any
@@ -452,12 +356,6 @@ variable "cluster_proportional_autoscaler" {
 
 variable "enable_ingress_nginx" {
   description = "Enable Ingress Nginx"
-  type        = bool
-  default     = false
-}
-
-variable "enable_ingress_nginx_gitops" {
-  description = "Enable Ingress Nginx GitOps add-on"
   type        = bool
   default     = false
 }
@@ -478,12 +376,6 @@ variable "enable_kube_prometheus_stack" {
   default     = false
 }
 
-variable "enable_kube_prometheus_stack_gitops" {
-  description = "Enable Kube Prometheus Stack GitOps add-on"
-  type        = bool
-  default     = false
-}
-
 variable "kube_prometheus_stack" {
   description = "Kube Prometheus Stack add-on configurations"
   type        = any
@@ -496,12 +388,6 @@ variable "kube_prometheus_stack" {
 
 variable "enable_gatekeeper" {
   description = "Enable Gatekeeper add-on"
-  type        = bool
-  default     = false
-}
-
-variable "enable_gatekeeper_gitops" {
-  description = "Enable Gatekeeper GitOps add-on"
   type        = bool
   default     = false
 }
@@ -522,12 +408,6 @@ variable "enable_efs_csi_driver" {
   default     = false
 }
 
-variable "enable_efs_csi_driver_gitops" {
-  description = "Enable EFS CSI Driver using GitOps add-on"
-  type        = bool
-  default     = false
-}
-
 variable "efs_csi_driver" {
   description = "EFS CSI Driver addon configuration values"
   type        = any
@@ -540,12 +420,6 @@ variable "efs_csi_driver" {
 
 variable "enable_fsx_csi_driver" {
   description = "Enable AWS FSX CSI Driver add-on"
-  type        = bool
-  default     = false
-}
-
-variable "enable_fsx_csi_driver_gitops" {
-  description = "Enable FSX CSI Driver using GitOps add-on"
   type        = bool
   default     = false
 }
@@ -565,12 +439,6 @@ variable "enable_aws_load_balancer_controller" {
   default     = false
 }
 
-variable "enable_aws_load_balancer_controller_gitops" {
-  description = "AWS Load Balancer Controller using GitOps add-on"
-  type        = bool
-  default     = false
-}
-
 variable "aws_load_balancer_controller" {
   description = "AWS Loadbalancer Controller addon configuration values"
   type        = any
@@ -582,12 +450,6 @@ variable "aws_load_balancer_controller" {
 ################################################################################
 variable "enable_vpa" {
   description = "Enable Vertical Pod Autoscaler add-on"
-  type        = bool
-  default     = false
-}
-
-variable "enable_vpa_gitops" {
-  description = "Vertical Pod Autoscaler using GitOps add-on"
   type        = bool
   default     = false
 }
