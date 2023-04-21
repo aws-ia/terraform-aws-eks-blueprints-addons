@@ -461,9 +461,23 @@ variable "vpa" {
 }
 
 ################################################################################
+# Velero
+################################################################################
+variable "enable_velero" {
+  description = "Enable Kubernetes Dashboard add-on"
+  type        = bool
+  default     = false
+}
+
+variable "velerot" {
+  description = "Velero addon configuration values"
+  type        = any
+  default     = {}
+}
+
+################################################################################
 # Fargate Fluentbit
 ################################################################################
-
 variable "enable_fargate_fluentbit" {
   description = "Enable Fargate FluentBit add-on"
   type        = bool
@@ -485,31 +499,6 @@ variable "irsa_iam_role_path" {
 
 variable "irsa_iam_permissions_boundary" {
   description = "IAM permissions boundary for IRSA roles"
-  type        = string
-  default     = ""
-}
-
-#-----------Kubernetes Velero ADDON-------------
-variable "enable_velero" {
-  description = "Enable Kubernetes Dashboard add-on"
-  type        = bool
-  default     = false
-}
-
-variable "velero_helm_config" {
-  description = "Kubernetes Velero Helm Chart config"
-  type        = any
-  default     = null
-}
-
-variable "velero_irsa_policies" {
-  description = "IAM policy ARNs for velero IRSA"
-  type        = list(string)
-  default     = []
-}
-
-variable "velero_backup_s3_bucket" {
-  description = "Bucket name for velero bucket"
   type        = string
   default     = ""
 }
