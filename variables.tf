@@ -484,6 +484,12 @@ variable "enable_fargate_fluentbit" {
   default     = false
 }
 
+variable "fargate_fluentbit_cw_log_group" {
+  description = "AWS Fargate Fluentbit CloudWatch Log Group configurations"
+  type        = any
+  default     = {}
+}
+
 variable "fargate_fluentbit" {
   description = "Fargate fluentbit add-on config"
   type        = any
