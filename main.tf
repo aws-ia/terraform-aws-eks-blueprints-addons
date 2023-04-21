@@ -2751,27 +2751,13 @@ data "aws_iam_policy_document" "velero" {
       "s3:ListMultipartUploadParts",
       "s3:PutObject",
     ]
-    resources = [
-      try("arn:${local.partition}:s3:::${var.velero.s3_bucket}/*",
-        module.velero_s3_bucket.s3_bucket_arn
-
-    )]
+    resources = ["arn:${local.partition}:s3:::${var.velero.backup_s3_bucket}/*"]
   }
 
   statement {
-    actions = ["s3:ListBucket"]
-    resources = [
-      try("arn:${local.parition}:s3:::${var.velero.s3_bucket}",
-        module.velero_s3_bucket.s3_bucket_arn
-    )]
+    actions   = ["s3:ListBucket"]
+    resources = ["arn:${local.partition}:s3:::${var.velero.backup_s3_bucket}"]
   }
-}
-
-module "velero_s3_bucket" {
-  source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "3.8.2"
-
-  bucket = try(var.velero.bucket_name, "${local.velero_name}-${local.account_id}-s3")
 }
 
 module "velero" {
@@ -2799,7 +2785,7 @@ module "velero" {
   configuration:
     provider: aws
     backupStorageLocation:
-      bucket: ${try(var.velero.s3_bucket, module.velero_s3_bucket.s3_bucket_arn)}
+      bucket: ${var.velero.backup_s3_bucket}
     volumeSnapshotLocation:
       config:
         region: ${local.region}

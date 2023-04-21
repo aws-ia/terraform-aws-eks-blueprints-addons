@@ -469,7 +469,7 @@ variable "enable_velero" {
   default     = false
 }
 
-variable "velerot" {
+variable "velero" {
   description = "Velero addon configuration values"
   type        = any
   default     = {}
