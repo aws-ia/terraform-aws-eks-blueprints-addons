@@ -460,6 +460,28 @@ variable "vpa" {
   default     = {}
 }
 
+################################################################################
+# Fargate Fluentbit
+################################################################################
+
+variable "enable_fargate_fluentbit" {
+  description = "Enable Fargate FluentBit add-on"
+  type        = bool
+  default     = false
+}
+
+variable "fargate_fluentbit_cw_log_group" {
+  description = "AWS Fargate Fluentbit CloudWatch Log Group configurations"
+  type        = any
+  default     = {}
+}
+
+variable "fargate_fluentbit" {
+  description = "Fargate fluentbit add-on config"
+  type        = any
+  default     = {}
+}
+
 #-------------------------------------------------------------------------------
 variable "irsa_iam_role_path" {
   description = "IAM role path for IRSA roles"
@@ -471,19 +493,6 @@ variable "irsa_iam_permissions_boundary" {
   description = "IAM permissions boundary for IRSA roles"
   type        = string
   default     = ""
-}
-
-#-----------FARGATE FLUENT BIT-------------
-variable "enable_fargate_fluentbit" {
-  description = "Enable Fargate FluentBit add-on"
-  type        = bool
-  default     = false
-}
-
-variable "fargate_fluentbit_addon_config" {
-  description = "Fargate fluentbit add-on config"
-  type        = any
-  default     = {}
 }
 
 #-----------Kubernetes Velero ADDON-------------
