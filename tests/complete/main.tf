@@ -150,7 +150,6 @@ module "eks_blueprints_addons" {
   enable_metrics_server                        = true
   enable_vpa                                   = true
   enable_aws_for_fluentbit                     = true
-  enable_fargate_fluentbit                     = true
 
   enable_aws_node_termination_handler   = true
   aws_node_termination_handler_asg_arns = [for asg in module.eks.self_managed_node_groups : asg.autoscaling_group_arn]
