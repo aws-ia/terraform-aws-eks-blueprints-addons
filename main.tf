@@ -2863,78 +2863,14 @@ module "velero" {
   tags = var.tags
 }
 
-################################################################################
-# Fargate Fluentbit
-################################################################################
-resource "aws_cloudwatch_log_group" "fargate_fluentbit" {
-  count = try(var.fargate_fluentbit_cw_log_group.create, true) && var.enable_fargate_fluentbit ? 1 : 0
-
-  name              = try(var.fargate_fluentbit_cw_log_group.name, null)
-  name_prefix       = try(var.fargate_fluentbit_cw_log_group.name_prefix, "/${var.cluster_name}/fargate-fluentbit-logs")
-  retention_in_days = try(var.fargate_fluentbit_cw_log_group.retention, 90)
-  kms_key_id        = try(var.fargate_fluentbit_cw_log_group.kms_key_arn, null)
-  skip_destroy      = try(var.fargate_fluentbit_cw_log_group.skip_destroy, false)
-  tags              = merge(var.tags, try(var.fargate_fluentbit_cw_log_group.tags, {}))
-}
-
-# Help on Fargate Logging with Fluentbit and CloudWatch
-# https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html
-resource "kubernetes_namespace_v1" "aws_observability" {
-  count = var.enable_fargate_fluentbit ? 1 : 0
-  metadata {
-    name = "aws-observability"
-
-    labels = {
-      aws-observability = "enabled"
-    }
-  }
-}
-
-# fluent-bit-cloudwatch value as the name of the CloudWatch log group that is automatically created as soon as your apps start logging
-resource "kubernetes_config_map_v1" "aws_logging" {
-  count = var.enable_fargate_fluentbit ? 1 : 0
-  metadata {
-    name      = "aws-logging"
-    namespace = kubernetes_namespace_v1.aws_observability[0].id
-  }
-
-  data = {
-    "parsers.conf" = try(var.fargate_fluentbit.parsers_conf, <<-EOT
-    [PARSER]
-      Name regex
-      Format regex
-      Regex ^(?<time>[^ ]+) (?<stream>[^ ]+) (?<logtag>[^ ]+) (?<message>.+)$
-      Time_Key time
-      Time_Format %Y-%m-%dT%H:%M:%S.%L%z
-      Time_Keep On
-      Decode_Field_As json message
-    EOT
-    )
-    "filters.conf" = try(var.fargate_fluentbit.filters_conf, <<-EOT
-      [FILTER]
-      Name parser
-      Match *
-      Key_Name log
-      Parser regex
-      Preserve_Key True
-      Reserve_Data True
-    EOT
-    )
-    "output.conf" = try(var.fargate_fluentbit.output_conf, <<-EOT
-    [OUTPUT]
-      Name cloudwatch_logs
-      Match *
-      region ${local.region}
-      log_group_name ${try(var.fargate_fluentbit.cwlog_group, aws_cloudwatch_log_group.fargate_fluentbit[0].name)}
-      log_stream_prefix ${try(var.fargate_fluentbit.cwlog_stream_prefix, "fargate-logs-")}
-      auto_create_group true
-    EOT
-    )
-    "flb_log_cw" = try(var.fargate_fluentbit.flb_log_cw, false)
-  }
-}
-
 #-----------------Kubernetes Add-ons----------------------
+
+module "fargate_fluentbit" {
+  count         = var.enable_fargate_fluentbit ? 1 : 0
+  source        = "./modules/fargate-fluentbit"
+  addon_config  = var.fargate_fluentbit_addon_config
+  addon_context = local.addon_context
+}
 
 module "csi_secrets_store_provider_aws" {
   count         = var.enable_secrets_store_csi_driver_provider_aws ? 1 : 0
