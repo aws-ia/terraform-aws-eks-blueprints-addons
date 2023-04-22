@@ -2774,26 +2774,7 @@ module "velero" {
   chart            = "velero"
   chart_version    = try(var.velero.chart_version, "3.1.6")
   repository       = try(var.velero.repository, "https://vmware-tanzu.github.io/helm-charts/")
-  values = try(var.velero.values, [<<-EOT
-  initContainers:
-  - name: velero-plugin-for-aws
-    image: velero/velero-plugin-for-aws:v1.5.0
-    volumeMounts:
-      - mountPath: /target
-        name: plugins
-
-  configuration:
-    provider: aws
-    backupStorageLocation:
-      bucket: ${var.velero.backup_s3_bucket}
-    volumeSnapshotLocation:
-      config:
-        region: ${local.region}
-
-  credentials:
-    useSecret: false
-    EOT
-  ])
+  values           = try(var.velero.values, [])
 
   timeout                    = try(var.velero.timeout, null)
   repository_key_file        = try(var.velero.repository_key_file, null)
@@ -2826,6 +2807,14 @@ module "velero" {
     {
       name  = "serviceAccount.name"
       value = local.velero_service_account
+    },
+    {
+      name  = "configuration.backupStorageLocation.bucket"
+      value = var.velero.backup_s3_bucket
+    },
+    {
+      name  = "configuration.volumeSnapshotLocation.config.region"
+      value = local.region
     }],
     try(var.velero.set, [])
   )
