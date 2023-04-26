@@ -2719,6 +2719,7 @@ locals {
 
 # https://github.com/vmware-tanzu/velero-plugin-for-aws#option-1-set-permissions-with-an-iam-user
 data "aws_iam_policy_document" "velero" {
+  count = var.enable_velero ? 1 : 0
   statement {
     actions = [
       "ec2:CreateSnapshot",
