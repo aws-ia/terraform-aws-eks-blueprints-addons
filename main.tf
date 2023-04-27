@@ -2733,10 +2733,10 @@ module "vpa" {
 ################################################################################
 locals {
   velero_name                    = "velero"
-  velero_service_account         = try(var.velero.service_account_name, "${local.velero_name}-sa")
+  velero_service_account         = try(var.velero.service_account_name, "${local.velero_name}-server")
   velero_backup_s3_bucket        = split(":", var.velero.s3_backup_location)
   velero_backup_s3_bucket_arn    = try(split("/", var.velero.s3_backup_location)[0], var.velero.s3_backup_location)
-  velero_backup_s3_bucket_name   = try(split("/", local.velero_backup_s3_bucket[5])[1], local.velero_backup_s3_bucket[5])
+  velero_backup_s3_bucket_name   = try(split("/", local.velero_backup_s3_bucket[5])[0], local.velero_backup_s3_bucket[5])
   velero_backup_s3_bucket_prefix = try(split("/", var.velero.s3_backup_location)[1], "")
 }
 
@@ -2774,7 +2774,7 @@ data "aws_iam_policy_document" "velero" {
       "s3:ListMultipartUploadParts",
       "s3:PutObject",
     ]
-    resources = [local.velero_backup_s3_bucket_prefix == "" ? "${var.velero.s3_backup_location}/*" : var.velero.s3_backup_location]
+    resources = ["${var.velero.s3_backup_location}/*"]
   }
 
   statement {
@@ -2839,7 +2839,7 @@ module "velero" {
             EOT
     },
     {
-      name  = "serviceAccount.name"
+      name  = "serviceAccount.server.name"
       value = local.velero_service_account
     },
     {
@@ -2855,6 +2855,10 @@ module "velero" {
       value = local.velero_backup_s3_bucket_name
     },
     {
+      name  = "configuration.backupStorageLocation.config.region"
+      value = local.region
+    },
+    {
       name  = "configuration.volumeSnapshotLocation.config.region"
       value = local.region
     },
@@ -2867,7 +2871,7 @@ module "velero" {
   set_sensitive = try(var.velero.set_sensitive, [])
 
   # IAM role for service account (IRSA)
-  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  set_irsa_names                = ["serviceAccount.server.annotations.eks\\.amazonaws\\.com/role-arn"]
   create_role                   = try(var.velero.create_role, true)
   role_name                     = try(var.velero.role_name, "velero")
   role_name_use_prefix          = try(var.velero.role_name_use_prefix, true)
