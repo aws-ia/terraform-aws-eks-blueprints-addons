@@ -2108,6 +2108,73 @@ module "secrets_store_csi_driver" {
   tags = var.tags
 }
 
+
+################################################################################
+# CSI Secrets Store Provider AWS
+################################################################################
+
+locals {
+  csi_secrets_store_provider_aws_name            = "secrets-store-csi-driver-provider-aws"
+  csi_secrets_store_provider_aws_service_account = try(var.csi_secrets_store_provider_aws.service_account_name, "${local.csi_secrets_store_provider_aws_name}-sa")
+}
+
+module "csi_secrets_store_provider_aws" {
+
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_csi_secrets_store_provider_aws
+
+  # https://github.com/aws/eks-charts/blob/master/stable/csi-secrets-store-provider-aws/Chart.yaml
+  name             = try(var.csi_secrets_store_provider_aws.name, local.csi_secrets_store_provider_aws_name)
+  description      = try(var.csi_secrets_store_provider_aws.description, "A Helm chart to install the Secrets Store CSI Driver and the AWS Key Management Service Provider inside a Kubernetes cluster.")
+  namespace        = try(var.csi_secrets_store_provider_aws.namespace, "kube-system")
+  create_namespace = try(var.csi_secrets_store_provider_aws.create_namespace, false)
+  chart            = "secrets-store-csi-driver-provider-aws"
+  chart_version    = try(var.csi_secrets_store_provider_aws.chart_version, "0.3.2")
+  repository       = try(var.csi_secrets_store_provider_aws.repository, "https://aws.github.io/secrets-store-csi-driver-provider-aws")
+  values           = try(var.csi_secrets_store_provider_aws.values, [])
+
+  timeout                    = try(var.csi_secrets_store_provider_aws.timeout, null)
+  repository_key_file        = try(var.csi_secrets_store_provider_aws.repository_key_file, null)
+  repository_cert_file       = try(var.csi_secrets_store_provider_aws.repository_cert_file, null)
+  repository_ca_file         = try(var.csi_secrets_store_provider_aws.repository_ca_file, null)
+  repository_username        = try(var.csi_secrets_store_provider_aws.repository_username, null)
+  repository_password        = try(var.csi_secrets_store_provider_aws.repository_password, null)
+  devel                      = try(var.csi_secrets_store_provider_aws.devel, null)
+  verify                     = try(var.csi_secrets_store_provider_aws.verify, null)
+  keyring                    = try(var.csi_secrets_store_provider_aws.keyring, null)
+  disable_webhooks           = try(var.csi_secrets_store_provider_aws.disable_webhooks, null)
+  reuse_values               = try(var.csi_secrets_store_provider_aws.reuse_values, null)
+  reset_values               = try(var.csi_secrets_store_provider_aws.reset_values, null)
+  force_update               = try(var.csi_secrets_store_provider_aws.force_update, null)
+  recreate_pods              = try(var.csi_secrets_store_provider_aws.recreate_pods, null)
+  cleanup_on_fail            = try(var.csi_secrets_store_provider_aws.cleanup_on_fail, null)
+  max_history                = try(var.csi_secrets_store_provider_aws.max_history, null)
+  atomic                     = try(var.csi_secrets_store_provider_aws.atomic, null)
+  skip_crds                  = try(var.csi_secrets_store_provider_aws.skip_crds, null)
+  render_subchart_notes      = try(var.csi_secrets_store_provider_aws.render_subchart_notes, null)
+  disable_openapi_validation = try(var.csi_secrets_store_provider_aws.disable_openapi_validation, null)
+  wait                       = try(var.csi_secrets_store_provider_aws.wait, null)
+  wait_for_jobs              = try(var.csi_secrets_store_provider_aws.wait_for_jobs, null)
+  dependency_update          = try(var.csi_secrets_store_provider_aws.dependency_update, null)
+  replace                    = try(var.csi_secrets_store_provider_aws.replace, null)
+  lint                       = try(var.csi_secrets_store_provider_aws.lint, null)
+
+  postrender = try(var.csi_secrets_store_provider_aws.postrender, [])
+  set = concat([
+    {
+      name  = "serviceAccount.name"
+      value = local.csi_secrets_store_provider_aws_service_account
+    }],
+    try(var.csi_secrets_store_provider_aws.set, [])
+  )
+  set_sensitive = try(var.csi_secrets_store_provider_aws.set_sensitive, [])
+
+  tags = var.tags
+}
+
+
 ################################################################################
 # AWS for Fluent-bit
 ################################################################################
@@ -2782,13 +2849,6 @@ resource "kubernetes_config_map_v1" "aws_logging" {
 }
 
 #-----------------Kubernetes Add-ons----------------------
-
-module "csi_secrets_store_provider_aws" {
-  count         = var.enable_secrets_store_csi_driver_provider_aws ? 1 : 0
-  source        = "./modules/csi-secrets-store-provider-aws"
-  helm_config   = var.csi_secrets_store_provider_aws_helm_config
-  addon_context = local.addon_context
-}
 
 module "velero" {
   count            = var.enable_velero ? 1 : 0

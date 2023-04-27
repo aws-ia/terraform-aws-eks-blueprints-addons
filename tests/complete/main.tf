@@ -132,25 +132,25 @@ module "eks_blueprints_addons" {
     }
   }
 
-  enable_efs_csi_driver                        = true
-  enable_fsx_csi_driver                        = true
-  enable_argocd                                = true
-  enable_cloudwatch_metrics                    = true
-  enable_aws_privateca_issuer                  = true
-  enable_cert_manager                          = true
-  enable_cluster_autoscaler                    = true
-  enable_secrets_store_csi_driver              = true
-  enable_secrets_store_csi_driver_provider_aws = true
-  enable_kube_prometheus_stack                 = true
-  enable_external_dns                          = true
-  enable_external_secrets                      = true
-  enable_gatekeeper                            = true
-  enable_ingress_nginx                         = true
-  enable_aws_load_balancer_controller          = true
-  enable_metrics_server                        = true
-  enable_vpa                                   = true
-  enable_aws_for_fluentbit                     = true
-  enable_fargate_fluentbit                     = true
+  enable_efs_csi_driver                 = true
+  enable_fsx_csi_driver                 = true
+  enable_argocd                         = true
+  enable_cloudwatch_metrics             = true
+  enable_aws_privateca_issuer           = true
+  enable_cert_manager                   = true
+  enable_cluster_autoscaler             = true
+  enable_secrets_store_csi_driver       = true
+  enable_csi_secrets_store_provider_aws = true
+  enable_kube_prometheus_stack          = true
+  enable_external_dns                   = true
+  enable_external_secrets               = true
+  enable_gatekeeper                     = true
+  enable_ingress_nginx                  = true
+  enable_aws_load_balancer_controller   = true
+  enable_metrics_server                 = true
+  enable_vpa                            = true
+  enable_aws_for_fluentbit              = true
+  enable_fargate_fluentbit              = true
 
   enable_aws_node_termination_handler   = true
   aws_node_termination_handler_asg_arns = [for asg in module.eks.self_managed_node_groups : asg.autoscaling_group_arn]
