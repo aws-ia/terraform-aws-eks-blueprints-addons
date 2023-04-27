@@ -1,13 +1,3 @@
-output "eks_addons" {
-  description = "Map of attributes for each EKS addons enabled"
-  value       = aws_eks_addon.this
-}
-
-output "argocd" {
-  description = "Map of attributes of the Helm release created"
-  value       = module.argocd
-}
-
 output "argo_rollouts" {
   description = "Map of attributes of the Helm release created"
   value       = module.argo_rollouts
@@ -18,19 +8,19 @@ output "argo_workflows" {
   value       = module.argo_workflows
 }
 
-output "cloudwatch_metrics" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.cloudwatch_metrics
+output "argocd" {
+  description = "Map of attributes of the Helm release created"
+  value       = module.argocd
 }
 
-output "efs_csi_driver" {
+output "aws_cloudwatch_metrics" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.efs_csi_driver
+  value       = module.aws_cloudwatch_metrics
 }
 
-output "external_secrets" {
+output "aws_efs_csi_driver" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.external_secrets
+  value       = module.aws_efs_csi_driver
 }
 
 output "aws_for_fluentbit" {
@@ -38,9 +28,9 @@ output "aws_for_fluentbit" {
   value       = module.aws_for_fluentbit
 }
 
-output "fsx_csi_driver" {
+output "aws_fsx_csi_driver" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.fsx_csi_driver
+  value       = module.aws_fsx_csi_driver
 }
 
 output "aws_load_balancer_controller" {
@@ -68,9 +58,14 @@ output "cluster_autoscaler" {
   value       = module.cluster_autoscaler
 }
 
-output "csi_secrets_store_provider_aws" {
+output "cluster_proportional_autoscaler" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.csi_secrets_store_provider_aws
+  value       = module.cluster_proportional_autoscaler
+}
+
+output "eks_addons" {
+  description = "Map of attributes for each EKS addons enabled"
+  value       = aws_eks_addon.this
 }
 
 output "external_dns" {
@@ -78,19 +73,9 @@ output "external_dns" {
   value       = module.external_dns
 }
 
-output "ingress_nginx" {
+output "external_secrets" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.ingress_nginx
-}
-
-output "metrics_server" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.metrics_server
-}
-
-output "cluster_proportional_autoscaler" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.cluster_proportional_autoscaler
+  value       = module.external_secrets
 }
 
 output "fargate_fluentbit" {
@@ -103,6 +88,11 @@ output "gatekeeper" {
   value       = module.gatekeeper
 }
 
+output "ingress_nginx" {
+  description = "Map of attributes of the Helm release and IRSA created"
+  value       = module.ingress_nginx
+}
+
 output "karpenter" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = module.karpenter
@@ -113,9 +103,19 @@ output "kube_prometheus_stack" {
   value       = module.kube_prometheus_stack
 }
 
+output "metrics_server" {
+  description = "Map of attributes of the Helm release and IRSA created"
+  value       = module.metrics_server
+}
+
 output "secrets_store_csi_driver" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = module.secrets_store_csi_driver
+}
+
+output "secrets_store_csi_driver_provider_aws" {
+  description = "Map of attributes of the Helm release and IRSA created"
+  value       = module.secrets_store_csi_driver_provider_aws
 }
 
 output "velero" {
