@@ -2808,16 +2808,15 @@ module "velero" {
   postrender = try(var.velero.postrender, [])
   set = concat([
     {
-      name = "initContainers"
-      value = yamlencode({
-        "name" : "velero-plugin-for-aws"
-        "image" : "velero/velero-plugin-for-aws:v1.7.0"
-        "imagePullPolicy" : "IfNotPresent"
-        "volumeMounts" : {
-          "mountPath" : "/target"
-          "name" : "plugins"
-        }
-      })
+      name  = "initContainers"
+      value = <<-EOT
+   - name: velero-plugin-for-aws
+     image: velero/velero-plugin-for-aws:v1.7.0
+     imagePullPolicy: IfNotPresent
+     volumeMounts:
+       - mountPath: /target
+         name: plugins
+            EOT
     },
     {
       name  = "serviceAccount.name"
