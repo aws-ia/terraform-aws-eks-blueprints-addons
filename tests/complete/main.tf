@@ -171,7 +171,7 @@ module "eks_blueprints_addons" {
     # S3 Bucket ARN provided by an S3 Module (module.velero_backup_s3_bucket declared below), without prefix.
     #s3_backup_location = module.velero_backup_s3_bucket.s3_bucket_arn
     # S3 Bucket ARN for an already existing Bucket provided with prefix.
-    s3_backup_location = "arn:aws:s3:::bersr-test-velero-20230105/dev"
+    s3_backup_location = "arn:aws:s3:::backup/dev"
   }
 
   tags = local.tags
