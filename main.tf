@@ -2731,12 +2731,13 @@ module "vpa" {
 ################################################################################
 # Velero
 ################################################################################
-
 locals {
-  velero_service_account         = try(var.velero.service_account_name, "velero-sa")
-  velero_backup_s3_bucket        = split(":", var.velero.s3_bucket_arn)
-  velero_backup_s3_bucket_name   = split("/", local.velero_backup_s3_bucket[5])
-  velero_backup_s3_bucket_prefix = split("/", var.velero.s3_bucket_arn)
+  velero_name                    = "velero"
+  velero_service_account         = try(var.velero.service_account_name, "${local.velero_name}-sa")
+  velero_backup_s3_bucket        = split(":", var.velero.s3_backup_location)
+  velero_backup_s3_bucket_arn    = try(split("/", var.velero.s3_backup_location)[0], var.velero.s3_backup_location)
+  velero_backup_s3_bucket_name   = try(split("/", local.velero_backup_s3_bucket[5])[1], local.velero_backup_s3_bucket[5])
+  velero_backup_s3_bucket_prefix = try(split("/", var.velero.s3_backup_location)[1], "")
 }
 
 # https://github.com/vmware-tanzu/velero-plugin-for-aws#option-1-set-permissions-with-an-iam-user
@@ -2773,12 +2774,12 @@ data "aws_iam_policy_document" "velero" {
       "s3:ListMultipartUploadParts",
       "s3:PutObject",
     ]
-    resources = [var.velero.s3_bucket_arn]
+    resources = [local.velero_backup_s3_bucket_prefix == "" ? "${var.velero.s3_backup_location}/*" : var.velero.s3_backup_location]
   }
 
   statement {
     actions   = ["s3:ListBucket"]
-    resources = [local.velero_backup_s3_bucket_prefix[0]]
+    resources = [local.velero_backup_s3_bucket_arn]
   }
 }
 
@@ -2847,11 +2848,11 @@ module "velero" {
     },
     {
       name  = "configuration.backupStorageLocation.prefix"
-      value = local.velero_backup_s3_bucket_prefix[1]
+      value = local.velero_backup_s3_bucket_prefix
     },
     {
       name  = "configuration.backupStorageLocation.bucket"
-      value = local.velero_backup_s3_bucket_name[0]
+      value = local.velero_backup_s3_bucket_name
     },
     {
       name  = "configuration.volumeSnapshotLocation.config.region"

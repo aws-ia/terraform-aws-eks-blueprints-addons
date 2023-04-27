@@ -477,7 +477,6 @@ variable "vpa" {
 ################################################################################
 # Velero
 ################################################################################
-
 variable "enable_velero" {
   description = "Enable Kubernetes Dashboard add-on"
   type        = bool
@@ -493,7 +492,6 @@ variable "velero" {
 ################################################################################
 # Fargate Fluentbit
 ################################################################################
-
 variable "enable_fargate_fluentbit" {
   description = "Enable Fargate FluentBit add-on"
   type        = bool

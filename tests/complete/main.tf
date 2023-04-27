@@ -166,9 +166,12 @@ module "eks_blueprints_addons" {
   }
 
   enable_velero = true
-  # bucket is required
+  # An S3 Bucket ARN is required. This can be declared with or without a Prefix.
   velero = {
-    s3_bucket_arn = module.velero_backup_s3_bucket.s3_bucket_arn
+    # S3 Bucket ARN provided by an S3 Module (module.velero_backup_s3_bucket declared below), without prefix.
+    #s3_backup_location = module.velero_backup_s3_bucket.s3_bucket_arn
+    # S3 Bucket ARN for an already existing Bucket provided with prefix.
+    s3_backup_location = "arn:aws:s3:::backup/dev"
   }
 
   tags = local.tags
@@ -203,44 +206,45 @@ module "vpc" {
   tags = local.tags
 }
 
-module "velero_backup_s3_bucket" {
-  source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "~> 3.0"
 
-  bucket_prefix = "${local.name}-"
+# module "velero_backup_s3_bucket" {
+#   source  = "terraform-aws-modules/s3-bucket/aws"
+#   version = "~> 3.0"
 
-  # Allow deletion of non-empty bucket
-  # NOTE: This is enabled for example usage only, you should not enable this for production workloads
-  force_destroy = true
+#   bucket_prefix = "${local.name}-"
 
-  attach_deny_insecure_transport_policy = true
-  attach_require_latest_tls_policy      = true
+#   # Allow deletion of non-empty bucket
+#   # NOTE: This is enabled for example usage only, you should not enable this for production workloads
+#   force_destroy = true
 
-  acl = "private"
+#   attach_deny_insecure_transport_policy = true
+#   attach_require_latest_tls_policy      = true
 
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+#   acl = "private"
 
-  control_object_ownership = true
-  object_ownership         = "BucketOwnerPreferred"
+#   block_public_acls       = true
+#   block_public_policy     = true
+#   ignore_public_acls      = true
+#   restrict_public_buckets = true
 
-  versioning = {
-    status     = true
-    mfa_delete = false
-  }
+#   control_object_ownership = true
+#   object_ownership         = "BucketOwnerPreferred"
 
-  server_side_encryption_configuration = {
-    rule = {
-      apply_server_side_encryption_by_default = {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
+#   versioning = {
+#     status     = true
+#     mfa_delete = false
+#   }
 
-  tags = local.tags
-}
+#   server_side_encryption_configuration = {
+#     rule = {
+#       apply_server_side_encryption_by_default = {
+#         sse_algorithm = "AES256"
+#       }
+#     }
+#   }
+
+#   tags = local.tags
+# }
 
 module "ebs_csi_driver_irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
