@@ -46,33 +46,1070 @@ locals {
 }
 
 ################################################################################
-# EKS Addons
+# Argo Rollouts
 ################################################################################
 
-data "aws_eks_addon_version" "this" {
-  for_each = var.eks_addons
+module "argo_rollouts" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
 
-  addon_name         = try(each.value.name, each.key)
-  kubernetes_version = var.cluster_version
-  most_recent        = try(each.value.most_recent, true)
+  create = var.enable_argo_rollouts
+
+  # https://github.com/argoproj/argo-helm/tree/main/charts/argo-rollouts
+  name             = try(var.argo_rollouts.name, "argo-rollouts")
+  description      = try(var.argo_rollouts.description, "A Helm chart for Argo Rollouts")
+  namespace        = try(var.argo_rollouts.namespace, "argo-rollouts")
+  create_namespace = try(var.argo_rollouts.create_namespace, true)
+  chart            = "argo-rollouts"
+  chart_version    = try(var.argo_rollouts.chart_version, "2.22.3")
+  repository       = try(var.argo_rollouts.repository, "https://argoproj.github.io/argo-helm")
+  values           = try(var.argo_rollouts.values, [])
+
+  timeout                    = try(var.argo_rollouts.timeout, null)
+  repository_key_file        = try(var.argo_rollouts.repository_key_file, null)
+  repository_cert_file       = try(var.argo_rollouts.repository_cert_file, null)
+  repository_ca_file         = try(var.argo_rollouts.repository_ca_file, null)
+  repository_username        = try(var.argo_rollouts.repository_username, null)
+  repository_password        = try(var.argo_rollouts.repository_password, null)
+  devel                      = try(var.argo_rollouts.devel, null)
+  verify                     = try(var.argo_rollouts.verify, null)
+  keyring                    = try(var.argo_rollouts.keyring, null)
+  disable_webhooks           = try(var.argo_rollouts.disable_webhooks, null)
+  reuse_values               = try(var.argo_rollouts.reuse_values, null)
+  reset_values               = try(var.argo_rollouts.reset_values, null)
+  force_update               = try(var.argo_rollouts.force_update, null)
+  recreate_pods              = try(var.argo_rollouts.recreate_pods, null)
+  cleanup_on_fail            = try(var.argo_rollouts.cleanup_on_fail, null)
+  max_history                = try(var.argo_rollouts.max_history, null)
+  atomic                     = try(var.argo_rollouts.atomic, null)
+  skip_crds                  = try(var.argo_rollouts.skip_crds, null)
+  render_subchart_notes      = try(var.argo_rollouts.render_subchart_notes, null)
+  disable_openapi_validation = try(var.argo_rollouts.disable_openapi_validation, null)
+  wait                       = try(var.argo_rollouts.wait, null)
+  wait_for_jobs              = try(var.argo_rollouts.wait_for_jobs, null)
+  dependency_update          = try(var.argo_rollouts.dependency_update, null)
+  replace                    = try(var.argo_rollouts.replace, null)
+  lint                       = try(var.argo_rollouts.lint, null)
+
+  postrender    = try(var.argo_rollouts.postrender, [])
+  set           = try(var.argo_rollouts.set, [])
+  set_sensitive = try(var.argo_rollouts.set_sensitive, [])
+
+  tags = var.tags
 }
 
-resource "aws_eks_addon" "this" {
-  for_each = var.eks_addons
+################################################################################
+# Argo Workflows
+################################################################################
 
-  cluster_name = var.cluster_name
-  addon_name   = try(each.value.name, each.key)
+module "argo_workflows" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
 
-  addon_version            = try(each.value.addon_version, data.aws_eks_addon_version.this[each.key].version)
-  configuration_values     = try(each.value.configuration_values, null)
-  preserve                 = try(each.value.preserve, null)
-  resolve_conflicts        = try(each.value.resolve_conflicts, "OVERWRITE")
-  service_account_role_arn = try(each.value.service_account_role_arn, null)
+  create = var.enable_argo_workflows
 
-  timeouts {
-    create = try(each.value.timeouts.create, var.eks_addons_timeouts.create, null)
-    update = try(each.value.timeouts.update, var.eks_addons_timeouts.update, null)
-    delete = try(each.value.timeouts.delete, var.eks_addons_timeouts.delete, null)
+  # https://github.com/argoproj/argo-helm/tree/main/charts/argo-workflows
+  name             = try(var.argo_workflows.name, "argo-workflows")
+  description      = try(var.argo_workflows.description, "A Helm chart for Argo Workflows")
+  namespace        = try(var.argo_workflows.namespace, "argo-workflows")
+  create_namespace = try(var.argo_workflows.create_namespace, true)
+  chart            = "argo-workflows"
+  chart_version    = try(var.argo_workflows.chart_version, "2.22.13")
+  repository       = try(var.argo_workflows.repository, "https://argoproj.github.io/argo-helm")
+  values           = try(var.argo_workflows.values, [])
+
+  timeout                    = try(var.argo_workflows.timeout, null)
+  repository_key_file        = try(var.argo_workflows.repository_key_file, null)
+  repository_cert_file       = try(var.argo_workflows.repository_cert_file, null)
+  repository_ca_file         = try(var.argo_workflows.repository_ca_file, null)
+  repository_username        = try(var.argo_workflows.repository_username, null)
+  repository_password        = try(var.argo_workflows.repository_password, null)
+  devel                      = try(var.argo_workflows.devel, null)
+  verify                     = try(var.argo_workflows.verify, null)
+  keyring                    = try(var.argo_workflows.keyring, null)
+  disable_webhooks           = try(var.argo_workflows.disable_webhooks, null)
+  reuse_values               = try(var.argo_workflows.reuse_values, null)
+  reset_values               = try(var.argo_workflows.reset_values, null)
+  force_update               = try(var.argo_workflows.force_update, null)
+  recreate_pods              = try(var.argo_workflows.recreate_pods, null)
+  cleanup_on_fail            = try(var.argo_workflows.cleanup_on_fail, null)
+  max_history                = try(var.argo_workflows.max_history, null)
+  atomic                     = try(var.argo_workflows.atomic, null)
+  skip_crds                  = try(var.argo_workflows.skip_crds, null)
+  render_subchart_notes      = try(var.argo_workflows.render_subchart_notes, null)
+  disable_openapi_validation = try(var.argo_workflows.disable_openapi_validation, null)
+  wait                       = try(var.argo_workflows.wait, null)
+  wait_for_jobs              = try(var.argo_workflows.wait_for_jobs, null)
+  dependency_update          = try(var.argo_workflows.dependency_update, null)
+  replace                    = try(var.argo_workflows.replace, null)
+  lint                       = try(var.argo_workflows.lint, null)
+
+  postrender    = try(var.argo_workflows.postrender, [])
+  set           = try(var.argo_workflows.set, [])
+  set_sensitive = try(var.argo_workflows.set_sensitive, [])
+
+  tags = var.tags
+}
+
+################################################################################
+# ArgoCD
+################################################################################
+
+module "argocd" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
+
+  create = var.enable_argocd
+
+  # https://github.com/argoproj/argo-helm/blob/main/charts/argo-cd/Chart.yaml
+  # (there is no offical helm chart for argocd)
+  name             = try(var.argocd.name, "argo-cd")
+  description      = try(var.argocd.description, "A Helm chart to install the ArgoCD")
+  namespace        = try(var.argocd.namespace, "argocd")
+  create_namespace = try(var.argocd.create_namespace, true)
+  chart            = "argo-cd"
+  chart_version    = try(var.argocd.chart_version, "5.29.1")
+  repository       = try(var.argocd.repository, "https://argoproj.github.io/argo-helm")
+  values           = try(var.argocd.values, [])
+
+  timeout                    = try(var.argocd.timeout, null)
+  repository_key_file        = try(var.argocd.repository_key_file, null)
+  repository_cert_file       = try(var.argocd.repository_cert_file, null)
+  repository_ca_file         = try(var.argocd.repository_ca_file, null)
+  repository_username        = try(var.argocd.repository_username, null)
+  repository_password        = try(var.argocd.repository_password, null)
+  devel                      = try(var.argocd.devel, null)
+  verify                     = try(var.argocd.verify, null)
+  keyring                    = try(var.argocd.keyring, null)
+  disable_webhooks           = try(var.argocd.disable_webhooks, null)
+  reuse_values               = try(var.argocd.reuse_values, null)
+  reset_values               = try(var.argocd.reset_values, null)
+  force_update               = try(var.argocd.force_update, null)
+  recreate_pods              = try(var.argocd.recreate_pods, null)
+  cleanup_on_fail            = try(var.argocd.cleanup_on_fail, null)
+  max_history                = try(var.argocd.max_history, null)
+  atomic                     = try(var.argocd.atomic, null)
+  skip_crds                  = try(var.argocd.skip_crds, null)
+  render_subchart_notes      = try(var.argocd.render_subchart_notes, null)
+  disable_openapi_validation = try(var.argocd.disable_openapi_validation, null)
+  wait                       = try(var.argocd.wait, null)
+  wait_for_jobs              = try(var.argocd.wait_for_jobs, null)
+  dependency_update          = try(var.argocd.dependency_update, null)
+  replace                    = try(var.argocd.replace, null)
+  lint                       = try(var.argocd.lint, null)
+
+  postrender    = try(var.argocd.postrender, [])
+  set           = try(var.argocd.set, [])
+  set_sensitive = try(var.argocd.set_sensitive, [])
+
+  tags = var.tags
+}
+
+################################################################################
+# AWS Cloudwatch Metrics
+################################################################################
+
+locals {
+  aws_cloudwatch_metrics_service_account = try(var.aws_cloudwatch_metrics.service_account_name, "aws-cloudwatch-metrics")
+}
+
+module "aws_cloudwatch_metrics" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
+
+  create = var.enable_aws_cloudwatch_metrics
+
+  # https://github.com/aws/eks-charts/tree/master/stable/aws-cloudwatch-metrics
+  name             = try(var.aws_cloudwatch_metrics.name, "aws-cloudwatch-metrics")
+  description      = try(var.aws_cloudwatch_metrics.description, "A Helm chart to deploy aws-cloudwatch-metrics project")
+  namespace        = try(var.aws_cloudwatch_metrics.namespace, "amazon-cloudwatch")
+  create_namespace = try(var.aws_cloudwatch_metrics.create_namespace, true)
+  chart            = "aws-cloudwatch-metrics"
+  chart_version    = try(var.aws_cloudwatch_metrics.chart_version, "0.0.8")
+  repository       = try(var.aws_cloudwatch_metrics.repository, "https://aws.github.io/eks-charts")
+  values           = try(var.aws_cloudwatch_metrics.values, [])
+
+  timeout                    = try(var.aws_cloudwatch_metrics.timeout, null)
+  repository_key_file        = try(var.aws_cloudwatch_metrics.repository_key_file, null)
+  repository_cert_file       = try(var.aws_cloudwatch_metrics.repository_cert_file, null)
+  repository_ca_file         = try(var.aws_cloudwatch_metrics.repository_ca_file, null)
+  repository_username        = try(var.aws_cloudwatch_metrics.repository_username, null)
+  repository_password        = try(var.aws_cloudwatch_metrics.repository_password, null)
+  devel                      = try(var.aws_cloudwatch_metrics.devel, null)
+  verify                     = try(var.aws_cloudwatch_metrics.verify, null)
+  keyring                    = try(var.aws_cloudwatch_metrics.keyring, null)
+  disable_webhooks           = try(var.aws_cloudwatch_metrics.disable_webhooks, null)
+  reuse_values               = try(var.aws_cloudwatch_metrics.reuse_values, null)
+  reset_values               = try(var.aws_cloudwatch_metrics.reset_values, null)
+  force_update               = try(var.aws_cloudwatch_metrics.force_update, null)
+  recreate_pods              = try(var.aws_cloudwatch_metrics.recreate_pods, null)
+  cleanup_on_fail            = try(var.aws_cloudwatch_metrics.cleanup_on_fail, null)
+  max_history                = try(var.aws_cloudwatch_metrics.max_history, null)
+  atomic                     = try(var.aws_cloudwatch_metrics.atomic, null)
+  skip_crds                  = try(var.aws_cloudwatch_metrics.skip_crds, null)
+  render_subchart_notes      = try(var.aws_cloudwatch_metrics.render_subchart_notes, null)
+  disable_openapi_validation = try(var.aws_cloudwatch_metrics.disable_openapi_validation, null)
+  wait                       = try(var.aws_cloudwatch_metrics.wait, null)
+  wait_for_jobs              = try(var.aws_cloudwatch_metrics.wait_for_jobs, null)
+  dependency_update          = try(var.aws_cloudwatch_metrics.dependency_update, null)
+  replace                    = try(var.aws_cloudwatch_metrics.replace, null)
+  lint                       = try(var.aws_cloudwatch_metrics.lint, null)
+
+  postrender = try(var.aws_cloudwatch_metrics.postrender, [])
+  set = concat([
+    {
+      name  = "clusterName"
+      value = var.cluster_name
+      }, {
+      name  = "serviceAccount.name"
+      value = local.aws_cloudwatch_metrics_service_account
+    }],
+    try(var.aws_cloudwatch_metrics.set, [])
+  )
+  set_sensitive = try(var.aws_cloudwatch_metrics.set_sensitive, [])
+
+  # IAM role for service account (IRSA)
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  create_role                   = try(var.aws_cloudwatch_metrics.create_role, true)
+  role_name                     = try(var.aws_cloudwatch_metrics.role_name, "aws-cloudwatch-metrics")
+  role_name_use_prefix          = try(var.aws_cloudwatch_metrics.role_name_use_prefix, true)
+  role_path                     = try(var.aws_cloudwatch_metrics.role_path, "/")
+  role_permissions_boundary_arn = try(var.aws_cloudwatch_metrics.role_permissions_boundary_arn, null)
+  role_description              = try(var.aws_cloudwatch_metrics.role_description, "IRSA for aws-cloudwatch-metrics project")
+  role_policies = lookup(var.aws_cloudwatch_metrics, "role_policies",
+    { CloudWatchAgentServerPolicy = "arn:${local.partition}:iam::aws:policy/CloudWatchAgentServerPolicy" }
+  )
+  create_policy = try(var.aws_cloudwatch_metrics.create_policy, false)
+
+  oidc_providers = {
+    this = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.aws_cloudwatch_metrics_service_account
+    }
+  }
+
+  tags = var.tags
+}
+
+################################################################################
+# AWS EFS CSI DRIVER
+################################################################################
+
+locals {
+  aws_efs_csi_driver_controller_service_account = try(var.aws_efs_csi_driver.controller_service_account_name, "efs-csi-controller-sa")
+  aws_efs_csi_driver_node_service_account       = try(var.aws_efs_csi_driver.node_service_account_name, "efs-csi-node-sa")
+  efs_arns = lookup(var.aws_efs_csi_driver, "efs_arns",
+    ["arn:${local.partition}:elasticfilesystem:${local.region}:${local.account_id}:file-system/*"],
+  )
+  efs_access_point_arns = lookup(var.aws_efs_csi_driver, "efs_access_point_arns",
+    ["arn:${local.partition}:elasticfilesystem:${local.region}:${local.account_id}:access-point/*"]
+  )
+}
+
+data "aws_iam_policy_document" "aws_efs_csi_driver" {
+  count = var.enable_aws_efs_csi_driver ? 1 : 0
+
+  statement {
+    sid       = "AllowDescribeAvailabilityZones"
+    actions   = ["ec2:DescribeAvailabilityZones"]
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "AllowDescribeFileSystems"
+    actions = [
+      "elasticfilesystem:DescribeAccessPoints",
+      "elasticfilesystem:DescribeFileSystems",
+      "elasticfilesystem:DescribeMountTargets"
+    ]
+    resources = flatten([
+      local.efs_arns,
+      local.efs_access_point_arns,
+    ])
+  }
+
+  statement {
+    sid       = "AllowCreateAccessPoint"
+    actions   = ["elasticfilesystem:CreateAccessPoint"]
+    resources = local.efs_arns
+
+    condition {
+      test     = "StringLike"
+      variable = "aws:RequestTag/efs.csi.aws.com/cluster"
+      values   = ["true"]
+    }
+  }
+
+  statement {
+    sid       = "AllowDeleteAccessPoint"
+    actions   = ["elasticfilesystem:DeleteAccessPoint"]
+    resources = local.efs_access_point_arns
+
+    condition {
+      test     = "StringLike"
+      variable = "aws:ResourceTag/efs.csi.aws.com/cluster"
+      values   = ["true"]
+    }
+  }
+
+  statement {
+    sid = "ClientReadWrite"
+    actions = [
+      "elasticfilesystem:ClientRootAccess",
+      "elasticfilesystem:ClientWrite",
+      "elasticfilesystem:ClientMount",
+    ]
+    resources = local.efs_arns
+
+    condition {
+      test     = "Bool"
+      variable = "elasticfilesystem:AccessedViaMountTarget"
+      values   = ["true"]
+    }
+  }
+}
+
+module "aws_efs_csi_driver" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
+
+  create = var.enable_aws_efs_csi_driver
+
+  # https://github.com/kubernetes-sigs/aws-efs-csi-driver/tree/master/charts/aws-efs-csi-driver
+  name             = try(var.aws_efs_csi_driver.name, "aws-efs-csi-driver")
+  description      = try(var.aws_efs_csi_driver.description, "A Helm chart to deploy aws-efs-csi-driver")
+  namespace        = try(var.aws_efs_csi_driver.namespace, "kube-system")
+  create_namespace = try(var.aws_efs_csi_driver.create_namespace, false)
+  chart            = "aws-efs-csi-driver"
+  chart_version    = try(var.aws_efs_csi_driver.chart_version, "2.4.1")
+  repository       = try(var.aws_efs_csi_driver.repository, "https://kubernetes-sigs.github.io/aws-efs-csi-driver/")
+  values           = try(var.aws_efs_csi_driver.values, [])
+
+  timeout                    = try(var.aws_efs_csi_driver.timeout, null)
+  repository_key_file        = try(var.aws_efs_csi_driver.repository_key_file, null)
+  repository_cert_file       = try(var.aws_efs_csi_driver.repository_cert_file, null)
+  repository_ca_file         = try(var.aws_efs_csi_driver.repository_ca_file, null)
+  repository_username        = try(var.aws_efs_csi_driver.repository_username, null)
+  repository_password        = try(var.aws_efs_csi_driver.repository_password, null)
+  devel                      = try(var.aws_efs_csi_driver.devel, null)
+  verify                     = try(var.aws_efs_csi_driver.verify, null)
+  keyring                    = try(var.aws_efs_csi_driver.keyring, null)
+  disable_webhooks           = try(var.aws_efs_csi_driver.disable_webhooks, null)
+  reuse_values               = try(var.aws_efs_csi_driver.reuse_values, null)
+  reset_values               = try(var.aws_efs_csi_driver.reset_values, null)
+  force_update               = try(var.aws_efs_csi_driver.force_update, null)
+  recreate_pods              = try(var.aws_efs_csi_driver.recreate_pods, null)
+  cleanup_on_fail            = try(var.aws_efs_csi_driver.cleanup_on_fail, null)
+  max_history                = try(var.aws_efs_csi_driver.max_history, null)
+  atomic                     = try(var.aws_efs_csi_driver.atomic, null)
+  skip_crds                  = try(var.aws_efs_csi_driver.skip_crds, null)
+  render_subchart_notes      = try(var.aws_efs_csi_driver.render_subchart_notes, null)
+  disable_openapi_validation = try(var.aws_efs_csi_driver.disable_openapi_validation, null)
+  wait                       = try(var.aws_efs_csi_driver.wait, null)
+  wait_for_jobs              = try(var.aws_efs_csi_driver.wait_for_jobs, null)
+  dependency_update          = try(var.aws_efs_csi_driver.dependency_update, null)
+  replace                    = try(var.aws_efs_csi_driver.replace, null)
+  lint                       = try(var.aws_efs_csi_driver.lint, null)
+
+  postrender = try(var.aws_efs_csi_driver.postrender, [])
+  set = concat([
+    {
+      name  = "controller.serviceAccount.name"
+      value = local.aws_efs_csi_driver_controller_service_account
+    },
+    {
+      name  = "node.serviceAccount.name"
+      value = local.aws_efs_csi_driver_node_service_account
+    }],
+    try(var.aws_efs_csi_driver.set, [])
+  )
+  set_sensitive = try(var.aws_efs_csi_driver.set_sensitive, [])
+
+  # IAM role for service account (IRSA)
+  set_irsa_names = [
+    "controller.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn",
+    "node.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+  ]
+  create_role                   = try(var.aws_efs_csi_driver.create_role, true)
+  role_name                     = try(var.aws_efs_csi_driver.role_name, "aws-efs-csi-driver")
+  role_name_use_prefix          = try(var.aws_efs_csi_driver.role_name_use_prefix, true)
+  role_path                     = try(var.aws_efs_csi_driver.role_path, "/")
+  role_permissions_boundary_arn = lookup(var.aws_efs_csi_driver, "role_permissions_boundary_arn", null)
+  role_description              = try(var.aws_efs_csi_driver.role_description, "IRSA for aws-efs-csi-driver project")
+  role_policies                 = lookup(var.aws_efs_csi_driver, "role_policies", {})
+
+  source_policy_documents = compact(concat(
+    data.aws_iam_policy_document.aws_efs_csi_driver[*].json,
+    lookup(var.aws_efs_csi_driver, "source_policy_documents", [])
+  ))
+  override_policy_documents = lookup(var.aws_efs_csi_driver, "override_policy_documents", [])
+  policy_statements         = lookup(var.aws_efs_csi_driver, "policy_statements", [])
+  policy_name               = try(var.aws_efs_csi_driver.policy_name, null)
+  policy_name_use_prefix    = try(var.aws_efs_csi_driver.policy_name_use_prefix, true)
+  policy_path               = try(var.aws_efs_csi_driver.policy_path, null)
+  policy_description        = try(var.aws_efs_csi_driver.policy_description, "IAM Policy for AWS EFS CSI Driver")
+
+  oidc_providers = {
+    controller = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.aws_efs_csi_driver_controller_service_account
+    }
+    node = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.aws_efs_csi_driver_node_service_account
+    }
+  }
+
+  tags = var.tags
+}
+
+################################################################################
+# AWS for Fluent-bit
+################################################################################
+
+locals {
+  aws_for_fluentbit_service_account = try(var.aws_for_fluentbit.service_account_name, "aws-for-fluent-bit-sa")
+}
+
+resource "aws_cloudwatch_log_group" "aws_for_fluentbit" {
+  count = try(var.aws_for_fluentbit_cw_log_group.create, true) && var.enable_aws_for_fluentbit ? 1 : 0
+
+  name              = try(var.aws_for_fluentbit_cw_log_group.name, null)
+  name_prefix       = try(var.aws_for_fluentbit_cw_log_group.name_prefix, "/${var.cluster_name}/aws-fluentbit-logs")
+  retention_in_days = try(var.aws_for_fluentbit_cw_log_group.retention, 90)
+  kms_key_id        = try(var.aws_for_fluentbit_cw_log_group.kms_key_arn, null)
+  skip_destroy      = try(var.aws_for_fluentbit_cw_log_group.skip_destroy, false)
+  tags              = merge(var.tags, try(var.aws_for_fluentbit_cw_log_group.tags, {}))
+}
+
+data "aws_iam_policy_document" "aws_for_fluentbit" {
+  count = try(var.aws_for_fluentbit_cw_log_group.create, true) && var.enable_aws_for_fluentbit ? 1 : 0
+
+  statement {
+    sid    = "PutLogEvents"
+    effect = "Allow"
+    resources = [
+      "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${try(var.aws_for_fluentbit_cw_log_group.name, "*")}:log-stream:*",
+    ]
+
+    actions = [
+      "logs:PutLogEvents"
+    ]
+  }
+
+  statement {
+    sid    = "CreateCWLogs"
+    effect = "Allow"
+    resources = [
+      "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${try(var.aws_for_fluentbit_cw_log_group.name, "*")}",
+    ]
+
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:DescribeLogGroups",
+      "logs:DescribeLogStreams",
+      "logs:PutRetentionPolicy",
+    ]
+  }
+}
+
+module "aws_for_fluentbit" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
+
+  create = var.enable_aws_for_fluentbit
+
+  # https://github.com/aws/eks-charts/blob/master/stable/aws-for-fluent-bit/Chart.yaml
+  name             = try(var.aws_for_fluentbit.name, "aws-for-fluent-bit")
+  description      = try(var.aws_for_fluentbit.description, "A Helm chart to install the Fluent-bit Driver")
+  namespace        = try(var.aws_for_fluentbit.namespace, "kube-system")
+  create_namespace = try(var.aws_for_fluentbit.create_namespace, false)
+  chart            = "aws-for-fluent-bit"
+  chart_version    = try(var.aws_for_fluentbit.chart_version, "0.1.24")
+  repository       = try(var.aws_for_fluentbit.repository, "https://aws.github.io/eks-charts")
+  values           = try(var.aws_for_fluentbit.values, [])
+
+  timeout                    = try(var.aws_for_fluentbit.timeout, null)
+  repository_key_file        = try(var.aws_for_fluentbit.repository_key_file, null)
+  repository_cert_file       = try(var.aws_for_fluentbit.repository_cert_file, null)
+  repository_ca_file         = try(var.aws_for_fluentbit.repository_ca_file, null)
+  repository_username        = try(var.aws_for_fluentbit.repository_username, null)
+  repository_password        = try(var.aws_for_fluentbit.repository_password, null)
+  devel                      = try(var.aws_for_fluentbit.devel, null)
+  verify                     = try(var.aws_for_fluentbit.verify, null)
+  keyring                    = try(var.aws_for_fluentbit.keyring, null)
+  disable_webhooks           = try(var.aws_for_fluentbit.disable_webhooks, null)
+  reuse_values               = try(var.aws_for_fluentbit.reuse_values, null)
+  reset_values               = try(var.aws_for_fluentbit.reset_values, null)
+  force_update               = try(var.aws_for_fluentbit.force_update, null)
+  recreate_pods              = try(var.aws_for_fluentbit.recreate_pods, null)
+  cleanup_on_fail            = try(var.aws_for_fluentbit.cleanup_on_fail, null)
+  max_history                = try(var.aws_for_fluentbit.max_history, null)
+  atomic                     = try(var.aws_for_fluentbit.atomic, null)
+  skip_crds                  = try(var.aws_for_fluentbit.skip_crds, null)
+  render_subchart_notes      = try(var.aws_for_fluentbit.render_subchart_notes, null)
+  disable_openapi_validation = try(var.aws_for_fluentbit.disable_openapi_validation, null)
+  wait                       = try(var.aws_for_fluentbit.wait, null)
+  wait_for_jobs              = try(var.aws_for_fluentbit.wait_for_jobs, null)
+  dependency_update          = try(var.aws_for_fluentbit.dependency_update, null)
+  replace                    = try(var.aws_for_fluentbit.replace, null)
+  lint                       = try(var.aws_for_fluentbit.lint, null)
+
+  postrender = try(var.aws_for_fluentbit.postrender, [])
+  set = concat([
+    {
+      name  = "serviceAccount.name"
+      value = local.aws_for_fluentbit_service_account
+    }],
+    try(var.aws_for_fluentbit.set, [])
+  )
+  set_sensitive = try(var.aws_for_fluentbit.set_sensitive, [])
+
+  # IAM role for service account (IRSA)
+  set_irsa_names = [
+    "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn",
+  ]
+  create_role                   = try(var.aws_for_fluentbit.create_role, true)
+  role_name                     = try(var.aws_for_fluentbit.role_name, "aws-for-fluent-bit")
+  role_name_use_prefix          = try(var.aws_for_fluentbit.role_name_use_prefix, true)
+  role_path                     = try(var.aws_for_fluentbit.role_path, "/")
+  role_permissions_boundary_arn = lookup(var.aws_for_fluentbit, "role_permissions_boundary_arn", null)
+  role_description              = try(var.aws_for_fluentbit.role_description, "IRSA for aws-for-fluent-bit")
+  role_policies                 = lookup(var.aws_for_fluentbit, "role_policies", {})
+
+  source_policy_documents = compact(concat(
+    data.aws_iam_policy_document.aws_for_fluentbit[*].json,
+    lookup(var.aws_for_fluentbit, "source_policy_documents", [])
+  ))
+  override_policy_documents = lookup(var.aws_for_fluentbit, "override_policy_documents", [])
+  policy_statements         = lookup(var.aws_for_fluentbit, "policy_statements", [])
+  policy_name               = try(var.aws_for_fluentbit.policy_name, "aws-for-fluent-bit")
+  policy_name_use_prefix    = try(var.aws_for_fluentbit.policy_name_use_prefix, true)
+  policy_path               = try(var.aws_for_fluentbit.policy_path, null)
+  policy_description        = try(var.aws_for_fluentbit.policy_description, "IAM Policy for AWS Fluentbit")
+
+  oidc_providers = {
+    this = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.aws_for_fluentbit_service_account
+    }
+  }
+
+  tags = var.tags
+}
+
+################################################################################
+# AWS FSX CSI DRIVER
+################################################################################
+
+locals {
+  aws_fsx_csi_driver_controller_service_account = try(var.aws_fsx_csi_driver.controller_service_account_name, "aws-fsx-csi-controller-sa")
+  aws_fsx_csi_driver_node_service_account       = try(var.aws_fsx_csi_driver.node_service_account_name, "aws-fsx-csi-node-sa")
+}
+
+data "aws_iam_policy_document" "aws_fsx_csi_driver" {
+  statement {
+    sid       = "AllowCreateServiceLinkedRoles"
+    resources = ["arn:${local.partition}:iam::*:role/aws-service-role/s3.data-source.lustre.fsx.${local.dns_suffix}/*"]
+
+    actions = [
+      "iam:CreateServiceLinkedRole",
+      "iam:AttachRolePolicy",
+      "iam:PutRolePolicy",
+    ]
+  }
+
+  statement {
+    sid       = "AllowCreateServiceLinkedRole"
+    resources = ["arn:${local.partition}:iam::${local.account_id}:role/*"]
+    actions   = ["iam:CreateServiceLinkedRole"]
+
+    condition {
+      test     = "StringLike"
+      variable = "iam:AWSServiceName"
+      values   = ["fsx.${local.dns_suffix}"]
+    }
+  }
+
+  statement {
+    sid       = "AllowListBuckets"
+    resources = ["arn:${local.partition}:s3:::*"]
+    actions = [
+      "s3:ListBucket"
+    ]
+  }
+
+  statement {
+    resources = ["arn:${local.partition}:fsx:${local.region}:${local.account_id}:file-system/*"]
+    actions = [
+      "fsx:CreateFileSystem",
+      "fsx:DeleteFileSystem",
+      "fsx:UpdateFileSystem",
+    ]
+  }
+
+  statement {
+    resources = ["arn:${local.partition}:fsx:${local.region}:${local.account_id}:*"]
+    actions = [
+      "fsx:DescribeFileSystems",
+      "fsx:TagResource"
+    ]
+  }
+}
+
+module "aws_fsx_csi_driver" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
+
+  create = var.enable_aws_fsx_csi_driver
+
+  # https://github.com/kubernetes-sigs/aws-fsx-csi-driver/tree/master/charts/aws-fsx-csi-driver
+  name             = try(var.aws_fsx_csi_driver.name, "aws-fsx-csi-driver")
+  description      = try(var.aws_fsx_csi_driver.description, "A Helm chart for AWS FSx for Lustre CSI Driver")
+  namespace        = try(var.aws_fsx_csi_driver.namespace, "kube-system")
+  create_namespace = try(var.aws_fsx_csi_driver.create_namespace, false)
+  chart            = "aws-fsx-csi-driver"
+  chart_version    = try(var.aws_fsx_csi_driver.chart_version, "1.5.1")
+  repository       = try(var.aws_fsx_csi_driver.repository, "https://kubernetes-sigs.github.io/aws-fsx-csi-driver/")
+  values           = try(var.aws_fsx_csi_driver.values, [])
+
+  timeout                    = try(var.aws_fsx_csi_driver.timeout, null)
+  repository_key_file        = try(var.aws_fsx_csi_driver.repository_key_file, null)
+  repository_cert_file       = try(var.aws_fsx_csi_driver.repository_cert_file, null)
+  repository_ca_file         = try(var.aws_fsx_csi_driver.repository_ca_file, null)
+  repository_username        = try(var.aws_fsx_csi_driver.repository_username, null)
+  repository_password        = try(var.aws_fsx_csi_driver.repository_password, null)
+  devel                      = try(var.aws_fsx_csi_driver.devel, null)
+  verify                     = try(var.aws_fsx_csi_driver.verify, null)
+  keyring                    = try(var.aws_fsx_csi_driver.keyring, null)
+  disable_webhooks           = try(var.aws_fsx_csi_driver.disable_webhooks, null)
+  reuse_values               = try(var.aws_fsx_csi_driver.reuse_values, null)
+  reset_values               = try(var.aws_fsx_csi_driver.reset_values, null)
+  force_update               = try(var.aws_fsx_csi_driver.force_update, null)
+  recreate_pods              = try(var.aws_fsx_csi_driver.recreate_pods, null)
+  cleanup_on_fail            = try(var.aws_fsx_csi_driver.cleanup_on_fail, null)
+  max_history                = try(var.aws_fsx_csi_driver.max_history, null)
+  atomic                     = try(var.aws_fsx_csi_driver.atomic, null)
+  skip_crds                  = try(var.aws_fsx_csi_driver.skip_crds, null)
+  render_subchart_notes      = try(var.aws_fsx_csi_driver.render_subchart_notes, null)
+  disable_openapi_validation = try(var.aws_fsx_csi_driver.disable_openapi_validation, null)
+  wait                       = try(var.aws_fsx_csi_driver.wait, null)
+  wait_for_jobs              = try(var.aws_fsx_csi_driver.wait_for_jobs, null)
+  dependency_update          = try(var.aws_fsx_csi_driver.dependency_update, null)
+  replace                    = try(var.aws_fsx_csi_driver.replace, null)
+  lint                       = try(var.aws_fsx_csi_driver.lint, null)
+
+  postrender = try(var.aws_fsx_csi_driver.postrender, [])
+  set = concat([
+    {
+      name  = "controller.serviceAccount.name"
+      value = local.aws_fsx_csi_driver_controller_service_account
+    },
+    {
+      name  = "node.serviceAccount.name"
+      value = local.aws_fsx_csi_driver_node_service_account
+    }],
+    try(var.aws_fsx_csi_driver.set, [])
+  )
+  set_sensitive = try(var.aws_fsx_csi_driver.set_sensitive, [])
+
+  # IAM role for service account (IRSA)
+  set_irsa_names = [
+    "controller.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn",
+    "node.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+  ]
+  create_role                   = try(var.aws_fsx_csi_driver.create_role, true)
+  role_name                     = try(var.aws_fsx_csi_driver.role_name, "aws-fsx-csi-driver")
+  role_name_use_prefix          = try(var.aws_fsx_csi_driver.role_name_use_prefix, true)
+  role_path                     = try(var.aws_fsx_csi_driver.role_path, "/")
+  role_permissions_boundary_arn = lookup(var.aws_fsx_csi_driver, "role_permissions_boundary_arn", null)
+  role_description              = try(var.aws_fsx_csi_driver.role_description, "IRSA for aws-fsx-csi-driver")
+  role_policies                 = lookup(var.aws_fsx_csi_driver, "role_policies", {})
+
+  source_policy_documents = compact(concat(
+    data.aws_iam_policy_document.aws_fsx_csi_driver[*].json,
+    lookup(var.aws_fsx_csi_driver, "source_policy_documents", [])
+  ))
+  override_policy_documents = lookup(var.aws_fsx_csi_driver, "override_policy_documents", [])
+  policy_statements         = lookup(var.aws_fsx_csi_driver, "policy_statements", [])
+  policy_name               = try(var.aws_fsx_csi_driver.policy_name, "aws-fsx-csi-driver")
+  policy_name_use_prefix    = try(var.aws_fsx_csi_driver.policy_name_use_prefix, true)
+  policy_path               = try(var.aws_fsx_csi_driver.policy_path, null)
+  policy_description        = try(var.aws_fsx_csi_driver.policy_description, "IAM Policy for AWS FSX CSI Driver")
+
+  oidc_providers = {
+    controller = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.aws_fsx_csi_driver_controller_service_account
+    }
+    node = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.aws_fsx_csi_driver_node_service_account
+    }
+  }
+}
+
+################################################################################
+# AWS Load Balancer Controller
+################################################################################
+
+locals {
+  aws_load_balancer_controller_service_account = try(var.aws_load_balancer_controller.service_account_name, "aws-load-balancer-controller-sa")
+}
+
+data "aws_iam_policy_document" "aws_load_balancer_controller" {
+  statement {
+    resources = ["*"]
+    actions   = ["iam:CreateServiceLinkedRole"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "iam:AWSServiceName"
+      values   = ["elasticloadbalancing.${local.dns_suffix}"]
+    }
+  }
+
+  statement {
+    resources = ["*"]
+    actions = [
+      "ec2:DescribeAccountAttributes",
+      "ec2:DescribeAddresses",
+      "ec2:DescribeAvailabilityZones",
+      "ec2:DescribeCoipPools",
+      "ec2:DescribeInstances",
+      "ec2:DescribeInternetGateways",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DescribeSecurityGroups",
+      "ec2:DescribeSubnets",
+      "ec2:DescribeTags",
+      "ec2:DescribeVpcPeeringConnections",
+      "ec2:DescribeVpcs",
+      "ec2:GetCoipPoolUsage",
+      "elasticloadbalancing:DescribeListenerCertificates",
+      "elasticloadbalancing:DescribeListeners",
+      "elasticloadbalancing:DescribeLoadBalancerAttributes",
+      "elasticloadbalancing:DescribeLoadBalancers",
+      "elasticloadbalancing:DescribeRules",
+      "elasticloadbalancing:DescribeSSLPolicies",
+      "elasticloadbalancing:DescribeTags",
+      "elasticloadbalancing:DescribeTargetGroupAttributes",
+      "elasticloadbalancing:DescribeTargetGroups",
+      "elasticloadbalancing:DescribeTargetHealth",
+    ]
+  }
+
+  statement {
+    resources = ["*"]
+    actions = [
+      "acm:DescribeCertificate",
+      "acm:ListCertificates",
+      "cognito-idp:DescribeUserPoolClient",
+      "iam:GetServerCertificate",
+      "iam:ListServerCertificates",
+      "shield:CreateProtection",
+      "shield:DeleteProtection",
+      "shield:DescribeProtection",
+      "shield:GetSubscriptionState",
+      "waf-regional:AssociateWebACL",
+      "waf-regional:DisassociateWebACL",
+      "waf-regional:GetWebACL",
+      "waf-regional:GetWebACLForResource",
+      "wafv2:AssociateWebACL",
+      "wafv2:DisassociateWebACL",
+      "wafv2:GetWebACL",
+      "wafv2:GetWebACLForResource",
+    ]
+  }
+
+  statement {
+    resources = ["*"]
+    actions = [
+      "ec2:AuthorizeSecurityGroupIngress",
+      "ec2:RevokeSecurityGroupIngress",
+    ]
+  }
+
+  statement {
+    resources = ["*"]
+    actions   = ["ec2:CreateSecurityGroup"]
+  }
+
+  statement {
+    resources = ["arn:${local.partition}:ec2:*:*:security-group/*"]
+    actions   = ["ec2:CreateTags"]
+
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "ec2:CreateAction"
+      values   = ["CreateSecurityGroup"]
+    }
+  }
+
+  statement {
+    resources = ["arn:${local.partition}:ec2:*:*:security-group/*"]
+    actions = [
+      "ec2:CreateTags",
+      "ec2:DeleteTags",
+    ]
+
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/ingress.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    resources = [
+      "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/app/*/*",
+      "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/net/*/*",
+      "arn:${local.partition}:elasticloadbalancing:*:*:targetgroup/*/*",
+    ]
+    actions = [
+      "elasticloadbalancing:AddTags",
+      "elasticloadbalancing:DeleteTargetGroup",
+      "elasticloadbalancing:RemoveTags",
+    ]
+
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/ingress.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    resources = ["arn:${local.partition}:ec2:*:*:security-group/*"]
+    actions = [
+      "ec2:CreateTags",
+      "ec2:DeleteTags",
+    ]
+
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["true"]
+    }
+  }
+
+  statement {
+    resources = ["*"]
+    actions = [
+      "ec2:AuthorizeSecurityGroupIngress",
+      "ec2:DeleteSecurityGroup",
+      "ec2:RevokeSecurityGroupIngress",
+    ]
+
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    resources = ["*"]
+    actions = [
+      "elasticloadbalancing:CreateLoadBalancer",
+      "elasticloadbalancing:CreateTargetGroup",
+    ]
+
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    resources = ["*"]
+    actions = [
+      "elasticloadbalancing:CreateListener",
+      "elasticloadbalancing:CreateRule",
+      "elasticloadbalancing:DeleteListener",
+      "elasticloadbalancing:DeleteRule",
+    ]
+  }
+
+  statement {
+    resources = [
+      "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/app/*/*",
+      "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/net/*/*",
+      "arn:${local.partition}:elasticloadbalancing:*:*:targetgroup/*/*",
+    ]
+    actions = [
+      "elasticloadbalancing:AddTags",
+      "elasticloadbalancing:RemoveTags",
+    ]
+
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["true"]
+    }
+
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    resources = [
+      "arn:${local.partition}:elasticloadbalancing:*:*:listener/net/*/*/*",
+      "arn:${local.partition}:elasticloadbalancing:*:*:listener/app/*/*/*",
+      "arn:${local.partition}:elasticloadbalancing:*:*:listener-rule/net/*/*/*",
+      "arn:${local.partition}:elasticloadbalancing:*:*:listener-rule/app/*/*/*",
+    ]
+    actions = [
+      "elasticloadbalancing:AddTags",
+      "elasticloadbalancing:RemoveTags",
+    ]
+  }
+
+  statement {
+    resources = ["*"]
+    actions = [
+      "elasticloadbalancing:DeleteLoadBalancer",
+      "elasticloadbalancing:DeleteTargetGroup",
+      "elasticloadbalancing:ModifyLoadBalancerAttributes",
+      "elasticloadbalancing:ModifyTargetGroup",
+      "elasticloadbalancing:ModifyTargetGroupAttributes",
+      "elasticloadbalancing:SetIpAddressType",
+      "elasticloadbalancing:SetSecurityGroups",
+      "elasticloadbalancing:SetSubnets",
+    ]
+
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    resources = ["arn:${local.partition}:elasticloadbalancing:*:*:targetgroup/*/*"]
+    actions = [
+      "elasticloadbalancing:DeregisterTargets",
+      "elasticloadbalancing:RegisterTargets",
+    ]
+  }
+
+  statement {
+    resources = ["*"]
+    actions = [
+      "elasticloadbalancing:AddListenerCertificates",
+      "elasticloadbalancing:ModifyListener",
+      "elasticloadbalancing:ModifyRule",
+      "elasticloadbalancing:RemoveListenerCertificates",
+      "elasticloadbalancing:SetWebAcl",
+    ]
+  }
+}
+
+module "aws_load_balancer_controller" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
+
+  create = var.enable_aws_load_balancer_controller
+
+  # https://github.com/aws/eks-charts/blob/master/stable/aws-load-balancer-controller/Chart.yaml
+  name        = try(var.aws_load_balancer_controller.name, "aws-load-balancer-controller")
+  description = try(var.aws_load_balancer_controller.description, "A Helm chart to deploy aws-load-balancer-controller for ingress resources")
+  namespace   = try(var.aws_load_balancer_controller.namespace, "kube-system")
+  # namespace creation is false here as kube-system already exists by default
+  create_namespace = try(var.aws_load_balancer_controller.create_namespace, false)
+  chart            = "aws-load-balancer-controller"
+  chart_version    = try(var.aws_load_balancer_controller.chart_version, "1.4.8")
+  repository       = try(var.aws_load_balancer_controller.repository, "https://aws.github.io/eks-charts")
+  values           = try(var.aws_load_balancer_controller.values, [])
+
+  timeout                    = try(var.aws_load_balancer_controller.timeout, null)
+  repository_key_file        = try(var.aws_load_balancer_controller.repository_key_file, null)
+  repository_cert_file       = try(var.aws_load_balancer_controller.repository_cert_file, null)
+  repository_ca_file         = try(var.aws_load_balancer_controller.repository_ca_file, null)
+  repository_username        = try(var.aws_load_balancer_controller.repository_username, null)
+  repository_password        = try(var.aws_load_balancer_controller.repository_password, null)
+  devel                      = try(var.aws_load_balancer_controller.devel, null)
+  verify                     = try(var.aws_load_balancer_controller.verify, null)
+  keyring                    = try(var.aws_load_balancer_controller.keyring, null)
+  disable_webhooks           = try(var.aws_load_balancer_controller.disable_webhooks, null)
+  reuse_values               = try(var.aws_load_balancer_controller.reuse_values, null)
+  reset_values               = try(var.aws_load_balancer_controller.reset_values, null)
+  force_update               = try(var.aws_load_balancer_controller.force_update, null)
+  recreate_pods              = try(var.aws_load_balancer_controller.recreate_pods, null)
+  cleanup_on_fail            = try(var.aws_load_balancer_controller.cleanup_on_fail, null)
+  max_history                = try(var.aws_load_balancer_controller.max_history, null)
+  atomic                     = try(var.aws_load_balancer_controller.atomic, null)
+  skip_crds                  = try(var.aws_load_balancer_controller.skip_crds, null)
+  render_subchart_notes      = try(var.aws_load_balancer_controller.render_subchart_notes, null)
+  disable_openapi_validation = try(var.aws_load_balancer_controller.disable_openapi_validation, null)
+  wait                       = try(var.aws_load_balancer_controller.wait, null)
+  wait_for_jobs              = try(var.aws_load_balancer_controller.wait_for_jobs, null)
+  dependency_update          = try(var.aws_load_balancer_controller.dependency_update, null)
+  replace                    = try(var.aws_load_balancer_controller.replace, null)
+  lint                       = try(var.aws_load_balancer_controller.lint, null)
+
+  postrender = try(var.aws_load_balancer_controller.postrender, [])
+  set = concat([
+    {
+      name  = "serviceAccount.name"
+      value = local.aws_load_balancer_controller_service_account
+      }, {
+      name  = "clusterName"
+      value = var.cluster_name
+    }],
+    try(var.aws_load_balancer_controller.set, [])
+  )
+  set_sensitive = try(var.aws_load_balancer_controller.set_sensitive, [])
+
+  # IAM role for service account (IRSA)
+  create_role                   = try(var.aws_load_balancer_controller.create_role, true)
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  role_name                     = try(var.aws_load_balancer_controller.role_name, "alb-controller")
+  role_name_use_prefix          = try(var.aws_load_balancer_controller.role_name_use_prefix, true)
+  role_path                     = try(var.aws_load_balancer_controller.role_path, "/")
+  role_permissions_boundary_arn = lookup(var.aws_load_balancer_controller, "role_permissions_boundary_arn", null)
+  role_description              = try(var.aws_load_balancer_controller.role_description, "IRSA for aws-load-balancer-controller project")
+  role_policies                 = lookup(var.aws_load_balancer_controller, "role_policies", {})
+
+  source_policy_documents = compact(concat(
+    data.aws_iam_policy_document.aws_load_balancer_controller[*].json,
+    lookup(var.aws_load_balancer_controller, "source_policy_documents", [])
+  ))
+  override_policy_documents = lookup(var.aws_load_balancer_controller, "override_policy_documents", [])
+  policy_statements         = lookup(var.aws_load_balancer_controller, "policy_statements", [])
+  policy_name               = try(var.aws_load_balancer_controller.policy_name, null)
+  policy_name_use_prefix    = try(var.aws_load_balancer_controller.policy_name_use_prefix, true)
+  policy_path               = try(var.aws_load_balancer_controller.policy_path, null)
+  policy_description        = try(var.aws_load_balancer_controller.policy_description, "IAM Policy for AWS Load Balancer Controller")
+
+  oidc_providers = {
+    this = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.aws_load_balancer_controller_service_account
+    }
   }
 
   tags = var.tags
@@ -202,8 +1239,8 @@ data "aws_iam_policy_document" "aws_node_termination_handler" {
 }
 
 module "aws_node_termination_handler" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
 
   create = var.enable_aws_node_termination_handler
 
@@ -299,161 +1336,109 @@ module "aws_node_termination_handler" {
 }
 
 ################################################################################
-# Argo Rollouts
+# AWS Private CA Issuer
 ################################################################################
 
-module "argo_rollouts" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
-
-  create = var.enable_argo_rollouts
-
-  # https://github.com/argoproj/argo-helm/tree/main/charts/argo-rollouts
-  name             = try(var.argo_rollouts.name, "argo-rollouts")
-  description      = try(var.argo_rollouts.description, "A Helm chart for Argo Rollouts")
-  namespace        = try(var.argo_rollouts.namespace, "argo-rollouts")
-  create_namespace = try(var.argo_rollouts.create_namespace, true)
-  chart            = "argo-rollouts"
-  chart_version    = try(var.argo_rollouts.chart_version, "2.22.3")
-  repository       = try(var.argo_rollouts.repository, "https://argoproj.github.io/argo-helm")
-  values           = try(var.argo_rollouts.values, [])
-
-  timeout                    = try(var.argo_rollouts.timeout, null)
-  repository_key_file        = try(var.argo_rollouts.repository_key_file, null)
-  repository_cert_file       = try(var.argo_rollouts.repository_cert_file, null)
-  repository_ca_file         = try(var.argo_rollouts.repository_ca_file, null)
-  repository_username        = try(var.argo_rollouts.repository_username, null)
-  repository_password        = try(var.argo_rollouts.repository_password, null)
-  devel                      = try(var.argo_rollouts.devel, null)
-  verify                     = try(var.argo_rollouts.verify, null)
-  keyring                    = try(var.argo_rollouts.keyring, null)
-  disable_webhooks           = try(var.argo_rollouts.disable_webhooks, null)
-  reuse_values               = try(var.argo_rollouts.reuse_values, null)
-  reset_values               = try(var.argo_rollouts.reset_values, null)
-  force_update               = try(var.argo_rollouts.force_update, null)
-  recreate_pods              = try(var.argo_rollouts.recreate_pods, null)
-  cleanup_on_fail            = try(var.argo_rollouts.cleanup_on_fail, null)
-  max_history                = try(var.argo_rollouts.max_history, null)
-  atomic                     = try(var.argo_rollouts.atomic, null)
-  skip_crds                  = try(var.argo_rollouts.skip_crds, null)
-  render_subchart_notes      = try(var.argo_rollouts.render_subchart_notes, null)
-  disable_openapi_validation = try(var.argo_rollouts.disable_openapi_validation, null)
-  wait                       = try(var.argo_rollouts.wait, null)
-  wait_for_jobs              = try(var.argo_rollouts.wait_for_jobs, null)
-  dependency_update          = try(var.argo_rollouts.dependency_update, null)
-  replace                    = try(var.argo_rollouts.replace, null)
-  lint                       = try(var.argo_rollouts.lint, null)
-
-  postrender    = try(var.argo_rollouts.postrender, [])
-  set           = try(var.argo_rollouts.set, [])
-  set_sensitive = try(var.argo_rollouts.set_sensitive, [])
-
-  tags = var.tags
+locals {
+  aws_privateca_issuer_service_account = try(var.aws_privateca_issuer.service_account_name, "aws-privateca-issuer-sa")
 }
 
-################################################################################
-# ArgoCD
-################################################################################
+data "aws_iam_policy_document" "aws_privateca_issuer" {
+  count = var.enable_aws_privateca_issuer ? 1 : 0
 
-module "argocd" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
-
-  create = var.enable_argocd
-
-  # https://github.com/argoproj/argo-helm/blob/main/charts/argo-cd/Chart.yaml
-  # (there is no offical helm chart for argocd)
-  name             = try(var.argocd.name, "argo-cd")
-  description      = try(var.argocd.description, "A Helm chart to install the ArgoCD")
-  namespace        = try(var.argocd.namespace, "argocd")
-  create_namespace = try(var.argocd.create_namespace, true)
-  chart            = "argo-cd"
-  chart_version    = try(var.argocd.chart_version, "5.29.1")
-  repository       = try(var.argocd.repository, "https://argoproj.github.io/argo-helm")
-  values           = try(var.argocd.values, [])
-
-  timeout                    = try(var.argocd.timeout, null)
-  repository_key_file        = try(var.argocd.repository_key_file, null)
-  repository_cert_file       = try(var.argocd.repository_cert_file, null)
-  repository_ca_file         = try(var.argocd.repository_ca_file, null)
-  repository_username        = try(var.argocd.repository_username, null)
-  repository_password        = try(var.argocd.repository_password, null)
-  devel                      = try(var.argocd.devel, null)
-  verify                     = try(var.argocd.verify, null)
-  keyring                    = try(var.argocd.keyring, null)
-  disable_webhooks           = try(var.argocd.disable_webhooks, null)
-  reuse_values               = try(var.argocd.reuse_values, null)
-  reset_values               = try(var.argocd.reset_values, null)
-  force_update               = try(var.argocd.force_update, null)
-  recreate_pods              = try(var.argocd.recreate_pods, null)
-  cleanup_on_fail            = try(var.argocd.cleanup_on_fail, null)
-  max_history                = try(var.argocd.max_history, null)
-  atomic                     = try(var.argocd.atomic, null)
-  skip_crds                  = try(var.argocd.skip_crds, null)
-  render_subchart_notes      = try(var.argocd.render_subchart_notes, null)
-  disable_openapi_validation = try(var.argocd.disable_openapi_validation, null)
-  wait                       = try(var.argocd.wait, null)
-  wait_for_jobs              = try(var.argocd.wait_for_jobs, null)
-  dependency_update          = try(var.argocd.dependency_update, null)
-  replace                    = try(var.argocd.replace, null)
-  lint                       = try(var.argocd.lint, null)
-
-  postrender    = try(var.argocd.postrender, [])
-  set           = try(var.argocd.set, [])
-  set_sensitive = try(var.argocd.set_sensitive, [])
-
-  tags = var.tags
+  statement {
+    actions = [
+      "acm-pca:DescribeCertificateAuthority",
+      "acm-pca:GetCertificate",
+      "acm-pca:IssueCertificate",
+    ]
+    resources = [
+      try(var.aws_privateca_issuer.acmca_arn,
+      "arn:${local.partition}:acm-pca:${local.region}:${local.account_id}:certificate-authority/*")
+    ]
+  }
 }
 
-################################################################################
-# Argo Workflows
-################################################################################
+module "aws_privateca_issuer" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
 
-module "argo_workflows" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
+  create = var.enable_aws_privateca_issuer
 
-  create = var.enable_argo_workflows
+  # https://github.com/cert-manager/aws-privateca-issuer/blob/main/charts/aws-pca-issuer/Chart.yaml
+  name             = try(var.aws_privateca_issuer.name, "aws-privateca-issuer")
+  description      = try(var.aws_privateca_issuer.description, "A Helm chart to install the AWS Private CA Issuer")
+  namespace        = try(var.aws_privateca_issuer.namespace, "kube-system")
+  create_namespace = try(var.aws_privateca_issuer.create_namespace, false)
+  chart            = "aws-privateca-issuer"
+  chart_version    = try(var.aws_privateca_issuer.chart_version, "v1.2.5")
+  repository       = try(var.aws_privateca_issuer.repository, "https://cert-manager.github.io/aws-privateca-issuer")
+  values           = try(var.aws_privateca_issuer.values, [])
 
-  # https://github.com/argoproj/argo-helm/tree/main/charts/argo-workflows
-  name             = try(var.argo_workflows.name, "argo-workflows")
-  description      = try(var.argo_workflows.description, "A Helm chart for Argo Workflows")
-  namespace        = try(var.argo_workflows.namespace, "argo-workflows")
-  create_namespace = try(var.argo_workflows.create_namespace, true)
-  chart            = "argo-workflows"
-  chart_version    = try(var.argo_workflows.chart_version, "2.22.13")
-  repository       = try(var.argo_workflows.repository, "https://argoproj.github.io/argo-helm")
-  values           = try(var.argo_workflows.values, [])
+  timeout                    = try(var.aws_privateca_issuer.timeout, null)
+  repository_key_file        = try(var.aws_privateca_issuer.repository_key_file, null)
+  repository_cert_file       = try(var.aws_privateca_issuer.repository_cert_file, null)
+  repository_ca_file         = try(var.aws_privateca_issuer.repository_ca_file, null)
+  repository_username        = try(var.aws_privateca_issuer.repository_username, null)
+  repository_password        = try(var.aws_privateca_issuer.repository_password, null)
+  devel                      = try(var.aws_privateca_issuer.devel, null)
+  verify                     = try(var.aws_privateca_issuer.verify, null)
+  keyring                    = try(var.aws_privateca_issuer.keyring, null)
+  disable_webhooks           = try(var.aws_privateca_issuer.disable_webhooks, null)
+  reuse_values               = try(var.aws_privateca_issuer.reuse_values, null)
+  reset_values               = try(var.aws_privateca_issuer.reset_values, null)
+  force_update               = try(var.aws_privateca_issuer.force_update, null)
+  recreate_pods              = try(var.aws_privateca_issuer.recreate_pods, null)
+  cleanup_on_fail            = try(var.aws_privateca_issuer.cleanup_on_fail, null)
+  max_history                = try(var.aws_privateca_issuer.max_history, null)
+  atomic                     = try(var.aws_privateca_issuer.atomic, null)
+  skip_crds                  = try(var.aws_privateca_issuer.skip_crds, null)
+  render_subchart_notes      = try(var.aws_privateca_issuer.render_subchart_notes, null)
+  disable_openapi_validation = try(var.aws_privateca_issuer.disable_openapi_validation, null)
+  wait                       = try(var.aws_privateca_issuer.wait, null)
+  wait_for_jobs              = try(var.aws_privateca_issuer.wait_for_jobs, null)
+  dependency_update          = try(var.aws_privateca_issuer.dependency_update, null)
+  replace                    = try(var.aws_privateca_issuer.replace, null)
+  lint                       = try(var.aws_privateca_issuer.lint, null)
 
-  timeout                    = try(var.argo_workflows.timeout, null)
-  repository_key_file        = try(var.argo_workflows.repository_key_file, null)
-  repository_cert_file       = try(var.argo_workflows.repository_cert_file, null)
-  repository_ca_file         = try(var.argo_workflows.repository_ca_file, null)
-  repository_username        = try(var.argo_workflows.repository_username, null)
-  repository_password        = try(var.argo_workflows.repository_password, null)
-  devel                      = try(var.argo_workflows.devel, null)
-  verify                     = try(var.argo_workflows.verify, null)
-  keyring                    = try(var.argo_workflows.keyring, null)
-  disable_webhooks           = try(var.argo_workflows.disable_webhooks, null)
-  reuse_values               = try(var.argo_workflows.reuse_values, null)
-  reset_values               = try(var.argo_workflows.reset_values, null)
-  force_update               = try(var.argo_workflows.force_update, null)
-  recreate_pods              = try(var.argo_workflows.recreate_pods, null)
-  cleanup_on_fail            = try(var.argo_workflows.cleanup_on_fail, null)
-  max_history                = try(var.argo_workflows.max_history, null)
-  atomic                     = try(var.argo_workflows.atomic, null)
-  skip_crds                  = try(var.argo_workflows.skip_crds, null)
-  render_subchart_notes      = try(var.argo_workflows.render_subchart_notes, null)
-  disable_openapi_validation = try(var.argo_workflows.disable_openapi_validation, null)
-  wait                       = try(var.argo_workflows.wait, null)
-  wait_for_jobs              = try(var.argo_workflows.wait_for_jobs, null)
-  dependency_update          = try(var.argo_workflows.dependency_update, null)
-  replace                    = try(var.argo_workflows.replace, null)
-  lint                       = try(var.argo_workflows.lint, null)
+  postrender = try(var.aws_privateca_issuer.postrender, [])
+  set = concat([
+    {
+      name  = "serviceAccount.name"
+      value = local.aws_privateca_issuer_service_account
+    }],
+    try(var.aws_privateca_issuer.set, [])
+  )
+  set_sensitive = try(var.aws_privateca_issuer.set_sensitive, [])
 
-  postrender    = try(var.argo_workflows.postrender, [])
-  set           = try(var.argo_workflows.set, [])
-  set_sensitive = try(var.argo_workflows.set_sensitive, [])
+  # IAM role for service account (IRSA)
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  create_role                   = try(var.aws_privateca_issuer.create_role, true)
+  role_name                     = try(var.aws_privateca_issuer.role_name, "aws-privateca-issuer")
+  role_name_use_prefix          = try(var.aws_privateca_issuer.role_name_use_prefix, true)
+  role_path                     = try(var.aws_privateca_issuer.role_path, "/")
+  role_permissions_boundary_arn = lookup(var.aws_privateca_issuer, "role_permissions_boundary_arn", null)
+  role_description              = try(var.aws_privateca_issuer.role_description, "IRSA for AWS Private CA Issuer")
+  role_policies                 = lookup(var.aws_privateca_issuer, "role_policies", {})
+
+  source_policy_documents = compact(concat(
+    data.aws_iam_policy_document.aws_privateca_issuer[*].json,
+    lookup(var.aws_privateca_issuer, "source_policy_documents", [])
+  ))
+  override_policy_documents = lookup(var.aws_privateca_issuer, "override_policy_documents", [])
+  policy_statements         = lookup(var.aws_privateca_issuer, "policy_statements", [])
+  policy_name               = try(var.aws_privateca_issuer.policy_name, "aws-privateca-issuer")
+  policy_name_use_prefix    = try(var.aws_privateca_issuer.policy_name_use_prefix, true)
+  policy_path               = try(var.aws_privateca_issuer.policy_path, null)
+  policy_description        = try(var.aws_privateca_issuer.policy_description, "IAM Policy for AWS Private CA Issuer")
+
+  oidc_providers = {
+    controller = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.aws_privateca_issuer_service_account
+    }
+  }
 
   tags = var.tags
 }
@@ -490,8 +1475,8 @@ data "aws_iam_policy_document" "cert_manager" {
 }
 
 module "cert_manager" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
 
   create = var.enable_cert_manager
 
@@ -575,902 +1560,6 @@ module "cert_manager" {
 }
 
 ################################################################################
-# Cloudwatch Metrics
-################################################################################
-
-locals {
-  cloudwatch_metrics_service_account = try(var.cloudwatch_metrics.service_account_name, "aws-cloudwatch-metrics")
-}
-
-module "cloudwatch_metrics" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
-
-  create = var.enable_cloudwatch_metrics
-
-  # https://github.com/aws/eks-charts/tree/master/stable/aws-cloudwatch-metrics
-  name             = try(var.cloudwatch_metrics.name, "aws-cloudwatch-metrics")
-  description      = try(var.cloudwatch_metrics.description, "A Helm chart to deploy aws-cloudwatch-metrics project")
-  namespace        = try(var.cloudwatch_metrics.namespace, "amazon-cloudwatch")
-  create_namespace = try(var.cloudwatch_metrics.create_namespace, true)
-  chart            = "aws-cloudwatch-metrics"
-  chart_version    = try(var.cloudwatch_metrics.chart_version, "0.0.8")
-  repository       = try(var.cloudwatch_metrics.repository, "https://aws.github.io/eks-charts")
-  values           = try(var.cloudwatch_metrics.values, [])
-
-  timeout                    = try(var.cloudwatch_metrics.timeout, null)
-  repository_key_file        = try(var.cloudwatch_metrics.repository_key_file, null)
-  repository_cert_file       = try(var.cloudwatch_metrics.repository_cert_file, null)
-  repository_ca_file         = try(var.cloudwatch_metrics.repository_ca_file, null)
-  repository_username        = try(var.cloudwatch_metrics.repository_username, null)
-  repository_password        = try(var.cloudwatch_metrics.repository_password, null)
-  devel                      = try(var.cloudwatch_metrics.devel, null)
-  verify                     = try(var.cloudwatch_metrics.verify, null)
-  keyring                    = try(var.cloudwatch_metrics.keyring, null)
-  disable_webhooks           = try(var.cloudwatch_metrics.disable_webhooks, null)
-  reuse_values               = try(var.cloudwatch_metrics.reuse_values, null)
-  reset_values               = try(var.cloudwatch_metrics.reset_values, null)
-  force_update               = try(var.cloudwatch_metrics.force_update, null)
-  recreate_pods              = try(var.cloudwatch_metrics.recreate_pods, null)
-  cleanup_on_fail            = try(var.cloudwatch_metrics.cleanup_on_fail, null)
-  max_history                = try(var.cloudwatch_metrics.max_history, null)
-  atomic                     = try(var.cloudwatch_metrics.atomic, null)
-  skip_crds                  = try(var.cloudwatch_metrics.skip_crds, null)
-  render_subchart_notes      = try(var.cloudwatch_metrics.render_subchart_notes, null)
-  disable_openapi_validation = try(var.cloudwatch_metrics.disable_openapi_validation, null)
-  wait                       = try(var.cloudwatch_metrics.wait, null)
-  wait_for_jobs              = try(var.cloudwatch_metrics.wait_for_jobs, null)
-  dependency_update          = try(var.cloudwatch_metrics.dependency_update, null)
-  replace                    = try(var.cloudwatch_metrics.replace, null)
-  lint                       = try(var.cloudwatch_metrics.lint, null)
-
-  postrender = try(var.cloudwatch_metrics.postrender, [])
-  set = concat([
-    {
-      name  = "clusterName"
-      value = var.cluster_name
-      }, {
-      name  = "serviceAccount.name"
-      value = local.cloudwatch_metrics_service_account
-    }],
-    try(var.cloudwatch_metrics.set, [])
-  )
-  set_sensitive = try(var.cloudwatch_metrics.set_sensitive, [])
-
-  # IAM role for service account (IRSA)
-  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
-  create_role                   = try(var.cloudwatch_metrics.create_role, true)
-  role_name                     = try(var.cloudwatch_metrics.role_name, "aws-cloudwatch-metrics")
-  role_name_use_prefix          = try(var.cloudwatch_metrics.role_name_use_prefix, true)
-  role_path                     = try(var.cloudwatch_metrics.role_path, "/")
-  role_permissions_boundary_arn = try(var.cloudwatch_metrics.role_permissions_boundary_arn, null)
-  role_description              = try(var.cloudwatch_metrics.role_description, "IRSA for aws-cloudwatch-metrics project")
-  role_policies = lookup(var.cloudwatch_metrics, "role_policies",
-    { CloudWatchAgentServerPolicy = "arn:${local.partition}:iam::aws:policy/CloudWatchAgentServerPolicy" }
-  )
-  create_policy = try(var.cloudwatch_metrics.create_policy, false)
-
-  oidc_providers = {
-    this = {
-      provider_arn = var.oidc_provider_arn
-      # namespace is inherited from chart
-      service_account = local.cloudwatch_metrics_service_account
-    }
-  }
-
-  tags = var.tags
-}
-
-################################################################################
-# EFS CSI DRIVER
-################################################################################
-
-locals {
-  efs_csi_driver_controller_service_account = try(var.efs_csi_driver.controller_service_account_name, "efs-csi-controller-sa")
-  efs_csi_driver_node_service_account       = try(var.efs_csi_driver.node_service_account_name, "efs-csi-node-sa")
-  efs_arns = lookup(var.efs_csi_driver, "efs_arns",
-    ["arn:${local.partition}:elasticfilesystem:${local.region}:${local.account_id}:file-system/*"],
-  )
-  efs_access_point_arns = lookup(var.efs_csi_driver, "efs_access_point_arns",
-    ["arn:${local.partition}:elasticfilesystem:${local.region}:${local.account_id}:access-point/*"]
-  )
-}
-
-data "aws_iam_policy_document" "efs_csi_driver" {
-  count = var.enable_efs_csi_driver ? 1 : 0
-
-  statement {
-    sid       = "AllowDescribeAvailabilityZones"
-    actions   = ["ec2:DescribeAvailabilityZones"]
-    resources = ["*"]
-  }
-
-  statement {
-    sid = "AllowDescribeFileSystems"
-    actions = [
-      "elasticfilesystem:DescribeAccessPoints",
-      "elasticfilesystem:DescribeFileSystems",
-      "elasticfilesystem:DescribeMountTargets"
-    ]
-    resources = flatten([
-      local.efs_arns,
-      local.efs_access_point_arns,
-    ])
-  }
-
-  statement {
-    sid       = "AllowCreateAccessPoint"
-    actions   = ["elasticfilesystem:CreateAccessPoint"]
-    resources = local.efs_arns
-
-    condition {
-      test     = "StringLike"
-      variable = "aws:RequestTag/efs.csi.aws.com/cluster"
-      values   = ["true"]
-    }
-  }
-
-  statement {
-    sid       = "AllowDeleteAccessPoint"
-    actions   = ["elasticfilesystem:DeleteAccessPoint"]
-    resources = local.efs_access_point_arns
-
-    condition {
-      test     = "StringLike"
-      variable = "aws:ResourceTag/efs.csi.aws.com/cluster"
-      values   = ["true"]
-    }
-  }
-
-  statement {
-    sid = "ClientReadWrite"
-    actions = [
-      "elasticfilesystem:ClientRootAccess",
-      "elasticfilesystem:ClientWrite",
-      "elasticfilesystem:ClientMount",
-    ]
-    resources = local.efs_arns
-
-    condition {
-      test     = "Bool"
-      variable = "elasticfilesystem:AccessedViaMountTarget"
-      values   = ["true"]
-    }
-  }
-}
-
-module "efs_csi_driver" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
-
-  create = var.enable_efs_csi_driver
-
-  # https://github.com/kubernetes-sigs/aws-efs-csi-driver/tree/master/charts/aws-efs-csi-driver
-  name             = try(var.efs_csi_driver.name, "aws-efs-csi-driver")
-  description      = try(var.efs_csi_driver.description, "A Helm chart to deploy aws-efs-csi-driver")
-  namespace        = try(var.efs_csi_driver.namespace, "kube-system")
-  create_namespace = try(var.efs_csi_driver.create_namespace, false)
-  chart            = "aws-efs-csi-driver"
-  chart_version    = try(var.efs_csi_driver.chart_version, "2.4.1")
-  repository       = try(var.efs_csi_driver.repository, "https://kubernetes-sigs.github.io/aws-efs-csi-driver/")
-  values           = try(var.efs_csi_driver.values, [])
-
-  timeout                    = try(var.efs_csi_driver.timeout, null)
-  repository_key_file        = try(var.efs_csi_driver.repository_key_file, null)
-  repository_cert_file       = try(var.efs_csi_driver.repository_cert_file, null)
-  repository_ca_file         = try(var.efs_csi_driver.repository_ca_file, null)
-  repository_username        = try(var.efs_csi_driver.repository_username, null)
-  repository_password        = try(var.efs_csi_driver.repository_password, null)
-  devel                      = try(var.efs_csi_driver.devel, null)
-  verify                     = try(var.efs_csi_driver.verify, null)
-  keyring                    = try(var.efs_csi_driver.keyring, null)
-  disable_webhooks           = try(var.efs_csi_driver.disable_webhooks, null)
-  reuse_values               = try(var.efs_csi_driver.reuse_values, null)
-  reset_values               = try(var.efs_csi_driver.reset_values, null)
-  force_update               = try(var.efs_csi_driver.force_update, null)
-  recreate_pods              = try(var.efs_csi_driver.recreate_pods, null)
-  cleanup_on_fail            = try(var.efs_csi_driver.cleanup_on_fail, null)
-  max_history                = try(var.efs_csi_driver.max_history, null)
-  atomic                     = try(var.efs_csi_driver.atomic, null)
-  skip_crds                  = try(var.efs_csi_driver.skip_crds, null)
-  render_subchart_notes      = try(var.efs_csi_driver.render_subchart_notes, null)
-  disable_openapi_validation = try(var.efs_csi_driver.disable_openapi_validation, null)
-  wait                       = try(var.efs_csi_driver.wait, null)
-  wait_for_jobs              = try(var.efs_csi_driver.wait_for_jobs, null)
-  dependency_update          = try(var.efs_csi_driver.dependency_update, null)
-  replace                    = try(var.efs_csi_driver.replace, null)
-  lint                       = try(var.efs_csi_driver.lint, null)
-
-  postrender = try(var.efs_csi_driver.postrender, [])
-  set = concat([
-    {
-      name  = "controller.serviceAccount.name"
-      value = local.efs_csi_driver_controller_service_account
-    },
-    {
-      name  = "node.serviceAccount.name"
-      value = local.efs_csi_driver_node_service_account
-    }],
-    try(var.efs_csi_driver.set, [])
-  )
-  set_sensitive = try(var.efs_csi_driver.set_sensitive, [])
-
-  # IAM role for service account (IRSA)
-  set_irsa_names = [
-    "controller.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn",
-    "node.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-  ]
-  create_role                   = try(var.efs_csi_driver.create_role, true)
-  role_name                     = try(var.efs_csi_driver.role_name, "aws-efs-csi-driver")
-  role_name_use_prefix          = try(var.efs_csi_driver.role_name_use_prefix, true)
-  role_path                     = try(var.efs_csi_driver.role_path, "/")
-  role_permissions_boundary_arn = lookup(var.efs_csi_driver, "role_permissions_boundary_arn", null)
-  role_description              = try(var.efs_csi_driver.role_description, "IRSA for aws-efs-csi-driver project")
-  role_policies                 = lookup(var.efs_csi_driver, "role_policies", {})
-
-  source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.efs_csi_driver[*].json,
-    lookup(var.efs_csi_driver, "source_policy_documents", [])
-  ))
-  override_policy_documents = lookup(var.efs_csi_driver, "override_policy_documents", [])
-  policy_statements         = lookup(var.efs_csi_driver, "policy_statements", [])
-  policy_name               = try(var.efs_csi_driver.policy_name, null)
-  policy_name_use_prefix    = try(var.efs_csi_driver.policy_name_use_prefix, true)
-  policy_path               = try(var.efs_csi_driver.policy_path, null)
-  policy_description        = try(var.efs_csi_driver.policy_description, "IAM Policy for AWS EFS CSI Driver")
-
-  oidc_providers = {
-    controller = {
-      provider_arn = var.oidc_provider_arn
-      # namespace is inherited from chart
-      service_account = local.efs_csi_driver_controller_service_account
-    }
-    node = {
-      provider_arn = var.oidc_provider_arn
-      # namespace is inherited from chart
-      service_account = local.efs_csi_driver_node_service_account
-    }
-  }
-
-  tags = var.tags
-}
-
-################################################################################
-# External Secrets
-################################################################################
-
-locals {
-  external_secrets_service_account = try(var.external_secrets.service_account_name, "external-secrets-sa")
-}
-
-# https://github.com/external-secrets/kubernetes-external-secrets#add-a-secret
-data "aws_iam_policy_document" "external_secrets" {
-  count = var.enable_external_secrets ? 1 : 0
-
-  dynamic "statement" {
-    for_each = length(var.external_secrets_ssm_parameter_arns) > 0 ? [1] : []
-
-    content {
-      actions   = ["ssm:DescribeParameters"]
-      resources = ["*"]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = length(var.external_secrets_ssm_parameter_arns) > 0 ? [1] : []
-
-    content {
-      actions = [
-        "ssm:GetParameter",
-        "ssm:GetParameters",
-      ]
-      resources = var.external_secrets_ssm_parameter_arns
-    }
-  }
-
-  dynamic "statement" {
-    for_each = length(var.external_secrets_secrets_manager_arns) > 0 ? [1] : []
-
-    content {
-      actions   = ["secretsmanager:ListSecrets"]
-      resources = ["*"]
-    }
-  }
-
-  dynamic "statement" {
-    for_each = length(var.external_secrets_secrets_manager_arns) > 0 ? [1] : []
-
-    content {
-      actions = [
-        "secretsmanager:GetResourcePolicy",
-        "secretsmanager:GetSecretValue",
-        "secretsmanager:DescribeSecret",
-        "secretsmanager:ListSecretVersionIds",
-      ]
-      resources = var.external_secrets_secrets_manager_arns
-    }
-  }
-
-  dynamic "statement" {
-    for_each = length(var.external_secrets_kms_key_arns) > 0 ? [1] : []
-
-    content {
-      actions   = ["kms:Decrypt"]
-      resources = var.external_secrets_kms_key_arns
-    }
-  }
-}
-
-module "external_secrets" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
-
-  create = var.enable_external_secrets
-
-  # https://github.com/external-secrets/external-secrets/blob/main/deploy/charts/external-secrets/Chart.yaml
-  name             = try(var.external_secrets.name, "external-secrets")
-  description      = try(var.external_secrets.description, "A Helm chart to deploy external-secrets")
-  namespace        = try(var.external_secrets.namespace, "external-secrets")
-  create_namespace = try(var.external_secrets.create_namespace, true)
-  chart            = "external-secrets"
-  chart_version    = try(var.external_secrets.chart_version, "0.8.1")
-  repository       = try(var.external_secrets.repository, "https://charts.external-secrets.io")
-  values           = try(var.external_secrets.values, [])
-
-  timeout                    = try(var.external_secrets.timeout, null)
-  repository_key_file        = try(var.external_secrets.repository_key_file, null)
-  repository_cert_file       = try(var.external_secrets.repository_cert_file, null)
-  repository_ca_file         = try(var.external_secrets.repository_ca_file, null)
-  repository_username        = try(var.external_secrets.repository_username, null)
-  repository_password        = try(var.external_secrets.repository_password, null)
-  devel                      = try(var.external_secrets.devel, null)
-  verify                     = try(var.external_secrets.verify, null)
-  keyring                    = try(var.external_secrets.keyring, null)
-  disable_webhooks           = try(var.external_secrets.disable_webhooks, null)
-  reuse_values               = try(var.external_secrets.reuse_values, null)
-  reset_values               = try(var.external_secrets.reset_values, null)
-  force_update               = try(var.external_secrets.force_update, null)
-  recreate_pods              = try(var.external_secrets.recreate_pods, null)
-  cleanup_on_fail            = try(var.external_secrets.cleanup_on_fail, null)
-  max_history                = try(var.external_secrets.max_history, null)
-  atomic                     = try(var.external_secrets.atomic, null)
-  skip_crds                  = try(var.external_secrets.skip_crds, null)
-  render_subchart_notes      = try(var.external_secrets.render_subchart_notes, null)
-  disable_openapi_validation = try(var.external_secrets.disable_openapi_validation, null)
-  wait                       = try(var.external_secrets.wait, null)
-  wait_for_jobs              = try(var.external_secrets.wait_for_jobs, null)
-  dependency_update          = try(var.external_secrets.dependency_update, null)
-  replace                    = try(var.external_secrets.replace, null)
-  lint                       = try(var.external_secrets.lint, null)
-
-  postrender = try(var.external_secrets.postrender, [])
-  set = concat([
-    {
-      name  = "serviceAccount.name"
-      value = local.external_secrets_service_account
-    }],
-    try(var.external_secrets.set, [])
-  )
-  set_sensitive = try(var.external_secrets.set_sensitive, [])
-
-  # IAM role for service account (IRSA)
-  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
-  create_role                   = try(var.external_secrets.create_role, true)
-  role_name                     = try(var.external_secrets.role_name, "external-secrets")
-  role_name_use_prefix          = try(var.external_secrets.role_name_use_prefix, true)
-  role_path                     = try(var.external_secrets.role_path, "/")
-  role_permissions_boundary_arn = lookup(var.external_secrets, "role_permissions_boundary_arn", null)
-  role_description              = try(var.external_secrets.role_description, "IRSA for external-secrets operator")
-  role_policies                 = lookup(var.external_secrets, "role_policies", {})
-
-  source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.external_secrets[*].json,
-    lookup(var.external_secrets, "source_policy_documents", [])
-  ))
-  override_policy_documents = lookup(var.external_secrets, "override_policy_documents", [])
-  policy_statements         = lookup(var.external_secrets, "policy_statements", [])
-  policy_name               = try(var.external_secrets.policy_name, null)
-  policy_name_use_prefix    = try(var.external_secrets.policy_name_use_prefix, true)
-  policy_path               = try(var.external_secrets.policy_path, null)
-  policy_description        = try(var.external_secrets.policy_description, "IAM Policy for external-secrets operator")
-
-  oidc_providers = {
-    this = {
-      provider_arn = var.oidc_provider_arn
-      # namespace is inherited from chart
-      service_account = local.external_secrets_service_account
-    }
-  }
-
-  tags = var.tags
-}
-
-################################################################################
-# External DNS
-################################################################################
-
-locals {
-  external_dns_service_account = try(var.external_dns.service_account_name, "external-dns-sa")
-}
-
-# https://github.com/external-secrets/kubernetes-external-secrets#add-a-secret
-data "aws_iam_policy_document" "external_dns" {
-  count = var.enable_external_dns && length(var.external_dns_route53_zone_arns) > 0 ? 1 : 0
-
-  statement {
-    actions   = ["route53:ChangeResourceRecordSets"]
-    resources = var.external_dns_route53_zone_arns
-  }
-
-  statement {
-    actions = [
-      "route53:ListHostedZones",
-      "route53:ListResourceRecordSets",
-    ]
-    resources = ["*"]
-  }
-}
-
-module "external_dns" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
-
-  create = var.enable_external_dns
-
-  # https://github.com/kubernetes-sigs/external-dns/tree/master/charts/external-dns/Chart.yaml
-  name             = try(var.external_dns.name, "external-dns")
-  description      = try(var.external_dns.description, "A Helm chart to deploy external-dns")
-  namespace        = try(var.external_dns.namespace, "external-dns")
-  create_namespace = try(var.external_dns.create_namespace, true)
-  chart            = "external-dns"
-  chart_version    = try(var.external_dns.chart_version, "1.12.2")
-  repository       = try(var.external_dns.repository, "https://kubernetes-sigs.github.io/external-dns/")
-  values           = try(var.external_dns.values, ["provider: aws"])
-
-  timeout                    = try(var.external_dns.timeout, null)
-  repository_key_file        = try(var.external_dns.repository_key_file, null)
-  repository_cert_file       = try(var.external_dns.repository_cert_file, null)
-  repository_ca_file         = try(var.external_dns.repository_ca_file, null)
-  repository_username        = try(var.external_dns.repository_username, null)
-  repository_password        = try(var.external_dns.repository_password, null)
-  devel                      = try(var.external_dns.devel, null)
-  verify                     = try(var.external_dns.verify, null)
-  keyring                    = try(var.external_dns.keyring, null)
-  disable_webhooks           = try(var.external_dns.disable_webhooks, null)
-  reuse_values               = try(var.external_dns.reuse_values, null)
-  reset_values               = try(var.external_dns.reset_values, null)
-  force_update               = try(var.external_dns.force_update, null)
-  recreate_pods              = try(var.external_dns.recreate_pods, null)
-  cleanup_on_fail            = try(var.external_dns.cleanup_on_fail, null)
-  max_history                = try(var.external_dns.max_history, null)
-  atomic                     = try(var.external_dns.atomic, null)
-  skip_crds                  = try(var.external_dns.skip_crds, null)
-  render_subchart_notes      = try(var.external_dns.render_subchart_notes, null)
-  disable_openapi_validation = try(var.external_dns.disable_openapi_validation, null)
-  wait                       = try(var.external_dns.wait, null)
-  wait_for_jobs              = try(var.external_dns.wait_for_jobs, null)
-  dependency_update          = try(var.external_dns.dependency_update, null)
-  replace                    = try(var.external_dns.replace, null)
-  lint                       = try(var.external_dns.lint, null)
-
-  postrender = try(var.external_dns.postrender, [])
-  set = concat([
-    {
-      name  = "serviceAccount.name"
-      value = local.external_dns_service_account
-    }],
-    try(var.external_dns.set, [])
-  )
-  set_sensitive = try(var.external_dns.set_sensitive, [])
-
-  # IAM role for service account (IRSA)
-  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
-  create_role                   = try(var.external_dns.create_role, true) && length(var.external_dns_route53_zone_arns) > 0
-  role_name                     = try(var.external_dns.role_name, "external-dns")
-  role_name_use_prefix          = try(var.external_dns.role_name_use_prefix, true)
-  role_path                     = try(var.external_dns.role_path, "/")
-  role_permissions_boundary_arn = lookup(var.external_dns, "role_permissions_boundary_arn", null)
-  role_description              = try(var.external_dns.role_description, "IRSA for external-dns operator")
-  role_policies                 = lookup(var.external_dns, "role_policies", {})
-
-  source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.external_dns[*].json,
-    lookup(var.external_dns, "source_policy_documents", [])
-  ))
-  override_policy_documents = lookup(var.external_dns, "override_policy_documents", [])
-  policy_statements         = lookup(var.external_dns, "policy_statements", [])
-  policy_name               = try(var.external_dns.policy_name, null)
-  policy_name_use_prefix    = try(var.external_dns.policy_name_use_prefix, true)
-  policy_path               = try(var.external_dns.policy_path, null)
-  policy_description        = try(var.external_dns.policy_description, "IAM Policy for external-dns operator")
-
-  oidc_providers = {
-    this = {
-      provider_arn = var.oidc_provider_arn
-      # namespace is inherited from chart
-      service_account = local.external_dns_service_account
-    }
-  }
-
-  tags = var.tags
-}
-
-################################################################################
-# AWS Load Balancer Controller
-################################################################################
-
-locals {
-  aws_load_balancer_controller_service_account = try(var.aws_load_balancer_controller.service_account_name, "aws-load-balancer-controller-sa")
-}
-
-data "aws_iam_policy_document" "aws_load_balancer_controller" {
-  statement {
-    resources = ["*"]
-    actions   = ["iam:CreateServiceLinkedRole"]
-
-    condition {
-      test     = "StringEquals"
-      variable = "iam:AWSServiceName"
-      values   = ["elasticloadbalancing.${local.dns_suffix}"]
-    }
-  }
-
-  statement {
-    resources = ["*"]
-
-    actions = [
-      "ec2:DescribeAccountAttributes",
-      "ec2:DescribeAddresses",
-      "ec2:DescribeAvailabilityZones",
-      "ec2:DescribeCoipPools",
-      "ec2:DescribeInstances",
-      "ec2:DescribeInternetGateways",
-      "ec2:DescribeNetworkInterfaces",
-      "ec2:DescribeSecurityGroups",
-      "ec2:DescribeSubnets",
-      "ec2:DescribeTags",
-      "ec2:DescribeVpcPeeringConnections",
-      "ec2:DescribeVpcs",
-      "ec2:GetCoipPoolUsage",
-      "elasticloadbalancing:DescribeListenerCertificates",
-      "elasticloadbalancing:DescribeListeners",
-      "elasticloadbalancing:DescribeLoadBalancerAttributes",
-      "elasticloadbalancing:DescribeLoadBalancers",
-      "elasticloadbalancing:DescribeRules",
-      "elasticloadbalancing:DescribeSSLPolicies",
-      "elasticloadbalancing:DescribeTags",
-      "elasticloadbalancing:DescribeTargetGroupAttributes",
-      "elasticloadbalancing:DescribeTargetGroups",
-      "elasticloadbalancing:DescribeTargetHealth",
-    ]
-  }
-
-  statement {
-    resources = ["*"]
-
-    actions = [
-      "acm:DescribeCertificate",
-      "acm:ListCertificates",
-      "cognito-idp:DescribeUserPoolClient",
-      "iam:GetServerCertificate",
-      "iam:ListServerCertificates",
-      "shield:CreateProtection",
-      "shield:DeleteProtection",
-      "shield:DescribeProtection",
-      "shield:GetSubscriptionState",
-      "waf-regional:AssociateWebACL",
-      "waf-regional:DisassociateWebACL",
-      "waf-regional:GetWebACL",
-      "waf-regional:GetWebACLForResource",
-      "wafv2:AssociateWebACL",
-      "wafv2:DisassociateWebACL",
-      "wafv2:GetWebACL",
-      "wafv2:GetWebACLForResource",
-    ]
-  }
-
-  statement {
-    resources = ["*"]
-
-    actions = [
-      "ec2:AuthorizeSecurityGroupIngress",
-      "ec2:RevokeSecurityGroupIngress",
-    ]
-  }
-
-  statement {
-    resources = ["*"]
-
-    actions = ["ec2:CreateSecurityGroup"]
-  }
-
-  statement {
-    resources = ["arn:${local.partition}:ec2:*:*:security-group/*"]
-
-    actions = ["ec2:CreateTags"]
-
-    condition {
-      test     = "Null"
-      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
-      values   = ["false"]
-    }
-
-    condition {
-      test     = "StringEquals"
-      variable = "ec2:CreateAction"
-      values   = ["CreateSecurityGroup"]
-    }
-  }
-
-  statement {
-    resources = ["arn:${local.partition}:ec2:*:*:security-group/*"]
-
-    actions = [
-      "ec2:CreateTags",
-      "ec2:DeleteTags",
-    ]
-
-    condition {
-      test     = "Null"
-      variable = "aws:ResourceTag/ingress.k8s.aws/cluster"
-      values   = ["false"]
-    }
-  }
-
-  statement {
-    resources = [
-      "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/app/*/*",
-      "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/net/*/*",
-      "arn:${local.partition}:elasticloadbalancing:*:*:targetgroup/*/*",
-    ]
-
-    actions = [
-      "elasticloadbalancing:AddTags",
-      "elasticloadbalancing:DeleteTargetGroup",
-      "elasticloadbalancing:RemoveTags",
-    ]
-
-    condition {
-      test     = "Null"
-      variable = "aws:ResourceTag/ingress.k8s.aws/cluster"
-      values   = ["false"]
-    }
-  }
-
-  statement {
-    resources = ["arn:${local.partition}:ec2:*:*:security-group/*"]
-
-    actions = [
-      "ec2:CreateTags",
-      "ec2:DeleteTags",
-    ]
-
-    condition {
-      test     = "Null"
-      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
-      values   = ["false"]
-    }
-
-    condition {
-      test     = "Null"
-      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
-      values   = ["true"]
-    }
-  }
-
-  statement {
-    resources = ["*"]
-
-    actions = [
-      "ec2:AuthorizeSecurityGroupIngress",
-      "ec2:DeleteSecurityGroup",
-      "ec2:RevokeSecurityGroupIngress",
-    ]
-
-    condition {
-      test     = "Null"
-      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
-      values   = ["false"]
-    }
-  }
-
-  statement {
-    resources = ["*"]
-
-    actions = [
-      "elasticloadbalancing:CreateLoadBalancer",
-      "elasticloadbalancing:CreateTargetGroup",
-    ]
-
-    condition {
-      test     = "Null"
-      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
-      values   = ["false"]
-    }
-  }
-
-  statement {
-    resources = ["*"]
-
-    actions = [
-      "elasticloadbalancing:CreateListener",
-      "elasticloadbalancing:CreateRule",
-      "elasticloadbalancing:DeleteListener",
-      "elasticloadbalancing:DeleteRule",
-    ]
-  }
-
-  statement {
-    resources = [
-      "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/app/*/*",
-      "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/net/*/*",
-      "arn:${local.partition}:elasticloadbalancing:*:*:targetgroup/*/*",
-    ]
-
-    actions = [
-      "elasticloadbalancing:AddTags",
-      "elasticloadbalancing:RemoveTags",
-    ]
-
-    condition {
-      test     = "Null"
-      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
-      values   = ["true"]
-    }
-
-    condition {
-      test     = "Null"
-      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
-      values   = ["false"]
-    }
-  }
-
-  statement {
-    resources = [
-      "arn:${local.partition}:elasticloadbalancing:*:*:listener/net/*/*/*",
-      "arn:${local.partition}:elasticloadbalancing:*:*:listener/app/*/*/*",
-      "arn:${local.partition}:elasticloadbalancing:*:*:listener-rule/net/*/*/*",
-      "arn:${local.partition}:elasticloadbalancing:*:*:listener-rule/app/*/*/*",
-    ]
-
-    actions = [
-      "elasticloadbalancing:AddTags",
-      "elasticloadbalancing:RemoveTags",
-    ]
-  }
-
-  statement {
-    resources = ["*"]
-
-    actions = [
-      "elasticloadbalancing:DeleteLoadBalancer",
-      "elasticloadbalancing:DeleteTargetGroup",
-      "elasticloadbalancing:ModifyLoadBalancerAttributes",
-      "elasticloadbalancing:ModifyTargetGroup",
-      "elasticloadbalancing:ModifyTargetGroupAttributes",
-      "elasticloadbalancing:SetIpAddressType",
-      "elasticloadbalancing:SetSecurityGroups",
-      "elasticloadbalancing:SetSubnets",
-    ]
-
-    condition {
-      test     = "Null"
-      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
-      values   = ["false"]
-    }
-  }
-
-  statement {
-    resources = ["arn:${local.partition}:elasticloadbalancing:*:*:targetgroup/*/*"]
-
-    actions = [
-      "elasticloadbalancing:DeregisterTargets",
-      "elasticloadbalancing:RegisterTargets",
-    ]
-  }
-
-  statement {
-    resources = ["*"]
-
-    actions = [
-      "elasticloadbalancing:AddListenerCertificates",
-      "elasticloadbalancing:ModifyListener",
-      "elasticloadbalancing:ModifyRule",
-      "elasticloadbalancing:RemoveListenerCertificates",
-      "elasticloadbalancing:SetWebAcl",
-    ]
-  }
-}
-
-module "aws_load_balancer_controller" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
-
-  create = var.enable_aws_load_balancer_controller
-
-  # https://github.com/aws/eks-charts/blob/master/stable/aws-load-balancer-controller/Chart.yaml
-  name        = try(var.aws_load_balancer_controller.name, "aws-load-balancer-controller")
-  description = try(var.aws_load_balancer_controller.description, "A Helm chart to deploy aws-load-balancer-controller for ingress resources")
-  namespace   = try(var.aws_load_balancer_controller.namespace, "kube-system")
-  # namespace creation is false here as kube-system already exists by default
-  create_namespace = try(var.aws_load_balancer_controller.create_namespace, false)
-  chart            = "aws-load-balancer-controller"
-  chart_version    = try(var.aws_load_balancer_controller.chart_version, "1.4.8")
-  repository       = try(var.aws_load_balancer_controller.repository, "https://aws.github.io/eks-charts")
-  values           = try(var.aws_load_balancer_controller.values, [])
-
-  timeout                    = try(var.aws_load_balancer_controller.timeout, null)
-  repository_key_file        = try(var.aws_load_balancer_controller.repository_key_file, null)
-  repository_cert_file       = try(var.aws_load_balancer_controller.repository_cert_file, null)
-  repository_ca_file         = try(var.aws_load_balancer_controller.repository_ca_file, null)
-  repository_username        = try(var.aws_load_balancer_controller.repository_username, null)
-  repository_password        = try(var.aws_load_balancer_controller.repository_password, null)
-  devel                      = try(var.aws_load_balancer_controller.devel, null)
-  verify                     = try(var.aws_load_balancer_controller.verify, null)
-  keyring                    = try(var.aws_load_balancer_controller.keyring, null)
-  disable_webhooks           = try(var.aws_load_balancer_controller.disable_webhooks, null)
-  reuse_values               = try(var.aws_load_balancer_controller.reuse_values, null)
-  reset_values               = try(var.aws_load_balancer_controller.reset_values, null)
-  force_update               = try(var.aws_load_balancer_controller.force_update, null)
-  recreate_pods              = try(var.aws_load_balancer_controller.recreate_pods, null)
-  cleanup_on_fail            = try(var.aws_load_balancer_controller.cleanup_on_fail, null)
-  max_history                = try(var.aws_load_balancer_controller.max_history, null)
-  atomic                     = try(var.aws_load_balancer_controller.atomic, null)
-  skip_crds                  = try(var.aws_load_balancer_controller.skip_crds, null)
-  render_subchart_notes      = try(var.aws_load_balancer_controller.render_subchart_notes, null)
-  disable_openapi_validation = try(var.aws_load_balancer_controller.disable_openapi_validation, null)
-  wait                       = try(var.aws_load_balancer_controller.wait, null)
-  wait_for_jobs              = try(var.aws_load_balancer_controller.wait_for_jobs, null)
-  dependency_update          = try(var.aws_load_balancer_controller.dependency_update, null)
-  replace                    = try(var.aws_load_balancer_controller.replace, null)
-  lint                       = try(var.aws_load_balancer_controller.lint, null)
-
-  postrender = try(var.aws_load_balancer_controller.postrender, [])
-  set = concat([
-    {
-      name  = "serviceAccount.name"
-      value = local.aws_load_balancer_controller_service_account
-      }, {
-      name  = "clusterName"
-      value = var.cluster_name
-    }],
-    try(var.aws_load_balancer_controller.set, [])
-  )
-  set_sensitive = try(var.aws_load_balancer_controller.set_sensitive, [])
-
-  # IAM role for service account (IRSA)
-  create_role                   = try(var.aws_load_balancer_controller.create_role, true)
-  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
-  role_name                     = try(var.aws_load_balancer_controller.role_name, "alb-controller")
-  role_name_use_prefix          = try(var.aws_load_balancer_controller.role_name_use_prefix, true)
-  role_path                     = try(var.aws_load_balancer_controller.role_path, "/")
-  role_permissions_boundary_arn = lookup(var.aws_load_balancer_controller, "role_permissions_boundary_arn", null)
-  role_description              = try(var.aws_load_balancer_controller.role_description, "IRSA for aws-load-balancer-controller project")
-  role_policies                 = lookup(var.aws_load_balancer_controller, "role_policies", {})
-
-  source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.aws_load_balancer_controller[*].json,
-    lookup(var.aws_load_balancer_controller, "source_policy_documents", [])
-  ))
-  override_policy_documents = lookup(var.aws_load_balancer_controller, "override_policy_documents", [])
-  policy_statements         = lookup(var.aws_load_balancer_controller, "policy_statements", [])
-  policy_name               = try(var.aws_load_balancer_controller.policy_name, null)
-  policy_name_use_prefix    = try(var.aws_load_balancer_controller.policy_name_use_prefix, true)
-  policy_path               = try(var.aws_load_balancer_controller.policy_path, null)
-  policy_description        = try(var.aws_load_balancer_controller.policy_description, "IAM Policy for AWS Load Balancer Controller")
-
-  oidc_providers = {
-    this = {
-      provider_arn = var.oidc_provider_arn
-      # namespace is inherited from chart
-      service_account = local.aws_load_balancer_controller_service_account
-    }
-  }
-
-  tags = var.tags
-}
-
-################################################################################
 # Cluster Autoscaler
 ################################################################################
 
@@ -1527,8 +1616,8 @@ data "aws_iam_policy_document" "cluster_autoscaler" {
 }
 
 module "cluster_autoscaler" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
 
   create = var.enable_cluster_autoscaler
 
@@ -1625,156 +1714,535 @@ module "cluster_autoscaler" {
 }
 
 ################################################################################
-# FSX CSI DRIVER
+# Cluster Proportional Autoscaler
+################################################################################
+
+module "cluster_proportional_autoscaler" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
+
+  create = var.enable_cluster_proportional_autoscaler
+
+  # https://github.com/kubernetes-sigs/cluster-proportional-autoscaler/blob/master/charts/cluster-proportional-autoscaler/Chart.yaml
+  name             = try(var.cluster_proportional_autoscaler.name, "cluster-proportional-autoscaler")
+  description      = try(var.cluster_proportional_autoscaler.description, "A Helm chart to install the Cluster Proportional Autoscaler")
+  namespace        = try(var.cluster_proportional_autoscaler.namespace, "kube-system")
+  create_namespace = try(var.cluster_proportional_autoscaler.create_namespace, false)
+  chart            = "cluster-proportional-autoscaler"
+  chart_version    = try(var.cluster_proportional_autoscaler.chart_version, "1.1.0")
+  repository       = try(var.cluster_proportional_autoscaler.repository, "https://kubernetes-sigs.github.io/cluster-proportional-autoscaler")
+  values           = try(var.cluster_proportional_autoscaler.values, [])
+
+  timeout                    = try(var.cluster_proportional_autoscaler.timeout, null)
+  repository_key_file        = try(var.cluster_proportional_autoscaler.repository_key_file, null)
+  repository_cert_file       = try(var.cluster_proportional_autoscaler.repository_cert_file, null)
+  repository_ca_file         = try(var.cluster_proportional_autoscaler.repository_ca_file, null)
+  repository_username        = try(var.cluster_proportional_autoscaler.repository_username, null)
+  repository_password        = try(var.cluster_proportional_autoscaler.repository_password, null)
+  devel                      = try(var.cluster_proportional_autoscaler.devel, null)
+  verify                     = try(var.cluster_proportional_autoscaler.verify, null)
+  keyring                    = try(var.cluster_proportional_autoscaler.keyring, null)
+  disable_webhooks           = try(var.cluster_proportional_autoscaler.disable_webhooks, null)
+  reuse_values               = try(var.cluster_proportional_autoscaler.reuse_values, null)
+  reset_values               = try(var.cluster_proportional_autoscaler.reset_values, null)
+  force_update               = try(var.cluster_proportional_autoscaler.force_update, null)
+  recreate_pods              = try(var.cluster_proportional_autoscaler.recreate_pods, null)
+  cleanup_on_fail            = try(var.cluster_proportional_autoscaler.cleanup_on_fail, null)
+  max_history                = try(var.cluster_proportional_autoscaler.max_history, null)
+  atomic                     = try(var.cluster_proportional_autoscaler.atomic, null)
+  skip_crds                  = try(var.cluster_proportional_autoscaler.skip_crds, null)
+  render_subchart_notes      = try(var.cluster_proportional_autoscaler.render_subchart_notes, null)
+  disable_openapi_validation = try(var.cluster_proportional_autoscaler.disable_openapi_validation, null)
+  wait                       = try(var.cluster_proportional_autoscaler.wait, null)
+  wait_for_jobs              = try(var.cluster_proportional_autoscaler.wait_for_jobs, null)
+  dependency_update          = try(var.cluster_proportional_autoscaler.dependency_update, null)
+  replace                    = try(var.cluster_proportional_autoscaler.replace, null)
+  lint                       = try(var.cluster_proportional_autoscaler.lint, null)
+
+  postrender    = try(var.cluster_proportional_autoscaler.postrender, [])
+  set           = try(var.cluster_proportional_autoscaler.set, [])
+  set_sensitive = try(var.cluster_proportional_autoscaler.set_sensitive, [])
+
+  tags = var.tags
+}
+
+################################################################################
+# EKS Addons
+################################################################################
+
+data "aws_eks_addon_version" "this" {
+  for_each = var.eks_addons
+
+  addon_name         = try(each.value.name, each.key)
+  kubernetes_version = var.cluster_version
+  most_recent        = try(each.value.most_recent, true)
+}
+
+resource "aws_eks_addon" "this" {
+  for_each = var.eks_addons
+
+  cluster_name = var.cluster_name
+  addon_name   = try(each.value.name, each.key)
+
+  addon_version            = try(each.value.addon_version, data.aws_eks_addon_version.this[each.key].version)
+  configuration_values     = try(each.value.configuration_values, null)
+  preserve                 = try(each.value.preserve, null)
+  resolve_conflicts        = try(each.value.resolve_conflicts, "OVERWRITE")
+  service_account_role_arn = try(each.value.service_account_role_arn, null)
+
+  timeouts {
+    create = try(each.value.timeouts.create, var.eks_addons_timeouts.create, null)
+    update = try(each.value.timeouts.update, var.eks_addons_timeouts.update, null)
+    delete = try(each.value.timeouts.delete, var.eks_addons_timeouts.delete, null)
+  }
+
+  tags = var.tags
+}
+
+################################################################################
+# External DNS
 ################################################################################
 
 locals {
-  fsx_csi_driver_controller_service_account = try(var.fsx_csi_driver.controller_service_account_name, "fsx-csi-controller-sa")
-  fsx_csi_driver_node_service_account       = try(var.fsx_csi_driver.node_service_account_name, "fsx-csi-node-sa")
+  external_dns_service_account = try(var.external_dns.service_account_name, "external-dns-sa")
 }
 
-data "aws_iam_policy_document" "fsx_csi_driver" {
-  statement {
-    sid       = "AllowCreateServiceLinkedRoles"
-    resources = ["arn:${local.partition}:iam::*:role/aws-service-role/s3.data-source.lustre.fsx.${local.dns_suffix}/*"]
+# https://github.com/external-secrets/kubernetes-external-secrets#add-a-secret
+data "aws_iam_policy_document" "external_dns" {
+  count = var.enable_external_dns && length(var.external_dns_route53_zone_arns) > 0 ? 1 : 0
 
-    actions = [
-      "iam:CreateServiceLinkedRole",
-      "iam:AttachRolePolicy",
-      "iam:PutRolePolicy",
-    ]
+  statement {
+    actions   = ["route53:ChangeResourceRecordSets"]
+    resources = var.external_dns_route53_zone_arns
   }
 
   statement {
-    sid       = "AllowCreateServiceLinkedRole"
-    resources = ["arn:${local.partition}:iam::${local.account_id}:role/*"]
-    actions   = ["iam:CreateServiceLinkedRole"]
-
-    condition {
-      test     = "StringLike"
-      variable = "iam:AWSServiceName"
-      values   = ["fsx.${local.dns_suffix}"]
-    }
-  }
-
-  statement {
-    sid       = "AllowListBuckets"
-    resources = ["arn:${local.partition}:s3:::*"]
     actions = [
-      "s3:ListBucket"
+      "route53:ListHostedZones",
+      "route53:ListResourceRecordSets",
     ]
-  }
-
-  statement {
-    resources = ["arn:${local.partition}:fsx:${local.region}:${local.account_id}:file-system/*"]
-    actions = [
-      "fsx:CreateFileSystem",
-      "fsx:DeleteFileSystem",
-      "fsx:UpdateFileSystem",
-    ]
-  }
-
-  statement {
-    resources = ["arn:${local.partition}:fsx:${local.region}:${local.account_id}:*"]
-    actions = [
-      "fsx:DescribeFileSystems",
-      "fsx:TagResource"
-    ]
+    resources = ["*"]
   }
 }
 
-module "fsx_csi_driver" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
+module "external_dns" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
 
-  create = var.enable_fsx_csi_driver
+  create = var.enable_external_dns
 
-  # https://github.com/kubernetes-sigs/aws-fsx-csi-driver/tree/master/charts/aws-fsx-csi-driver
-  name             = try(var.fsx_csi_driver.name, "aws-fsx-csi-driver")
-  description      = try(var.fsx_csi_driver.description, "A Helm chart for AWS FSx for Lustre CSI Driver")
-  namespace        = try(var.fsx_csi_driver.namespace, "kube-system")
-  create_namespace = try(var.fsx_csi_driver.create_namespace, false)
-  chart            = "aws-fsx-csi-driver"
-  chart_version    = try(var.fsx_csi_driver.chart_version, "1.5.1")
-  repository       = try(var.fsx_csi_driver.repository, "https://kubernetes-sigs.github.io/aws-fsx-csi-driver/")
-  values           = try(var.fsx_csi_driver.values, [])
+  # https://github.com/kubernetes-sigs/external-dns/tree/master/charts/external-dns/Chart.yaml
+  name             = try(var.external_dns.name, "external-dns")
+  description      = try(var.external_dns.description, "A Helm chart to deploy external-dns")
+  namespace        = try(var.external_dns.namespace, "external-dns")
+  create_namespace = try(var.external_dns.create_namespace, true)
+  chart            = "external-dns"
+  chart_version    = try(var.external_dns.chart_version, "1.12.2")
+  repository       = try(var.external_dns.repository, "https://kubernetes-sigs.github.io/external-dns/")
+  values           = try(var.external_dns.values, ["provider: aws"])
 
-  timeout                    = try(var.fsx_csi_driver.timeout, null)
-  repository_key_file        = try(var.fsx_csi_driver.repository_key_file, null)
-  repository_cert_file       = try(var.fsx_csi_driver.repository_cert_file, null)
-  repository_ca_file         = try(var.fsx_csi_driver.repository_ca_file, null)
-  repository_username        = try(var.fsx_csi_driver.repository_username, null)
-  repository_password        = try(var.fsx_csi_driver.repository_password, null)
-  devel                      = try(var.fsx_csi_driver.devel, null)
-  verify                     = try(var.fsx_csi_driver.verify, null)
-  keyring                    = try(var.fsx_csi_driver.keyring, null)
-  disable_webhooks           = try(var.fsx_csi_driver.disable_webhooks, null)
-  reuse_values               = try(var.fsx_csi_driver.reuse_values, null)
-  reset_values               = try(var.fsx_csi_driver.reset_values, null)
-  force_update               = try(var.fsx_csi_driver.force_update, null)
-  recreate_pods              = try(var.fsx_csi_driver.recreate_pods, null)
-  cleanup_on_fail            = try(var.fsx_csi_driver.cleanup_on_fail, null)
-  max_history                = try(var.fsx_csi_driver.max_history, null)
-  atomic                     = try(var.fsx_csi_driver.atomic, null)
-  skip_crds                  = try(var.fsx_csi_driver.skip_crds, null)
-  render_subchart_notes      = try(var.fsx_csi_driver.render_subchart_notes, null)
-  disable_openapi_validation = try(var.fsx_csi_driver.disable_openapi_validation, null)
-  wait                       = try(var.fsx_csi_driver.wait, null)
-  wait_for_jobs              = try(var.fsx_csi_driver.wait_for_jobs, null)
-  dependency_update          = try(var.fsx_csi_driver.dependency_update, null)
-  replace                    = try(var.fsx_csi_driver.replace, null)
-  lint                       = try(var.fsx_csi_driver.lint, null)
+  timeout                    = try(var.external_dns.timeout, null)
+  repository_key_file        = try(var.external_dns.repository_key_file, null)
+  repository_cert_file       = try(var.external_dns.repository_cert_file, null)
+  repository_ca_file         = try(var.external_dns.repository_ca_file, null)
+  repository_username        = try(var.external_dns.repository_username, null)
+  repository_password        = try(var.external_dns.repository_password, null)
+  devel                      = try(var.external_dns.devel, null)
+  verify                     = try(var.external_dns.verify, null)
+  keyring                    = try(var.external_dns.keyring, null)
+  disable_webhooks           = try(var.external_dns.disable_webhooks, null)
+  reuse_values               = try(var.external_dns.reuse_values, null)
+  reset_values               = try(var.external_dns.reset_values, null)
+  force_update               = try(var.external_dns.force_update, null)
+  recreate_pods              = try(var.external_dns.recreate_pods, null)
+  cleanup_on_fail            = try(var.external_dns.cleanup_on_fail, null)
+  max_history                = try(var.external_dns.max_history, null)
+  atomic                     = try(var.external_dns.atomic, null)
+  skip_crds                  = try(var.external_dns.skip_crds, null)
+  render_subchart_notes      = try(var.external_dns.render_subchart_notes, null)
+  disable_openapi_validation = try(var.external_dns.disable_openapi_validation, null)
+  wait                       = try(var.external_dns.wait, null)
+  wait_for_jobs              = try(var.external_dns.wait_for_jobs, null)
+  dependency_update          = try(var.external_dns.dependency_update, null)
+  replace                    = try(var.external_dns.replace, null)
+  lint                       = try(var.external_dns.lint, null)
 
-  postrender = try(var.fsx_csi_driver.postrender, [])
+  postrender = try(var.external_dns.postrender, [])
   set = concat([
     {
-      name  = "controller.serviceAccount.name"
-      value = local.fsx_csi_driver_controller_service_account
-    },
-    {
-      name  = "node.serviceAccount.name"
-      value = local.fsx_csi_driver_node_service_account
+      name  = "serviceAccount.name"
+      value = local.external_dns_service_account
     }],
-    try(var.fsx_csi_driver.set, [])
+    try(var.external_dns.set, [])
   )
-  set_sensitive = try(var.fsx_csi_driver.set_sensitive, [])
+  set_sensitive = try(var.external_dns.set_sensitive, [])
 
   # IAM role for service account (IRSA)
-  set_irsa_names = [
-    "controller.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn",
-    "node.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-  ]
-  create_role                   = try(var.fsx_csi_driver.create_role, true)
-  role_name                     = try(var.fsx_csi_driver.role_name, "aws-fsx-csi-driver")
-  role_name_use_prefix          = try(var.fsx_csi_driver.role_name_use_prefix, true)
-  role_path                     = try(var.fsx_csi_driver.role_path, "/")
-  role_permissions_boundary_arn = lookup(var.fsx_csi_driver, "role_permissions_boundary_arn", null)
-  role_description              = try(var.fsx_csi_driver.role_description, "IRSA for aws-fsx-csi-driver")
-  role_policies                 = lookup(var.fsx_csi_driver, "role_policies", {})
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  create_role                   = try(var.external_dns.create_role, true) && length(var.external_dns_route53_zone_arns) > 0
+  role_name                     = try(var.external_dns.role_name, "external-dns")
+  role_name_use_prefix          = try(var.external_dns.role_name_use_prefix, true)
+  role_path                     = try(var.external_dns.role_path, "/")
+  role_permissions_boundary_arn = lookup(var.external_dns, "role_permissions_boundary_arn", null)
+  role_description              = try(var.external_dns.role_description, "IRSA for external-dns operator")
+  role_policies                 = lookup(var.external_dns, "role_policies", {})
 
   source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.fsx_csi_driver[*].json,
-    lookup(var.fsx_csi_driver, "source_policy_documents", [])
+    data.aws_iam_policy_document.external_dns[*].json,
+    lookup(var.external_dns, "source_policy_documents", [])
   ))
-  override_policy_documents = lookup(var.fsx_csi_driver, "override_policy_documents", [])
-  policy_statements         = lookup(var.fsx_csi_driver, "policy_statements", [])
-  policy_name               = try(var.fsx_csi_driver.policy_name, "aws-fsx-csi-driver")
-  policy_name_use_prefix    = try(var.fsx_csi_driver.policy_name_use_prefix, true)
-  policy_path               = try(var.fsx_csi_driver.policy_path, null)
-  policy_description        = try(var.fsx_csi_driver.policy_description, "IAM Policy for AWS FSX CSI Driver")
+  override_policy_documents = lookup(var.external_dns, "override_policy_documents", [])
+  policy_statements         = lookup(var.external_dns, "policy_statements", [])
+  policy_name               = try(var.external_dns.policy_name, null)
+  policy_name_use_prefix    = try(var.external_dns.policy_name_use_prefix, true)
+  policy_path               = try(var.external_dns.policy_path, null)
+  policy_description        = try(var.external_dns.policy_description, "IAM Policy for external-dns operator")
 
   oidc_providers = {
-    controller = {
+    this = {
       provider_arn = var.oidc_provider_arn
       # namespace is inherited from chart
-      service_account = local.fsx_csi_driver_controller_service_account
-    }
-    node = {
-      provider_arn = var.oidc_provider_arn
-      # namespace is inherited from chart
-      service_account = local.fsx_csi_driver_node_service_account
+      service_account = local.external_dns_service_account
     }
   }
+
+  tags = var.tags
+}
+
+################################################################################
+# External Secrets
+################################################################################
+
+locals {
+  external_secrets_service_account = try(var.external_secrets.service_account_name, "external-secrets-sa")
+}
+
+# https://github.com/external-secrets/kubernetes-external-secrets#add-a-secret
+data "aws_iam_policy_document" "external_secrets" {
+  count = var.enable_external_secrets ? 1 : 0
+
+  dynamic "statement" {
+    for_each = length(var.external_secrets_ssm_parameter_arns) > 0 ? [1] : []
+
+    content {
+      actions   = ["ssm:DescribeParameters"]
+      resources = ["*"]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = length(var.external_secrets_ssm_parameter_arns) > 0 ? [1] : []
+
+    content {
+      actions = [
+        "ssm:GetParameter",
+        "ssm:GetParameters",
+      ]
+      resources = var.external_secrets_ssm_parameter_arns
+    }
+  }
+
+  dynamic "statement" {
+    for_each = length(var.external_secrets_secrets_manager_arns) > 0 ? [1] : []
+
+    content {
+      actions   = ["secretsmanager:ListSecrets"]
+      resources = ["*"]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = length(var.external_secrets_secrets_manager_arns) > 0 ? [1] : []
+
+    content {
+      actions = [
+        "secretsmanager:GetResourcePolicy",
+        "secretsmanager:GetSecretValue",
+        "secretsmanager:DescribeSecret",
+        "secretsmanager:ListSecretVersionIds",
+      ]
+      resources = var.external_secrets_secrets_manager_arns
+    }
+  }
+
+  dynamic "statement" {
+    for_each = length(var.external_secrets_kms_key_arns) > 0 ? [1] : []
+
+    content {
+      actions   = ["kms:Decrypt"]
+      resources = var.external_secrets_kms_key_arns
+    }
+  }
+}
+
+module "external_secrets" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
+
+  create = var.enable_external_secrets
+
+  # https://github.com/external-secrets/external-secrets/blob/main/deploy/charts/external-secrets/Chart.yaml
+  name             = try(var.external_secrets.name, "external-secrets")
+  description      = try(var.external_secrets.description, "A Helm chart to deploy external-secrets")
+  namespace        = try(var.external_secrets.namespace, "external-secrets")
+  create_namespace = try(var.external_secrets.create_namespace, true)
+  chart            = "external-secrets"
+  chart_version    = try(var.external_secrets.chart_version, "0.8.1")
+  repository       = try(var.external_secrets.repository, "https://charts.external-secrets.io")
+  values           = try(var.external_secrets.values, [])
+
+  timeout                    = try(var.external_secrets.timeout, null)
+  repository_key_file        = try(var.external_secrets.repository_key_file, null)
+  repository_cert_file       = try(var.external_secrets.repository_cert_file, null)
+  repository_ca_file         = try(var.external_secrets.repository_ca_file, null)
+  repository_username        = try(var.external_secrets.repository_username, null)
+  repository_password        = try(var.external_secrets.repository_password, null)
+  devel                      = try(var.external_secrets.devel, null)
+  verify                     = try(var.external_secrets.verify, null)
+  keyring                    = try(var.external_secrets.keyring, null)
+  disable_webhooks           = try(var.external_secrets.disable_webhooks, null)
+  reuse_values               = try(var.external_secrets.reuse_values, null)
+  reset_values               = try(var.external_secrets.reset_values, null)
+  force_update               = try(var.external_secrets.force_update, null)
+  recreate_pods              = try(var.external_secrets.recreate_pods, null)
+  cleanup_on_fail            = try(var.external_secrets.cleanup_on_fail, null)
+  max_history                = try(var.external_secrets.max_history, null)
+  atomic                     = try(var.external_secrets.atomic, null)
+  skip_crds                  = try(var.external_secrets.skip_crds, null)
+  render_subchart_notes      = try(var.external_secrets.render_subchart_notes, null)
+  disable_openapi_validation = try(var.external_secrets.disable_openapi_validation, null)
+  wait                       = try(var.external_secrets.wait, null)
+  wait_for_jobs              = try(var.external_secrets.wait_for_jobs, null)
+  dependency_update          = try(var.external_secrets.dependency_update, null)
+  replace                    = try(var.external_secrets.replace, null)
+  lint                       = try(var.external_secrets.lint, null)
+
+  postrender = try(var.external_secrets.postrender, [])
+  set = concat([
+    {
+      name  = "serviceAccount.name"
+      value = local.external_secrets_service_account
+    }],
+    try(var.external_secrets.set, [])
+  )
+  set_sensitive = try(var.external_secrets.set_sensitive, [])
+
+  # IAM role for service account (IRSA)
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  create_role                   = try(var.external_secrets.create_role, true)
+  role_name                     = try(var.external_secrets.role_name, "external-secrets")
+  role_name_use_prefix          = try(var.external_secrets.role_name_use_prefix, true)
+  role_path                     = try(var.external_secrets.role_path, "/")
+  role_permissions_boundary_arn = lookup(var.external_secrets, "role_permissions_boundary_arn", null)
+  role_description              = try(var.external_secrets.role_description, "IRSA for external-secrets operator")
+  role_policies                 = lookup(var.external_secrets, "role_policies", {})
+
+  source_policy_documents = compact(concat(
+    data.aws_iam_policy_document.external_secrets[*].json,
+    lookup(var.external_secrets, "source_policy_documents", [])
+  ))
+  override_policy_documents = lookup(var.external_secrets, "override_policy_documents", [])
+  policy_statements         = lookup(var.external_secrets, "policy_statements", [])
+  policy_name               = try(var.external_secrets.policy_name, null)
+  policy_name_use_prefix    = try(var.external_secrets.policy_name_use_prefix, true)
+  policy_path               = try(var.external_secrets.policy_path, null)
+  policy_description        = try(var.external_secrets.policy_description, "IAM Policy for external-secrets operator")
+
+  oidc_providers = {
+    this = {
+      provider_arn = var.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.external_secrets_service_account
+    }
+  }
+
+  tags = var.tags
+}
+
+################################################################################
+# Fargate Fluentbit
+################################################################################
+
+resource "aws_cloudwatch_log_group" "fargate_fluentbit" {
+  count = try(var.fargate_fluentbit_cw_log_group.create, true) && var.enable_fargate_fluentbit ? 1 : 0
+
+  name              = try(var.fargate_fluentbit_cw_log_group.name, null)
+  name_prefix       = try(var.fargate_fluentbit_cw_log_group.name_prefix, "/${var.cluster_name}/fargate-fluentbit-logs")
+  retention_in_days = try(var.fargate_fluentbit_cw_log_group.retention, 90)
+  kms_key_id        = try(var.fargate_fluentbit_cw_log_group.kms_key_arn, null)
+  skip_destroy      = try(var.fargate_fluentbit_cw_log_group.skip_destroy, false)
+  tags              = merge(var.tags, try(var.fargate_fluentbit_cw_log_group.tags, {}))
+}
+
+# Help on Fargate Logging with Fluentbit and CloudWatch
+# https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html
+resource "kubernetes_namespace_v1" "aws_observability" {
+  count = var.enable_fargate_fluentbit ? 1 : 0
+
+  metadata {
+    name = "aws-observability"
+
+    labels = {
+      aws-observability = "enabled"
+    }
+  }
+}
+
+# fluent-bit-cloudwatch value as the name of the CloudWatch log group that is automatically created as soon as your apps start logging
+resource "kubernetes_config_map_v1" "aws_logging" {
+  count = var.enable_fargate_fluentbit ? 1 : 0
+
+  metadata {
+    name      = "aws-logging"
+    namespace = kubernetes_namespace_v1.aws_observability[0].id
+  }
+
+  data = {
+    "parsers.conf" = try(
+      var.fargate_fluentbit.parsers_conf,
+      <<-EOT
+        [PARSER]
+          Name regex
+          Format regex
+          Regex ^(?<time>[^ ]+) (?<stream>[^ ]+) (?<logtag>[^ ]+) (?<message>.+)$
+          Time_Key time
+          Time_Format %Y-%m-%dT%H:%M:%S.%L%z
+          Time_Keep On
+          Decode_Field_As json message
+      EOT
+    )
+    "filters.conf" = try(
+      var.fargate_fluentbit.filters_conf,
+      <<-EOT
+        [FILTER]
+          Name parser
+          Match *
+          Key_Name log
+          Parser regex
+          Preserve_Key True
+          Reserve_Data True
+      EOT
+    )
+    "output.conf" = try(
+      var.fargate_fluentbit.output_conf,
+      <<-EOT
+        [OUTPUT]
+          Name cloudwatch_logs
+          Match *
+          region ${local.region}
+          log_group_name ${try(var.fargate_fluentbit.cwlog_group, aws_cloudwatch_log_group.fargate_fluentbit[0].name)}
+          log_stream_prefix ${try(var.fargate_fluentbit.cwlog_stream_prefix, "fargate-logs-")}
+          auto_create_group true
+      EOT
+    )
+    "flb_log_cw" = try(var.fargate_fluentbit.flb_log_cw, false)
+  }
+}
+
+################################################################################
+# Gatekeeper
+################################################################################
+
+module "gatekeeper" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
+
+  create = var.enable_gatekeeper
+
+  # https://github.com/open-policy-agent/gatekeeper/blob/master/charts/gatekeeper/Chart.yaml
+  name             = try(var.gatekeeper.name, "gatekeeper")
+  description      = try(var.gatekeeper.description, "A Helm chart to install Gatekeeper")
+  namespace        = try(var.gatekeeper.namespace, "gatekeeper-system")
+  create_namespace = try(var.gatekeeper.create_namespace, true)
+  chart            = "gatekeeper"
+  chart_version    = try(var.gatekeeper.chart_version, "3.12.0")
+  repository       = try(var.gatekeeper.repository, "https://open-policy-agent.github.io/gatekeeper/charts")
+  values           = try(var.gatekeeper.values, [])
+
+  timeout                    = try(var.gatekeeper.timeout, null)
+  repository_key_file        = try(var.gatekeeper.repository_key_file, null)
+  repository_cert_file       = try(var.gatekeeper.repository_cert_file, null)
+  repository_ca_file         = try(var.gatekeeper.repository_ca_file, null)
+  repository_username        = try(var.gatekeeper.repository_username, null)
+  repository_password        = try(var.gatekeeper.repository_password, null)
+  devel                      = try(var.gatekeeper.devel, null)
+  verify                     = try(var.gatekeeper.verify, null)
+  keyring                    = try(var.gatekeeper.keyring, null)
+  disable_webhooks           = try(var.gatekeeper.disable_webhooks, null)
+  reuse_values               = try(var.gatekeeper.reuse_values, null)
+  reset_values               = try(var.gatekeeper.reset_values, null)
+  force_update               = try(var.gatekeeper.force_update, null)
+  recreate_pods              = try(var.gatekeeper.recreate_pods, null)
+  cleanup_on_fail            = try(var.gatekeeper.cleanup_on_fail, null)
+  max_history                = try(var.gatekeeper.max_history, null)
+  atomic                     = try(var.gatekeeper.atomic, null)
+  skip_crds                  = try(var.gatekeeper.skip_crds, null)
+  render_subchart_notes      = try(var.gatekeeper.render_subchart_notes, null)
+  disable_openapi_validation = try(var.gatekeeper.disable_openapi_validation, null)
+  wait                       = try(var.gatekeeper.wait, null)
+  wait_for_jobs              = try(var.gatekeeper.wait_for_jobs, null)
+  dependency_update          = try(var.gatekeeper.dependency_update, null)
+  replace                    = try(var.gatekeeper.replace, null)
+  lint                       = try(var.gatekeeper.lint, null)
+
+  postrender    = try(var.gatekeeper.postrender, [])
+  set           = try(var.gatekeeper.set, [])
+  set_sensitive = try(var.gatekeeper.set_sensitive, [])
+
+  tags = var.tags
+}
+
+################################################################################
+# Ingress Nginx
+################################################################################
+
+module "ingress_nginx" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
+
+  create = var.enable_ingress_nginx
+
+  # https://github.com/kubernetes/ingress-nginx/blob/main/charts/ingress-nginx/Chart.yaml
+  name             = try(var.ingress_nginx.name, "ingress-nginx")
+  description      = try(var.ingress_nginx.description, "A Helm chart to install the Ingress Nginx")
+  namespace        = try(var.ingress_nginx.namespace, "ingress-nginx")
+  create_namespace = try(var.ingress_nginx.create_namespace, true)
+  chart            = "ingress-nginx"
+  chart_version    = try(var.ingress_nginx.chart_version, "4.6.0")
+  repository       = try(var.ingress_nginx.repository, "https://kubernetes.github.io/ingress-nginx")
+  values           = try(var.ingress_nginx.values, [])
+
+  timeout                    = try(var.ingress_nginx.timeout, null)
+  repository_key_file        = try(var.ingress_nginx.repository_key_file, null)
+  repository_cert_file       = try(var.ingress_nginx.repository_cert_file, null)
+  repository_ca_file         = try(var.ingress_nginx.repository_ca_file, null)
+  repository_username        = try(var.ingress_nginx.repository_username, null)
+  repository_password        = try(var.ingress_nginx.repository_password, null)
+  devel                      = try(var.ingress_nginx.devel, null)
+  verify                     = try(var.ingress_nginx.verify, null)
+  keyring                    = try(var.ingress_nginx.keyring, null)
+  disable_webhooks           = try(var.ingress_nginx.disable_webhooks, null)
+  reuse_values               = try(var.ingress_nginx.reuse_values, null)
+  reset_values               = try(var.ingress_nginx.reset_values, null)
+  force_update               = try(var.ingress_nginx.force_update, null)
+  recreate_pods              = try(var.ingress_nginx.recreate_pods, null)
+  cleanup_on_fail            = try(var.ingress_nginx.cleanup_on_fail, null)
+  max_history                = try(var.ingress_nginx.max_history, null)
+  atomic                     = try(var.ingress_nginx.atomic, null)
+  skip_crds                  = try(var.ingress_nginx.skip_crds, null)
+  render_subchart_notes      = try(var.ingress_nginx.render_subchart_notes, null)
+  disable_openapi_validation = try(var.ingress_nginx.disable_openapi_validation, null)
+  wait                       = try(var.ingress_nginx.wait, null)
+  wait_for_jobs              = try(var.ingress_nginx.wait_for_jobs, null)
+  dependency_update          = try(var.ingress_nginx.dependency_update, null)
+  replace                    = try(var.ingress_nginx.replace, null)
+  lint                       = try(var.ingress_nginx.lint, null)
+
+  postrender    = try(var.ingress_nginx.postrender, [])
+  set           = try(var.ingress_nginx.set, [])
+  set_sensitive = try(var.ingress_nginx.set_sensitive, [])
+
+  tags = var.tags
 }
 
 ################################################################################
@@ -1935,8 +2403,8 @@ resource "aws_iam_instance_profile" "karpenter" {
 }
 
 module "karpenter" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
 
   create = var.enable_karpenter
 
@@ -2037,528 +2505,6 @@ module "karpenter" {
 }
 
 ################################################################################
-# Secrets Store CSI Driver
-################################################################################
-
-module "secrets_store_csi_driver" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
-
-  create = var.enable_secrets_store_csi_driver
-
-  # https://github.com/kubernetes-sigs/secrets-store-csi-driver/blob/main/charts/secrets-store-csi-driver/Chart.yaml
-  name             = try(var.secrets_store_csi_driver.name, "secrets-store-csi-driver")
-  description      = try(var.secrets_store_csi_driver.description, "A Helm chart to install the Secrets Store CSI Driver")
-  namespace        = try(var.secrets_store_csi_driver.namespace, "kube-system")
-  create_namespace = try(var.secrets_store_csi_driver.create_namespace, false)
-  chart            = "secrets-store-csi-driver"
-  chart_version    = try(var.secrets_store_csi_driver.chart_version, "1.3.2")
-  repository       = try(var.secrets_store_csi_driver.repository, "https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts")
-  values           = try(var.secrets_store_csi_driver.values, [])
-
-  timeout                    = try(var.secrets_store_csi_driver.timeout, null)
-  repository_key_file        = try(var.secrets_store_csi_driver.repository_key_file, null)
-  repository_cert_file       = try(var.secrets_store_csi_driver.repository_cert_file, null)
-  repository_ca_file         = try(var.secrets_store_csi_driver.repository_ca_file, null)
-  repository_username        = try(var.secrets_store_csi_driver.repository_username, null)
-  repository_password        = try(var.secrets_store_csi_driver.repository_password, null)
-  devel                      = try(var.secrets_store_csi_driver.devel, null)
-  verify                     = try(var.secrets_store_csi_driver.verify, null)
-  keyring                    = try(var.secrets_store_csi_driver.keyring, null)
-  disable_webhooks           = try(var.secrets_store_csi_driver.disable_webhooks, null)
-  reuse_values               = try(var.secrets_store_csi_driver.reuse_values, null)
-  reset_values               = try(var.secrets_store_csi_driver.reset_values, null)
-  force_update               = try(var.secrets_store_csi_driver.force_update, null)
-  recreate_pods              = try(var.secrets_store_csi_driver.recreate_pods, null)
-  cleanup_on_fail            = try(var.secrets_store_csi_driver.cleanup_on_fail, null)
-  max_history                = try(var.secrets_store_csi_driver.max_history, null)
-  atomic                     = try(var.secrets_store_csi_driver.atomic, null)
-  skip_crds                  = try(var.secrets_store_csi_driver.skip_crds, null)
-  render_subchart_notes      = try(var.secrets_store_csi_driver.render_subchart_notes, null)
-  disable_openapi_validation = try(var.secrets_store_csi_driver.disable_openapi_validation, null)
-  wait                       = try(var.secrets_store_csi_driver.wait, null)
-  wait_for_jobs              = try(var.secrets_store_csi_driver.wait_for_jobs, null)
-  dependency_update          = try(var.secrets_store_csi_driver.dependency_update, null)
-  replace                    = try(var.secrets_store_csi_driver.replace, null)
-  lint                       = try(var.secrets_store_csi_driver.lint, null)
-
-  postrender    = try(var.secrets_store_csi_driver.postrender, [])
-  set           = try(var.secrets_store_csi_driver.set, [])
-  set_sensitive = try(var.secrets_store_csi_driver.set_sensitive, [])
-
-  tags = var.tags
-}
-
-################################################################################
-# CSI Secrets Store Provider AWS
-################################################################################
-
-locals {
-  csi_secrets_store_provider_aws_service_account = try(var.csi_secrets_store_provider_aws.service_account_name, "secrets-store-csi-driver-provider-aws-sa")
-}
-
-module "csi_secrets_store_provider_aws" {
-
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
-
-  create = var.enable_csi_secrets_store_provider_aws
-
-  # https://github.com/aws/eks-charts/blob/master/stable/csi-secrets-store-provider-aws/Chart.yaml
-  name             = try(var.csi_secrets_store_provider_aws.name, "secrets-store-csi-driver-provider-aws")
-  description      = try(var.csi_secrets_store_provider_aws.description, "A Helm chart to install the Secrets Store CSI Driver and the AWS Key Management Service Provider inside a Kubernetes cluster.")
-  namespace        = try(var.csi_secrets_store_provider_aws.namespace, "kube-system")
-  create_namespace = try(var.csi_secrets_store_provider_aws.create_namespace, false)
-  chart            = "secrets-store-csi-driver-provider-aws"
-  chart_version    = try(var.csi_secrets_store_provider_aws.chart_version, "0.3.2")
-  repository       = try(var.csi_secrets_store_provider_aws.repository, "https://aws.github.io/secrets-store-csi-driver-provider-aws")
-  values           = try(var.csi_secrets_store_provider_aws.values, [])
-
-  timeout                    = try(var.csi_secrets_store_provider_aws.timeout, null)
-  repository_key_file        = try(var.csi_secrets_store_provider_aws.repository_key_file, null)
-  repository_cert_file       = try(var.csi_secrets_store_provider_aws.repository_cert_file, null)
-  repository_ca_file         = try(var.csi_secrets_store_provider_aws.repository_ca_file, null)
-  repository_username        = try(var.csi_secrets_store_provider_aws.repository_username, null)
-  repository_password        = try(var.csi_secrets_store_provider_aws.repository_password, null)
-  devel                      = try(var.csi_secrets_store_provider_aws.devel, null)
-  verify                     = try(var.csi_secrets_store_provider_aws.verify, null)
-  keyring                    = try(var.csi_secrets_store_provider_aws.keyring, null)
-  disable_webhooks           = try(var.csi_secrets_store_provider_aws.disable_webhooks, null)
-  reuse_values               = try(var.csi_secrets_store_provider_aws.reuse_values, null)
-  reset_values               = try(var.csi_secrets_store_provider_aws.reset_values, null)
-  force_update               = try(var.csi_secrets_store_provider_aws.force_update, null)
-  recreate_pods              = try(var.csi_secrets_store_provider_aws.recreate_pods, null)
-  cleanup_on_fail            = try(var.csi_secrets_store_provider_aws.cleanup_on_fail, null)
-  max_history                = try(var.csi_secrets_store_provider_aws.max_history, null)
-  atomic                     = try(var.csi_secrets_store_provider_aws.atomic, null)
-  skip_crds                  = try(var.csi_secrets_store_provider_aws.skip_crds, null)
-  render_subchart_notes      = try(var.csi_secrets_store_provider_aws.render_subchart_notes, null)
-  disable_openapi_validation = try(var.csi_secrets_store_provider_aws.disable_openapi_validation, null)
-  wait                       = try(var.csi_secrets_store_provider_aws.wait, null)
-  wait_for_jobs              = try(var.csi_secrets_store_provider_aws.wait_for_jobs, null)
-  dependency_update          = try(var.csi_secrets_store_provider_aws.dependency_update, null)
-  replace                    = try(var.csi_secrets_store_provider_aws.replace, null)
-  lint                       = try(var.csi_secrets_store_provider_aws.lint, null)
-
-  postrender = try(var.csi_secrets_store_provider_aws.postrender, [])
-  set = concat([
-    {
-      name  = "serviceAccount.name"
-      value = local.csi_secrets_store_provider_aws_service_account
-    }],
-    try(var.csi_secrets_store_provider_aws.set, [])
-  )
-  set_sensitive = try(var.csi_secrets_store_provider_aws.set_sensitive, [])
-
-  tags = var.tags
-}
-
-################################################################################
-# AWS for Fluent-bit
-################################################################################
-
-locals {
-  aws_for_fluentbit_service_account = try(var.aws_for_fluentbit.service_account_name, "aws-for-fluent-bit-sa")
-}
-
-module "aws_for_fluentbit" {
-  #source                    = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
-
-  create = var.enable_aws_for_fluentbit
-
-  # https://github.com/aws/eks-charts/blob/master/stable/aws-for-fluent-bit/Chart.yaml
-
-  name             = try(var.aws_for_fluentbit.name, "aws-for-fluent-bit")
-  description      = try(var.aws_for_fluentbit.description, "A Helm chart to install the Fluent-bit Driver")
-  namespace        = try(var.aws_for_fluentbit.namespace, "kube-system")
-  create_namespace = try(var.aws_for_fluentbit.create_namespace, false)
-  chart            = "aws-for-fluent-bit"
-  chart_version    = try(var.aws_for_fluentbit.chart_version, "0.1.24")
-  repository       = try(var.aws_for_fluentbit.repository, "https://aws.github.io/eks-charts")
-  values           = try(var.aws_for_fluentbit.values, [])
-
-  timeout                    = try(var.aws_for_fluentbit.timeout, null)
-  repository_key_file        = try(var.aws_for_fluentbit.repository_key_file, null)
-  repository_cert_file       = try(var.aws_for_fluentbit.repository_cert_file, null)
-  repository_ca_file         = try(var.aws_for_fluentbit.repository_ca_file, null)
-  repository_username        = try(var.aws_for_fluentbit.repository_username, null)
-  repository_password        = try(var.aws_for_fluentbit.repository_password, null)
-  devel                      = try(var.aws_for_fluentbit.devel, null)
-  verify                     = try(var.aws_for_fluentbit.verify, null)
-  keyring                    = try(var.aws_for_fluentbit.keyring, null)
-  disable_webhooks           = try(var.aws_for_fluentbit.disable_webhooks, null)
-  reuse_values               = try(var.aws_for_fluentbit.reuse_values, null)
-  reset_values               = try(var.aws_for_fluentbit.reset_values, null)
-  force_update               = try(var.aws_for_fluentbit.force_update, null)
-  recreate_pods              = try(var.aws_for_fluentbit.recreate_pods, null)
-  cleanup_on_fail            = try(var.aws_for_fluentbit.cleanup_on_fail, null)
-  max_history                = try(var.aws_for_fluentbit.max_history, null)
-  atomic                     = try(var.aws_for_fluentbit.atomic, null)
-  skip_crds                  = try(var.aws_for_fluentbit.skip_crds, null)
-  render_subchart_notes      = try(var.aws_for_fluentbit.render_subchart_notes, null)
-  disable_openapi_validation = try(var.aws_for_fluentbit.disable_openapi_validation, null)
-  wait                       = try(var.aws_for_fluentbit.wait, null)
-  wait_for_jobs              = try(var.aws_for_fluentbit.wait_for_jobs, null)
-  dependency_update          = try(var.aws_for_fluentbit.dependency_update, null)
-  replace                    = try(var.aws_for_fluentbit.replace, null)
-  lint                       = try(var.aws_for_fluentbit.lint, null)
-
-  postrender = try(var.aws_for_fluentbit.postrender, [])
-  set = concat([
-    {
-      name  = "serviceAccount.name"
-      value = local.aws_for_fluentbit_service_account
-    }],
-    try(var.aws_for_fluentbit.set, [])
-  )
-  set_sensitive = try(var.aws_for_fluentbit.set_sensitive, [])
-
-  # IAM role for service account (IRSA)
-  set_irsa_names = [
-    "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn",
-  ]
-  create_role                   = try(var.aws_for_fluentbit.create_role, true)
-  role_name                     = try(var.aws_for_fluentbit.role_name, "aws-for-fluent-bit")
-  role_name_use_prefix          = try(var.aws_for_fluentbit.role_name_use_prefix, true)
-  role_path                     = try(var.aws_for_fluentbit.role_path, "/")
-  role_permissions_boundary_arn = lookup(var.aws_for_fluentbit, "role_permissions_boundary_arn", null)
-  role_description              = try(var.aws_for_fluentbit.role_description, "IRSA for aws-for-fluent-bit")
-  role_policies                 = lookup(var.aws_for_fluentbit, "role_policies", {})
-
-  source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.aws_for_fluentbit[*].json,
-    lookup(var.aws_for_fluentbit, "source_policy_documents", [])
-  ))
-  override_policy_documents = lookup(var.aws_for_fluentbit, "override_policy_documents", [])
-  policy_statements         = lookup(var.aws_for_fluentbit, "policy_statements", [])
-  policy_name               = try(var.aws_for_fluentbit.policy_name, "aws-for-fluent-bit")
-  policy_name_use_prefix    = try(var.aws_for_fluentbit.policy_name_use_prefix, true)
-  policy_path               = try(var.aws_for_fluentbit.policy_path, null)
-  policy_description        = try(var.aws_for_fluentbit.policy_description, "IAM Policy for AWS Fluentbit")
-
-  oidc_providers = {
-    this = {
-      provider_arn = var.oidc_provider_arn
-      # namespace is inherited from chart
-      service_account = local.aws_for_fluentbit_service_account
-    }
-  }
-
-  tags = var.tags
-}
-
-resource "aws_cloudwatch_log_group" "aws_for_fluentbit" {
-  count = try(var.aws_for_fluentbit_cw_log_group.create, true) && var.enable_aws_for_fluentbit ? 1 : 0
-
-  name              = try(var.aws_for_fluentbit_cw_log_group.name, null)
-  name_prefix       = try(var.aws_for_fluentbit_cw_log_group.name_prefix, "/${var.cluster_name}/aws-fluentbit-logs")
-  retention_in_days = try(var.aws_for_fluentbit_cw_log_group.retention, 90)
-  kms_key_id        = try(var.aws_for_fluentbit_cw_log_group.kms_key_arn, null)
-  skip_destroy      = try(var.aws_for_fluentbit_cw_log_group.skip_destroy, false)
-  tags              = merge(var.tags, try(var.aws_for_fluentbit_cw_log_group.tags, {}))
-}
-
-data "aws_iam_policy_document" "aws_for_fluentbit" {
-  count = try(var.aws_for_fluentbit_cw_log_group.create, true) && var.enable_aws_for_fluentbit ? 1 : 0
-
-  statement {
-    sid    = "PutLogEvents"
-    effect = "Allow"
-    resources = [
-      "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${try(var.aws_for_fluentbit_cw_log_group.name, "*")}:log-stream:*",
-    ]
-
-    actions = [
-      "logs:PutLogEvents"
-    ]
-  }
-
-  statement {
-    sid    = "CreateCWLogs"
-    effect = "Allow"
-    resources = [
-      "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${try(var.aws_for_fluentbit_cw_log_group.name, "*")}",
-    ]
-
-    actions = [
-      "logs:CreateLogGroup",
-      "logs:CreateLogStream",
-      "logs:DescribeLogGroups",
-      "logs:DescribeLogStreams",
-      "logs:PutRetentionPolicy",
-    ]
-  }
-}
-
-################################################################################
-# Private CA Issuer
-################################################################################
-
-locals {
-  aws_privateca_issuer_service_account = try(var.aws_privateca_issuer.service_account_name, "aws-privateca-issuer-sa")
-}
-
-data "aws_iam_policy_document" "aws_privateca_issuer" {
-  count = var.enable_aws_privateca_issuer ? 1 : 0
-
-  statement {
-    actions = [
-      "acm-pca:DescribeCertificateAuthority",
-      "acm-pca:GetCertificate",
-      "acm-pca:IssueCertificate",
-    ]
-    resources = [
-      try(var.aws_privateca_issuer.acmca_arn,
-      "arn:${local.partition}:acm-pca:${local.region}:${local.account_id}:certificate-authority/*")
-    ]
-  }
-}
-
-module "aws_privateca_issuer" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
-
-  create = var.enable_aws_privateca_issuer
-
-  # https://github.com/cert-manager/aws-privateca-issuer/blob/main/charts/aws-pca-issuer/Chart.yaml
-  name             = try(var.aws_privateca_issuer.name, "aws-privateca-issuer")
-  description      = try(var.aws_privateca_issuer.description, "A Helm chart to install the AWS Private CA Issuer")
-  namespace        = try(var.aws_privateca_issuer.namespace, "kube-system")
-  create_namespace = try(var.aws_privateca_issuer.create_namespace, false)
-  chart            = "aws-privateca-issuer"
-  chart_version    = try(var.aws_privateca_issuer.chart_version, "v1.2.5")
-  repository       = try(var.aws_privateca_issuer.repository, "https://cert-manager.github.io/aws-privateca-issuer")
-  values           = try(var.aws_privateca_issuer.values, [])
-
-  timeout                    = try(var.aws_privateca_issuer.timeout, null)
-  repository_key_file        = try(var.aws_privateca_issuer.repository_key_file, null)
-  repository_cert_file       = try(var.aws_privateca_issuer.repository_cert_file, null)
-  repository_ca_file         = try(var.aws_privateca_issuer.repository_ca_file, null)
-  repository_username        = try(var.aws_privateca_issuer.repository_username, null)
-  repository_password        = try(var.aws_privateca_issuer.repository_password, null)
-  devel                      = try(var.aws_privateca_issuer.devel, null)
-  verify                     = try(var.aws_privateca_issuer.verify, null)
-  keyring                    = try(var.aws_privateca_issuer.keyring, null)
-  disable_webhooks           = try(var.aws_privateca_issuer.disable_webhooks, null)
-  reuse_values               = try(var.aws_privateca_issuer.reuse_values, null)
-  reset_values               = try(var.aws_privateca_issuer.reset_values, null)
-  force_update               = try(var.aws_privateca_issuer.force_update, null)
-  recreate_pods              = try(var.aws_privateca_issuer.recreate_pods, null)
-  cleanup_on_fail            = try(var.aws_privateca_issuer.cleanup_on_fail, null)
-  max_history                = try(var.aws_privateca_issuer.max_history, null)
-  atomic                     = try(var.aws_privateca_issuer.atomic, null)
-  skip_crds                  = try(var.aws_privateca_issuer.skip_crds, null)
-  render_subchart_notes      = try(var.aws_privateca_issuer.render_subchart_notes, null)
-  disable_openapi_validation = try(var.aws_privateca_issuer.disable_openapi_validation, null)
-  wait                       = try(var.aws_privateca_issuer.wait, null)
-  wait_for_jobs              = try(var.aws_privateca_issuer.wait_for_jobs, null)
-  dependency_update          = try(var.aws_privateca_issuer.dependency_update, null)
-  replace                    = try(var.aws_privateca_issuer.replace, null)
-  lint                       = try(var.aws_privateca_issuer.lint, null)
-
-  postrender = try(var.aws_privateca_issuer.postrender, [])
-  set = concat([
-    {
-      name  = "serviceAccount.name"
-      value = local.aws_privateca_issuer_service_account
-    }],
-    try(var.aws_privateca_issuer.set, [])
-  )
-  set_sensitive = try(var.aws_privateca_issuer.set_sensitive, [])
-
-  # IAM role for service account (IRSA)
-  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
-  create_role                   = try(var.aws_privateca_issuer.create_role, true)
-  role_name                     = try(var.aws_privateca_issuer.role_name, "aws-privateca-issuer")
-  role_name_use_prefix          = try(var.aws_privateca_issuer.role_name_use_prefix, true)
-  role_path                     = try(var.aws_privateca_issuer.role_path, "/")
-  role_permissions_boundary_arn = lookup(var.aws_privateca_issuer, "role_permissions_boundary_arn", null)
-  role_description              = try(var.aws_privateca_issuer.role_description, "IRSA for AWS Private CA Issuer")
-  role_policies                 = lookup(var.aws_privateca_issuer, "role_policies", {})
-
-  source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.aws_privateca_issuer[*].json,
-    lookup(var.aws_privateca_issuer, "source_policy_documents", [])
-  ))
-  override_policy_documents = lookup(var.aws_privateca_issuer, "override_policy_documents", [])
-  policy_statements         = lookup(var.aws_privateca_issuer, "policy_statements", [])
-  policy_name               = try(var.aws_privateca_issuer.policy_name, "aws-privateca-issuer")
-  policy_name_use_prefix    = try(var.aws_privateca_issuer.policy_name_use_prefix, true)
-  policy_path               = try(var.aws_privateca_issuer.policy_path, null)
-  policy_description        = try(var.aws_privateca_issuer.policy_description, "IAM Policy for AWS Private CA Issuer")
-
-  oidc_providers = {
-    controller = {
-      provider_arn = var.oidc_provider_arn
-      # namespace is inherited from chart
-      service_account = local.aws_privateca_issuer_service_account
-    }
-  }
-
-  tags = var.tags
-}
-
-################################################################################
-# Metrics Server
-################################################################################
-
-module "metrics_server" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
-
-  create = var.enable_metrics_server
-
-  # https://github.com/kubernetes-sigs/metrics-server/blob/master/charts/metrics-server/Chart.yaml
-  name             = try(var.metrics_server.name, "metrics-server")
-  description      = try(var.metrics_server.description, "A Helm chart to install the Metrics Server")
-  namespace        = try(var.metrics_server.namespace, "kube-system")
-  create_namespace = try(var.metrics_server.create_namespace, false)
-  chart            = "metrics-server"
-  chart_version    = try(var.metrics_server.chart_version, "3.10.0")
-  repository       = try(var.metrics_server.repository, "https://kubernetes-sigs.github.io/metrics-server/")
-  values           = try(var.metrics_server.values, [])
-
-  timeout                    = try(var.metrics_server.timeout, null)
-  repository_key_file        = try(var.metrics_server.repository_key_file, null)
-  repository_cert_file       = try(var.metrics_server.repository_cert_file, null)
-  repository_ca_file         = try(var.metrics_server.repository_ca_file, null)
-  repository_username        = try(var.metrics_server.repository_username, null)
-  repository_password        = try(var.metrics_server.repository_password, null)
-  devel                      = try(var.metrics_server.devel, null)
-  verify                     = try(var.metrics_server.verify, null)
-  keyring                    = try(var.metrics_server.keyring, null)
-  disable_webhooks           = try(var.metrics_server.disable_webhooks, null)
-  reuse_values               = try(var.metrics_server.reuse_values, null)
-  reset_values               = try(var.metrics_server.reset_values, null)
-  force_update               = try(var.metrics_server.force_update, null)
-  recreate_pods              = try(var.metrics_server.recreate_pods, null)
-  cleanup_on_fail            = try(var.metrics_server.cleanup_on_fail, null)
-  max_history                = try(var.metrics_server.max_history, null)
-  atomic                     = try(var.metrics_server.atomic, null)
-  skip_crds                  = try(var.metrics_server.skip_crds, null)
-  render_subchart_notes      = try(var.metrics_server.render_subchart_notes, null)
-  disable_openapi_validation = try(var.metrics_server.disable_openapi_validation, null)
-  wait                       = try(var.metrics_server.wait, null)
-  wait_for_jobs              = try(var.metrics_server.wait_for_jobs, null)
-  dependency_update          = try(var.metrics_server.dependency_update, null)
-  replace                    = try(var.metrics_server.replace, null)
-  lint                       = try(var.metrics_server.lint, null)
-
-  postrender    = try(var.metrics_server.postrender, [])
-  set           = try(var.metrics_server.set, [])
-  set_sensitive = try(var.metrics_server.set_sensitive, [])
-
-  tags = var.tags
-}
-
-################################################################################
-# Ingress Nginx
-################################################################################
-
-module "ingress_nginx" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
-
-  create = var.enable_ingress_nginx
-
-  # https://github.com/kubernetes/ingress-nginx/blob/main/charts/ingress-nginx/Chart.yaml
-  name             = try(var.ingress_nginx.name, "ingress-nginx")
-  description      = try(var.ingress_nginx.description, "A Helm chart to install the Ingress Nginx")
-  namespace        = try(var.ingress_nginx.namespace, "ingress-nginx")
-  create_namespace = try(var.ingress_nginx.create_namespace, true)
-  chart            = "ingress-nginx"
-  chart_version    = try(var.ingress_nginx.chart_version, "4.6.0")
-  repository       = try(var.ingress_nginx.repository, "https://kubernetes.github.io/ingress-nginx")
-  values           = try(var.ingress_nginx.values, [])
-
-  timeout                    = try(var.ingress_nginx.timeout, null)
-  repository_key_file        = try(var.ingress_nginx.repository_key_file, null)
-  repository_cert_file       = try(var.ingress_nginx.repository_cert_file, null)
-  repository_ca_file         = try(var.ingress_nginx.repository_ca_file, null)
-  repository_username        = try(var.ingress_nginx.repository_username, null)
-  repository_password        = try(var.ingress_nginx.repository_password, null)
-  devel                      = try(var.ingress_nginx.devel, null)
-  verify                     = try(var.ingress_nginx.verify, null)
-  keyring                    = try(var.ingress_nginx.keyring, null)
-  disable_webhooks           = try(var.ingress_nginx.disable_webhooks, null)
-  reuse_values               = try(var.ingress_nginx.reuse_values, null)
-  reset_values               = try(var.ingress_nginx.reset_values, null)
-  force_update               = try(var.ingress_nginx.force_update, null)
-  recreate_pods              = try(var.ingress_nginx.recreate_pods, null)
-  cleanup_on_fail            = try(var.ingress_nginx.cleanup_on_fail, null)
-  max_history                = try(var.ingress_nginx.max_history, null)
-  atomic                     = try(var.ingress_nginx.atomic, null)
-  skip_crds                  = try(var.ingress_nginx.skip_crds, null)
-  render_subchart_notes      = try(var.ingress_nginx.render_subchart_notes, null)
-  disable_openapi_validation = try(var.ingress_nginx.disable_openapi_validation, null)
-  wait                       = try(var.ingress_nginx.wait, null)
-  wait_for_jobs              = try(var.ingress_nginx.wait_for_jobs, null)
-  dependency_update          = try(var.ingress_nginx.dependency_update, null)
-  replace                    = try(var.ingress_nginx.replace, null)
-  lint                       = try(var.ingress_nginx.lint, null)
-
-  postrender    = try(var.ingress_nginx.postrender, [])
-  set           = try(var.ingress_nginx.set, [])
-  set_sensitive = try(var.ingress_nginx.set_sensitive, [])
-
-  tags = var.tags
-}
-
-################################################################################
-# Cluster Proportional Autoscaler
-################################################################################
-
-module "cluster_proportional_autoscaler" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
-
-  create = var.enable_cluster_proportional_autoscaler
-
-  # https://github.com/kubernetes-sigs/cluster-proportional-autoscaler/blob/master/charts/cluster-proportional-autoscaler/Chart.yaml
-  name             = try(var.cluster_proportional_autoscaler.name, "cluster-proportional-autoscaler")
-  description      = try(var.cluster_proportional_autoscaler.description, "A Helm chart to install the Cluster Proportional Autoscaler")
-  namespace        = try(var.cluster_proportional_autoscaler.namespace, "kube-system")
-  create_namespace = try(var.cluster_proportional_autoscaler.create_namespace, false)
-  chart            = "cluster-proportional-autoscaler"
-  chart_version    = try(var.cluster_proportional_autoscaler.chart_version, "1.1.0")
-  repository       = try(var.cluster_proportional_autoscaler.repository, "https://kubernetes-sigs.github.io/cluster-proportional-autoscaler")
-  values           = try(var.cluster_proportional_autoscaler.values, [])
-
-  timeout                    = try(var.cluster_proportional_autoscaler.timeout, null)
-  repository_key_file        = try(var.cluster_proportional_autoscaler.repository_key_file, null)
-  repository_cert_file       = try(var.cluster_proportional_autoscaler.repository_cert_file, null)
-  repository_ca_file         = try(var.cluster_proportional_autoscaler.repository_ca_file, null)
-  repository_username        = try(var.cluster_proportional_autoscaler.repository_username, null)
-  repository_password        = try(var.cluster_proportional_autoscaler.repository_password, null)
-  devel                      = try(var.cluster_proportional_autoscaler.devel, null)
-  verify                     = try(var.cluster_proportional_autoscaler.verify, null)
-  keyring                    = try(var.cluster_proportional_autoscaler.keyring, null)
-  disable_webhooks           = try(var.cluster_proportional_autoscaler.disable_webhooks, null)
-  reuse_values               = try(var.cluster_proportional_autoscaler.reuse_values, null)
-  reset_values               = try(var.cluster_proportional_autoscaler.reset_values, null)
-  force_update               = try(var.cluster_proportional_autoscaler.force_update, null)
-  recreate_pods              = try(var.cluster_proportional_autoscaler.recreate_pods, null)
-  cleanup_on_fail            = try(var.cluster_proportional_autoscaler.cleanup_on_fail, null)
-  max_history                = try(var.cluster_proportional_autoscaler.max_history, null)
-  atomic                     = try(var.cluster_proportional_autoscaler.atomic, null)
-  skip_crds                  = try(var.cluster_proportional_autoscaler.skip_crds, null)
-  render_subchart_notes      = try(var.cluster_proportional_autoscaler.render_subchart_notes, null)
-  disable_openapi_validation = try(var.cluster_proportional_autoscaler.disable_openapi_validation, null)
-  wait                       = try(var.cluster_proportional_autoscaler.wait, null)
-  wait_for_jobs              = try(var.cluster_proportional_autoscaler.wait_for_jobs, null)
-  dependency_update          = try(var.cluster_proportional_autoscaler.dependency_update, null)
-  replace                    = try(var.cluster_proportional_autoscaler.replace, null)
-  lint                       = try(var.cluster_proportional_autoscaler.lint, null)
-
-  postrender    = try(var.cluster_proportional_autoscaler.postrender, [])
-  set           = try(var.cluster_proportional_autoscaler.set, [])
-  set_sensitive = try(var.cluster_proportional_autoscaler.set_sensitive, [])
-
-  tags = var.tags
-}
-
-################################################################################
 # Kube Prometheus stack
 ################################################################################
 
@@ -2572,9 +2518,10 @@ module "cluster_proportional_autoscaler" {
 # kubectl delete crd prometheusrules.monitoring.coreos.com
 # kubectl delete crd servicemonitors.monitoring.coreos.com
 # kubectl delete crd thanosrulers.monitoring.coreos.com
+
 module "kube_prometheus_stack" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
 
   create = var.enable_kube_prometheus_stack
 
@@ -2622,108 +2569,170 @@ module "kube_prometheus_stack" {
 }
 
 ################################################################################
-# Gatekeeper
+# Metrics Server
 ################################################################################
 
-module "gatekeeper" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
+module "metrics_server" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
 
-  create = var.enable_gatekeeper
+  create = var.enable_metrics_server
 
-  # https://github.com/open-policy-agent/gatekeeper/blob/master/charts/gatekeeper/Chart.yaml
-  name             = try(var.gatekeeper.name, "gatekeeper")
-  description      = try(var.gatekeeper.description, "A Helm chart to install Gatekeeper")
-  namespace        = try(var.gatekeeper.namespace, "gatekeeper-system")
-  create_namespace = try(var.gatekeeper.create_namespace, true)
-  chart            = "gatekeeper"
-  chart_version    = try(var.gatekeeper.chart_version, "3.12.0")
-  repository       = try(var.gatekeeper.repository, "https://open-policy-agent.github.io/gatekeeper/charts")
-  values           = try(var.gatekeeper.values, [])
+  # https://github.com/kubernetes-sigs/metrics-server/blob/master/charts/metrics-server/Chart.yaml
+  name             = try(var.metrics_server.name, "metrics-server")
+  description      = try(var.metrics_server.description, "A Helm chart to install the Metrics Server")
+  namespace        = try(var.metrics_server.namespace, "kube-system")
+  create_namespace = try(var.metrics_server.create_namespace, false)
+  chart            = "metrics-server"
+  chart_version    = try(var.metrics_server.chart_version, "3.10.0")
+  repository       = try(var.metrics_server.repository, "https://kubernetes-sigs.github.io/metrics-server/")
+  values           = try(var.metrics_server.values, [])
 
-  timeout                    = try(var.gatekeeper.timeout, null)
-  repository_key_file        = try(var.gatekeeper.repository_key_file, null)
-  repository_cert_file       = try(var.gatekeeper.repository_cert_file, null)
-  repository_ca_file         = try(var.gatekeeper.repository_ca_file, null)
-  repository_username        = try(var.gatekeeper.repository_username, null)
-  repository_password        = try(var.gatekeeper.repository_password, null)
-  devel                      = try(var.gatekeeper.devel, null)
-  verify                     = try(var.gatekeeper.verify, null)
-  keyring                    = try(var.gatekeeper.keyring, null)
-  disable_webhooks           = try(var.gatekeeper.disable_webhooks, null)
-  reuse_values               = try(var.gatekeeper.reuse_values, null)
-  reset_values               = try(var.gatekeeper.reset_values, null)
-  force_update               = try(var.gatekeeper.force_update, null)
-  recreate_pods              = try(var.gatekeeper.recreate_pods, null)
-  cleanup_on_fail            = try(var.gatekeeper.cleanup_on_fail, null)
-  max_history                = try(var.gatekeeper.max_history, null)
-  atomic                     = try(var.gatekeeper.atomic, null)
-  skip_crds                  = try(var.gatekeeper.skip_crds, null)
-  render_subchart_notes      = try(var.gatekeeper.render_subchart_notes, null)
-  disable_openapi_validation = try(var.gatekeeper.disable_openapi_validation, null)
-  wait                       = try(var.gatekeeper.wait, null)
-  wait_for_jobs              = try(var.gatekeeper.wait_for_jobs, null)
-  dependency_update          = try(var.gatekeeper.dependency_update, null)
-  replace                    = try(var.gatekeeper.replace, null)
-  lint                       = try(var.gatekeeper.lint, null)
+  timeout                    = try(var.metrics_server.timeout, null)
+  repository_key_file        = try(var.metrics_server.repository_key_file, null)
+  repository_cert_file       = try(var.metrics_server.repository_cert_file, null)
+  repository_ca_file         = try(var.metrics_server.repository_ca_file, null)
+  repository_username        = try(var.metrics_server.repository_username, null)
+  repository_password        = try(var.metrics_server.repository_password, null)
+  devel                      = try(var.metrics_server.devel, null)
+  verify                     = try(var.metrics_server.verify, null)
+  keyring                    = try(var.metrics_server.keyring, null)
+  disable_webhooks           = try(var.metrics_server.disable_webhooks, null)
+  reuse_values               = try(var.metrics_server.reuse_values, null)
+  reset_values               = try(var.metrics_server.reset_values, null)
+  force_update               = try(var.metrics_server.force_update, null)
+  recreate_pods              = try(var.metrics_server.recreate_pods, null)
+  cleanup_on_fail            = try(var.metrics_server.cleanup_on_fail, null)
+  max_history                = try(var.metrics_server.max_history, null)
+  atomic                     = try(var.metrics_server.atomic, null)
+  skip_crds                  = try(var.metrics_server.skip_crds, null)
+  render_subchart_notes      = try(var.metrics_server.render_subchart_notes, null)
+  disable_openapi_validation = try(var.metrics_server.disable_openapi_validation, null)
+  wait                       = try(var.metrics_server.wait, null)
+  wait_for_jobs              = try(var.metrics_server.wait_for_jobs, null)
+  dependency_update          = try(var.metrics_server.dependency_update, null)
+  replace                    = try(var.metrics_server.replace, null)
+  lint                       = try(var.metrics_server.lint, null)
 
-  postrender    = try(var.gatekeeper.postrender, [])
-  set           = try(var.gatekeeper.set, [])
-  set_sensitive = try(var.gatekeeper.set_sensitive, [])
+  postrender    = try(var.metrics_server.postrender, [])
+  set           = try(var.metrics_server.set, [])
+  set_sensitive = try(var.metrics_server.set_sensitive, [])
 
   tags = var.tags
 }
 
 ################################################################################
-# Vertical Pod Autoscaler
+# Secrets Store CSI Driver
 ################################################################################
 
-module "vpa" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
+module "secrets_store_csi_driver" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
 
-  create = var.enable_vpa
+  create = var.enable_secrets_store_csi_driver
 
-  # https://github.com/FairwindsOps/charts/blob/master/stable/vpa/Chart.yaml
-  # (there is no offical helm chart for VPA)
-  name             = try(var.vpa.name, "vpa")
-  description      = try(var.vpa.description, "A Helm chart to install the Vertical Pod Autoscaler")
-  namespace        = try(var.vpa.namespace, "vpa")
-  create_namespace = try(var.vpa.create_namespace, true)
-  chart            = "vpa"
-  chart_version    = try(var.vpa.chart_version, "1.7.2")
-  repository       = try(var.vpa.repository, "https://charts.fairwinds.com/stable")
-  values           = try(var.vpa.values, [])
+  # https://github.com/kubernetes-sigs/secrets-store-csi-driver/blob/main/charts/secrets-store-csi-driver/Chart.yaml
+  name             = try(var.secrets_store_csi_driver.name, "secrets-store-csi-driver")
+  description      = try(var.secrets_store_csi_driver.description, "A Helm chart to install the Secrets Store CSI Driver")
+  namespace        = try(var.secrets_store_csi_driver.namespace, "kube-system")
+  create_namespace = try(var.secrets_store_csi_driver.create_namespace, false)
+  chart            = "secrets-store-csi-driver"
+  chart_version    = try(var.secrets_store_csi_driver.chart_version, "1.3.2")
+  repository       = try(var.secrets_store_csi_driver.repository, "https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts")
+  values           = try(var.secrets_store_csi_driver.values, [])
 
-  timeout                    = try(var.vpa.timeout, null)
-  repository_key_file        = try(var.vpa.repository_key_file, null)
-  repository_cert_file       = try(var.vpa.repository_cert_file, null)
-  repository_ca_file         = try(var.vpa.repository_ca_file, null)
-  repository_username        = try(var.vpa.repository_username, null)
-  repository_password        = try(var.vpa.repository_password, null)
-  devel                      = try(var.vpa.devel, null)
-  verify                     = try(var.vpa.verify, null)
-  keyring                    = try(var.vpa.keyring, null)
-  disable_webhooks           = try(var.vpa.disable_webhooks, null)
-  reuse_values               = try(var.vpa.reuse_values, null)
-  reset_values               = try(var.vpa.reset_values, null)
-  force_update               = try(var.vpa.force_update, null)
-  recreate_pods              = try(var.vpa.recreate_pods, null)
-  cleanup_on_fail            = try(var.vpa.cleanup_on_fail, null)
-  max_history                = try(var.vpa.max_history, null)
-  atomic                     = try(var.vpa.atomic, null)
-  skip_crds                  = try(var.vpa.skip_crds, null)
-  render_subchart_notes      = try(var.vpa.render_subchart_notes, null)
-  disable_openapi_validation = try(var.vpa.disable_openapi_validation, null)
-  wait                       = try(var.vpa.wait, null)
-  wait_for_jobs              = try(var.vpa.wait_for_jobs, null)
-  dependency_update          = try(var.vpa.dependency_update, null)
-  replace                    = try(var.vpa.replace, null)
-  lint                       = try(var.vpa.lint, null)
+  timeout                    = try(var.secrets_store_csi_driver.timeout, null)
+  repository_key_file        = try(var.secrets_store_csi_driver.repository_key_file, null)
+  repository_cert_file       = try(var.secrets_store_csi_driver.repository_cert_file, null)
+  repository_ca_file         = try(var.secrets_store_csi_driver.repository_ca_file, null)
+  repository_username        = try(var.secrets_store_csi_driver.repository_username, null)
+  repository_password        = try(var.secrets_store_csi_driver.repository_password, null)
+  devel                      = try(var.secrets_store_csi_driver.devel, null)
+  verify                     = try(var.secrets_store_csi_driver.verify, null)
+  keyring                    = try(var.secrets_store_csi_driver.keyring, null)
+  disable_webhooks           = try(var.secrets_store_csi_driver.disable_webhooks, null)
+  reuse_values               = try(var.secrets_store_csi_driver.reuse_values, null)
+  reset_values               = try(var.secrets_store_csi_driver.reset_values, null)
+  force_update               = try(var.secrets_store_csi_driver.force_update, null)
+  recreate_pods              = try(var.secrets_store_csi_driver.recreate_pods, null)
+  cleanup_on_fail            = try(var.secrets_store_csi_driver.cleanup_on_fail, null)
+  max_history                = try(var.secrets_store_csi_driver.max_history, null)
+  atomic                     = try(var.secrets_store_csi_driver.atomic, null)
+  skip_crds                  = try(var.secrets_store_csi_driver.skip_crds, null)
+  render_subchart_notes      = try(var.secrets_store_csi_driver.render_subchart_notes, null)
+  disable_openapi_validation = try(var.secrets_store_csi_driver.disable_openapi_validation, null)
+  wait                       = try(var.secrets_store_csi_driver.wait, null)
+  wait_for_jobs              = try(var.secrets_store_csi_driver.wait_for_jobs, null)
+  dependency_update          = try(var.secrets_store_csi_driver.dependency_update, null)
+  replace                    = try(var.secrets_store_csi_driver.replace, null)
+  lint                       = try(var.secrets_store_csi_driver.lint, null)
 
-  postrender    = try(var.vpa.postrender, [])
-  set           = try(var.vpa.set, [])
-  set_sensitive = try(var.vpa.set_sensitive, [])
+  postrender    = try(var.secrets_store_csi_driver.postrender, [])
+  set           = try(var.secrets_store_csi_driver.set, [])
+  set_sensitive = try(var.secrets_store_csi_driver.set_sensitive, [])
+
+  tags = var.tags
+}
+
+################################################################################
+# Secrets Store CSI Driver Provider AWS
+################################################################################
+
+locals {
+  secrets_store_csi_driver_provider_aws_service_account = try(var.secrets_store_csi_driver_provider_aws.service_account_name, "secrets-store-csi-driver-provider-aws-sa")
+}
+
+module "secrets_store_csi_driver_provider_aws" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
+
+  create = var.enable_secrets_store_csi_driver_provider_aws
+
+  # https://github.com/aws/eks-charts/blob/master/stable/csi-secrets-store-provider-aws/Chart.yaml
+  name             = try(var.secrets_store_csi_driver_provider_aws.name, "secrets-store-csi-driver-provider-aws")
+  description      = try(var.secrets_store_csi_driver_provider_aws.description, "A Helm chart to install the Secrets Store CSI Driver and the AWS Key Management Service Provider inside a Kubernetes cluster.")
+  namespace        = try(var.secrets_store_csi_driver_provider_aws.namespace, "kube-system")
+  create_namespace = try(var.secrets_store_csi_driver_provider_aws.create_namespace, false)
+  chart            = "secrets-store-csi-driver-provider-aws"
+  chart_version    = try(var.secrets_store_csi_driver_provider_aws.chart_version, "0.3.2")
+  repository       = try(var.secrets_store_csi_driver_provider_aws.repository, "https://aws.github.io/secrets-store-csi-driver-provider-aws")
+  values           = try(var.secrets_store_csi_driver_provider_aws.values, [])
+
+  timeout                    = try(var.secrets_store_csi_driver_provider_aws.timeout, null)
+  repository_key_file        = try(var.secrets_store_csi_driver_provider_aws.repository_key_file, null)
+  repository_cert_file       = try(var.secrets_store_csi_driver_provider_aws.repository_cert_file, null)
+  repository_ca_file         = try(var.secrets_store_csi_driver_provider_aws.repository_ca_file, null)
+  repository_username        = try(var.secrets_store_csi_driver_provider_aws.repository_username, null)
+  repository_password        = try(var.secrets_store_csi_driver_provider_aws.repository_password, null)
+  devel                      = try(var.secrets_store_csi_driver_provider_aws.devel, null)
+  verify                     = try(var.secrets_store_csi_driver_provider_aws.verify, null)
+  keyring                    = try(var.secrets_store_csi_driver_provider_aws.keyring, null)
+  disable_webhooks           = try(var.secrets_store_csi_driver_provider_aws.disable_webhooks, null)
+  reuse_values               = try(var.secrets_store_csi_driver_provider_aws.reuse_values, null)
+  reset_values               = try(var.secrets_store_csi_driver_provider_aws.reset_values, null)
+  force_update               = try(var.secrets_store_csi_driver_provider_aws.force_update, null)
+  recreate_pods              = try(var.secrets_store_csi_driver_provider_aws.recreate_pods, null)
+  cleanup_on_fail            = try(var.secrets_store_csi_driver_provider_aws.cleanup_on_fail, null)
+  max_history                = try(var.secrets_store_csi_driver_provider_aws.max_history, null)
+  atomic                     = try(var.secrets_store_csi_driver_provider_aws.atomic, null)
+  skip_crds                  = try(var.secrets_store_csi_driver_provider_aws.skip_crds, null)
+  render_subchart_notes      = try(var.secrets_store_csi_driver_provider_aws.render_subchart_notes, null)
+  disable_openapi_validation = try(var.secrets_store_csi_driver_provider_aws.disable_openapi_validation, null)
+  wait                       = try(var.secrets_store_csi_driver_provider_aws.wait, null)
+  wait_for_jobs              = try(var.secrets_store_csi_driver_provider_aws.wait_for_jobs, null)
+  dependency_update          = try(var.secrets_store_csi_driver_provider_aws.dependency_update, null)
+  replace                    = try(var.secrets_store_csi_driver_provider_aws.replace, null)
+  lint                       = try(var.secrets_store_csi_driver_provider_aws.lint, null)
+
+  postrender = try(var.secrets_store_csi_driver_provider_aws.postrender, [])
+  set = concat([
+    {
+      name  = "serviceAccount.name"
+      value = local.secrets_store_csi_driver_provider_aws_service_account
+    }],
+    try(var.secrets_store_csi_driver_provider_aws.set, [])
+  )
+  set_sensitive = try(var.secrets_store_csi_driver_provider_aws.set_sensitive, [])
 
   tags = var.tags
 }
@@ -2731,9 +2740,9 @@ module "vpa" {
 ################################################################################
 # Velero
 ################################################################################
+
 locals {
-  velero_name                    = "velero"
-  velero_service_account         = try(var.velero.service_account_name, "${local.velero_name}-sa")
+  velero_service_account         = try(var.velero.service_account_name, "velero-sa")
   velero_backup_s3_bucket        = split(":", var.velero.s3_backup_location)
   velero_backup_s3_bucket_arn    = try(split("/", var.velero.s3_backup_location)[0], var.velero.s3_backup_location)
   velero_backup_s3_bucket_name   = try(split("/", local.velero_backup_s3_bucket[5])[1], local.velero_backup_s3_bucket[5])
@@ -2743,6 +2752,7 @@ locals {
 # https://github.com/vmware-tanzu/velero-plugin-for-aws#option-1-set-permissions-with-an-iam-user
 data "aws_iam_policy_document" "velero" {
   count = var.enable_velero ? 1 : 0
+
   statement {
     actions = [
       "ec2:CreateSnapshot",
@@ -2784,8 +2794,8 @@ data "aws_iam_policy_document" "velero" {
 }
 
 module "velero" {
-  # source = "aws-ia/eks-blueprints-addon/aws"
-  source = "./modules/eks-blueprints-addon"
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
 
   create = var.enable_velero
 
@@ -2899,81 +2909,55 @@ module "velero" {
 }
 
 ################################################################################
-# Fargate Fluentbit
+# Vertical Pod Autoscaler
 ################################################################################
 
-resource "aws_cloudwatch_log_group" "fargate_fluentbit" {
-  count = try(var.fargate_fluentbit_cw_log_group.create, true) && var.enable_fargate_fluentbit ? 1 : 0
+module "vpa" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
 
-  name              = try(var.fargate_fluentbit_cw_log_group.name, null)
-  name_prefix       = try(var.fargate_fluentbit_cw_log_group.name_prefix, "/${var.cluster_name}/fargate-fluentbit-logs")
-  retention_in_days = try(var.fargate_fluentbit_cw_log_group.retention, 90)
-  kms_key_id        = try(var.fargate_fluentbit_cw_log_group.kms_key_arn, null)
-  skip_destroy      = try(var.fargate_fluentbit_cw_log_group.skip_destroy, false)
-  tags              = merge(var.tags, try(var.fargate_fluentbit_cw_log_group.tags, {}))
-}
+  create = var.enable_vpa
 
-# Help on Fargate Logging with Fluentbit and CloudWatch
-# https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html
-resource "kubernetes_namespace_v1" "aws_observability" {
-  count = var.enable_fargate_fluentbit ? 1 : 0
+  # https://github.com/FairwindsOps/charts/blob/master/stable/vpa/Chart.yaml
+  # (there is no offical helm chart for VPA)
+  name             = try(var.vpa.name, "vpa")
+  description      = try(var.vpa.description, "A Helm chart to install the Vertical Pod Autoscaler")
+  namespace        = try(var.vpa.namespace, "vpa")
+  create_namespace = try(var.vpa.create_namespace, true)
+  chart            = "vpa"
+  chart_version    = try(var.vpa.chart_version, "1.7.2")
+  repository       = try(var.vpa.repository, "https://charts.fairwinds.com/stable")
+  values           = try(var.vpa.values, [])
 
-  metadata {
-    name = "aws-observability"
+  timeout                    = try(var.vpa.timeout, null)
+  repository_key_file        = try(var.vpa.repository_key_file, null)
+  repository_cert_file       = try(var.vpa.repository_cert_file, null)
+  repository_ca_file         = try(var.vpa.repository_ca_file, null)
+  repository_username        = try(var.vpa.repository_username, null)
+  repository_password        = try(var.vpa.repository_password, null)
+  devel                      = try(var.vpa.devel, null)
+  verify                     = try(var.vpa.verify, null)
+  keyring                    = try(var.vpa.keyring, null)
+  disable_webhooks           = try(var.vpa.disable_webhooks, null)
+  reuse_values               = try(var.vpa.reuse_values, null)
+  reset_values               = try(var.vpa.reset_values, null)
+  force_update               = try(var.vpa.force_update, null)
+  recreate_pods              = try(var.vpa.recreate_pods, null)
+  cleanup_on_fail            = try(var.vpa.cleanup_on_fail, null)
+  max_history                = try(var.vpa.max_history, null)
+  atomic                     = try(var.vpa.atomic, null)
+  skip_crds                  = try(var.vpa.skip_crds, null)
+  render_subchart_notes      = try(var.vpa.render_subchart_notes, null)
+  disable_openapi_validation = try(var.vpa.disable_openapi_validation, null)
+  wait                       = try(var.vpa.wait, null)
+  wait_for_jobs              = try(var.vpa.wait_for_jobs, null)
+  dependency_update          = try(var.vpa.dependency_update, null)
+  replace                    = try(var.vpa.replace, null)
+  lint                       = try(var.vpa.lint, null)
 
-    labels = {
-      aws-observability = "enabled"
-    }
-  }
-}
+  postrender    = try(var.vpa.postrender, [])
+  set           = try(var.vpa.set, [])
+  set_sensitive = try(var.vpa.set_sensitive, [])
 
-# fluent-bit-cloudwatch value as the name of the CloudWatch log group that is automatically created as soon as your apps start logging
-resource "kubernetes_config_map_v1" "aws_logging" {
-  count = var.enable_fargate_fluentbit ? 1 : 0
-
-  metadata {
-    name      = "aws-logging"
-    namespace = kubernetes_namespace_v1.aws_observability[0].id
-  }
-
-  data = {
-    "parsers.conf" = try(
-      var.fargate_fluentbit.parsers_conf,
-      <<-EOT
-        [PARSER]
-          Name regex
-          Format regex
-          Regex ^(?<time>[^ ]+) (?<stream>[^ ]+) (?<logtag>[^ ]+) (?<message>.+)$
-          Time_Key time
-          Time_Format %Y-%m-%dT%H:%M:%S.%L%z
-          Time_Keep On
-          Decode_Field_As json message
-      EOT
-    )
-    "filters.conf" = try(
-      var.fargate_fluentbit.filters_conf,
-      <<-EOT
-        [FILTER]
-          Name parser
-          Match *
-          Key_Name log
-          Parser regex
-          Preserve_Key True
-          Reserve_Data True
-      EOT
-    )
-    "output.conf" = try(
-      var.fargate_fluentbit.output_conf,
-      <<-EOT
-        [OUTPUT]
-          Name cloudwatch_logs
-          Match *
-          region ${local.region}
-          log_group_name ${try(var.fargate_fluentbit.cwlog_group, aws_cloudwatch_log_group.fargate_fluentbit[0].name)}
-          log_stream_prefix ${try(var.fargate_fluentbit.cwlog_stream_prefix, "fargate-logs-")}
-          auto_create_group true
-      EOT
-    )
-    "flb_log_cw" = try(var.fargate_fluentbit.flb_log_cw, false)
-  }
+  tags = var.tags
 }
