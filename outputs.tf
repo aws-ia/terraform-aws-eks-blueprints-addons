@@ -100,7 +100,7 @@ output "fargate_fluentbit" {
 
 output "gatekeeper" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.gatekeeper[0], null)
+  value       = module.gatekeeper
 }
 
 output "karpenter" {
@@ -120,7 +120,7 @@ output "secrets_store_csi_driver" {
 
 output "velero" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = try(module.velero[0], null)
+  value       = module.velero
 }
 
 output "vpa" {

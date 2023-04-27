@@ -168,7 +168,9 @@ module "eks_blueprints_addons" {
 
   enable_velero = true
   # bucket is required
-  velero_backup_s3_bucket = module.velero_backup_s3_bucket.s3_bucket_id
+  velero = {
+    s3_bucket_arn = module.velero_backup_s3_bucket.s3_bucket_arn
+  }
 
   tags = local.tags
 }
