@@ -354,9 +354,6 @@ module "argo_rollouts" {
 ################################################################################
 # ArgoCD
 ################################################################################
-locals {
-  argocd_name = "argo-cd"
-}
 
 module "argocd" {
   # source = "aws-ia/eks-blueprints-addon/aws"
@@ -366,11 +363,11 @@ module "argocd" {
 
   # https://github.com/argoproj/argo-helm/blob/main/charts/argo-cd/Chart.yaml
   # (there is no offical helm chart for argocd)
-  name             = try(var.argocd.name, local.argocd_name)
+  name             = try(var.argocd.name, "argo-cd")
   description      = try(var.argocd.description, "A Helm chart to install the ArgoCD")
   namespace        = try(var.argocd.namespace, "argocd")
   create_namespace = try(var.argocd.create_namespace, true)
-  chart            = local.argocd_name
+  chart            = "argo-cd"
   chart_version    = try(var.argocd.chart_version, "5.29.1")
   repository       = try(var.argocd.repository, "https://argoproj.github.io/argo-helm")
   values           = try(var.argocd.values, [])
@@ -467,8 +464,7 @@ module "argo_workflows" {
 
 locals {
   cert_manager_service_account = try(var.cert_manager.service_account_name, "cert-manager")
-
-  create_cert_manager_irsa = var.enable_cert_manager && length(var.cert_manager_route53_hosted_zone_arns) > 0
+  create_cert_manager_irsa     = var.enable_cert_manager && length(var.cert_manager_route53_hosted_zone_arns) > 0
 }
 
 data "aws_iam_policy_document" "cert_manager" {
@@ -1104,8 +1100,7 @@ module "external_dns" {
 ################################################################################
 
 locals {
-  aws_load_balancer_controller_name            = "aws-load-balancer-controller"
-  aws_load_balancer_controller_service_account = try(var.aws_load_balancer_controller.service_account_name, "${local.aws_load_balancer_controller_name}-sa")
+  aws_load_balancer_controller_service_account = try(var.aws_load_balancer_controller.service_account_name, "aws-load-balancer-controller-sa")
 }
 
 data "aws_iam_policy_document" "aws_load_balancer_controller" {
@@ -1394,12 +1389,12 @@ module "aws_load_balancer_controller" {
   create = var.enable_aws_load_balancer_controller
 
   # https://github.com/aws/eks-charts/blob/master/stable/aws-load-balancer-controller/Chart.yaml
-  name        = try(var.aws_load_balancer_controller.name, local.aws_load_balancer_controller_name)
+  name        = try(var.aws_load_balancer_controller.name, "aws-load-balancer-controller")
   description = try(var.aws_load_balancer_controller.description, "A Helm chart to deploy aws-load-balancer-controller for ingress resources")
   namespace   = try(var.aws_load_balancer_controller.namespace, "kube-system")
   # namespace creation is false here as kube-system already exists by default
   create_namespace = try(var.aws_load_balancer_controller.create_namespace, false)
-  chart            = local.aws_load_balancer_controller_name
+  chart            = "aws-load-balancer-controller"
   chart_version    = try(var.aws_load_balancer_controller.chart_version, "1.4.8")
   repository       = try(var.aws_load_balancer_controller.repository, "https://aws.github.io/eks-charts")
   values           = try(var.aws_load_balancer_controller.values, [])
@@ -1641,7 +1636,6 @@ locals {
 data "aws_iam_policy_document" "fsx_csi_driver" {
   statement {
     sid       = "AllowCreateServiceLinkedRoles"
-    effect    = "Allow"
     resources = ["arn:${local.partition}:iam::*:role/aws-service-role/s3.data-source.lustre.fsx.${local.dns_suffix}/*"]
 
     actions = [
@@ -1653,7 +1647,6 @@ data "aws_iam_policy_document" "fsx_csi_driver" {
 
   statement {
     sid       = "AllowCreateServiceLinkedRole"
-    effect    = "Allow"
     resources = ["arn:${local.partition}:iam::${local.account_id}:role/*"]
     actions   = ["iam:CreateServiceLinkedRole"]
 
@@ -1666,19 +1659,14 @@ data "aws_iam_policy_document" "fsx_csi_driver" {
 
   statement {
     sid       = "AllowListBuckets"
-    effect    = "Allow"
     resources = ["arn:${local.partition}:s3:::*"]
-
     actions = [
       "s3:ListBucket"
     ]
   }
 
   statement {
-    sid       = ""
-    effect    = "Allow"
     resources = ["arn:${local.partition}:fsx:${local.region}:${local.account_id}:file-system/*"]
-
     actions = [
       "fsx:CreateFileSystem",
       "fsx:DeleteFileSystem",
@@ -1687,10 +1675,7 @@ data "aws_iam_policy_document" "fsx_csi_driver" {
   }
 
   statement {
-    sid       = ""
-    effect    = "Allow"
     resources = ["arn:${local.partition}:fsx:${local.region}:${local.account_id}:*"]
-
     actions = [
       "fsx:DescribeFileSystems",
       "fsx:TagResource"
@@ -2055,10 +2040,6 @@ module "karpenter" {
 # Secrets Store CSI Driver
 ################################################################################
 
-locals {
-  secrets_store_csi_driver_name = "secrets-store-csi-driver"
-}
-
 module "secrets_store_csi_driver" {
   # source = "aws-ia/eks-blueprints-addon/aws"
   source = "./modules/eks-blueprints-addon"
@@ -2066,11 +2047,11 @@ module "secrets_store_csi_driver" {
   create = var.enable_secrets_store_csi_driver
 
   # https://github.com/kubernetes-sigs/secrets-store-csi-driver/blob/main/charts/secrets-store-csi-driver/Chart.yaml
-  name             = try(var.secrets_store_csi_driver.name, local.secrets_store_csi_driver_name)
+  name             = try(var.secrets_store_csi_driver.name, "secrets-store-csi-driver")
   description      = try(var.secrets_store_csi_driver.description, "A Helm chart to install the Secrets Store CSI Driver")
   namespace        = try(var.secrets_store_csi_driver.namespace, "kube-system")
   create_namespace = try(var.secrets_store_csi_driver.create_namespace, false)
-  chart            = local.secrets_store_csi_driver_name
+  chart            = "secrets-store-csi-driver"
   chart_version    = try(var.secrets_store_csi_driver.chart_version, "1.3.2")
   repository       = try(var.secrets_store_csi_driver.repository, "https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts")
   values           = try(var.secrets_store_csi_driver.values, [])
@@ -2109,12 +2090,75 @@ module "secrets_store_csi_driver" {
 }
 
 ################################################################################
+# CSI Secrets Store Provider AWS
+################################################################################
+
+locals {
+  csi_secrets_store_provider_aws_service_account = try(var.csi_secrets_store_provider_aws.service_account_name, "secrets-store-csi-driver-provider-aws-sa")
+}
+
+module "csi_secrets_store_provider_aws" {
+
+  # source = "aws-ia/eks-blueprints-addon/aws"
+  source = "./modules/eks-blueprints-addon"
+
+  create = var.enable_csi_secrets_store_provider_aws
+
+  # https://github.com/aws/eks-charts/blob/master/stable/csi-secrets-store-provider-aws/Chart.yaml
+  name             = try(var.csi_secrets_store_provider_aws.name, "secrets-store-csi-driver-provider-aws")
+  description      = try(var.csi_secrets_store_provider_aws.description, "A Helm chart to install the Secrets Store CSI Driver and the AWS Key Management Service Provider inside a Kubernetes cluster.")
+  namespace        = try(var.csi_secrets_store_provider_aws.namespace, "kube-system")
+  create_namespace = try(var.csi_secrets_store_provider_aws.create_namespace, false)
+  chart            = "secrets-store-csi-driver-provider-aws"
+  chart_version    = try(var.csi_secrets_store_provider_aws.chart_version, "0.3.2")
+  repository       = try(var.csi_secrets_store_provider_aws.repository, "https://aws.github.io/secrets-store-csi-driver-provider-aws")
+  values           = try(var.csi_secrets_store_provider_aws.values, [])
+
+  timeout                    = try(var.csi_secrets_store_provider_aws.timeout, null)
+  repository_key_file        = try(var.csi_secrets_store_provider_aws.repository_key_file, null)
+  repository_cert_file       = try(var.csi_secrets_store_provider_aws.repository_cert_file, null)
+  repository_ca_file         = try(var.csi_secrets_store_provider_aws.repository_ca_file, null)
+  repository_username        = try(var.csi_secrets_store_provider_aws.repository_username, null)
+  repository_password        = try(var.csi_secrets_store_provider_aws.repository_password, null)
+  devel                      = try(var.csi_secrets_store_provider_aws.devel, null)
+  verify                     = try(var.csi_secrets_store_provider_aws.verify, null)
+  keyring                    = try(var.csi_secrets_store_provider_aws.keyring, null)
+  disable_webhooks           = try(var.csi_secrets_store_provider_aws.disable_webhooks, null)
+  reuse_values               = try(var.csi_secrets_store_provider_aws.reuse_values, null)
+  reset_values               = try(var.csi_secrets_store_provider_aws.reset_values, null)
+  force_update               = try(var.csi_secrets_store_provider_aws.force_update, null)
+  recreate_pods              = try(var.csi_secrets_store_provider_aws.recreate_pods, null)
+  cleanup_on_fail            = try(var.csi_secrets_store_provider_aws.cleanup_on_fail, null)
+  max_history                = try(var.csi_secrets_store_provider_aws.max_history, null)
+  atomic                     = try(var.csi_secrets_store_provider_aws.atomic, null)
+  skip_crds                  = try(var.csi_secrets_store_provider_aws.skip_crds, null)
+  render_subchart_notes      = try(var.csi_secrets_store_provider_aws.render_subchart_notes, null)
+  disable_openapi_validation = try(var.csi_secrets_store_provider_aws.disable_openapi_validation, null)
+  wait                       = try(var.csi_secrets_store_provider_aws.wait, null)
+  wait_for_jobs              = try(var.csi_secrets_store_provider_aws.wait_for_jobs, null)
+  dependency_update          = try(var.csi_secrets_store_provider_aws.dependency_update, null)
+  replace                    = try(var.csi_secrets_store_provider_aws.replace, null)
+  lint                       = try(var.csi_secrets_store_provider_aws.lint, null)
+
+  postrender = try(var.csi_secrets_store_provider_aws.postrender, [])
+  set = concat([
+    {
+      name  = "serviceAccount.name"
+      value = local.csi_secrets_store_provider_aws_service_account
+    }],
+    try(var.csi_secrets_store_provider_aws.set, [])
+  )
+  set_sensitive = try(var.csi_secrets_store_provider_aws.set_sensitive, [])
+
+  tags = var.tags
+}
+
+################################################################################
 # AWS for Fluent-bit
 ################################################################################
 
 locals {
-  aws_for_fluentbit_name            = "aws-for-fluent-bit"
-  aws_for_fluentbit_service_account = try(var.aws_for_fluentbit.service_account_name, "${local.aws_for_fluentbit_name}-sa")
+  aws_for_fluentbit_service_account = try(var.aws_for_fluentbit.service_account_name, "aws-for-fluent-bit-sa")
 }
 
 module "aws_for_fluentbit" {
@@ -2125,7 +2169,7 @@ module "aws_for_fluentbit" {
 
   # https://github.com/aws/eks-charts/blob/master/stable/aws-for-fluent-bit/Chart.yaml
 
-  name             = try(var.aws_for_fluentbit.name, local.aws_for_fluentbit_name)
+  name             = try(var.aws_for_fluentbit.name, "aws-for-fluent-bit")
   description      = try(var.aws_for_fluentbit.description, "A Helm chart to install the Fluent-bit Driver")
   namespace        = try(var.aws_for_fluentbit.namespace, "kube-system")
   create_namespace = try(var.aws_for_fluentbit.create_namespace, false)
@@ -2217,13 +2261,13 @@ resource "aws_cloudwatch_log_group" "aws_for_fluentbit" {
 
 data "aws_iam_policy_document" "aws_for_fluentbit" {
   count = try(var.aws_for_fluentbit_cw_log_group.create, true) && var.enable_aws_for_fluentbit ? 1 : 0
+
   statement {
     sid    = "PutLogEvents"
     effect = "Allow"
     resources = [
-      try("arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${var.aws_for_fluentbit_cw_log_group.name}:log-stream:*",
-        "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:*:log-stream:*"
-    )]
+      "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${try(var.aws_for_fluentbit_cw_log_group.name, "*")}:log-stream:*",
+    ]
 
     actions = [
       "logs:PutLogEvents"
@@ -2234,9 +2278,8 @@ data "aws_iam_policy_document" "aws_for_fluentbit" {
     sid    = "CreateCWLogs"
     effect = "Allow"
     resources = [
-      try("arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${var.aws_for_fluentbit_cw_log_group.name}",
-        "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:*"
-    )]
+      "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${try(var.aws_for_fluentbit_cw_log_group.name, "*")}",
+    ]
 
     actions = [
       "logs:CreateLogGroup",
@@ -2253,8 +2296,7 @@ data "aws_iam_policy_document" "aws_for_fluentbit" {
 ################################################################################
 
 locals {
-  aws_privateca_issuer_name            = "aws-privateca-issuer"
-  aws_privateca_issuer_service_account = try(var.aws_privateca_issuer.service_account_name, "${local.aws_privateca_issuer_name}-sa")
+  aws_privateca_issuer_service_account = try(var.aws_privateca_issuer.service_account_name, "aws-privateca-issuer-sa")
 }
 
 data "aws_iam_policy_document" "aws_privateca_issuer" {
@@ -2280,7 +2322,7 @@ module "aws_privateca_issuer" {
   create = var.enable_aws_privateca_issuer
 
   # https://github.com/cert-manager/aws-privateca-issuer/blob/main/charts/aws-pca-issuer/Chart.yaml
-  name             = try(var.aws_privateca_issuer.name, local.secrets_store_csi_driver_name)
+  name             = try(var.aws_privateca_issuer.name, "aws-privateca-issuer")
   description      = try(var.aws_privateca_issuer.description, "A Helm chart to install the AWS Private CA Issuer")
   namespace        = try(var.aws_privateca_issuer.namespace, "kube-system")
   create_namespace = try(var.aws_privateca_issuer.create_namespace, false)
@@ -2361,10 +2403,6 @@ module "aws_privateca_issuer" {
 # Metrics Server
 ################################################################################
 
-locals {
-  metrics_server_name = "metrics-server"
-}
-
 module "metrics_server" {
   # source = "aws-ia/eks-blueprints-addon/aws"
   source = "./modules/eks-blueprints-addon"
@@ -2372,7 +2410,7 @@ module "metrics_server" {
   create = var.enable_metrics_server
 
   # https://github.com/kubernetes-sigs/metrics-server/blob/master/charts/metrics-server/Chart.yaml
-  name             = try(var.metrics_server.name, local.metrics_server_name)
+  name             = try(var.metrics_server.name, "metrics-server")
   description      = try(var.metrics_server.description, "A Helm chart to install the Metrics Server")
   namespace        = try(var.metrics_server.namespace, "kube-system")
   create_namespace = try(var.metrics_server.create_namespace, false)
@@ -2418,10 +2456,6 @@ module "metrics_server" {
 # Ingress Nginx
 ################################################################################
 
-locals {
-  ingress_nginx_name = "ingress-nginx"
-}
-
 module "ingress_nginx" {
   # source = "aws-ia/eks-blueprints-addon/aws"
   source = "./modules/eks-blueprints-addon"
@@ -2429,11 +2463,11 @@ module "ingress_nginx" {
   create = var.enable_ingress_nginx
 
   # https://github.com/kubernetes/ingress-nginx/blob/main/charts/ingress-nginx/Chart.yaml
-  name             = try(var.ingress_nginx.name, local.ingress_nginx_name)
+  name             = try(var.ingress_nginx.name, "ingress-nginx")
   description      = try(var.ingress_nginx.description, "A Helm chart to install the Ingress Nginx")
   namespace        = try(var.ingress_nginx.namespace, "ingress-nginx")
   create_namespace = try(var.ingress_nginx.create_namespace, true)
-  chart            = local.ingress_nginx_name
+  chart            = "ingress-nginx"
   chart_version    = try(var.ingress_nginx.chart_version, "4.6.0")
   repository       = try(var.ingress_nginx.repository, "https://kubernetes.github.io/ingress-nginx")
   values           = try(var.ingress_nginx.values, [])
@@ -2475,10 +2509,6 @@ module "ingress_nginx" {
 # Cluster Proportional Autoscaler
 ################################################################################
 
-locals {
-  cluster_proportional_autoscaler_name = "cluster-proportional-autoscaler"
-}
-
 module "cluster_proportional_autoscaler" {
   # source = "aws-ia/eks-blueprints-addon/aws"
   source = "./modules/eks-blueprints-addon"
@@ -2486,11 +2516,11 @@ module "cluster_proportional_autoscaler" {
   create = var.enable_cluster_proportional_autoscaler
 
   # https://github.com/kubernetes-sigs/cluster-proportional-autoscaler/blob/master/charts/cluster-proportional-autoscaler/Chart.yaml
-  name             = try(var.cluster_proportional_autoscaler.name, local.cluster_proportional_autoscaler_name)
+  name             = try(var.cluster_proportional_autoscaler.name, "cluster-proportional-autoscaler")
   description      = try(var.cluster_proportional_autoscaler.description, "A Helm chart to install the Cluster Proportional Autoscaler")
   namespace        = try(var.cluster_proportional_autoscaler.namespace, "kube-system")
   create_namespace = try(var.cluster_proportional_autoscaler.create_namespace, false)
-  chart            = local.cluster_proportional_autoscaler_name
+  chart            = "cluster-proportional-autoscaler"
   chart_version    = try(var.cluster_proportional_autoscaler.chart_version, "1.1.0")
   repository       = try(var.cluster_proportional_autoscaler.repository, "https://kubernetes-sigs.github.io/cluster-proportional-autoscaler")
   values           = try(var.cluster_proportional_autoscaler.values, [])
@@ -2532,10 +2562,6 @@ module "cluster_proportional_autoscaler" {
 # Kube Prometheus stack
 ################################################################################
 
-locals {
-  kube_prometheus_stack_name = "kube-prometheus-stack"
-}
-
 # During destroy CRDs created by this chart are not removed by default and
 # should be manually cleaned up:
 # kubectl delete crd alertmanagerconfigs.monitoring.coreos.com
@@ -2553,11 +2579,11 @@ module "kube_prometheus_stack" {
   create = var.enable_kube_prometheus_stack
 
   # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/Chart.yaml
-  name             = try(var.kube_prometheus_stack.name, local.kube_prometheus_stack_name)
+  name             = try(var.kube_prometheus_stack.name, "kube-prometheus-stack")
   description      = try(var.kube_prometheus_stack.description, "A Helm chart to install the Kube Prometheus Stack")
   namespace        = try(var.kube_prometheus_stack.namespace, "kube-prometheus-stack")
   create_namespace = try(var.kube_prometheus_stack.create_namespace, true)
-  chart            = local.kube_prometheus_stack_name
+  chart            = "kube-prometheus-stack"
   chart_version    = try(var.kube_prometheus_stack.chart_version, "45.10.1")
   repository       = try(var.kube_prometheus_stack.repository, "https://prometheus-community.github.io/helm-charts")
   values           = try(var.kube_prometheus_stack.values, [])
@@ -2599,10 +2625,6 @@ module "kube_prometheus_stack" {
 # Gatekeeper
 ################################################################################
 
-locals {
-  gatekeeper_name = "gatekeeper"
-}
-
 module "gatekeeper" {
   # source = "aws-ia/eks-blueprints-addon/aws"
   source = "./modules/eks-blueprints-addon"
@@ -2610,11 +2632,11 @@ module "gatekeeper" {
   create = var.enable_gatekeeper
 
   # https://github.com/open-policy-agent/gatekeeper/blob/master/charts/gatekeeper/Chart.yaml
-  name             = try(var.gatekeeper.name, local.cluster_proportional_autoscaler_name)
+  name             = try(var.gatekeeper.name, "gatekeeper")
   description      = try(var.gatekeeper.description, "A Helm chart to install Gatekeeper")
   namespace        = try(var.gatekeeper.namespace, "gatekeeper-system")
   create_namespace = try(var.gatekeeper.create_namespace, true)
-  chart            = local.gatekeeper_name
+  chart            = "gatekeeper"
   chart_version    = try(var.gatekeeper.chart_version, "3.12.0")
   repository       = try(var.gatekeeper.repository, "https://open-policy-agent.github.io/gatekeeper/charts")
   values           = try(var.gatekeeper.values, [])
@@ -2655,9 +2677,6 @@ module "gatekeeper" {
 ################################################################################
 # Vertical Pod Autoscaler
 ################################################################################
-locals {
-  vpa_name = "vpa"
-}
 
 module "vpa" {
   # source = "aws-ia/eks-blueprints-addon/aws"
@@ -2667,11 +2686,11 @@ module "vpa" {
 
   # https://github.com/FairwindsOps/charts/blob/master/stable/vpa/Chart.yaml
   # (there is no offical helm chart for VPA)
-  name             = try(var.vpa.name, local.vpa_name)
+  name             = try(var.vpa.name, "vpa")
   description      = try(var.vpa.description, "A Helm chart to install the Vertical Pod Autoscaler")
   namespace        = try(var.vpa.namespace, "vpa")
   create_namespace = try(var.vpa.create_namespace, true)
-  chart            = local.vpa_name
+  chart            = "vpa"
   chart_version    = try(var.vpa.chart_version, "1.7.2")
   repository       = try(var.vpa.repository, "https://charts.fairwinds.com/stable")
   values           = try(var.vpa.values, [])
@@ -2712,9 +2731,9 @@ module "vpa" {
 ################################################################################
 # Velero
 ################################################################################
+
 locals {
-  velero_name                    = "velero"
-  velero_service_account         = try(var.velero.service_account_name, "${local.velero_name}-sa")
+  velero_service_account         = try(var.velero.service_account_name, "velero-sa")
   velero_backup_s3_bucket        = split(":", var.velero.s3_bucket_arn)
   velero_backup_s3_bucket_name   = split("/", local.velero_backup_s3_bucket[5])
   velero_backup_s3_bucket_prefix = split("/", var.velero.s3_bucket_arn)
@@ -2770,7 +2789,7 @@ module "velero" {
   create = var.enable_velero
 
   # https://github.com/vmware-tanzu/helm-charts/blob/main/charts/velero/Chart.yaml
-  name             = try(var.velero.name, local.velero_name)
+  name             = try(var.velero.name, "velero")
   description      = try(var.velero.description, "A Helm chart to install the Velero")
   namespace        = try(var.velero.namespace, "velero")
   create_namespace = try(var.velero.create_namespace, true)
@@ -2881,6 +2900,7 @@ module "velero" {
 ################################################################################
 # Fargate Fluentbit
 ################################################################################
+
 resource "aws_cloudwatch_log_group" "fargate_fluentbit" {
   count = try(var.fargate_fluentbit_cw_log_group.create, true) && var.enable_fargate_fluentbit ? 1 : 0
 
@@ -2896,6 +2916,7 @@ resource "aws_cloudwatch_log_group" "fargate_fluentbit" {
 # https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html
 resource "kubernetes_namespace_v1" "aws_observability" {
   count = var.enable_fargate_fluentbit ? 1 : 0
+
   metadata {
     name = "aws-observability"
 
@@ -2908,52 +2929,50 @@ resource "kubernetes_namespace_v1" "aws_observability" {
 # fluent-bit-cloudwatch value as the name of the CloudWatch log group that is automatically created as soon as your apps start logging
 resource "kubernetes_config_map_v1" "aws_logging" {
   count = var.enable_fargate_fluentbit ? 1 : 0
+
   metadata {
     name      = "aws-logging"
     namespace = kubernetes_namespace_v1.aws_observability[0].id
   }
 
   data = {
-    "parsers.conf" = try(var.fargate_fluentbit.parsers_conf, <<-EOT
-    [PARSER]
-      Name regex
-      Format regex
-      Regex ^(?<time>[^ ]+) (?<stream>[^ ]+) (?<logtag>[^ ]+) (?<message>.+)$
-      Time_Key time
-      Time_Format %Y-%m-%dT%H:%M:%S.%L%z
-      Time_Keep On
-      Decode_Field_As json message
-    EOT
+    "parsers.conf" = try(
+      var.fargate_fluentbit.parsers_conf,
+      <<-EOT
+        [PARSER]
+          Name regex
+          Format regex
+          Regex ^(?<time>[^ ]+) (?<stream>[^ ]+) (?<logtag>[^ ]+) (?<message>.+)$
+          Time_Key time
+          Time_Format %Y-%m-%dT%H:%M:%S.%L%z
+          Time_Keep On
+          Decode_Field_As json message
+      EOT
     )
-    "filters.conf" = try(var.fargate_fluentbit.filters_conf, <<-EOT
-      [FILTER]
-      Name parser
-      Match *
-      Key_Name log
-      Parser regex
-      Preserve_Key True
-      Reserve_Data True
-    EOT
+    "filters.conf" = try(
+      var.fargate_fluentbit.filters_conf,
+      <<-EOT
+        [FILTER]
+          Name parser
+          Match *
+          Key_Name log
+          Parser regex
+          Preserve_Key True
+          Reserve_Data True
+      EOT
     )
-    "output.conf" = try(var.fargate_fluentbit.output_conf, <<-EOT
-    [OUTPUT]
-      Name cloudwatch_logs
-      Match *
-      region ${local.region}
-      log_group_name ${try(var.fargate_fluentbit.cwlog_group, aws_cloudwatch_log_group.fargate_fluentbit[0].name)}
-      log_stream_prefix ${try(var.fargate_fluentbit.cwlog_stream_prefix, "fargate-logs-")}
-      auto_create_group true
-    EOT
+    "output.conf" = try(
+      var.fargate_fluentbit.output_conf,
+      <<-EOT
+        [OUTPUT]
+          Name cloudwatch_logs
+          Match *
+          region ${local.region}
+          log_group_name ${try(var.fargate_fluentbit.cwlog_group, aws_cloudwatch_log_group.fargate_fluentbit[0].name)}
+          log_stream_prefix ${try(var.fargate_fluentbit.cwlog_stream_prefix, "fargate-logs-")}
+          auto_create_group true
+      EOT
     )
     "flb_log_cw" = try(var.fargate_fluentbit.flb_log_cw, false)
   }
-}
-
-#-----------------Kubernetes Add-ons----------------------
-
-module "csi_secrets_store_provider_aws" {
-  count         = var.enable_secrets_store_csi_driver_provider_aws ? 1 : 0
-  source        = "./modules/csi-secrets-store-provider-aws"
-  helm_config   = var.csi_secrets_store_provider_aws_helm_config
-  addon_context = local.addon_context
 }
