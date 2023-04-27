@@ -2713,8 +2713,11 @@ module "vpa" {
 # Velero
 ################################################################################
 locals {
-  velero_name            = "velero"
-  velero_service_account = try(var.velero.service_account_name, "${local.velero_name}-sa")
+  velero_name                    = "velero"
+  velero_service_account         = try(var.velero.service_account_name, "${local.velero_name}-sa")
+  velero_backup_s3_bucket        = split(":", var.velero.s3_bucket_arn)
+  velero_backup_s3_bucket_name   = split("/", local.velero_backup_s3_bucket[5])
+  velero_backup_s3_bucket_prefix = split("/", var.velero.s3_bucket_arn)
 }
 
 # https://github.com/vmware-tanzu/velero-plugin-for-aws#option-1-set-permissions-with-an-iam-user
@@ -2751,12 +2754,12 @@ data "aws_iam_policy_document" "velero" {
       "s3:ListMultipartUploadParts",
       "s3:PutObject",
     ]
-    resources = ["arn:${local.partition}:s3:::${var.velero.backup_s3_bucket}/*"]
+    resources = [var.velero.s3_bucket_arn]
   }
 
   statement {
     actions   = ["s3:ListBucket"]
-    resources = ["arn:${local.partition}:s3:::${var.velero.backup_s3_bucket}"]
+    resources = [local.velero_backup_s3_bucket_prefix[0]]
   }
 }
 
@@ -2805,16 +2808,40 @@ module "velero" {
   postrender = try(var.velero.postrender, [])
   set = concat([
     {
+      name = "initContainers"
+      value = yamlencode({
+        "name" : "velero-plugin-for-aws"
+        "image" : "velero/velero-plugin-for-aws:v1.7.0"
+        "imagePullPolicy" : "IfNotPresent"
+        "volumeMounts" : {
+          "mountPath" : "/target"
+          "name" : "plugins"
+        }
+      })
+    },
+    {
       name  = "serviceAccount.name"
       value = local.velero_service_account
     },
     {
+      name  = "configuration.provider"
+      value = "aws"
+    },
+    {
+      name  = "configuration.backupStorageLocation.prefix"
+      value = local.velero_backup_s3_bucket_prefix[1]
+    },
+    {
       name  = "configuration.backupStorageLocation.bucket"
-      value = var.velero.backup_s3_bucket
+      value = local.velero_backup_s3_bucket_name[0]
     },
     {
       name  = "configuration.volumeSnapshotLocation.config.region"
       value = local.region
+    },
+    {
+      name  = "credentials.useSecret"
+      value = false
     }],
     try(var.velero.set, [])
   )
