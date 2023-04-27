@@ -25,18 +25,136 @@ variable "oidc_provider_arn" {
 }
 
 ################################################################################
-# EKS Addons
+# Argo Rollouts
 ################################################################################
 
-variable "eks_addons" {
-  description = "Map of EKS addon configurations to enable for the cluster. Addon name can be the map keys or set with `name`"
+variable "enable_argo_rollouts" {
+  description = "Enable Argo Rollouts add-on"
+  type        = bool
+  default     = false
+}
+
+variable "argo_rollouts" {
+  description = "Argo Rollouts addon configuration values"
   type        = any
   default     = {}
 }
 
-variable "eks_addons_timeouts" {
-  description = "Create, update, and delete timeout configurations for the EKS addons"
-  type        = map(string)
+################################################################################
+# Argo Workflows
+################################################################################
+
+variable "enable_argo_workflows" {
+  description = "Enable Argo workflows add-on"
+  type        = bool
+  default     = false
+}
+
+variable "argo_workflows" {
+  description = "Argo Workflows addon configuration values"
+  type        = any
+  default     = {}
+}
+
+################################################################################
+# ArgoCD
+################################################################################
+
+variable "enable_argocd" {
+  description = "Enable Argo CD Kubernetes add-on"
+  type        = bool
+  default     = false
+}
+
+variable "argocd" {
+  description = "ArgoCD addon configuration values"
+  type        = any
+  default     = {}
+}
+
+################################################################################
+# AWS Cloudwatch Metrics
+################################################################################
+
+variable "enable_aws_cloudwatch_metrics" {
+  description = "Enable AWS Cloudwatch Metrics add-on for Container Insights"
+  type        = bool
+  default     = false
+}
+
+variable "aws_cloudwatch_metrics" {
+  description = "Cloudwatch Metrics addon configuration values"
+  type        = any
+  default     = {}
+}
+
+################################################################################
+# AWS EFS CSI Driver
+################################################################################
+
+variable "enable_aws_efs_csi_driver" {
+  description = "Enable AWS EFS CSI Driver add-on"
+  type        = bool
+  default     = false
+}
+
+variable "aws_efs_csi_driver" {
+  description = "EFS CSI Driver addon configuration values"
+  type        = any
+  default     = {}
+}
+
+################################################################################
+# AWS for Fluentbit
+################################################################################
+
+variable "enable_aws_for_fluentbit" {
+  description = "Enable AWS for FluentBit add-on"
+  type        = bool
+  default     = false
+}
+
+variable "aws_for_fluentbit" {
+  description = "AWS Fluentbit add-on configurations"
+  type        = any
+  default     = {}
+}
+
+variable "aws_for_fluentbit_cw_log_group" {
+  description = "AWS Fluentbit CloudWatch Log Group configurations"
+  type        = any
+  default     = {}
+}
+
+################################################################################
+# AWS FSx CSI Driver
+################################################################################
+
+variable "enable_aws_fsx_csi_driver" {
+  description = "Enable AWS FSX CSI Driver add-on"
+  type        = bool
+  default     = false
+}
+
+variable "aws_fsx_csi_driver" {
+  description = "FSX CSI Driver addon configuration values"
+  type        = any
+  default     = {}
+}
+
+################################################################################
+# AWS Load Balancer Controller
+################################################################################
+
+variable "enable_aws_load_balancer_controller" {
+  description = "Enable AWS Load Balancer Controller add-on"
+  type        = bool
+  default     = false
+}
+
+variable "aws_load_balancer_controller" {
+  description = "AWS Load Balancer Controller addon configuration values"
+  type        = any
   default     = {}
 }
 
@@ -69,49 +187,17 @@ variable "aws_node_termination_handler_asg_arns" {
 }
 
 ################################################################################
-# ArgoCD
+# AWS Private CA Issuer
 ################################################################################
 
-variable "enable_argocd" {
-  description = "Enable Argo CD Kubernetes add-on"
+variable "enable_aws_privateca_issuer" {
+  description = "Enable AWS PCA Issuer"
   type        = bool
   default     = false
 }
 
-variable "argocd" {
-  description = "ArgoCD addon configuration values"
-  type        = any
-  default     = {}
-}
-
-################################################################################
-# Argo Workflows
-################################################################################
-
-variable "enable_argo_workflows" {
-  description = "Enable Argo workflows add-on"
-  type        = bool
-  default     = false
-}
-
-variable "argo_workflows" {
-  description = "Argo Workflows addon configuration values"
-  type        = any
-  default     = {}
-}
-
-################################################################################
-# Argo Rollouts
-################################################################################
-
-variable "enable_argo_rollouts" {
-  description = "Enable Argo Rollouts add-on"
-  type        = bool
-  default     = false
-}
-
-variable "argo_rollouts" {
-  description = "Argo Rollouts addon configuration values"
+variable "aws_privateca_issuer" {
+  description = "AWS PCA Issuer add-on configurations"
   type        = any
   default     = {}
 }
@@ -155,19 +241,57 @@ variable "cluster_autoscaler" {
 }
 
 ################################################################################
-# Cloudwatch Metrics
+# Cluster Proportional Autoscaler
 ################################################################################
 
-variable "enable_cloudwatch_metrics" {
-  description = "Enable AWS Cloudwatch Metrics add-on for Container Insights"
+variable "enable_cluster_proportional_autoscaler" {
+  description = "Enable Cluster Proportional Autoscaler"
   type        = bool
   default     = false
 }
 
-variable "cloudwatch_metrics" {
-  description = "Cloudwatch Metrics addon configuration values"
+variable "cluster_proportional_autoscaler" {
+  description = "Cluster Proportional Autoscaler add-on configurations"
   type        = any
   default     = {}
+}
+
+################################################################################
+# EKS Addons
+################################################################################
+
+variable "eks_addons" {
+  description = "Map of EKS addon configurations to enable for the cluster. Addon name can be the map keys or set with `name`"
+  type        = any
+  default     = {}
+}
+
+variable "eks_addons_timeouts" {
+  description = "Create, update, and delete timeout configurations for the EKS addons"
+  type        = map(string)
+  default     = {}
+}
+
+################################################################################
+# External DNS
+################################################################################
+
+variable "enable_external_dns" {
+  description = "Enable external-dns operator add-on"
+  type        = bool
+  default     = false
+}
+
+variable "external_dns" {
+  description = "external-dns addon configuration values"
+  type        = any
+  default     = {}
+}
+
+variable "external_dns_route53_zone_arns" {
+  description = "List of Route53 zones ARNs which external-dns will have access to create/manage records (if using Route53)"
+  type        = list(string)
+  default     = []
 }
 
 ################################################################################
@@ -205,25 +329,57 @@ variable "external_secrets_kms_key_arns" {
 }
 
 ################################################################################
-# External DNS
+# Fargate Fluentbit
 ################################################################################
 
-variable "enable_external_dns" {
-  description = "Enable external-dns operator add-on"
+variable "enable_fargate_fluentbit" {
+  description = "Enable Fargate FluentBit add-on"
   type        = bool
   default     = false
 }
 
-variable "external_dns" {
-  description = "external-dns addon configuration values"
+variable "fargate_fluentbit_cw_log_group" {
+  description = "AWS Fargate Fluentbit CloudWatch Log Group configurations"
   type        = any
   default     = {}
 }
 
-variable "external_dns_route53_zone_arns" {
-  description = "List of Route53 zones ARNs which external-dns will have access to create/manage records (if using Route53)"
-  type        = list(string)
-  default     = []
+variable "fargate_fluentbit" {
+  description = "Fargate fluentbit add-on config"
+  type        = any
+  default     = {}
+}
+
+################################################################################
+# Gatekeeper
+################################################################################
+
+variable "enable_gatekeeper" {
+  description = "Enable Gatekeeper add-on"
+  type        = bool
+  default     = false
+}
+
+variable "gatekeeper" {
+  description = "Gatekeeper add-on configuration"
+  type        = bool
+  default     = false
+}
+
+################################################################################
+# Ingress Nginx
+################################################################################
+
+variable "enable_ingress_nginx" {
+  description = "Enable Ingress Nginx"
+  type        = bool
+  default     = false
+}
+
+variable "ingress_nginx" {
+  description = "Ingress Nginx add-on configurations"
+  type        = any
+  default     = {}
 }
 
 ################################################################################
@@ -261,71 +417,17 @@ variable "karpenter_instance_profile" {
 }
 
 ################################################################################
-# Secrets Store CSI Driver
+# Kube Prometheus Stack
 ################################################################################
 
-variable "enable_secrets_store_csi_driver" {
-  description = "Enable CSI Secrets Store Provider"
+variable "enable_kube_prometheus_stack" {
+  description = "Enable Kube Prometheus Stack"
   type        = bool
   default     = false
 }
 
-variable "secrets_store_csi_driver" {
-  description = "CSI Secrets Store Provider add-on configurations"
-  type        = any
-  default     = {}
-}
-
-################################################################################
-# CSI Secrets Store Provider AWS
-################################################################################
-
-variable "enable_csi_secrets_store_provider_aws" {
-  description = "Enable AWS CSI Secrets Store Provider"
-  type        = bool
-  default     = false
-}
-
-variable "csi_secrets_store_provider_aws" {
-  description = "CSI Secrets Store Provider add-on configurations"
-  type        = any
-  default     = {}
-}
-
-################################################################################
-# AWS for Fluentbit
-################################################################################
-
-variable "enable_aws_for_fluentbit" {
-  description = "Enable AWS for FluentBit add-on"
-  type        = bool
-  default     = false
-}
-
-variable "aws_for_fluentbit" {
-  description = "AWS Fluentbit add-on configurations"
-  type        = any
-  default     = {}
-}
-
-variable "aws_for_fluentbit_cw_log_group" {
-  description = "AWS Fluentbit CloudWatch Log Group configurations"
-  type        = any
-  default     = {}
-}
-
-################################################################################
-# AWS Private CA Issuer
-################################################################################
-
-variable "enable_aws_privateca_issuer" {
-  description = "Enable AWS PCA Issuer"
-  type        = bool
-  default     = false
-}
-
-variable "aws_privateca_issuer" {
-  description = "AWS PCA Issuer add-on configurations"
+variable "kube_prometheus_stack" {
+  description = "Kube Prometheus Stack add-on configurations"
   type        = any
   default     = {}
 }
@@ -347,113 +449,49 @@ variable "metrics_server" {
 }
 
 ################################################################################
-# Cluster Proportional Autoscaler
+# Secrets Store CSI Driver
 ################################################################################
 
-variable "enable_cluster_proportional_autoscaler" {
-  description = "Enable Cluster Proportional Autoscaler"
+variable "enable_secrets_store_csi_driver" {
+  description = "Enable CSI Secrets Store Provider"
   type        = bool
   default     = false
 }
 
-variable "cluster_proportional_autoscaler" {
-  description = "Cluster Proportional Autoscaler add-on configurations"
+variable "secrets_store_csi_driver" {
+  description = "CSI Secrets Store Provider add-on configurations"
   type        = any
   default     = {}
 }
 
 ################################################################################
-# Ingress Nginx
+# CSI Secrets Store Provider AWS
 ################################################################################
 
-variable "enable_ingress_nginx" {
-  description = "Enable Ingress Nginx"
+variable "enable_secrets_store_csi_driver_provider_aws" {
+  description = "Enable AWS CSI Secrets Store Provider"
   type        = bool
   default     = false
 }
 
-variable "ingress_nginx" {
-  description = "Ingress Nginx add-on configurations"
+variable "secrets_store_csi_driver_provider_aws" {
+  description = "CSI Secrets Store Provider add-on configurations"
   type        = any
   default     = {}
 }
 
 ################################################################################
-# Kube Prometheus Stack
+# Velero
 ################################################################################
 
-variable "enable_kube_prometheus_stack" {
-  description = "Enable Kube Prometheus Stack"
+variable "enable_velero" {
+  description = "Enable Kubernetes Dashboard add-on"
   type        = bool
   default     = false
 }
 
-variable "kube_prometheus_stack" {
-  description = "Kube Prometheus Stack add-on configurations"
-  type        = any
-  default     = {}
-}
-
-################################################################################
-# Gatekeeper
-################################################################################
-
-variable "enable_gatekeeper" {
-  description = "Enable Gatekeeper add-on"
-  type        = bool
-  default     = false
-}
-
-variable "gatekeeper" {
-  description = "Gatekeeper add-on configuration"
-  type        = bool
-  default     = false
-}
-
-################################################################################
-# EFS CSI Driver
-################################################################################
-
-variable "enable_efs_csi_driver" {
-  description = "Enable AWS EFS CSI Driver add-on"
-  type        = bool
-  default     = false
-}
-
-variable "efs_csi_driver" {
-  description = "EFS CSI Driver addon configuration values"
-  type        = any
-  default     = {}
-}
-
-################################################################################
-# FSx CSI Driver
-################################################################################
-
-variable "enable_fsx_csi_driver" {
-  description = "Enable AWS FSX CSI Driver add-on"
-  type        = bool
-  default     = false
-}
-
-variable "fsx_csi_driver" {
-  description = "FSX CSI Driver addon configuration values"
-  type        = any
-  default     = {}
-}
-
-################################################################################
-# AWS Load Balancer Controller
-################################################################################
-
-variable "enable_aws_load_balancer_controller" {
-  description = "Enable AWS Load Balancer Controller add-on"
-  type        = bool
-  default     = false
-}
-
-variable "aws_load_balancer_controller" {
-  description = "AWS Loadbalancer Controller addon configuration values"
+variable "velero" {
+  description = "Velero addon configuration values"
   type        = any
   default     = {}
 }
@@ -470,42 +508,6 @@ variable "enable_vpa" {
 
 variable "vpa" {
   description = "Vertical Pod Autoscaler addon configuration values"
-  type        = any
-  default     = {}
-}
-
-################################################################################
-# Velero
-################################################################################
-variable "enable_velero" {
-  description = "Enable Kubernetes Dashboard add-on"
-  type        = bool
-  default     = false
-}
-
-variable "velero" {
-  description = "Velero addon configuration values"
-  type        = any
-  default     = {}
-}
-
-################################################################################
-# Fargate Fluentbit
-################################################################################
-variable "enable_fargate_fluentbit" {
-  description = "Enable Fargate FluentBit add-on"
-  type        = bool
-  default     = false
-}
-
-variable "fargate_fluentbit_cw_log_group" {
-  description = "AWS Fargate Fluentbit CloudWatch Log Group configurations"
-  type        = any
-  default     = {}
-}
-
-variable "fargate_fluentbit" {
-  description = "Fargate fluentbit add-on config"
   type        = any
   default     = {}
 }

@@ -131,25 +131,25 @@ module "eks_blueprints_addons" {
     }
   }
 
-  enable_efs_csi_driver                 = true
-  enable_fsx_csi_driver                 = true
-  enable_argocd                         = true
-  enable_cloudwatch_metrics             = true
-  enable_aws_privateca_issuer           = true
-  enable_cert_manager                   = true
-  enable_cluster_autoscaler             = true
-  enable_secrets_store_csi_driver       = true
-  enable_csi_secrets_store_provider_aws = true
-  enable_kube_prometheus_stack          = true
-  enable_external_dns                   = true
-  enable_external_secrets               = true
-  enable_gatekeeper                     = true
-  enable_ingress_nginx                  = true
-  enable_aws_load_balancer_controller   = true
-  enable_metrics_server                 = true
-  enable_vpa                            = true
-  enable_aws_for_fluentbit              = true
-  enable_fargate_fluentbit              = true
+  enable_aws_efs_csi_driver                    = true
+  enable_aws_fsx_csi_driver                    = true
+  enable_argocd                                = true
+  enable_aws_cloudwatch_metrics                = true
+  enable_aws_privateca_issuer                  = true
+  enable_cert_manager                          = true
+  enable_cluster_autoscaler                    = true
+  enable_secrets_store_csi_driver              = true
+  enable_secrets_store_csi_driver_provider_aws = true
+  enable_kube_prometheus_stack                 = true
+  enable_external_dns                          = true
+  enable_external_secrets                      = true
+  enable_gatekeeper                            = true
+  enable_ingress_nginx                         = true
+  enable_aws_load_balancer_controller          = true
+  enable_metrics_server                        = true
+  enable_vpa                                   = true
+  enable_aws_for_fluentbit                     = true
+  enable_fargate_fluentbit                     = true
 
   enable_aws_node_termination_handler   = true
   aws_node_termination_handler_asg_arns = [for asg in module.eks.self_managed_node_groups : asg.autoscaling_group_arn]
@@ -168,10 +168,7 @@ module "eks_blueprints_addons" {
   enable_velero = true
   # An S3 Bucket ARN is required. This can be declared with or without a Prefix.
   velero = {
-    # S3 Bucket ARN provided by an S3 Module (module.velero_backup_s3_bucket declared below), without prefix.
-    #s3_backup_location = module.velero_backup_s3_bucket.s3_bucket_arn
-    # S3 Bucket ARN for an already existing Bucket provided with prefix.
-    s3_backup_location = "arn:aws:s3:::backup/dev"
+    s3_backup_location = "${module.velero_backup_s3_bucket.s3_bucket_arn}/backups"
   }
 
   tags = local.tags
@@ -206,45 +203,44 @@ module "vpc" {
   tags = local.tags
 }
 
+module "velero_backup_s3_bucket" {
+  source  = "terraform-aws-modules/s3-bucket/aws"
+  version = "~> 3.0"
 
-# module "velero_backup_s3_bucket" {
-#   source  = "terraform-aws-modules/s3-bucket/aws"
-#   version = "~> 3.0"
+  bucket_prefix = "${local.name}-"
 
-#   bucket_prefix = "${local.name}-"
+  # Allow deletion of non-empty bucket
+  # NOTE: This is enabled for example usage only, you should not enable this for production workloads
+  force_destroy = true
 
-#   # Allow deletion of non-empty bucket
-#   # NOTE: This is enabled for example usage only, you should not enable this for production workloads
-#   force_destroy = true
+  attach_deny_insecure_transport_policy = true
+  attach_require_latest_tls_policy      = true
 
-#   attach_deny_insecure_transport_policy = true
-#   attach_require_latest_tls_policy      = true
+  acl = "private"
 
-#   acl = "private"
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 
-#   block_public_acls       = true
-#   block_public_policy     = true
-#   ignore_public_acls      = true
-#   restrict_public_buckets = true
+  control_object_ownership = true
+  object_ownership         = "BucketOwnerPreferred"
 
-#   control_object_ownership = true
-#   object_ownership         = "BucketOwnerPreferred"
+  versioning = {
+    status     = true
+    mfa_delete = false
+  }
 
-#   versioning = {
-#     status     = true
-#     mfa_delete = false
-#   }
+  server_side_encryption_configuration = {
+    rule = {
+      apply_server_side_encryption_by_default = {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
 
-#   server_side_encryption_configuration = {
-#     rule = {
-#       apply_server_side_encryption_by_default = {
-#         sse_algorithm = "AES256"
-#       }
-#     }
-#   }
-
-#   tags = local.tags
-# }
+  tags = local.tags
+}
 
 module "ebs_csi_driver_irsa" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
@@ -326,7 +322,6 @@ resource "aws_security_group" "guardduty" {
 
   tags = local.tags
 }
-
 
 resource "aws_vpc_endpoint" "guardduty" {
   vpc_id              = module.vpc.vpc_id
