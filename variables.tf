@@ -19,11 +19,6 @@ variable "cluster_version" {
   type        = string
 }
 
-variable "oidc_provider" {
-  description = "The OpenID Connect identity provider (issuer URL without leading `https://`)"
-  type        = string
-}
-
 variable "oidc_provider_arn" {
   description = "The ARN of the cluster OIDC Provider"
   type        = string
@@ -300,6 +295,7 @@ variable "csi_secrets_store_provider_aws" {
 ################################################################################
 # AWS for Fluentbit
 ################################################################################
+
 variable "enable_aws_for_fluentbit" {
   description = "Enable AWS for FluentBit add-on"
   type        = bool
@@ -449,6 +445,7 @@ variable "fsx_csi_driver" {
 ################################################################################
 # AWS Load Balancer Controller
 ################################################################################
+
 variable "enable_aws_load_balancer_controller" {
   description = "Enable AWS Load Balancer Controller add-on"
   type        = bool
@@ -464,6 +461,7 @@ variable "aws_load_balancer_controller" {
 ################################################################################
 # Vertical Pod Autoscaler
 ################################################################################
+
 variable "enable_vpa" {
   description = "Enable Vertical Pod Autoscaler add-on"
   type        = bool
@@ -479,6 +477,7 @@ variable "vpa" {
 ################################################################################
 # Velero
 ################################################################################
+
 variable "enable_velero" {
   description = "Enable Kubernetes Dashboard add-on"
   type        = bool
@@ -494,6 +493,7 @@ variable "velero" {
 ################################################################################
 # Fargate Fluentbit
 ################################################################################
+
 variable "enable_fargate_fluentbit" {
   description = "Enable Fargate FluentBit add-on"
   type        = bool
@@ -510,17 +510,4 @@ variable "fargate_fluentbit" {
   description = "Fargate fluentbit add-on config"
   type        = any
   default     = {}
-}
-
-#-------------------------------------------------------------------------------
-variable "irsa_iam_role_path" {
-  description = "IAM role path for IRSA roles"
-  type        = string
-  default     = "/"
-}
-
-variable "irsa_iam_permissions_boundary" {
-  description = "IAM permissions boundary for IRSA roles"
-  type        = string
-  default     = ""
 }
