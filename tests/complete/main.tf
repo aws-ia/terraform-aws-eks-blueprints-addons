@@ -169,9 +169,9 @@ module "eks_blueprints_addons" {
   # An S3 Bucket ARN is required. This can be declared with or without a Prefix.
   velero = {
     # S3 Bucket ARN provided by an S3 Module (module.velero_backup_s3_bucket declared below), without prefix.
-    #backup_location = module.velero_backup_s3_bucket.s3_bucket_arn
+    #s3_backup_location = module.velero_backup_s3_bucket.s3_bucket_arn
     # S3 Bucket ARN for an already existing Bucket provided with prefix.
-    backup_location = "arn:aws:s3:::backup/dev"
+    s3_backup_location = "arn:aws:s3:::backup/dev"
   }
 
   tags = local.tags
