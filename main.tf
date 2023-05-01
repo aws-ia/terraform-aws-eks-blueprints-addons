@@ -2257,6 +2257,7 @@ locals {
 }
 
 data "aws_iam_role" "karpenter" {
+  count = var.enable_karpenter ? 1 : 0
   name = var.karpenter_instance_profile.iam_role_name
 }
 
@@ -2294,7 +2295,7 @@ data "aws_iam_policy_document" "karpenter" {
 
   statement {
     actions   = ["iam:PassRole"]
-    resources = [data.aws_iam_role.karpenter.arn]
+    resources = [data.aws_iam_role.karpenter.0.arn]
   }
 
   statement {
@@ -2744,9 +2745,9 @@ module "secrets_store_csi_driver_provider_aws" {
 locals {
   velero_name                    = "velero"
   velero_service_account         = try(var.velero.service_account_name, "${local.velero_name}-server")
-  velero_backup_s3_bucket        = split(":", var.velero.s3_backup_location)
-  velero_backup_s3_bucket_arn    = try(split("/", var.velero.s3_backup_location)[0], var.velero.s3_backup_location)
-  velero_backup_s3_bucket_name   = try(split("/", local.velero_backup_s3_bucket[5])[0], local.velero_backup_s3_bucket[5])
+  velero_backup_s3_bucket        = try(split(":", var.velero.s3_backup_location), [])
+  velero_backup_s3_bucket_arn    = try(split("/", var.velero.s3_backup_location)[0], var.velero.s3_backup_location, "")
+  velero_backup_s3_bucket_name   = try(split("/", local.velero_backup_s3_bucket[5])[0], local.velero_backup_s3_bucket[5], "")
   velero_backup_s3_bucket_prefix = try(split("/", var.velero.s3_backup_location)[1], "")
 }
 
