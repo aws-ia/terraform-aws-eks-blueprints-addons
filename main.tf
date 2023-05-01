@@ -2295,7 +2295,7 @@ data "aws_iam_policy_document" "karpenter" {
 
   statement {
     actions   = ["iam:PassRole"]
-    resources = [data.aws_iam_role.karpenter.0.arn]
+    resources = [data.aws_iam_role.karpenter[0].arn]
   }
 
   statement {
