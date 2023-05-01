@@ -2258,7 +2258,7 @@ locals {
 
 data "aws_iam_role" "karpenter" {
   count = var.enable_karpenter ? 1 : 0
-  name = var.karpenter_instance_profile.iam_role_name
+  name  = var.karpenter_instance_profile.iam_role_name
 }
 
 data "aws_iam_policy_document" "karpenter" {
