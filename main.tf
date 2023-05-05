@@ -2,11 +2,31 @@ data "aws_partition" "current" {}
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
+# This resource is used to provide a means of mapping an implicit dependency
+# between the cluster and the addons.
+resource "time_sleep" "this" {
+  create_duration = var.create_delay_duration
+
+  triggers = {
+    cluster_endpoint  = var.cluster_endpoint
+    cluster_name      = var.cluster_name
+    custom            = join(",", var.create_delay_dependencies)
+    oidc_provider_arn = var.oidc_provider_arn
+  }
+}
+
 locals {
   account_id = data.aws_caller_identity.current.account_id
   dns_suffix = data.aws_partition.current.dns_suffix
   partition  = data.aws_partition.current.partition
   region     = data.aws_region.current.name
+
+  # Threads the sleep resource into the module to make the dependency
+  cluster_endpoint  = time_sleep.this.triggers["cluster_endpoint"]
+  cluster_name      = time_sleep.this.triggers["cluster_name"]
+  oidc_provider_arn = time_sleep.this.triggers["oidc_provider_arn"]
+
+  iam_role_policy_prefix = "arn:${local.partition}:iam::aws:policy"
 
   # Used by Karpenter & AWS Node Termination Handler
   ec2_events = {
@@ -256,14 +276,17 @@ module "aws_cloudwatch_metrics" {
   lint                       = try(var.aws_cloudwatch_metrics.lint, null)
 
   postrender = try(var.aws_cloudwatch_metrics.postrender, [])
-  set = concat([
-    {
-      name  = "clusterName"
-      value = var.cluster_name
-      }, {
-      name  = "serviceAccount.name"
-      value = local.aws_cloudwatch_metrics_service_account
-    }],
+  set = concat(
+    [
+      {
+        name  = "clusterName"
+        value = local.cluster_name
+      },
+      {
+        name  = "serviceAccount.name"
+        value = local.aws_cloudwatch_metrics_service_account
+      }
+    ],
     try(var.aws_cloudwatch_metrics.set, [])
   )
   set_sensitive = try(var.aws_cloudwatch_metrics.set_sensitive, [])
@@ -283,7 +306,7 @@ module "aws_cloudwatch_metrics" {
 
   oidc_providers = {
     this = {
-      provider_arn = var.oidc_provider_arn
+      provider_arn = local.oidc_provider_arn
       # namespace is inherited from chart
       service_account = local.aws_cloudwatch_metrics_service_account
     }
@@ -452,12 +475,12 @@ module "aws_efs_csi_driver" {
 
   oidc_providers = {
     controller = {
-      provider_arn = var.oidc_provider_arn
+      provider_arn = local.oidc_provider_arn
       # namespace is inherited from chart
       service_account = local.aws_efs_csi_driver_controller_service_account
     }
     node = {
-      provider_arn = var.oidc_provider_arn
+      provider_arn = local.oidc_provider_arn
       # namespace is inherited from chart
       service_account = local.aws_efs_csi_driver_node_service_account
     }
@@ -594,7 +617,7 @@ module "aws_for_fluentbit" {
 
   oidc_providers = {
     this = {
-      provider_arn = var.oidc_provider_arn
+      provider_arn = local.oidc_provider_arn
       # namespace is inherited from chart
       service_account = local.aws_for_fluentbit_service_account
     }
@@ -744,12 +767,12 @@ module "aws_fsx_csi_driver" {
 
   oidc_providers = {
     controller = {
-      provider_arn = var.oidc_provider_arn
+      provider_arn = local.oidc_provider_arn
       # namespace is inherited from chart
       service_account = local.aws_fsx_csi_driver_controller_service_account
     }
     node = {
-      provider_arn = var.oidc_provider_arn
+      provider_arn = local.oidc_provider_arn
       # namespace is inherited from chart
       service_account = local.aws_fsx_csi_driver_node_service_account
     }
@@ -1077,7 +1100,7 @@ module "aws_load_balancer_controller" {
       value = local.aws_load_balancer_controller_service_account
       }, {
       name  = "clusterName"
-      value = var.cluster_name
+      value = local.cluster_name
     }],
     try(var.aws_load_balancer_controller.set, [])
   )
@@ -1106,7 +1129,7 @@ module "aws_load_balancer_controller" {
 
   oidc_providers = {
     this = {
-      provider_arn = var.oidc_provider_arn
+      provider_arn = local.oidc_provider_arn
       # namespace is inherited from chart
       service_account = local.aws_load_balancer_controller_service_account
     }
@@ -1326,7 +1349,7 @@ module "aws_node_termination_handler" {
 
   oidc_providers = {
     this = {
-      provider_arn = var.oidc_provider_arn
+      provider_arn = local.oidc_provider_arn
       # namespace is inherited from chart
       service_account = local.aws_node_termination_handler_service_account
     }
@@ -1434,7 +1457,7 @@ module "aws_privateca_issuer" {
 
   oidc_providers = {
     controller = {
-      provider_arn = var.oidc_provider_arn
+      provider_arn = local.oidc_provider_arn
       # namespace is inherited from chart
       service_account = local.aws_privateca_issuer_service_account
     }
@@ -1550,7 +1573,7 @@ module "cert_manager" {
 
   oidc_providers = {
     this = {
-      provider_arn = var.oidc_provider_arn
+      provider_arn = local.oidc_provider_arn
       # namespace is inherited from chart
       service_account = local.cert_manager_service_account
     }
@@ -1666,7 +1689,7 @@ module "cluster_autoscaler" {
       },
       {
         name  = "autoDiscovery.clusterName"
-        value = var.cluster_name
+        value = local.cluster_name
       },
       {
         name  = "image.tag"
@@ -1704,7 +1727,7 @@ module "cluster_autoscaler" {
 
   oidc_providers = {
     this = {
-      provider_arn = var.oidc_provider_arn
+      provider_arn = local.oidc_provider_arn
       # namespace is inherited from chart
       service_account = local.cluster_autoscaler_service_account
     }
@@ -1781,7 +1804,7 @@ data "aws_eks_addon_version" "this" {
 resource "aws_eks_addon" "this" {
   for_each = var.eks_addons
 
-  cluster_name = var.cluster_name
+  cluster_name = local.cluster_name
   addon_name   = try(each.value.name, each.key)
 
   addon_version            = try(each.value.addon_version, data.aws_eks_addon_version.this[each.key].version)
@@ -1900,7 +1923,7 @@ module "external_dns" {
 
   oidc_providers = {
     this = {
-      provider_arn = var.oidc_provider_arn
+      provider_arn = local.oidc_provider_arn
       # namespace is inherited from chart
       service_account = local.external_dns_service_account
     }
@@ -2050,7 +2073,7 @@ module "external_secrets" {
 
   oidc_providers = {
     this = {
-      provider_arn = var.oidc_provider_arn
+      provider_arn = local.oidc_provider_arn
       # namespace is inherited from chart
       service_account = local.external_secrets_service_account
     }
@@ -2252,13 +2275,10 @@ module "ingress_nginx" {
 locals {
   karpenter_service_account_name    = try(var.karpenter.service_account_name, "karpenter")
   karpenter_enable_spot_termination = var.enable_karpenter && var.karpenter_enable_spot_termination
-  create_karpenter_instance_profile = try(var.karpenter_instance_profile.create, true)
-  karpenter_instance_profile_name   = try(aws_iam_instance_profile.karpenter[0].name, var.karpenter_instance_profile.name, "")
-}
 
-data "aws_iam_role" "karpenter" {
-  count = var.enable_karpenter ? 1 : 0
-  name  = var.karpenter_instance_profile.iam_role_name
+  create_karpenter_node_iam_role = var.enable_karpenter && try(var.karpenter_node.create_iam_role, true)
+  karpenter_node_iam_role_arn    = try(aws_iam_role.karpenter[0].arn, var.karpenter_node.iam_role_arn, "")
+  karpenter_node_iam_role_name   = try(var.karpenter_node.iam_role_name, "karpenter-${var.cluster_name}")
 }
 
 data "aws_iam_policy_document" "karpenter" {
@@ -2295,7 +2315,7 @@ data "aws_iam_policy_document" "karpenter" {
 
   statement {
     actions   = ["iam:PassRole"]
-    resources = [data.aws_iam_role.karpenter[0].arn]
+    resources = [local.karpenter_node_iam_role_arn]
   }
 
   statement {
@@ -2393,14 +2413,63 @@ resource "aws_cloudwatch_event_target" "karpenter" {
   arn       = module.karpenter_sqs.queue_arn
 }
 
+data "aws_iam_policy_document" "karpenter_assume_role" {
+  count = local.create_karpenter_node_iam_role ? 1 : 0
+
+  statement {
+    sid     = "KarpenterNodeAssumeRole"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.${local.dns_suffix}"]
+    }
+  }
+}
+
+resource "aws_iam_role" "karpenter" {
+  count = local.create_karpenter_node_iam_role ? 1 : 0
+
+  name        = try(var.karpenter_node.iam_role_use_name_prefix, true) ? null : local.karpenter_node_iam_role_name
+  name_prefix = try(var.karpenter_node.iam_role_use_name_prefix, true) ? "${local.karpenter_node_iam_role_name}-" : null
+  path        = try(var.karpenter_node.iam_role_path, null)
+  description = try(var.karpenter_node.iam_role_description, "Karpenter EC2 node IAM role")
+
+  assume_role_policy    = try(data.aws_iam_policy_document.karpenter_assume_role[0].json, "")
+  max_session_duration  = try(var.karpenter_node.iam_role_max_session_duration, null)
+  permissions_boundary  = try(var.karpenter_node.iam_role_permissions_boundary, null)
+  force_detach_policies = true
+
+  tags = merge(var.tags, try(var.karpenter_node.iam_role_tags, {}))
+}
+
+resource "aws_iam_role_policy_attachment" "karpenter" {
+  for_each = { for k, v in {
+    AmazonEKSWorkerNodePolicy          = "${local.iam_role_policy_prefix}/AmazonEKSWorkerNodePolicy",
+    AmazonEC2ContainerRegistryReadOnly = "${local.iam_role_policy_prefix}/AmazonEC2ContainerRegistryReadOnly",
+    AmazonEKS_CNI_Policy               = "${local.iam_role_policy_prefix}/AmazonEKS_CNI_Policy"
+  } : k => v if local.create_karpenter_node_iam_role }
+
+  policy_arn = each.value
+  role       = aws_iam_role.karpenter[0].name
+}
+
+resource "aws_iam_role_policy_attachment" "additional" {
+  for_each = { for k, v in try(var.karpenter_node.iam_role_additional_policies, {}) : k => v if local.create_karpenter_node_iam_role }
+
+  policy_arn = each.value
+  role       = aws_iam_role.karpenter[0].name
+}
+
 resource "aws_iam_instance_profile" "karpenter" {
-  count = var.enable_karpenter && local.create_karpenter_instance_profile ? 1 : 0
+  count = var.enable_karpenter && try(var.karpenter_node.create_instance_profile, true) ? 1 : 0
 
-  name_prefix = try(var.karpenter_instance_profile.name_prefix, "karpenter-")
-  path        = try(var.karpenter_instance_profile.path, null)
-  role        = var.karpenter_instance_profile.iam_role_name
+  name        = try(var.karpenter_node.iam_role_use_name_prefix, true) ? null : local.karpenter_node_iam_role_name
+  name_prefix = try(var.karpenter_node.iam_role_use_name_prefix, true) ? "${local.karpenter_node_iam_role_name}-" : null
+  path        = try(var.karpenter_node.iam_role_path, null)
+  role        = try(aws_iam_role.karpenter[0].name, var.karpenter_node.iam_role_name, "")
 
-  tags = merge(var.tags, try(var.karpenter_instance_profile.tags, {}))
+  tags = merge(var.tags, try(var.karpenter_node.instance_profile_tags, {}))
 }
 
 module "karpenter" {
@@ -2450,15 +2519,15 @@ module "karpenter" {
     [
       {
         name  = "settings.aws.clusterName"
-        value = var.cluster_name
+        value = local.cluster_name
       },
       {
         name  = "settings.aws.clusterEndpoint"
-        value = var.cluster_endpoint
+        value = local.cluster_endpoint
       },
       {
         name  = "settings.aws.defaultInstanceProfile"
-        value = local.karpenter_instance_profile_name
+        value = try(aws_iam_instance_profile.karpenter[0].name, var.karpenter_node.instance_profile_name, "")
       },
       {
         name  = "settings.aws.interruptionQueueName"
@@ -2496,7 +2565,7 @@ module "karpenter" {
 
   oidc_providers = {
     this = {
-      provider_arn = var.oidc_provider_arn
+      provider_arn = local.oidc_provider_arn
       # namespace is inherited from chart
       service_account = local.karpenter_service_account_name
     }
@@ -2905,7 +2974,7 @@ module "velero" {
 
   oidc_providers = {
     controller = {
-      provider_arn = var.oidc_provider_arn
+      provider_arn = local.oidc_provider_arn
       # namespace is inherited from chart
       service_account = local.velero_service_account
     }

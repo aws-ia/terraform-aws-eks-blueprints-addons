@@ -24,6 +24,18 @@ variable "oidc_provider_arn" {
   type        = string
 }
 
+variable "create_delay_duration" {
+  description = "The duration to wait before creating resources"
+  type        = string
+  default     = "30s"
+}
+
+variable "create_delay_dependencies" {
+  description = "Dependency attribute which must be resolved before starting the `create_delay_duration`"
+  type        = list(string)
+  default     = []
+}
+
 ################################################################################
 # Argo Rollouts
 ################################################################################
@@ -410,8 +422,8 @@ variable "karpenter_sqs" {
   default     = {}
 }
 
-variable "karpenter_instance_profile" {
-  description = "Karpenter instance profile configuration values"
+variable "karpenter_node" {
+  description = "Karpenter IAM role and IAM instance profile configuration values"
   type        = any
   default     = {}
 }

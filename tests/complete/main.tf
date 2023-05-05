@@ -160,10 +160,6 @@ module "eks_blueprints_addons" {
     repository_username = data.aws_ecrpublic_authorization_token.token.user_name
     repository_password = data.aws_ecrpublic_authorization_token.token.password
   }
-  karpenter_instance_profile = {
-    # Re-using the EKS managed node group IAM role for Karpenter nodes
-    iam_role_name = module.eks.eks_managed_node_groups["initial"].iam_role_name
-  }
 
   enable_velero = true
   # An S3 Bucket ARN is required. This can be declared with or without a Prefix.
