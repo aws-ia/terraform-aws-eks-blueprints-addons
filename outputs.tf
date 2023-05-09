@@ -103,8 +103,9 @@ output "karpenter" {
   value = merge(
     module.karpenter,
     {
-      iam_instance_profile_name = local.karpenter_instance_profile_name
-      sqs                       = module.karpenter_sqs
+      node_instance_profile_name = try(aws_iam_instance_profile.karpenter[0].name, "")
+      node_iam_role_arn          = try(aws_iam_role.karpenter[0].arn, "")
+      sqs                        = module.karpenter_sqs
     }
   )
 }
