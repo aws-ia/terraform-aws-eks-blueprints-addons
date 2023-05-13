@@ -494,14 +494,15 @@ module "aws_efs_csi_driver" {
 ################################################################################
 
 locals {
-  aws_for_fluentbit_service_account = try(var.aws_for_fluentbit.service_account_name, "aws-for-fluent-bit-sa")
+  aws_for_fluentbit_service_account   = try(var.aws_for_fluentbit.service_account_name, "aws-for-fluent-bit-sa")
+  aws_for_fluentbit_cw_log_group_name = try(var.aws_for_fluentbit_cw_log_group.create, true) ? try(var.aws_for_fluentbit_cw_log_group.name, "/${var.cluster_name}/aws-fluentbit-logs") : null
 }
 
 resource "aws_cloudwatch_log_group" "aws_for_fluentbit" {
   count = try(var.aws_for_fluentbit_cw_log_group.create, true) && var.enable_aws_for_fluentbit ? 1 : 0
 
-  name              = try(var.aws_for_fluentbit_cw_log_group.name, null)
-  name_prefix       = try(var.aws_for_fluentbit_cw_log_group.name_prefix, "/${var.cluster_name}/aws-fluentbit-logs")
+  name              = try(var.aws_for_fluentbit_cw_log_group.use_name_prefix, true) ? null : local.aws_for_fluentbit_cw_log_group_name
+  name_prefix       = try(var.aws_for_fluentbit_cw_log_group.use_name_prefix, true) ? try(var.aws_for_fluentbit_cw_log_group.name_prefix, "${local.aws_for_fluentbit_cw_log_group_name}-") : null
   retention_in_days = try(var.aws_for_fluentbit_cw_log_group.retention, 90)
   kms_key_id        = try(var.aws_for_fluentbit_cw_log_group.kms_key_arn, null)
   skip_destroy      = try(var.aws_for_fluentbit_cw_log_group.skip_destroy, false)
@@ -515,7 +516,7 @@ data "aws_iam_policy_document" "aws_for_fluentbit" {
     sid    = "PutLogEvents"
     effect = "Allow"
     resources = [
-      "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${try(var.aws_for_fluentbit_cw_log_group.name, "*")}:log-stream:*",
+      "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${try(var.aws_for_fluentbit_cw_log_group.name, "")}*:log-stream:*",
     ]
 
     actions = [
@@ -527,7 +528,7 @@ data "aws_iam_policy_document" "aws_for_fluentbit" {
     sid    = "CreateCWLogs"
     effect = "Allow"
     resources = [
-      "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${try(var.aws_for_fluentbit_cw_log_group.name, "*")}",
+      "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${try(var.aws_for_fluentbit_cw_log_group.name, "")}*",
     ]
 
     actions = [
@@ -597,7 +598,7 @@ module "aws_for_fluentbit" {
     "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn",
   ]
   create_role                   = try(var.aws_for_fluentbit.create_role, true)
-  role_name                     = try(var.aws_for_fluentbit.role_name, "aws-for-fluent-bit")
+  role_name                     = try(var.aws_for_fluentbit.role_name, "${local.cluster_name}-aws-fluent-bit")
   role_name_use_prefix          = try(var.aws_for_fluentbit.role_name_use_prefix, true)
   role_path                     = try(var.aws_for_fluentbit.role_path, "/")
   role_permissions_boundary_arn = lookup(var.aws_for_fluentbit, "role_permissions_boundary_arn", null)
