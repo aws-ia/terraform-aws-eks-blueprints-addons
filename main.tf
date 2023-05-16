@@ -353,8 +353,10 @@ data "aws_iam_policy_document" "aws_efs_csi_driver" {
   }
 
   statement {
-    sid       = "AllowCreateAccessPoint"
-    actions   = ["elasticfilesystem:CreateAccessPoint"]
+    actions = [
+      "elasticfilesystem:CreateAccessPoint",
+      "elasticfilesystem:TagResource",
+    ]
     resources = local.efs_arns
 
     condition {
