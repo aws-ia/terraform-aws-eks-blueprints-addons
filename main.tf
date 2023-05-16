@@ -598,7 +598,7 @@ module "aws_for_fluentbit" {
     "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn",
   ]
   create_role                   = try(var.aws_for_fluentbit.create_role, true)
-  role_name                     = try(var.aws_for_fluentbit.role_name, "${local.cluster_name}-aws-fluent-bit")
+  role_name                     = try(var.aws_for_fluentbit.role_name, "aws-for-fluent-bit")
   role_name_use_prefix          = try(var.aws_for_fluentbit.role_name_use_prefix, true)
   role_path                     = try(var.aws_for_fluentbit.role_path, "/")
   role_permissions_boundary_arn = lookup(var.aws_for_fluentbit, "role_permissions_boundary_arn", null)
