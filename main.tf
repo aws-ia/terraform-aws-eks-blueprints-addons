@@ -2710,7 +2710,7 @@ module "secrets_store_csi_driver" {
   namespace        = try(var.secrets_store_csi_driver.namespace, "kube-system")
   create_namespace = try(var.secrets_store_csi_driver.create_namespace, false)
   chart            = "secrets-store-csi-driver"
-  chart_version    = try(var.secrets_store_csi_driver.chart_version, "1.3.2")
+  chart_version    = try(var.secrets_store_csi_driver.chart_version, "1.3.3")
   repository       = try(var.secrets_store_csi_driver.repository, "https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts")
   values           = try(var.secrets_store_csi_driver.values, [])
 
@@ -2751,17 +2751,13 @@ module "secrets_store_csi_driver" {
 # Secrets Store CSI Driver Provider AWS
 ################################################################################
 
-locals {
-  secrets_store_csi_driver_provider_aws_service_account = try(var.secrets_store_csi_driver_provider_aws.service_account_name, "secrets-store-csi-driver-provider-aws-sa")
-}
-
 module "secrets_store_csi_driver_provider_aws" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.0.0"
 
   create = var.enable_secrets_store_csi_driver_provider_aws
 
-  # https://github.com/aws/eks-charts/blob/master/stable/csi-secrets-store-provider-aws/Chart.yaml
+  # https://github.com/aws/secrets-store-csi-driver-provider-aws/blob/main/charts/secrets-store-csi-driver-provider-aws/Chart.yaml
   name             = try(var.secrets_store_csi_driver_provider_aws.name, "secrets-store-csi-driver-provider-aws")
   description      = try(var.secrets_store_csi_driver_provider_aws.description, "A Helm chart to install the Secrets Store CSI Driver and the AWS Key Management Service Provider inside a Kubernetes cluster.")
   namespace        = try(var.secrets_store_csi_driver_provider_aws.namespace, "kube-system")
@@ -2797,14 +2793,8 @@ module "secrets_store_csi_driver_provider_aws" {
   replace                    = try(var.secrets_store_csi_driver_provider_aws.replace, null)
   lint                       = try(var.secrets_store_csi_driver_provider_aws.lint, null)
 
-  postrender = try(var.secrets_store_csi_driver_provider_aws.postrender, [])
-  set = concat([
-    {
-      name  = "serviceAccount.name"
-      value = local.secrets_store_csi_driver_provider_aws_service_account
-    }],
-    try(var.secrets_store_csi_driver_provider_aws.set, [])
-  )
+  postrender    = try(var.secrets_store_csi_driver_provider_aws.postrender, [])
+  set           = try(var.secrets_store_csi_driver_provider_aws.set, [])
   set_sensitive = try(var.secrets_store_csi_driver_provider_aws.set_sensitive, [])
 
   tags = var.tags
@@ -3003,7 +2993,7 @@ module "vpa" {
   namespace        = try(var.vpa.namespace, "vpa")
   create_namespace = try(var.vpa.create_namespace, true)
   chart            = "vpa"
-  chart_version    = try(var.vpa.chart_version, "1.7.2")
+  chart_version    = try(var.vpa.chart_version, "1.7.5")
   repository       = try(var.vpa.repository, "https://charts.fairwinds.com/stable")
   values           = try(var.vpa.values, [])
 
@@ -3033,8 +3023,14 @@ module "vpa" {
   replace                    = try(var.vpa.replace, null)
   lint                       = try(var.vpa.lint, null)
 
-  postrender    = try(var.vpa.postrender, [])
-  set           = try(var.vpa.set, [])
+  postrender = try(var.vpa.postrender, [])
+  set = concat([
+    {
+      name  = "admissionController.enabled"
+      value = true
+    }],
+    try(var.vpa.set, [])
+  )
   set_sensitive = try(var.vpa.set_sensitive, [])
 
   tags = var.tags

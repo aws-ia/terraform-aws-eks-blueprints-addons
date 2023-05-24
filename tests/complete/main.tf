@@ -63,13 +63,39 @@ module "eks" {
   version = "~> 19.13"
 
   cluster_name                   = local.name
-  cluster_version                = "1.25"
+  cluster_version                = "1.26"
   cluster_endpoint_public_access = true
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets
 
   manage_aws_auth_configmap = true
+
+  cluster_addons = {
+    aws-ebs-csi-driver = {
+      most_recent              = true
+      service_account_role_arn = module.ebs_csi_driver_irsa.iam_role_arn
+    }
+    coredns = {
+      most_recent = true
+
+      timeouts = {
+        create = "25m"
+        delete = "10m"
+      }
+    }
+    vpc-cni = {
+      most_recent              = true
+      service_account_role_arn = module.vpc_cni_irsa.iam_role_arn
+    }
+    kube-proxy = {}
+    # ADOT has a dependency on cert-manager.
+    #adot = {
+    #  most_recent              = true
+    #  service_account_role_arn = module.adot_irsa.iam_role_arn
+    #}
+    aws-guardduty-agent = {}
+  }
 
   eks_managed_node_groups = {
     initial = {
@@ -106,31 +132,6 @@ module "eks_blueprints_addons" {
   cluster_version   = module.eks.cluster_version
   oidc_provider_arn = module.eks.oidc_provider_arn
 
-  eks_addons = {
-    aws-ebs-csi-driver = {
-      most_recent              = true
-      service_account_role_arn = module.ebs_csi_driver_irsa.iam_role_arn
-    }
-    coredns = {
-      preserve    = true
-      most_recent = true
-    }
-    vpc-cni = {
-      most_recent              = true
-      service_account_role_arn = module.vpc_cni_irsa.iam_role_arn
-    }
-    kube-proxy = {
-      most_recent = true
-    }
-    adot = {
-      most_recent              = true
-      service_account_role_arn = module.adot_irsa.iam_role_arn
-    }
-    aws-guardduty-agent = {
-      most_recent = true
-    }
-  }
-
   enable_aws_efs_csi_driver                    = true
   enable_aws_fsx_csi_driver                    = true
   enable_argocd                                = true
@@ -162,7 +163,7 @@ module "eks_blueprints_addons" {
   }
 
   enable_velero = true
-  # An S3 Bucket ARN is required. This can be declared with or without a Prefix.
+  ## An S3 Bucket ARN is required. This can be declared with or without a Prefix.
   velero = {
     s3_backup_location = "${module.velero_backup_s3_bucket.s3_bucket_arn}/backups"
   }
