@@ -84,8 +84,11 @@ output "external_secrets" {
 }
 
 output "fargate_fluentbit" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = kubernetes_config_map_v1.aws_logging
+  description = "Map of attributes of the configmap and IAM policy created"
+  value = {
+    configmap  = kubernetes_config_map_v1.aws_logging
+    iam_policy = aws_iam_policy.fargate_fluentbit
+  }
 }
 
 output "gatekeeper" {
