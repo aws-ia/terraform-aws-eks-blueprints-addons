@@ -1,4 +1,6 @@
-# EKS Blueprints Addons Terraform Module
+# AWS EKS Blueprints Addons
+
+Terraform module to deploy Kubernetes addons on AWS EKS clusters.
 
 ### 🚧 Currently under development 🚧
 
