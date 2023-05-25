@@ -4,9 +4,10 @@ on:
     branches:
       - main
     paths:
-      - "docs/**"
-      - "mkdocs.yml"
+      - 'docs/**'
+      - mkdocs.yml
       - README.md
+      - '.github/workflows/publish-docs.yaml'
 
   release:
     types:
