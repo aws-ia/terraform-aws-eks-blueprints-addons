@@ -1833,7 +1833,6 @@ locals {
   external_dns_service_account = try(var.external_dns.service_account_name, "external-dns-sa")
 }
 
-# https://github.com/external-secrets/kubernetes-external-secrets#add-a-secret
 data "aws_iam_policy_document" "external_dns" {
   count = var.enable_external_dns && length(var.external_dns_route53_zone_arns) > 0 ? 1 : 0
 
@@ -1943,7 +1942,6 @@ locals {
   external_secrets_service_account = try(var.external_secrets.service_account_name, "external-secrets-sa")
 }
 
-# https://github.com/external-secrets/kubernetes-external-secrets#add-a-secret
 data "aws_iam_policy_document" "external_secrets" {
   count = var.enable_external_secrets ? 1 : 0
 
