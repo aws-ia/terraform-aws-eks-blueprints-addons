@@ -2,47 +2,58 @@
 
 Terraform module to deploy Kubernetes addons on AWS EKS clusters.
 
-## Supported Architectures
 
-| Addon | x86_64/amd64 | arm64 |
-|-------|:------:|:-----:|
-| Argo Rollouts | ✓ | ✓ |
-| Argo Workflows | ✓ | ✓ |
-| Argo CD | ✓ | ✓ |
-| AWS CloudWatch Metrics | ✓ | ✓ |
-| AWS EFS CSI Driver | ✓ | ✓ |
-| AWS for FluentBit | ✓ | ✓ |
-| AWS FSx CSI Driver | ✓ | ✓ |
-| AWS Load Balancer Controller | ✓ | ✓ |
-| AWS Node Termination Handler | ✓ | ✓ |
-| AWS Private CA Issuer | ✓ | ✓ |
-| Cert Manager | ✓ | ✓ |
-| Cluster Autoscaler | ✓ | ✓ |
-| Cluster Proportional Autoscaler | ✓ | ✓ |
-| External DNS | ✓ | ✓ |
-| External Secrets | ✓ | ✓ |
-| OPA Gatekeeper | ✓ | ✓ |
-| Ingress Nginx | ✓ | ✓ |
-| Karpenter | ✓ | ✓ |
-| Kube-Prometheus Stack | ✓ | ✓ |
-| Metrics Server | ✓ | ✓ |
-| Secrets Store CSI Driver | ✓ | ✓ |
-| Secrets Store CSI Driver Provider AWS | ✓ | ✓ |
-| Velero | ✓ | ✓ |
-| Vertical Pod Autoscaler | ✓ | ✓ |
+## Usage
 
-### [Amazon EKS Addons](https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html)
+### Create Addon (Helm Release) w/ IAM Role for Service Account (IRSA)
 
-Only the EKS provided addons are listed below; 3rd party addons that are available via the AWS Marketplace will vary based on the support provided by the addon vendor. These addons are specified via the `eks_addons` input variable.
+```hcl
+module "eks" {
+  source = "terraform-aws-modules/eks/aws"
 
-| Addon | x86_64/amd64 | arm64 |
-|-------|:------:|:-----:|
-| AWS VPC CNI | ✓ | ✓ |
-| AWS EBS CSI Driver | ✓ | ✓ |
-| CoreDNS | ✓ | ✓ |
-| Kube-proxy | ✓ | ✓ |
-| ADOT Collector | ✓ | ✓ |
-| AWS GuardDuty Agent | ✓ | ✓ |
+  cluster_name    = "my-cluster"
+  cluster_version = "1.27"
+
+  ... truncated for brevity
+}
+
+module "eks_blueprints_addons" {
+  source = "aws-ia/eks-blueprints-addons/aws"
+
+  cluster_name      = module.eks.cluster_name
+  cluster_endpoint  = module.eks.cluster_endpoint
+  cluster_version   = module.eks.cluster_version
+  oidc_provider_arn = module.eks.oidc_provider_arn
+
+  eks_addons = {
+    aws-ebs-csi-driver = {
+      most_recent = true
+    }
+    coredns = {
+      most_recent = true
+    }
+    vpc-cni = {
+      most_recent = true
+    }
+    kube-proxy = {
+      most_recent = true
+    }
+  }
+
+  enable_aws_load_balancer_controller    = true
+  enable_cluster_proportional_autoscaler = true
+  enable_karpenter                       = true
+  enable_kube_prometheus_stack           = true
+  enable_metrics_server                  = true
+  enable_external_dns                    = true
+  enable_cert_manager                    = true
+  cert_manager_route53_hosted_zone_arns  = ["arn:aws:route53:::hostedzone/XXXXXXXXXXXXX"]
+
+  tags = {
+    Environment = "dev"
+  }
+}
+```
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
