@@ -2,11 +2,34 @@
 
 Terraform module to deploy Kubernetes addons on AWS EKS clusters.
 
-### 🚧 Currently under development 🚧
+## Supported Architectures
 
-See [here](https://github.com/aws-ia/terraform-aws-eks-blueprints/issues/1421) for more details on the changes to EKS Blueprints. While we work on incorprating the changes requested by users, we want to avoid unecessary disruptive changes. Therefore, we are working to incorporate as many changes as possible into the release of this module so that users only need to make this change once. Please feel free to try out the module as we develop it and leave any feedback, comments, requests. We look forward to providing an improved experience very soon! Thank you for your patience for for using EKS Blueprints!
-
-Please note: not all addons will be supported as they are today in the main EKS Blueprints repository. We will have guidance and documentation that explains the changes, how to migrate/upgrade, and demonstrates the different options for addons that are no longer natively supported in this project.
+| Addon | x86_64/amd64 | arm64 |
+|-------|:------:|:-----:|
+| Argo Rollouts | ✓ | ✓ |
+| Argo Workflows | ✓ | ✓ |
+| Argo CD | ✓ | ✓ |
+| AWS CloudWatch Metrics | ✓ | ✓ |
+| AWS EFS CSI Driver | ✓ | ✓ |
+| AWS for FluentBit | ✓ | ✓ |
+| AWS FSx CSI Driver | ✓ | ✓ |
+| AWS Load Balancer Controller | ✓ | ✓ |
+| AWS Node Termination Handler | ✓ | ✓ |
+| AWS Private CA Issuer | ✓ | ✓ |
+| Cert Manager | ✓ | ✓ |
+| Cluster Autoscaler | ✓ | ✓ |
+| Cluster Proportional Autoscaler | ✓ | ✓ |
+| External DNS | ✓ | ✓ |
+| External Secrets | ✓ | ✓ |
+| OPA Gatekeeper | ✓ | ✓ |
+| Ingress Nginx | ✓ | ✓ |
+| Karpenter | ✓ | ✓ |
+| Kube-Prometheus Stack | ✓ | ✓ |
+| Metrics Server | ✓ | ✓ |
+| Secrets Store CSI Driver | ✓ | ✓ |
+| Secrets Store CSI Driver Provider AWS | ✓ | ✓ |
+| Velero | ✓ | ✓ |
+| Vertical Pod Autoscaler | ✓ | ✓ |
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
