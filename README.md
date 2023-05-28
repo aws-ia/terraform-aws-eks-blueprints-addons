@@ -2,11 +2,58 @@
 
 Terraform module to deploy Kubernetes addons on AWS EKS clusters.
 
-### 🚧 Currently under development 🚧
 
-See [here](https://github.com/aws-ia/terraform-aws-eks-blueprints/issues/1421) for more details on the changes to EKS Blueprints. While we work on incorprating the changes requested by users, we want to avoid unecessary disruptive changes. Therefore, we are working to incorporate as many changes as possible into the release of this module so that users only need to make this change once. Please feel free to try out the module as we develop it and leave any feedback, comments, requests. We look forward to providing an improved experience very soon! Thank you for your patience for for using EKS Blueprints!
+## Usage
 
-Please note: not all addons will be supported as they are today in the main EKS Blueprints repository. We will have guidance and documentation that explains the changes, how to migrate/upgrade, and demonstrates the different options for addons that are no longer natively supported in this project.
+### Create Addon (Helm Release) w/ IAM Role for Service Account (IRSA)
+
+```hcl
+module "eks" {
+  source = "terraform-aws-modules/eks/aws"
+
+  cluster_name    = "my-cluster"
+  cluster_version = "1.27"
+
+  ... truncated for brevity
+}
+
+module "eks_blueprints_addons" {
+  source = "aws-ia/eks-blueprints-addons/aws"
+
+  cluster_name      = module.eks.cluster_name
+  cluster_endpoint  = module.eks.cluster_endpoint
+  cluster_version   = module.eks.cluster_version
+  oidc_provider_arn = module.eks.oidc_provider_arn
+
+  eks_addons = {
+    aws-ebs-csi-driver = {
+      most_recent = true
+    }
+    coredns = {
+      most_recent = true
+    }
+    vpc-cni = {
+      most_recent = true
+    }
+    kube-proxy = {
+      most_recent = true
+    }
+  }
+
+  enable_aws_load_balancer_controller    = true
+  enable_cluster_proportional_autoscaler = true
+  enable_karpenter                       = true
+  enable_kube_prometheus_stack           = true
+  enable_metrics_server                  = true
+  enable_external_dns                    = true
+  enable_cert_manager                    = true
+  cert_manager_route53_hosted_zone_arns  = ["arn:aws:route53:::hostedzone/XXXXXXXXXXXXX"]
+
+  tags = {
+    Environment = "dev"
+  }
+}
+```
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
