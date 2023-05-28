@@ -103,7 +103,7 @@ module "eks" {
 
       min_size     = 2
       max_size     = 10
-      desired_size = 2
+      desired_size = 3
     }
   }
 
@@ -111,9 +111,9 @@ module "eks" {
     default = {
       instance_type = "m5.large"
 
-      min_size     = 1
-      max_size     = 3
-      desired_size = 1
+      min_size     = 2
+      max_size     = 10
+      desired_size = 3
     }
   }
 
@@ -187,10 +187,10 @@ module "eks_blueprints_addons" {
     }
     gpu-operator = {
       description      = "A Helm chart for NVIDIA GPU operator"
-      namespace        = "nvidia/gpu-operator"
+      namespace        = "gpu-operator"
       create_namespace = true
       chart            = "gpu-operator"
-      chart_version    = "23.2.2"
+      chart_version    = "v23.3.2"
       repository       = "https://nvidia.github.io/gpu-operator"
       values = [
         <<-EOT
