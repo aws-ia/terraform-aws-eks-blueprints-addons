@@ -1,6 +1,6 @@
 # AWS Private CA (PCA) Issuer
 
-[AWS Private CA](https://aws.amazon.com/private-ca/) is an AWS service that can setup and manage private CAs, as well as issue private certifiates. This Add-on deployes the AWS Private CA Issuer as an [external issuer](https://cert-manager.io/docs/configuration/external/) to **cert-manager** that signs off certificate requests using AWS Private CA in an Amazon EKS Cluster.
+[AWS Private CA](https://aws.amazon.com/private-ca/) is an AWS service that can setup and manage private CAs, as well as issue private certificates. This add-on deploys the AWS Private CA Issuer as an [external issuer](https://cert-manager.io/docs/configuration/external/) to **cert-manager** that signs off certificate requests using AWS Private CA in an Amazon EKS Cluster.
 
 ## Usage
 

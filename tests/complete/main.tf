@@ -85,8 +85,7 @@ module "eks" {
       }
     }
     vpc-cni = {
-      most_recent              = true
-      service_account_role_arn = module.vpc_cni_irsa.iam_role_arn
+      most_recent = true
     }
     kube-proxy = {}
     # ADOT has a dependency on cert-manager.
@@ -144,13 +143,13 @@ module "eks_blueprints_addons" {
   enable_kube_prometheus_stack                 = true
   enable_external_dns                          = true
   enable_external_secrets                      = true
-  enable_gatekeeper                            = true
-  enable_ingress_nginx                         = true
-  enable_aws_load_balancer_controller          = true
-  enable_metrics_server                        = true
-  enable_vpa                                   = true
-  enable_aws_for_fluentbit                     = true
-  enable_fargate_fluentbit                     = true
+  # enable_gatekeeper                            = true
+  enable_ingress_nginx                = true
+  enable_aws_load_balancer_controller = true
+  enable_metrics_server               = true
+  enable_vpa                          = true
+  enable_aws_for_fluentbit            = true
+  enable_fargate_fluentbit            = true
 
   enable_aws_node_termination_handler   = true
   aws_node_termination_handler_asg_arns = [for asg in module.eks.self_managed_node_groups : asg.autoscaling_group_arn]
@@ -284,25 +283,6 @@ module "ebs_csi_driver_irsa" {
     main = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
-    }
-  }
-
-  tags = local.tags
-}
-
-module "vpc_cni_irsa" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.14"
-
-  role_name_prefix = "${local.name}-vpc-cni-"
-
-  attach_vpc_cni_policy = true
-  vpc_cni_enable_ipv4   = true
-
-  oidc_providers = {
-    main = {
-      provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["kube-system:aws-node"]
     }
   }
 
