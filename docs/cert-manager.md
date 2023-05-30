@@ -25,7 +25,7 @@ It's possible to customize your deployment using the Helm Chart parameters insid
   }
 ```
 
-You can find all available Helm Chart parameter values [here]https://github.com/cert-manager/cert-manager/blob/master/deploy/charts/cert-manager/values.yaml
+You can find all available Helm Chart parameter values [here](https://github.com/cert-manager/cert-manager/blob/master/deploy/charts/cert-manager/values.yaml)
 
 ## Validation
 

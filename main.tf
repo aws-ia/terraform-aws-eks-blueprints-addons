@@ -700,7 +700,7 @@ module "aws_fsx_csi_driver" {
   namespace        = try(var.aws_fsx_csi_driver.namespace, "kube-system")
   create_namespace = try(var.aws_fsx_csi_driver.create_namespace, false)
   chart            = "aws-fsx-csi-driver"
-  chart_version    = try(var.aws_fsx_csi_driver.chart_version, "1.5.1")
+  chart_version    = try(var.aws_fsx_csi_driver.chart_version, "1.6.0")
   repository       = try(var.aws_fsx_csi_driver.repository, "https://kubernetes-sigs.github.io/aws-fsx-csi-driver/")
   values           = try(var.aws_fsx_csi_driver.values, [])
 
