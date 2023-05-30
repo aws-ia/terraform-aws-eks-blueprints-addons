@@ -4,7 +4,7 @@ This add-on deploys the [Amazon FSx for Lustre CSI Driver](https://docs.aws.amaz
 
 ## Usage
 
-The [Amazon FSx for Lustre CSI Driver](https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/modules/kubernetes-addons/aws-fsx-csi-driver) can be deployed by enabling the add-on via the following. 
+The [Amazon FSx for Lustre CSI Driver](https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/modules/kubernetes-addons/aws-fsx-csi-driver) can be deployed by enabling the add-on via the following.
 
 ```hcl
   enable_aws_fsx_csi_driver = true
@@ -35,7 +35,7 @@ $ kubectl -n kube-system get deployment fsx-csi-controller
 NAME                 READY   UP-TO-DATE   AVAILABLE   AGE
 fsx-csi-controller   2/2     2            2           4m29s
 
-$ kubectl -n kube-system get pods -l app=fsx-csi-controller 
+$ kubectl -n kube-system get pods -l app=fsx-csi-controller
 NAME                                  READY   STATUS    RESTARTS   AGE
 fsx-csi-controller-56c6d9bbb8-89cpc   4/4     Running   0          3m30s
 fsx-csi-controller-56c6d9bbb8-9wnlh   4/4     Running   0          3m30s
@@ -107,10 +107,10 @@ EOF
 Wait for the PV to be created and bound to your PVC.
 
 ```sh
-$ kubectl get pvc   
+$ kubectl get pvc  
 NAME        STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
 fsx-claim   Bound    pvc-df385730-72d6-4b0c-8275-cc055a438760   1200Gi     RWX            fsx-sc         7m47s
-$ kubectl get pv 
+$ kubectl get pv
 NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM               STORAGECLASS   REASON   AGE
 pvc-df385730-72d6-4b0c-8275-cc055a438760   1200Gi     RWX            Delete           Bound    default/fsx-claim   fsx-sc                  2m13s
 ```
