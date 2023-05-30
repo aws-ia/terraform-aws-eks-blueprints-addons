@@ -12,6 +12,7 @@ nav:
   - Addons:
     - AWS CloudWatch Metrics: aws-cloudwatch-metrics.md
     - AWS EFS CSI Driver: aws-efs-csi-driver.md
+    - AWS FSx CSI Driver: aws-fsx-csi-driver.md
     - AWS Load Balancer Controller: aws-load-balancer-controller.md
     - AWS Private CA Issuer: aws-private-ca-issuer.md
     - Cert-Manager: cert-manager.md

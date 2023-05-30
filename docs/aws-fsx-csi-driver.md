@@ -70,6 +70,7 @@ parameters:
 mountOptions:
   - flock
 EOF
+```
 
 ```sh
 $ kubect describe storageclass fsx-sc
@@ -107,7 +108,7 @@ EOF
 Wait for the PV to be created and bound to your PVC.
 
 ```sh
-$ kubectl get pvc  
+$ kubectl get pvc
 NAME        STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
 fsx-claim   Bound    pvc-df385730-72d6-4b0c-8275-cc055a438760   1200Gi     RWX            fsx-sc         7m47s
 $ kubectl get pv
