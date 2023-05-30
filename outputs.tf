@@ -142,3 +142,12 @@ output "vpa" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = module.vpa
 }
+
+################################################################################
+# (Generic) Helm Release
+################################################################################
+
+output "helm_releases" {
+  description = "Map of attributes of the Helm release created"
+  value       = helm_release.this
+}

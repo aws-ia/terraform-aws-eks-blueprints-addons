@@ -103,7 +103,7 @@ module "eks" {
 
       min_size     = 2
       max_size     = 10
-      desired_size = 2
+      desired_size = 3
     }
   }
 
@@ -111,9 +111,9 @@ module "eks" {
     default = {
       instance_type = "m5.large"
 
-      min_size     = 1
-      max_size     = 3
-      desired_size = 1
+      min_size     = 2
+      max_size     = 10
+      desired_size = 3
     }
   }
 
@@ -166,6 +166,39 @@ module "eks_blueprints_addons" {
   ## An S3 Bucket ARN is required. This can be declared with or without a Prefix.
   velero = {
     s3_backup_location = "${module.velero_backup_s3_bucket.s3_bucket_arn}/backups"
+  }
+
+  # Pass in any number of Helm charts to be created for those that are not natively supported
+  helm_releases = {
+    prometheus-adapter = {
+      description      = "A Helm chart for k8s prometheus adapter"
+      namespace        = "prometheus-adapter"
+      create_namespace = true
+      chart            = "prometheus-adapter"
+      chart_version    = "4.2.0"
+      repository       = "https://prometheus-community.github.io/helm-charts"
+      values = [
+        <<-EOT
+          replicas: 2
+          podDisruptionBudget:
+            enabled: true
+        EOT
+      ]
+    }
+    gpu-operator = {
+      description      = "A Helm chart for NVIDIA GPU operator"
+      namespace        = "gpu-operator"
+      create_namespace = true
+      chart            = "gpu-operator"
+      chart_version    = "v23.3.2"
+      repository       = "https://nvidia.github.io/gpu-operator"
+      values = [
+        <<-EOT
+          operator:
+            defaultRuntime: containerd
+        EOT
+      ]
+    }
   }
 
   tags = local.tags
