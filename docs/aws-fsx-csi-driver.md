@@ -18,7 +18,7 @@ You can optionally customize the Helm chart deployment using a configuration lik
   enable_aws_fsx_csi_driver = true
   aws_fsx_csi_driver = {
     namespace     = "aws-fsx-csi-driver"
-    chart_version = "1.5.1"
+    chart_version = "1.6.0"
     role_policies = <ADDITIONAL_IAM_POLICY_ARN>
   }
 ```
