@@ -6,6 +6,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/amazon-eks-addons/</loc>
+         <lastmod>2023-05-30</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/architectures/</loc>
          <lastmod>2023-05-30</lastmod>
          <changefreq>daily</changefreq>
