@@ -71,31 +71,6 @@ module "eks" {
 
   manage_aws_auth_configmap = true
 
-  cluster_addons = {
-    aws-ebs-csi-driver = {
-      most_recent              = true
-      service_account_role_arn = module.ebs_csi_driver_irsa.iam_role_arn
-    }
-    coredns = {
-      most_recent = true
-
-      timeouts = {
-        create = "25m"
-        delete = "10m"
-      }
-    }
-    vpc-cni = {
-      most_recent = true
-    }
-    kube-proxy = {}
-    # ADOT has a dependency on cert-manager.
-    #adot = {
-    #  most_recent              = true
-    #  service_account_role_arn = module.adot_irsa.iam_role_arn
-    #}
-    aws-guardduty-agent = {}
-  }
-
   eks_managed_node_groups = {
     initial = {
       instance_types = ["m5.xlarge"]
@@ -130,6 +105,30 @@ module "eks_blueprints_addons" {
   cluster_endpoint  = module.eks.cluster_endpoint
   cluster_version   = module.eks.cluster_version
   oidc_provider_arn = module.eks.oidc_provider_arn
+
+  eks_addons = {
+    aws-ebs-csi-driver = {
+      most_recent              = true
+      service_account_role_arn = module.ebs_csi_driver_irsa.iam_role_arn
+    }
+    coredns = {
+      most_recent = true
+
+      timeouts = {
+        create = "25m"
+        delete = "10m"
+      }
+    }
+    vpc-cni = {
+      most_recent = true
+    }
+    kube-proxy = {}
+    adot = {
+      most_recent              = true
+      service_account_role_arn = module.adot_irsa.iam_role_arn
+    }
+    aws-guardduty-agent = {}
+  }
 
   enable_aws_efs_csi_driver                    = true
   enable_aws_fsx_csi_driver                    = true
@@ -209,7 +208,7 @@ module "eks_blueprints_addons" {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 4.0"
+  version = "~> 5.0"
 
   name = local.name
   cidr = local.vpc_cidr
