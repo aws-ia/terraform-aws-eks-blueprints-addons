@@ -21,6 +21,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/aws-fsx-csi-driver/</loc>
+         <lastmod>2023-05-30</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/aws-load-balancer-controller/</loc>
          <lastmod>2023-05-30</lastmod>
          <changefreq>daily</changefreq>
