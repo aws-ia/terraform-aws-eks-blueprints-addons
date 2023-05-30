@@ -740,6 +740,10 @@
 <td>&gt;= 4.47</td>
 </tr>
 <tr>
+<td><a name="requirement_helm"></a> <a href="..#requirement_helm">helm</a></td>
+<td>&gt;= 2.9</td>
+</tr>
+<tr>
 <td><a name="requirement_kubernetes"></a> <a href="..#requirement_kubernetes">kubernetes</a></td>
 <td>&gt;= 2.20</td>
 </tr>
@@ -761,6 +765,10 @@
 <tr>
 <td><a name="provider_aws"></a> <a href="..#provider_aws">aws</a></td>
 <td>&gt;= 4.47</td>
+</tr>
+<tr>
+<td><a name="provider_helm"></a> <a href="..#provider_helm">helm</a></td>
+<td>&gt;= 2.9</td>
 </tr>
 <tr>
 <td><a name="provider_kubernetes"></a> <a href="..#provider_kubernetes">kubernetes</a></td>
@@ -977,6 +985,10 @@
 </tr>
 <tr>
 <td><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment">aws_iam_role_policy_attachment.karpenter</a></td>
+<td>resource</td>
+</tr>
+<tr>
+<td><a href="https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release">helm_release.this</a></td>
 <td>resource</td>
 </tr>
 <tr>
@@ -1484,6 +1496,13 @@
 <td align="center">no</td>
 </tr>
 <tr>
+<td><a name="input_helm_releases"></a> <a href="..#input_helm_releases">helm_releases</a></td>
+<td>A map of Helm releases to create. This provides the ability to pass in an arbitrary map of Helm chart definitions to create</td>
+<td><code>any</code></td>
+<td><code>{}</code></td>
+<td align="center">no</td>
+</tr>
+<tr>
 <td><a name="input_ingress_nginx"></a> <a href="..#input_ingress_nginx">ingress_nginx</a></td>
 <td>Ingress Nginx add-on configurations</td>
 <td><code>any</code></td>
@@ -1656,6 +1675,10 @@
 <tr>
 <td><a name="output_gatekeeper"></a> <a href="..#output_gatekeeper">gatekeeper</a></td>
 <td>Map of attributes of the Helm release and IRSA created</td>
+</tr>
+<tr>
+<td><a name="output_helm_releases"></a> <a href="..#output_helm_releases">helm_releases</a></td>
+<td>Map of attributes of the Helm release created</td>
 </tr>
 <tr>
 <td><a name="output_ingress_nginx"></a> <a href="..#output_ingress_nginx">ingress_nginx</a></td>
