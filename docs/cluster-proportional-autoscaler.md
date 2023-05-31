@@ -66,15 +66,17 @@ The `cluster-proportional-autoscaler` pod running in the `kube-system` namespace
 ```bash
 kubectl -n kube-system get po -l app.kubernetes.io/instance=cluster-proportional-autoscaler
 NAME                                                              READY   STATUS    RESTARTS   AGE
-cluster-proportional-autoscaler-kube-dns-autoscaler-d8dc8477xx7   1/1     Running   0          5m
+cluster-proportional-autoscaler-kube-dns-autoscaler-d8dc8477xx7   1/1     Running   0          21h
 ```
 The `cluster-proportional-autoscaler-kube-dns-autoscaler` config map exists.
 ```bash
 kubectl -n kube-system get cm cluster-proportional-autoscaler-kube-dns-autoscaler
+NAME                                                  DATA   AGE
+cluster-proportional-autoscaler-kube-dns-autoscaler   1      21h
 ```
 
 ## Testing
-To test that `coredns` pods scale, first check how many nodes the cluster has and how many `coredns` pods are running.
+To test that `coredns` pods scale, first take a baseline of how many nodes the cluster has and how many `coredns` pods are running.
 ```bash
 kubectl get nodes
 NAME                          STATUS   ROLES    AGE   VERSION
@@ -89,7 +91,7 @@ coredns-7975d6fb9b-dlkdd   1/1     Running   0          21h
 coredns-7975d6fb9b-xqqwp   1/1     Running   0          21h
 ```
 
-Change the following parameters in the hcl code above:
+Change the following parameters in the hcl code above so a scaling event can be easily triggered:
 ```hcl
         config:
           linear:
@@ -100,7 +102,7 @@ Change the following parameters in the hcl code above:
 ```
 and execute `terraform apply`.
 
-Update the managed node group desired size, in this case from 4 to 5. This can be done via the AWS Console.
+Increase the managed node group desired size, in this example from 4 to 5. This can be done via the AWS Console.
 
 Check that the new node came up and `coredns` scaled up.
 ```bash
