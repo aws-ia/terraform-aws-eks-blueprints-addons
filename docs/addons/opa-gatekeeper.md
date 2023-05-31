@@ -1,4 +1,4 @@
-# Gatekeeper
+# OPA Gatekeeper
 
 Gatekeeper is an admission controller that validates requests to create and update Pods on Kubernetes clusters, using the Open Policy Agent (OPA). Using Gatekeeper allows administrators to define policies with a constraint, which is a set of conditions that permit or deny deployment behaviors in Kubernetes.
 

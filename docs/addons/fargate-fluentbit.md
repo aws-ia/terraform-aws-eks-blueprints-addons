@@ -1,4 +1,4 @@
-# Fargate Fluentbit
+# Fargate FluentBit
 
 Amazon EKS on Fargate offers a built-in log router based on Fluent Bit. This means that you don't explicitly run a Fluent Bit container as a sidecar, but Amazon runs it for you. All that you have to do is configure the log router. The configuration happens through a dedicated ConfigMap, that is deployed via this Add-on.
 

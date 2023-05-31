@@ -1,4 +1,4 @@
-# Amazon EKS add-ons
+# Amazon EKS Add-ons
 
 The Amazon EKS add-on implementation is generic and can be used to deploy any add-on supported by the EKS API; either native EKS addons or third party add-ons supplied via the AWS Marketplace.
 
