@@ -5,6 +5,8 @@ Horizontal cluster-proportional-autoscaler watches over the number of schedulabl
 The [cluster-proportional-autoscaler](https://github.com/kubernetes-sigs/cluster-proportional-autoscaler) helps to scale the applications using deployment or replicationcontroller or replicaset. This is an alternative solution to Horizontal Pod Autoscaling.
 It is typically installed as a **Deployment** in your cluster.
 
+Refer to the [eks-best-practices-guides](https://aws.github.io/aws-eks-best-practices/reliability/docs/dataplane/#configure-cluster-proportional-scaler-for-coredns) for addional configuration guidanance.
+ 
 ## Usage
 
 This add-on requires both `enable_cluster_proportional_autoscaler` and `cluster_proportional_autoscaler` as mandatory fields.
