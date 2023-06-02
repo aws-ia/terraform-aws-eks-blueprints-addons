@@ -28,3 +28,12 @@ You can also customize the Helm chart that deploys `aws-cloudwatch-metrics` via 
     values        = [templatefile("${path.module}/values.yaml", {})] # The value `clusterName` is already set to the EKS cluster name, no need to specify here
   }
 ```
+
+Verify aws-cloudwatch-metrics pods are running
+
+```sh
+$ kubectl get pods -n amazon-cloudwatch
+
+NAME                           READY   STATUS    RESTARTS   AGE
+aws-cloudwatch-metrics-2dt5h   1/1     Running   0          149m
+```
