@@ -10,12 +10,12 @@ Argo Workflows can be deployed by enabling the add-on via the following.
 enable_argo_workflows = true
 ```
 
-You can optionally customize the Helm chart that deploys `argo_workflows` via the following configuration.
+You can optionally customize the Helm chart that deploys Argo Workflows via the following configuration.
 
 ```hcl
   enable_argo_workflows = true
 
-  argo_rollouts = {
+  argo_workflows = {
     name          = "argo-workflows"
     chart_version = "0.28.2"
     repository    = "https://argoproj.github.io/argo-helm"

@@ -10,7 +10,7 @@ Argo Rollouts can be deployed by enabling the add-on via the following.
 enable_argo_rollouts = true
 ```
 
-You can optionally customize the Helm chart that deploys `argo_rollouts` via the following configuration.
+You can optionally customize the Helm chart that deploys Argo Rollouts via the following configuration.
 
 ```hcl
   enable_argo_rollouts = true
