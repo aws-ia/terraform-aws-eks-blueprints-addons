@@ -133,6 +133,8 @@ module "eks_blueprints_addons" {
   enable_aws_efs_csi_driver                    = true
   enable_aws_fsx_csi_driver                    = true
   enable_argocd                                = true
+  enable_argo_rollouts                         = true
+  enable_argo_workflows                        = true
   enable_aws_cloudwatch_metrics                = true
   enable_aws_privateca_issuer                  = true
   enable_cert_manager                          = true

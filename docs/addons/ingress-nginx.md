@@ -12,16 +12,6 @@ Nginx Ingress Controller can be deployed by enabling the add-on via the followin
 enable_ingress_nginx = true
 ```
 
-You can also customize the Helm chart that deploys `ingress-nginx` via the following configuration:
-
-```sh
-$ kubectl get pods -n ingress-nginx
-NAME                                       READY   STATUS    RESTARTS   AGE
-ingress-nginx-controller-f6c55fdc8-8bt2z   1/1     Running   0          44m
-```
-
-Note that the ingress controller is deployed in the `ingress-nginx` namespace.
-
 You can optionally customize the Helm chart that deploys `nginx` via the following configuration.
 
 ```hcl
@@ -35,4 +25,12 @@ You can optionally customize the Helm chart that deploys `nginx` via the followi
     values        = [templatefile("${path.module}/values.yaml", {})]
   }
 
+```
+
+Verify ingress-nginx pods are running.
+
+```sh
+$ kubectl get pods -n ingress-nginx
+NAME                                       READY   STATUS    RESTARTS   AGE
+ingress-nginx-controller-f6c55fdc8-8bt2z   1/1     Running   0          44m
 ```
