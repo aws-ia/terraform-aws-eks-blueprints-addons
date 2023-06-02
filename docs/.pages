@@ -1,0 +1,4 @@
+nav:
+  - Overview: index.md
+  - Architectures: architectures.md
+  - Addons: addons

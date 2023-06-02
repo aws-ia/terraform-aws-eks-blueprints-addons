@@ -1,4 +1,4 @@
-# Nginx
+# Nginx Ingress
 
 This add-on installs [Nginx Ingress Controller](https://kubernetes.github.io/ingress-nginx/deploy/) on Amazon EKS. The Nginx ingress controller uses [Nginx](https://www.nginx.org/) as a reverse proxy and load balancer.
 

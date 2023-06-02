@@ -1,11 +1,8 @@
-# AWS EKS Blueprints Addons
+# Amazon EKS Blueprints Addons
 
-Terraform module to deploy Kubernetes addons on AWS EKS clusters.
-
+Terraform module to deploy Kubernetes addons on Amazon EKS clusters.
 
 ## Usage
-
-### Create Addon (Helm Release) w/ IAM Role for Service Account (IRSA)
 
 ```hcl
 module "eks" {

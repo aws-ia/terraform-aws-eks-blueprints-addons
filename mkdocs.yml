@@ -1,28 +1,10 @@
-site_name: AWS EKS Blueprints Addons
+site_name: Amazon EKS Blueprints Addons
 docs_dir: 'docs/'
 copyright: 'Copyright &copy; Amazon 2023'
 site_author: 'AWS'
 site_url: 'https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/'
 repo_name: 'terraform-aws-eks-blueprints-addons'
 repo_url: 'https://github.com/aws-ia/terraform-aws-eks-blueprints-addons'
-
-nav:
-  - Overview: index.md
-  - Architectures: architectures.md
-  - Addons:
-    - Amazon EKS Add-Ons: amazon-eks-addons.md
-    - AWS CloudWatch Metrics: aws-cloudwatch-metrics.md
-    - AWS EFS CSI Driver: aws-efs-csi-driver.md
-    - AWS FSx CSI Driver: aws-fsx-csi-driver.md
-    - AWS Load Balancer Controller: aws-load-balancer-controller.md
-    - AWS Private CA Issuer: aws-private-ca-issuer.md
-    - Cert-Manager: cert-manager.md
-    - Fargate FluentBit: fargate-fluentbit.md
-    - Karpenter: karpenter.md
-    - Nginx Ingress: nginx-ingress.md
-    - OPA Gatekeeper: opa-gatekeeper.md
-    - Velero: velero.md
-    - Vertical Pod Autoscaler: vpa.md
 
 theme:
   name: material
@@ -60,6 +42,7 @@ plugins:
   - search:
       lang:
         - en
+  - awesome-pages
 
 extra:
   version:
