@@ -6,42 +6,7 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/amazon-eks-addons/</loc>
-         <lastmod>2023-06-02</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/architectures/</loc>
-         <lastmod>2023-06-02</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/aws-cloudwatch-metrics/</loc>
-         <lastmod>2023-06-02</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/aws-efs-csi-driver/</loc>
-         <lastmod>2023-06-02</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/aws-fsx-csi-driver/</loc>
-         <lastmod>2023-06-02</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/aws-load-balancer-controller/</loc>
-         <lastmod>2023-06-02</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/aws-private-ca-issuer/</loc>
-         <lastmod>2023-06-02</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/cert-manager/</loc>
          <lastmod>2023-06-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -51,32 +16,67 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/fargate-fluentbit/</loc>
+         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/amazon-eks-addons/</loc>
          <lastmod>2023-06-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/karpenter/</loc>
+         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/aws-cloudwatch-metrics/</loc>
          <lastmod>2023-06-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/nginx-ingress/</loc>
+         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/aws-efs-csi-driver/</loc>
          <lastmod>2023-06-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/opa-gatekeeper/</loc>
+         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/aws-fsx-csi-driver/</loc>
          <lastmod>2023-06-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/velero/</loc>
+         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/aws-load-balancer-controller/</loc>
          <lastmod>2023-06-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/vpa/</loc>
+         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/aws-private-ca-issuer/</loc>
+         <lastmod>2023-06-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/cert-manager/</loc>
+         <lastmod>2023-06-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/fargate-fluentbit/</loc>
+         <lastmod>2023-06-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/karpenter/</loc>
+         <lastmod>2023-06-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/nginx-ingress/</loc>
+         <lastmod>2023-06-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/opa-gatekeeper/</loc>
+         <lastmod>2023-06-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/velero/</loc>
+         <lastmod>2023-06-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/vpa/</loc>
          <lastmod>2023-06-02</lastmod>
          <changefreq>daily</changefreq>
     </url>

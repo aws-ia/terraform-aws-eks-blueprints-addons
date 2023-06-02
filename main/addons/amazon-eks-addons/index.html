@@ -10,27 +10,27 @@
         <meta name="author" content="AWS">
       
       
-        <link rel="canonical" href="https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/amazon-eks-addons/">
+        <link rel="canonical" href="https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/amazon-eks-addons/">
       
       
-        <link rel="prev" href="../architectures/">
+        <link rel="prev" href="../../architectures/">
       
       
         <link rel="next" href="../aws-cloudwatch-metrics/">
       
-      <link rel="icon" href="../images/colored-logo.png">
+      <link rel="icon" href="../../images/colored-logo.png">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.4">
     
     
       
-        <title>Amazon EKS Add-Ons - AWS EKS Blueprints Addons</title>
+        <title>Amazon EKS Add-ons - Amazon EKS Blueprints Addons</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.240905d7.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.240905d7.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.a0c5b2b5.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.a0c5b2b5.min.css">
       
       
   
@@ -87,7 +87,7 @@
       
     
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -132,9 +132,9 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="AWS EKS Blueprints Addons" class="md-header__button md-logo" aria-label="AWS EKS Blueprints Addons" data-md-component="logo">
+    <a href="../.." title="Amazon EKS Blueprints Addons" class="md-header__button md-logo" aria-label="Amazon EKS Blueprints Addons" data-md-component="logo">
       
-  <img src="../images/white-logo.png" alt="logo">
+  <img src="../../images/white-logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -144,13 +144,13 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            AWS EKS Blueprints Addons
+            Amazon EKS Blueprints Addons
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Amazon EKS Add-Ons
+              Amazon EKS Add-ons
             
           </span>
         </div>
@@ -229,12 +229,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="AWS EKS Blueprints Addons" class="md-nav__button md-logo" aria-label="AWS EKS Blueprints Addons" data-md-component="logo">
+    <a href="../.." title="Amazon EKS Blueprints Addons" class="md-nav__button md-logo" aria-label="Amazon EKS Blueprints Addons" data-md-component="logo">
       
-  <img src="../images/white-logo.png" alt="logo">
+  <img src="../../images/white-logo.png" alt="logo">
 
     </a>
-    AWS EKS Blueprints Addons
+    Amazon EKS Blueprints Addons
   </label>
   
     <div class="md-nav__source">
@@ -259,7 +259,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         Overview
       </a>
     </li>
@@ -274,7 +274,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../architectures/" class="md-nav__link">
+      <a href="../../architectures/" class="md-nav__link">
         Architectures
       </a>
     </li>
@@ -328,12 +328,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Amazon EKS Add-Ons
+          Amazon EKS Add-ons
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Amazon EKS Add-Ons
+        Amazon EKS Add-ons
       </a>
       
         
@@ -443,7 +443,7 @@
   
     <li class="md-nav__item">
       <a href="../aws-load-balancer-controller/" class="md-nav__link">
-        AWS Load Balancer Controller
+        AWS Load Balancer Controller.
       </a>
     </li>
   
@@ -646,7 +646,7 @@
   
 
 
-<h1 id="amazon-eks-add-ons">Amazon EKS add-ons<a class="headerlink" href="#amazon-eks-add-ons" title="Permanent link">&para;</a></h1>
+<h1 id="amazon-eks-add-ons">Amazon EKS Add-ons<a class="headerlink" href="#amazon-eks-add-ons" title="Permanent link">&para;</a></h1>
 <p>The Amazon EKS add-on implementation is generic and can be used to deploy any add-on supported by the EKS API; either native EKS addons or third party add-ons supplied via the AWS Marketplace.</p>
 <p>See the <a href="https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html">EKS documentation</a> for more details on EKS addon-ons, including the list of <a href="https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html#workloads-add-ons-available-eks">Amazon EKS add-ons from Amazon EKS</a>, as well as <a href="https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html#workloads-add-ons-available-vendors">Additional Amazon EKS add-ons from independent software vendors</a>.</p>
 <h2 id="architecture-support">Architecture Support<a class="headerlink" href="#architecture-support" title="Permanent link">&para;</a></h2>
@@ -898,10 +898,10 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs.sticky"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs.sticky"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.19047be9.min.js"></script>
+      <script src="../../assets/javascripts/bundle.19047be9.min.js"></script>
       
     
   </body>
