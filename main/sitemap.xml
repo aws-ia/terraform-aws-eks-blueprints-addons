@@ -11,11 +11,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/cluster-proportional-autoscaler/</loc>
-         <lastmod>2023-06-02</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/amazon-eks-addons/</loc>
          <lastmod>2023-06-02</lastmod>
          <changefreq>daily</changefreq>
@@ -47,6 +42,11 @@
     </url>
     <url>
          <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/cert-manager/</loc>
+         <lastmod>2023-06-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/cluster-proportional-autoscaler/</loc>
          <lastmod>2023-06-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
