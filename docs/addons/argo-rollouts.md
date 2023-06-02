@@ -17,7 +17,7 @@ You can optionally customize the Helm chart that deploys `argo_rollouts` via the
 
   argo_rollouts = {
     name          = "argo-rollouts"
-    chart_version = "0.28.2"
+    chart_version = "2.22.3"
     repository    = "https://argoproj.github.io/argo-helm"
     namespace     = "argo-rollouts"
     values        = [templatefile("${path.module}/values.yaml", {})]
@@ -31,4 +31,4 @@ Verify argo-rollouts pods are running.
 $ kubectl get pods -n argo-rollouts
 NAME                             READY   STATUS    RESTARTS   AGE
 argo-rollouts-5db5688849-x89zb   0/1     Running   0          11s
-``
+```
