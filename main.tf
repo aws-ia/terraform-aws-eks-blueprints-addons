@@ -1596,6 +1596,7 @@ locals {
     "1.24" = "v1.24.1"
     "1.25" = "v1.25.1"
     "1.26" = "v1.26.2"
+    "1.27" = "v1.27.2"
   }
 }
 
@@ -1648,7 +1649,7 @@ module "cluster_autoscaler" {
   namespace        = try(var.cluster_autoscaler.namespace, "kube-system")
   create_namespace = try(var.cluster_autoscaler.create_namespace, false)
   chart            = "cluster-autoscaler"
-  chart_version    = try(var.cluster_autoscaler.chart_version, "9.28.0")
+  chart_version    = try(var.cluster_autoscaler.chart_version, "9.29.0")
   repository       = try(var.cluster_autoscaler.repository, "https://kubernetes.github.io/autoscaler")
   values           = try(var.cluster_autoscaler.values, [])
 
@@ -2635,7 +2636,7 @@ module "kube_prometheus_stack" {
   namespace        = try(var.kube_prometheus_stack.namespace, "kube-prometheus-stack")
   create_namespace = try(var.kube_prometheus_stack.create_namespace, true)
   chart            = "kube-prometheus-stack"
-  chart_version    = try(var.kube_prometheus_stack.chart_version, "45.10.1")
+  chart_version    = try(var.kube_prometheus_stack.chart_version, "46.6.0")
   repository       = try(var.kube_prometheus_stack.repository, "https://prometheus-community.github.io/helm-charts")
   values           = try(var.kube_prometheus_stack.values, [])
 

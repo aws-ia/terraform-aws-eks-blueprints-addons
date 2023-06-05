@@ -10,6 +10,21 @@ The [AWS EFS CSI driver](https://github.com/aws-ia/terraform-aws-eks-blueprints/
   enable_aws_efs_csi_driver = true
 ```
 
+You can optionally customize the Helm chart that deploys the driver via the following configuration.
+
+```hcl
+  enable_aws_efs_csi_driver = true
+
+  # Optional aws_efs_csi_driver_helm_config
+  aws_efs_csi_driver = {
+    repository     = "https://kubernetes-sigs.github.io/aws-efs-csi-driver/"
+    chart_version  = "2.4.1"
+  }
+  aws_efs_csi_driver {
+    role_policies = ["<ADDITIONAL_IAM_POLICY_ARN>"]
+  }
+```
+
 Once deployed, you will be able to see a number of supporting resources in the `kube-system` namespace.
 
 ```sh
@@ -26,17 +41,6 @@ NAME           DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTO
 efs-csi-node   3         3         3       3            3           beta.kubernetes.io/os=linux   4m32s
 ```
 
-You can optionally customize the Helm chart that deploys the driver via the following configuration.
+## Validate EFS CSI Driver
 
-```hcl
-  enable_aws_efs_csi_driver = true
-
-  # Optional aws_efs_csi_driver_helm_config
-  aws_efs_csi_driver = {
-    repository     = "https://kubernetes-sigs.github.io/aws-efs-csi-driver/"
-    chart_version  = "2.4.1"
-  }
-  aws_efs_csi_driver {
-    role_policies = ["<ADDITIONAL_IAM_POLICY_ARN>"]
-  }
-```
+Follow the static provisioning example described [here](https://github.com/kubernetes-sigs/aws-efs-csi-driver/blob/master/examples/kubernetes/static_provisioning/README.md) to validate the CSI driver is working as expected.
