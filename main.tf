@@ -2636,7 +2636,7 @@ module "kube_prometheus_stack" {
   namespace        = try(var.kube_prometheus_stack.namespace, "kube-prometheus-stack")
   create_namespace = try(var.kube_prometheus_stack.create_namespace, true)
   chart            = "kube-prometheus-stack"
-  chart_version    = try(var.kube_prometheus_stack.chart_version, "45.10.1")
+  chart_version    = try(var.kube_prometheus_stack.chart_version, "46.6.0")
   repository       = try(var.kube_prometheus_stack.repository, "https://prometheus-community.github.io/helm-charts")
   values           = try(var.kube_prometheus_stack.values, [])
 

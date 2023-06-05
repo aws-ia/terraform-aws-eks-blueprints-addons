@@ -41,6 +41,6 @@ NAME           DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTO
 efs-csi-node   3         3         3       3            3           beta.kubernetes.io/os=linux   4m32s
 ```
 
-## Validate EFS CSI Driver 
+## Validate EFS CSI Driver
 
 Follow the static provisioning example described [here](https://github.com/kubernetes-sigs/aws-efs-csi-driver/blob/master/examples/kubernetes/static_provisioning/README.md) to validate the CSI driver is working as expected.
