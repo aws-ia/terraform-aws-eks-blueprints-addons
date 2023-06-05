@@ -10,21 +10,27 @@
         <meta name="author" content="AWS">
       
       
+        <link rel="canonical" href="https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/secrets-store-csi-driver-provider-aws/">
       
       
-      <link rel="icon" href="/terraform-aws-eks-blueprints-addons/main/images/colored-logo.png">
+        <link rel="prev" href="../opa-gatekeeper/">
+      
+      
+        <link rel="next" href="../velero/">
+      
+      <link rel="icon" href="../../images/colored-logo.png">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.4">
     
     
       
-        <title>Amazon EKS Blueprints Addons</title>
+        <title>AWS Secrets Manager and Config Provider for Secret Store CSI Driver - Amazon EKS Blueprints Addons</title>
       
     
     
-      <link rel="stylesheet" href="/terraform-aws-eks-blueprints-addons/main/assets/stylesheets/main.240905d7.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.240905d7.min.css">
       
         
-        <link rel="stylesheet" href="/terraform-aws-eks-blueprints-addons/main/assets/stylesheets/palette.a0c5b2b5.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.a0c5b2b5.min.css">
       
       
   
@@ -81,7 +87,7 @@
       
     
     
-    <script>__md_scope=new URL("/terraform-aws-eks-blueprints-addons/main",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -105,6 +111,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#aws-secrets-manager-and-config-provider-for-secret-store-csi-driver" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -121,9 +132,9 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="/terraform-aws-eks-blueprints-addons/main/." title="Amazon EKS Blueprints Addons" class="md-header__button md-logo" aria-label="Amazon EKS Blueprints Addons" data-md-component="logo">
+    <a href="../.." title="Amazon EKS Blueprints Addons" class="md-header__button md-logo" aria-label="Amazon EKS Blueprints Addons" data-md-component="logo">
       
-  <img src="/terraform-aws-eks-blueprints-addons/main/images/white-logo.png" alt="logo">
+  <img src="../../images/white-logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -139,7 +150,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              
+              AWS Secrets Manager and Config Provider for Secret Store CSI Driver
             
           </span>
         </div>
@@ -218,9 +229,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/terraform-aws-eks-blueprints-addons/main/." title="Amazon EKS Blueprints Addons" class="md-nav__button md-logo" aria-label="Amazon EKS Blueprints Addons" data-md-component="logo">
+    <a href="../.." title="Amazon EKS Blueprints Addons" class="md-nav__button md-logo" aria-label="Amazon EKS Blueprints Addons" data-md-component="logo">
       
-  <img src="/terraform-aws-eks-blueprints-addons/main/images/white-logo.png" alt="logo">
+  <img src="../../images/white-logo.png" alt="logo">
 
     </a>
     Amazon EKS Blueprints Addons
@@ -248,7 +259,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         Overview
       </a>
     </li>
@@ -263,7 +274,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/architectures/" class="md-nav__link">
+      <a href="../../architectures/" class="md-nav__link">
         Architectures
       </a>
     </li>
@@ -278,7 +289,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/amazon-eks-addons/" class="md-nav__link">
+      <a href="../../amazon-eks-addons/" class="md-nav__link">
         Amazon EKS Addons
       </a>
     </li>
@@ -293,7 +304,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/aws-partner-addons/" class="md-nav__link">
+      <a href="../../aws-partner-addons/" class="md-nav__link">
         AWS Partner Addons
       </a>
     </li>
@@ -306,14 +317,16 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
       
       
       
@@ -322,7 +335,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_5">
           <span class="md-nav__icon md-icon"></span>
           Addons
@@ -335,7 +348,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/argo-rollouts/" class="md-nav__link">
+      <a href="../argo-rollouts/" class="md-nav__link">
         Argo Rollouts
       </a>
     </li>
@@ -349,7 +362,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/argo-workflows/" class="md-nav__link">
+      <a href="../argo-workflows/" class="md-nav__link">
         Argo Workflows
       </a>
     </li>
@@ -363,7 +376,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/argocd/" class="md-nav__link">
+      <a href="../argocd/" class="md-nav__link">
         Argo CD
       </a>
     </li>
@@ -377,7 +390,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/aws-cloudwatch-metrics/" class="md-nav__link">
+      <a href="../aws-cloudwatch-metrics/" class="md-nav__link">
         AWS CloudWatch Metrics
       </a>
     </li>
@@ -391,7 +404,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/aws-efs-csi-driver/" class="md-nav__link">
+      <a href="../aws-efs-csi-driver/" class="md-nav__link">
         AWS EFS CSI Driver
       </a>
     </li>
@@ -405,7 +418,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/aws-for-fluentbit/" class="md-nav__link">
+      <a href="../aws-for-fluentbit/" class="md-nav__link">
         AWS for Fluent Bit
       </a>
     </li>
@@ -419,7 +432,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/aws-fsx-csi-driver/" class="md-nav__link">
+      <a href="../aws-fsx-csi-driver/" class="md-nav__link">
         AWS FSx CSI Driver
       </a>
     </li>
@@ -433,7 +446,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/aws-load-balancer-controller/" class="md-nav__link">
+      <a href="../aws-load-balancer-controller/" class="md-nav__link">
         AWS Load Balancer Controller.
       </a>
     </li>
@@ -447,7 +460,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/aws-node-termination-handler/" class="md-nav__link">
+      <a href="../aws-node-termination-handler/" class="md-nav__link">
         AWS Node Termination Handler
       </a>
     </li>
@@ -461,7 +474,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/aws-private-ca-issuer/" class="md-nav__link">
+      <a href="../aws-private-ca-issuer/" class="md-nav__link">
         AWS Private CA Issuer
       </a>
     </li>
@@ -475,7 +488,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/cert-manager/" class="md-nav__link">
+      <a href="../cert-manager/" class="md-nav__link">
         Cert-Manager
       </a>
     </li>
@@ -489,7 +502,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/cluster-autoscaler/" class="md-nav__link">
+      <a href="../cluster-autoscaler/" class="md-nav__link">
         Cluster Autoscaler
       </a>
     </li>
@@ -503,7 +516,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/cluster-proportional-autoscaler/" class="md-nav__link">
+      <a href="../cluster-proportional-autoscaler/" class="md-nav__link">
         Cluster Proportional Autoscaler
       </a>
     </li>
@@ -517,7 +530,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/external-dns/" class="md-nav__link">
+      <a href="../external-dns/" class="md-nav__link">
         External DNS
       </a>
     </li>
@@ -531,7 +544,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/external-secrets/" class="md-nav__link">
+      <a href="../external-secrets/" class="md-nav__link">
         External Secrets
       </a>
     </li>
@@ -545,7 +558,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/fargate-fluentbit/" class="md-nav__link">
+      <a href="../fargate-fluentbit/" class="md-nav__link">
         Fargate FluentBit
       </a>
     </li>
@@ -559,7 +572,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/ingress-nginx/" class="md-nav__link">
+      <a href="../ingress-nginx/" class="md-nav__link">
         Ingress Nginx
       </a>
     </li>
@@ -573,7 +586,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/karpenter/" class="md-nav__link">
+      <a href="../karpenter/" class="md-nav__link">
         Karpenter
       </a>
     </li>
@@ -587,7 +600,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/kube-prometheus-stack/" class="md-nav__link">
+      <a href="../kube-prometheus-stack/" class="md-nav__link">
         Kube Prometheus Stack
       </a>
     </li>
@@ -601,7 +614,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/metrics-server/" class="md-nav__link">
+      <a href="../metrics-server/" class="md-nav__link">
         Metrics Server
       </a>
     </li>
@@ -615,7 +628,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/opa-gatekeeper/" class="md-nav__link">
+      <a href="../opa-gatekeeper/" class="md-nav__link">
         OPA Gatekeeper
       </a>
     </li>
@@ -627,11 +640,52 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/secrets-store-csi-driver-provider-aws/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          AWS Secrets Manager and Config Provider for Secret Store CSI Driver
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         AWS Secrets Manager and Config Provider for Secret Store CSI Driver
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -643,7 +697,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/velero/" class="md-nav__link">
+      <a href="../velero/" class="md-nav__link">
         Velero
       </a>
     </li>
@@ -657,7 +711,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/terraform-aws-eks-blueprints-addons/main/addons/vertical-pod-autoscaler/" class="md-nav__link">
+      <a href="../vertical-pod-autoscaler/" class="md-nav__link">
         Vertical Pod Autoscaler
       </a>
     </li>
@@ -688,6 +742,23 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -699,8 +770,43 @@
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset">
                 
-  <h1>404 - Not found</h1>
+                  
 
+  
+  
+
+
+<h1 id="aws-secrets-manager-and-config-provider-for-secret-store-csi-driver">AWS Secrets Manager and Config Provider for Secret Store CSI Driver<a class="headerlink" href="#aws-secrets-manager-and-config-provider-for-secret-store-csi-driver" title="Permanent link">&para;</a></h1>
+<p>AWS offers two services to manage secrets and parameters conveniently in your code. AWS Secrets Manager allows you to easily rotate, manage, and retrieve database credentials, API keys, certificates, and other secrets throughout their lifecycle. AWS Systems Manager Parameter Store provides hierarchical storage for configuration data. The <a href="https://github.com/aws/secrets-store-csi-driver-provider-aws">AWS provider for the Secrets Store CSI Driver</a> allows you to make secrets stored in Secrets Manager and parameters stored in Parameter Store appear as files mounted in Kubernetes pods.</p>
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
+<p>AWS Secrets Store CSI Driver can be deployed by enabling the add-on via the following.</p>
+<div class="language-hcl highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="na">enable_secrets_store_csi_driver</span><span class="w">              </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="na">enable_secrets_store_csi_driver_provider_aws</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+</span></code></pre></div>
+<p>You can optionally customize the Helm chart via the following configuration.</p>
+<div class="language-hcl highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="w">  </span><span class="na">enable_secrets_store_csi_driver</span><span class="w">              </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="na">enable_secrets_store_csi_driver_provider_aws</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nb">secrets_store_csi_driver_provider_aws</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="na">name</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;secrets-store-csi-driver&quot;</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="na">chart_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;0.3.2&quot;</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="na">repository</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;https://aws.github.io/secrets-store-csi-driver-provider-aws&quot;</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="na">namespace</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;kube-system&quot;</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="na">values</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="nf">templatefile</span><span class="p">(</span><span class="s2">&quot;${path.module}/values.yaml&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{})]</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">  </span><span class="p">}</span>
+</span></code></pre></div>
+<p>Verify metrics-server pods are running.</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>NAME<span class="w">                                         </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">       </span>AGE
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>secrets-store-csi-driver-9l2z8<span class="w">               </span><span class="m">3</span>/3<span class="w">     </span>Running<span class="w">   </span><span class="m">1</span><span class="w"> </span><span class="o">(</span>2d5h<span class="w"> </span>ago<span class="o">)</span><span class="w">   </span>2d9h
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>secrets-store-csi-driver-provider-aws-2qqkk<span class="w">  </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">1</span><span class="w"> </span><span class="o">(</span>2d5h<span class="w"> </span>ago<span class="o">)</span><span class="w">   </span>2d9h
+</span></code></pre></div>
+
+
+
+
+
+                
               </article>
             </div>
           
@@ -736,10 +842,10 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "/terraform-aws-eks-blueprints-addons/main", "features": ["navigation.tabs.sticky"], "search": "/terraform-aws-eks-blueprints-addons/main/assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs.sticky"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="/terraform-aws-eks-blueprints-addons/main/assets/javascripts/bundle.19047be9.min.js"></script>
+      <script src="../../assets/javascripts/bundle.19047be9.min.js"></script>
       
     
   </body>
