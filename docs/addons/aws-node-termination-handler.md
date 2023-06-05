@@ -40,7 +40,7 @@ $ aws sqs list-queues
 
 {
     "QueueUrls": [
-        "https://sqs.us-east-1.amazonaws.com/829527579886/aws_node_termination_handler20221123072051157700000004"
+        "https://sqs.us-east-1.amazonaws.com/XXXXXXXXXXXXXX/aws_node_termination_handler20221123072051157700000004"
     ]
 }
 ```
@@ -53,7 +53,7 @@ $ aws event list-rules
     [
         {
             "Name": "NTH-ASGTerminiate-20230602191740664900000025",
-            "Arn": "arn:aws:events:us-west-2:829527579886:rule/NTH-ASGTerminiate-20230602191740664900000025",
+            "Arn": "arn:aws:events:us-west-2:XXXXXXXXXXXXXX:rule/NTH-ASGTerminiate-20230602191740664900000025",
             "EventPattern": "{\"detail-type\":[\"EC2 Instance-terminate Lifecycle Action\"],\"source\":[\"aws.autoscaling\"]}",
             "State": "ENABLED",
             "Description": "Auto scaling instance terminate event",
@@ -61,7 +61,7 @@ $ aws event list-rules
         },
         {
             "Name": "NTH-HealthEvent-20230602191740079300000022",
-            "Arn": "arn:aws:events:us-west-2:829527579886:rule/NTH-HealthEvent-20230602191740079300000022",
+            "Arn": "arn:aws:events:us-west-2:XXXXXXXXXXXXXX:rule/NTH-HealthEvent-20230602191740079300000022",
             "EventPattern": "{\"detail-type\":[\"AWS Health Event\"],\"source\":[\"aws.health\"]}",
             "State": "ENABLED",
             "Description": "AWS health event",
@@ -69,7 +69,7 @@ $ aws event list-rules
         },
         {
             "Name": "NTH-InstanceRebalance-20230602191740077100000021",
-            "Arn": "arn:aws:events:us-west-2:829527579886:rule/NTH-InstanceRebalance-20230602191740077100000021",
+            "Arn": "arn:aws:events:us-west-2:XXXXXXXXXXXXXX:rule/NTH-InstanceRebalance-20230602191740077100000021",
             "EventPattern": "{\"detail-type\":[\"EC2 Instance Rebalance Recommendation\"],\"source\":[\"aws.ec2\"]}",
             "State": "ENABLED",
             "Description": "EC2 instance rebalance recommendation",
@@ -77,7 +77,7 @@ $ aws event list-rules
         },
         {
             "Name": "NTH-InstanceStateChange-20230602191740165000000024",
-            "Arn": "arn:aws:events:us-west-2:829527579886:rule/NTH-InstanceStateChange-20230602191740165000000024",
+            "Arn": "arn:aws:events:us-west-2:XXXXXXXXXXXXXX:rule/NTH-InstanceStateChange-20230602191740165000000024",
             "EventPattern": "{\"detail-type\":[\"EC2 Instance State-change Notification\"],\"source\":[\"aws.ec2\"]}",
             "State": "ENABLED",
             "Description": "EC2 instance state-change notification",
@@ -85,7 +85,7 @@ $ aws event list-rules
         },
         {
             "Name": "NTH-SpotInterrupt-20230602191740077100000020",
-            "Arn": "arn:aws:events:us-west-2:829527579886:rule/NTH-SpotInterrupt-20230602191740077100000020",
+            "Arn": "arn:aws:events:us-west-2:XXXXXXXXXXXXXX:rule/NTH-SpotInterrupt-20230602191740077100000020",
             "EventPattern": "{\"detail-type\":[\"EC2 Spot Instance Interruption Warning\"],\"source\":[\"aws.ec2\"]}",
             "State": "ENABLED",
             "Description": "EC2 spot instance interruption warning",
@@ -93,35 +93,35 @@ $ aws event list-rules
         },
         {
             "Name": "NTHASGTermRule",
-            "Arn": "arn:aws:events:us-west-2:829527579886:rule/NTHASGTermRule",
+            "Arn": "arn:aws:events:us-west-2:XXXXXXXXXXXXXX:rule/NTHASGTermRule",
             "EventPattern": "{\"detail-type\":[\"EC2 Instance-terminate Lifecycle Action\"],\"source\":[\"aws.autoscaling\"]}",
             "State": "ENABLED",
             "EventBusName": "default"
         },
         {
             "Name": "NTHInstanceStateChangeRule",
-            "Arn": "arn:aws:events:us-west-2:829527579886:rule/NTHInstanceStateChangeRule",
+            "Arn": "arn:aws:events:us-west-2:XXXXXXXXXXXXXX:rule/NTHInstanceStateChangeRule",
             "EventPattern": "{\"detail-type\":[\"EC2 Instance State-change Notification\"],\"source\":[\"aws.ec2\"]}",
             "State": "ENABLED",
             "EventBusName": "default"
         },
         {
             "Name": "NTHRebalanceRule",
-            "Arn": "arn:aws:events:us-west-2:829527579886:rule/NTHRebalanceRule",
+            "Arn": "arn:aws:events:us-west-2:XXXXXXXXXXXXXX:rule/NTHRebalanceRule",
             "EventPattern": "{\"detail-type\":[\"EC2 Instance Rebalance Recommendation\"],\"source\":[\"aws.ec2\"]}",
             "State": "ENABLED",
             "EventBusName": "default"
         },
         {
             "Name": "NTHScheduledChangeRule",
-            "Arn": "arn:aws:events:us-west-2:829527579886:rule/NTHScheduledChangeRule",
+            "Arn": "arn:aws:events:us-west-2:XXXXXXXXXXXXXX:rule/NTHScheduledChangeRule",
             "EventPattern": "{\"detail-type\":[\"AWS Health Event\"],\"source\":[\"aws.health\"]}",
             "State": "ENABLED",
             "EventBusName": "default"
         },
         {
             "Name": "NTHSpotTermRule",
-            "Arn": "arn:aws:events:us-west-2:829527579886:rule/NTHSpotTermRule",
+            "Arn": "arn:aws:events:us-west-2:XXXXXXXXXXXXXX:rule/NTHSpotTermRule",
             "EventPattern": "{\"detail-type\":[\"EC2 Spot Instance Interruption Warning\"],\"source\":[\"aws.ec2\"]}",
             "State": "ENABLED",
             "EventBusName": "default"
