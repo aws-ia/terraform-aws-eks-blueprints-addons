@@ -2,7 +2,7 @@
 
 Starting with [EKS Blueprints v5](https://github.com/aws-ia/terraform-aws-eks-blueprints/blob/main/docs/v4-to-v5/motivation.md) we have made a decision to only support the provisioning of a certain core set of [add-ons](./addons/). On an going basis, we will evaluate the current list to see if more add-ons need to be supported via this repo. Typically you can expect that any AWS created add-on that is not yet available via the [Amazon EKS add-ons](./amazon-eks-addons.md) will be prioritized to be provisioned through this repository.
 
-In addition to these AWS add-ons, we will also support the provisioning of certain OSS add-ons that we think customers will benefit from. These are selected based on customer demand (e.g. [metrics-server](./addons/metrics-server.md)) and certain patterns ([gitops](./addons/argocd.md)) that are foundational elements a complete blueprint of an EKS cluster.
+In addition to these AWS add-ons, we will also support the provisioning of certain OSS add-ons that we think customers will benefit from. These are selected based on customer demand (e.g. [metrics-server](./addons/metrics-server.md)) and certain patterns ([gitops](./addons/argocd.md)) that are foundational elements for a complete blueprint of an EKS cluster.
 
 One of the reasons customers pick kubernetes is because of its strong commercial and open-source software ecosystem and would like to provision add-ons that are not necessarily supported by EKS Blueprints. For such add-ons the options are as following:
 
