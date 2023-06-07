@@ -86,7 +86,7 @@ terraform apply -target=module.addons
 terraform destroy -target=module.addons
 ```
 
-## With EKS Blueprints Add-on Module
+## With EKS Blueprints Addon Module
 
 If you have an add-on that requires an IAM Role for Service Account (IRSA), we have created a new Terraform module [terraform-aws-eks-blueprints-addon](https://registry.terraform.io/modules/aws-ia/eks-blueprints-addon/aws/latest) that can help provision a Helm chart along with an IAM role and policies with permissions required for the add-on to function properly. We use this module for all of the add-ons that are provisioned by EKS Blueprints Add-ons today.
 
