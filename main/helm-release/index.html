@@ -10,27 +10,27 @@
         <meta name="author" content="AWS">
       
       
-        <link rel="canonical" href="https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/aws-load-balancer-controller/">
+        <link rel="canonical" href="https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/helm-release/">
       
       
-        <link rel="prev" href="../aws-fsx-csi-driver/">
+        <link rel="prev" href="../aws-partner-addons/">
       
       
-        <link rel="next" href="../aws-node-termination-handler/">
+        <link rel="next" href="../addons/argo-rollouts/">
       
-      <link rel="icon" href="../../images/colored-logo.png">
+      <link rel="icon" href="../images/colored-logo.png">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.4">
     
     
       
-        <title>AWS Load Balancer Controller. - Amazon EKS Blueprints Addons</title>
+        <title>Helm Releases - Amazon EKS Blueprints Addons</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.240905d7.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.240905d7.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.a0c5b2b5.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a0c5b2b5.min.css">
       
       
   
@@ -87,7 +87,7 @@
       
     
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -112,7 +112,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#aws-load-balancer-controller" class="md-skip">
+        <a href="#helm-release-add-ons" class="md-skip">
           Skip to content
         </a>
       
@@ -132,9 +132,9 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Amazon EKS Blueprints Addons" class="md-header__button md-logo" aria-label="Amazon EKS Blueprints Addons" data-md-component="logo">
+    <a href=".." title="Amazon EKS Blueprints Addons" class="md-header__button md-logo" aria-label="Amazon EKS Blueprints Addons" data-md-component="logo">
       
-  <img src="../../images/white-logo.png" alt="logo">
+  <img src="../images/white-logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -150,7 +150,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              AWS Load Balancer Controller.
+              Helm Releases
             
           </span>
         </div>
@@ -229,9 +229,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Amazon EKS Blueprints Addons" class="md-nav__button md-logo" aria-label="Amazon EKS Blueprints Addons" data-md-component="logo">
+    <a href=".." title="Amazon EKS Blueprints Addons" class="md-nav__button md-logo" aria-label="Amazon EKS Blueprints Addons" data-md-component="logo">
       
-  <img src="../../images/white-logo.png" alt="logo">
+  <img src="../images/white-logo.png" alt="logo">
 
     </a>
     Amazon EKS Blueprints Addons
@@ -259,7 +259,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href=".." class="md-nav__link">
         Overview
       </a>
     </li>
@@ -274,7 +274,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../architectures/" class="md-nav__link">
+      <a href="../architectures/" class="md-nav__link">
         Architectures
       </a>
     </li>
@@ -289,7 +289,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../amazon-eks-addons/" class="md-nav__link">
+      <a href="../amazon-eks-addons/" class="md-nav__link">
         Amazon EKS Addons
       </a>
     </li>
@@ -304,7 +304,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../aws-partner-addons/" class="md-nav__link">
+      <a href="../aws-partner-addons/" class="md-nav__link">
         AWS Partner Addons
       </a>
     </li>
@@ -315,148 +315,6 @@
       
       
 
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../helm-release/" class="md-nav__link">
-        Helm Releases
-      </a>
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-    
-  
-  
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
-      
-      
-      
-      
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
-      
-      
-      
-        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
-          Addons
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
-        <label class="md-nav__title" for="__nav_6">
-          <span class="md-nav__icon md-icon"></span>
-          Addons
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../argo-rollouts/" class="md-nav__link">
-        Argo Rollouts
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../argo-workflows/" class="md-nav__link">
-        Argo Workflows
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../argocd/" class="md-nav__link">
-        Argo CD
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../aws-cloudwatch-metrics/" class="md-nav__link">
-        AWS CloudWatch Metrics
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../aws-efs-csi-driver/" class="md-nav__link">
-        AWS EFS CSI Driver
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../aws-for-fluentbit/" class="md-nav__link">
-        AWS for Fluent Bit
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../aws-fsx-csi-driver/" class="md-nav__link">
-        AWS FSx CSI Driver
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
   
   
     
@@ -471,12 +329,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          AWS Load Balancer Controller.
+          Helm Releases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        AWS Load Balancer Controller.
+        Helm Releases
       </a>
       
         
@@ -495,35 +353,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
-    Usage
-  </a>
-  
-    <nav class="md-nav" aria-label="Usage">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#helm-chart-customization" class="md-nav__link">
-    Helm Chart customization
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#validate" class="md-nav__link">
-    Validate
+  <a href="#with-helm_release-terraform-resource" class="md-nav__link">
+    With helm_release Terraform Resource
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#resources" class="md-nav__link">
-    Resources
+  <a href="#with-helm_releases-variable" class="md-nav__link">
+    With helm_releases Variable
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#with-eks-blueprints-addon-module" class="md-nav__link">
+    With EKS Blueprints Addon Module
   </a>
   
 </li>
@@ -535,6 +380,48 @@
     </li>
   
 
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          Addons
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          Addons
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../addons/argo-rollouts/" class="md-nav__link">
+        Argo Rollouts
+      </a>
+    </li>
+  
+
             
           
             
@@ -543,7 +430,105 @@
   
   
     <li class="md-nav__item">
-      <a href="../aws-node-termination-handler/" class="md-nav__link">
+      <a href="../addons/argo-workflows/" class="md-nav__link">
+        Argo Workflows
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../addons/argocd/" class="md-nav__link">
+        Argo CD
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../addons/aws-cloudwatch-metrics/" class="md-nav__link">
+        AWS CloudWatch Metrics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../addons/aws-efs-csi-driver/" class="md-nav__link">
+        AWS EFS CSI Driver
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../addons/aws-for-fluentbit/" class="md-nav__link">
+        AWS for Fluent Bit
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../addons/aws-fsx-csi-driver/" class="md-nav__link">
+        AWS FSx CSI Driver
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../addons/aws-load-balancer-controller/" class="md-nav__link">
+        AWS Load Balancer Controller.
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../addons/aws-node-termination-handler/" class="md-nav__link">
         AWS Node Termination Handler
       </a>
     </li>
@@ -557,7 +542,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../aws-private-ca-issuer/" class="md-nav__link">
+      <a href="../addons/aws-private-ca-issuer/" class="md-nav__link">
         AWS Private CA Issuer
       </a>
     </li>
@@ -571,7 +556,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../cert-manager/" class="md-nav__link">
+      <a href="../addons/cert-manager/" class="md-nav__link">
         Cert-Manager
       </a>
     </li>
@@ -585,7 +570,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../cluster-autoscaler/" class="md-nav__link">
+      <a href="../addons/cluster-autoscaler/" class="md-nav__link">
         Cluster Autoscaler
       </a>
     </li>
@@ -599,7 +584,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../cluster-proportional-autoscaler/" class="md-nav__link">
+      <a href="../addons/cluster-proportional-autoscaler/" class="md-nav__link">
         Cluster Proportional Autoscaler
       </a>
     </li>
@@ -613,7 +598,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../external-dns/" class="md-nav__link">
+      <a href="../addons/external-dns/" class="md-nav__link">
         External DNS
       </a>
     </li>
@@ -627,7 +612,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../external-secrets/" class="md-nav__link">
+      <a href="../addons/external-secrets/" class="md-nav__link">
         External Secrets
       </a>
     </li>
@@ -641,7 +626,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../fargate-fluentbit/" class="md-nav__link">
+      <a href="../addons/fargate-fluentbit/" class="md-nav__link">
         Fargate FluentBit
       </a>
     </li>
@@ -655,7 +640,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../ingress-nginx/" class="md-nav__link">
+      <a href="../addons/ingress-nginx/" class="md-nav__link">
         Ingress Nginx
       </a>
     </li>
@@ -669,7 +654,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../karpenter/" class="md-nav__link">
+      <a href="../addons/karpenter/" class="md-nav__link">
         Karpenter
       </a>
     </li>
@@ -683,7 +668,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../kube-prometheus-stack/" class="md-nav__link">
+      <a href="../addons/kube-prometheus-stack/" class="md-nav__link">
         Kube Prometheus Stack
       </a>
     </li>
@@ -697,7 +682,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../metrics-server/" class="md-nav__link">
+      <a href="../addons/metrics-server/" class="md-nav__link">
         Metrics Server
       </a>
     </li>
@@ -711,7 +696,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../opa-gatekeeper/" class="md-nav__link">
+      <a href="../addons/opa-gatekeeper/" class="md-nav__link">
         OPA Gatekeeper
       </a>
     </li>
@@ -725,7 +710,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../secrets-store-csi-driver-provider-aws/" class="md-nav__link">
+      <a href="../addons/secrets-store-csi-driver-provider-aws/" class="md-nav__link">
         AWS Secrets Manager and Config Provider for Secret Store CSI Driver
       </a>
     </li>
@@ -739,7 +724,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../velero/" class="md-nav__link">
+      <a href="../addons/velero/" class="md-nav__link">
         Velero
       </a>
     </li>
@@ -753,7 +738,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../vertical-pod-autoscaler/" class="md-nav__link">
+      <a href="../addons/vertical-pod-autoscaler/" class="md-nav__link">
         Vertical Pod Autoscaler
       </a>
     </li>
@@ -794,35 +779,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
-    Usage
-  </a>
-  
-    <nav class="md-nav" aria-label="Usage">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#helm-chart-customization" class="md-nav__link">
-    Helm Chart customization
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#validate" class="md-nav__link">
-    Validate
+  <a href="#with-helm_release-terraform-resource" class="md-nav__link">
+    With helm_release Terraform Resource
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#resources" class="md-nav__link">
-    Resources
+  <a href="#with-helm_releases-variable" class="md-nav__link">
+    With helm_releases Variable
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#with-eks-blueprints-addon-module" class="md-nav__link">
+    With EKS Blueprints Addon Module
   </a>
   
 </li>
@@ -845,75 +817,83 @@
   
 
 
-<h1 id="aws-load-balancer-controller">AWS Load Balancer Controller.<a class="headerlink" href="#aws-load-balancer-controller" title="Permanent link">&para;</a></h1>
-<p><a href="https://kubernetes-sigs.github.io/aws-load-balancer-controller/">AWS Load Balancer Controller </a> is a controller to help manage Elastic Load Balancers for a Kubernetes cluster. This Add-on deploys this controller in an Amazon EKS Cluster.</p>
-<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
-<p>In order to deploy the AWS Load Balancer Controller Addon via <a href="https://github.com/aws-ia/terraform-aws-eks-blueprints-addons">EKS Blueprints Addons</a>, reference the following parameters under the <code>module.eks_blueprints_addons</code>.</p>
-<div class="language-hcl highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kr">module</span><span class="w"> </span><span class="nv">&quot;eks_blueprints_addons&quot;</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="na">enable_aws_load_balancer_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nb">aws_load_balancer_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="na">set</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="p">{</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">        </span><span class="na">name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;vpcId&quot;</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">        </span><span class="na">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">module.vpc.vpc_id</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">      </span><span class="p">},</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">      </span><span class="p">{</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">        </span><span class="na">name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;podDisruptionBudget.maxUnavailable&quot;</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">        </span><span class="na">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">      </span><span class="p">},</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="p">]</span>
+<h1 id="helm-release-add-ons">Helm Release Add-ons<a class="headerlink" href="#helm-release-add-ons" title="Permanent link">&para;</a></h1>
+<p>Starting with <a href="https://github.com/aws-ia/terraform-aws-eks-blueprints/blob/main/docs/v4-to-v5/motivation.md">EKS Blueprints v5</a> we have made a decision to only support the provisioning of a certain core set of <a href="./addons/">add-ons</a>. On an going basis, we will evaluate the current list to see if more add-ons need to be supported via this repo. Typically you can expect that any AWS created add-on that is not yet available via the <a href="../amazon-eks-addons/">Amazon EKS add-ons</a> will be prioritized to be provisioned through this repository.</p>
+<p>In addition to these AWS add-ons, we will also support the provisioning of certain OSS add-ons that we think customers will benefit from. These are selected based on customer demand (e.g. <a href="../addons/metrics-server/">metrics-server</a>) and certain patterns (<a href="../addons/argocd/">gitops</a>) that are foundational elements for a complete blueprint of an EKS cluster.</p>
+<p>One of the reasons customers pick Kubernetes is because of its strong commercial and open-source software ecosystem and would like to provision add-ons that are not necessarily supported by EKS Blueprints. For such add-ons the options are as following:</p>
+<h2 id="with-helm_release-terraform-resource">With <code>helm_release</code> Terraform Resource<a class="headerlink" href="#with-helm_release-terraform-resource" title="Permanent link">&para;</a></h2>
+<p>The <a href="https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release">helm_release</a> resource is the most fundamental way to provision a helm chart via Terraform.</p>
+<p>Use this resource, if you need to control the lifecycle add-ons down to level of each add-on resource.</p>
+<h2 id="with-helm_releases-variable">With <code>helm_releases</code> Variable<a class="headerlink" href="#with-helm_releases-variable" title="Permanent link">&para;</a></h2>
+<p>You can use the <code>helm_releases</code> variable in <a href="https://registry.terraform.io/modules/aws-ia/eks-blueprints-addons/aws/latest?tab=inputs">EKS Blueprints Add-ons</a> to provide a map of add-ons and their respective Helm configuration. Under the hood, we just iterate through the provided map and pass each configuration to the Terraform <a href="https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release">helm_release</a> resource.</p>
+<p>E.g.</p>
+<div class="language-hcl highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kr">module</span><span class="w"> </span><span class="nv">&quot;addons&quot;</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="na">source</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;aws-ia/eks-blueprints-addons/aws&quot;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="na">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;~&gt; 1.0&quot;</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="na">cluster_name</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&lt;cluster_name&gt;&quot;</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="na">cluster_endpoint</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&lt;cluster_endpoint&gt;&quot;</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="na">cluster_version</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&lt;cluster_version&gt;&quot;</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="na">oidc_provider_arn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&lt;oidc_provider_arn&gt;&quot;</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1">  # EKS add-ons</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="nb">eks_addons</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="nb">coredns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{}</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="nb">vpc-cni</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{}</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="nb">kube-proxy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{}</span>
 </span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="c1">  # Blueprints add-ons</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">  </span><span class="na">enable_aws_efs_csi_driver</span><span class="w">                    </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">  </span><span class="na">enable_aws_cloudwatch_metrics</span><span class="w">                </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">  </span><span class="na">enable_cert_manager</span><span class="w">                          </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">  </span><span class="p">...</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="c1">  # Pass in any number of Helm charts to be created for those that are not natively supported</span>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">  </span><span class="nb">helm_releases</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">    </span><span class="nb">prometheus-adapter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">      </span><span class="na">description</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;A Helm chart for k8s prometheus adapter&quot;</span>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="w">      </span><span class="na">namespace</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;prometheus-adapter&quot;</span>
+</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="w">      </span><span class="na">create_namespace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="w">      </span><span class="na">chart</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;prometheus-adapter&quot;</span>
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="w">      </span><span class="na">chart_version</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;4.2.0&quot;</span>
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="w">      </span><span class="na">repository</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;https://prometheus-community.github.io/helm-charts&quot;</span>
+</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="w">      </span><span class="na">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="w">        </span><span class="o">&lt;&lt;-</span><span class="dl">EOT</span>
+</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="sh">          replicas: 2</span>
+</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a><span class="sh">          podDisruptionBudget:</span>
+</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a><span class="sh">            enabled: true</span>
+</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a><span class="dl">        EOT</span>
+</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a><span class="w">      </span><span class="p">]</span>
+</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a><span class="w">    </span><span class="nb">gpu-operator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a><span class="w">      </span><span class="na">description</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;A Helm chart for NVIDIA GPU operator&quot;</span>
+</span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a><span class="w">      </span><span class="na">namespace</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;gpu-operator&quot;</span>
+</span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a><span class="w">      </span><span class="na">create_namespace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+</span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a><span class="w">      </span><span class="na">chart</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;gpu-operator&quot;</span>
+</span><span id="__span-0-45"><a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a><span class="w">      </span><span class="na">chart_version</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;v23.3.2&quot;</span>
+</span><span id="__span-0-46"><a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a><span class="w">      </span><span class="na">repository</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;https://nvidia.github.io/gpu-operator&quot;</span>
+</span><span id="__span-0-47"><a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a><span class="w">      </span><span class="na">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-0-48"><a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a><span class="w">        </span><span class="o">&lt;&lt;-</span><span class="dl">EOT</span>
+</span><span id="__span-0-49"><a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a><span class="sh">          operator:</span>
+</span><span id="__span-0-50"><a id="__codelineno-0-50" name="__codelineno-0-50" href="#__codelineno-0-50"></a><span class="sh">            defaultRuntime: containerd</span>
+</span><span id="__span-0-51"><a id="__codelineno-0-51" name="__codelineno-0-51" href="#__codelineno-0-51"></a><span class="dl">        EOT</span>
+</span><span id="__span-0-52"><a id="__codelineno-0-52" name="__codelineno-0-52" href="#__codelineno-0-52"></a><span class="w">      </span><span class="p">]</span>
+</span><span id="__span-0-53"><a id="__codelineno-0-53" name="__codelineno-0-53" href="#__codelineno-0-53"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-0-54"><a id="__codelineno-0-54" name="__codelineno-0-54" href="#__codelineno-0-54"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-0-55"><a id="__codelineno-0-55" name="__codelineno-0-55" href="#__codelineno-0-55"></a>
+</span><span id="__span-0-56"><a id="__codelineno-0-56" name="__codelineno-0-56" href="#__codelineno-0-56"></a><span class="w">  </span><span class="na">tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">local.tags</span>
+</span><span id="__span-0-57"><a id="__codelineno-0-57" name="__codelineno-0-57" href="#__codelineno-0-57"></a><span class="p">}</span>
 </span></code></pre></div>
-<h3 id="helm-chart-customization">Helm Chart customization<a class="headerlink" href="#helm-chart-customization" title="Permanent link">&para;</a></h3>
-<p>It's possible to customize your deployment using the Helm Chart parameters inside the <code>aws_load_balancer_controller</code> configuration block:</p>
-<div class="language-hcl highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="w">  </span><span class="nb">aws_load_balancer_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="na">set</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">      </span><span class="p">{</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">        </span><span class="na">name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;vpcId&quot;</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">        </span><span class="na">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">module.vpc.vpc_id</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">      </span><span class="p">},</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">      </span><span class="p">{</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">        </span><span class="na">name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;podDisruptionBudget.maxUnavailable&quot;</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">        </span><span class="na">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">      </span><span class="p">},</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">      </span><span class="p">{</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">        </span><span class="na">name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;resources.requests.cpu&quot;</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">        </span><span class="na">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">100</span><span class="err">m</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">      </span><span class="p">},</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">      </span><span class="p">{</span>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">        </span><span class="na">name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;resources.requests.memory&quot;</span>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">        </span><span class="na">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">128</span><span class="err">Mi</span>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">      </span><span class="p">},</span>
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">    </span><span class="p">]</span>
-</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="p">}</span>
+<p>With this pattern, the lifecycle of all your add-ons is tied to that of the <code>addons</code> module. This allows you to easily target the addon module in your Terraform apply and destroy commands. E.g.</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>terraform<span class="w"> </span>apply<span class="w"> </span>-target<span class="o">=</span>module.addons
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>terraform<span class="w"> </span>destroy<span class="w"> </span>-target<span class="o">=</span>module.addons
 </span></code></pre></div>
-<p>You can find all available Helm Chart parameter values <a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/main/helm/aws-load-balancer-controller/values.yaml">here</a>.</p>
-<h2 id="validate">Validate<a class="headerlink" href="#validate" title="Permanent link">&para;</a></h2>
-<ol>
-<li>To validate the deployment, check if the <code>aws-load-balancer-controller</code> Pods were created in the <code>kube-system</code> Namespace, as the following example.</li>
-</ol>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>kubectl<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>aws-load-balancer-controller
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>NAMESPACE<span class="w">       </span>NAME<span class="w">                                            </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>kube-system<span class="w">     </span>aws-load-balancer-controller-6cbdb58654-fvskt<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>26m
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>kube-system<span class="w">     </span>aws-load-balancer-controller-6cbdb58654-sc7dk<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>26m
-</span></code></pre></div>
-<ol>
-<li>Create a Kubernetes Ingress, using the <code>alb</code> IngressClass, pointing to an existing Service. In this example we'll use a Service called <code>example-svc</code>.</li>
-</ol>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>kubectl<span class="w"> </span>create<span class="w"> </span>ingress<span class="w"> </span>example-ingress<span class="w"> </span>--class<span class="w"> </span>alb<span class="w"> </span>--rule<span class="o">=</span><span class="s2">&quot;/*=example-svc:80&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>--annotation<span class="w"> </span>alb.ingress.kubernetes.io/scheme<span class="o">=</span>internet-facing<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>--annotation<span class="w"> </span>alb.ingress.kubernetes.io/target-type<span class="o">=</span>ip
-</span></code></pre></div>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>ingress<span class="w">  </span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>NAME<span class="w">                </span>CLASS<span class="w">   </span>HOSTS<span class="w">   </span>ADDRESS<span class="w">                                                                 </span>PORTS<span class="w">   </span>AGE
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>example-ingress<span class="w">     </span>alb<span class="w">     </span>*<span class="w">       </span>k8s-example-ingress-7e0d6f03e7-1234567890.us-west-2.elb.amazonaws.com<span class="w">   </span><span class="m">80</span><span class="w">      </span>4m9s
-</span></code></pre></div>
-<h2 id="resources">Resources<a class="headerlink" href="#resources" title="Permanent link">&para;</a></h2>
-<p><a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/">GitHub Repo</a>
-<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/tree/main/helm/aws-load-balancer-controller">Helm Chart</a>
-<a href="https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html">AWS Docs</a></p>
+<h2 id="with-eks-blueprints-addon-module">With EKS Blueprints Addon Module<a class="headerlink" href="#with-eks-blueprints-addon-module" title="Permanent link">&para;</a></h2>
+<p>If you have an add-on that requires an IAM Role for Service Account (IRSA), we have created a new Terraform module <a href="https://registry.terraform.io/modules/aws-ia/eks-blueprints-addon/aws/latest">terraform-aws-eks-blueprints-addon</a> that can help provision a Helm chart along with an IAM role and policies with permissions required for the add-on to function properly. We use this module for all of the add-ons that are provisioned by EKS Blueprints Add-ons today.</p>
+<p>You can optionally use this module for add-ons that do not need IRSA or even just to create the IAM resources for IRSA and skip the helm release. Detailed usage of how to consume this module can be found in its <a href="https://github.com/aws-ia/terraform-aws-eks-blueprints-addon#readme">readme</a>.</p>
+<p>This pattern can be used to create a Terraform module with a set of add-ons that are not supported in the EKS Blueprints Add-ons today and wrap them in the same module definition. An example of this is the <a href="https://github.com/aws-ia/terraform-aws-eks-ack-addons">ACK add-ons repository</a> which is a collection of ACK helm chart deployments with IRSA for each of the ACK controllers.</p>
 
 
 
@@ -955,10 +935,10 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs.sticky"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs.sticky"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.19047be9.min.js"></script>
+      <script src="../assets/javascripts/bundle.19047be9.min.js"></script>
       
     
   </body>
