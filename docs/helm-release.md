@@ -21,7 +21,7 @@ E.g.
 ```hcl
 module "addons" {
   source  = "aws-ia/eks-blueprints-addons/aws"
-  version = "1.1.0"
+  version = "~> 1.0"
 
   cluster_name      = "<cluster_name>"
   cluster_endpoint  = "<cluster_endpoint>"
