@@ -92,4 +92,4 @@ If you have an add-on that requires an IAM Role for Service Account (IRSA), we h
 
 You can optionally use this module for add-ons that do not need IRSA or even just to create the IAM resources for IRSA and skip the helm release. Detailed usage of how to consume this module can be found in its [readme](https://github.com/aws-ia/terraform-aws-eks-blueprints-addon#readme).
 
-This pattern can be used to create a terraform module with a set of add-ons that are not supported in the EKS Blueprints Add-ons today and wrap them in the same module definition. An example of this is the [ACK add-ons repository](https://github.com/aws-ia/terraform-aws-eks-ack-addons) which is a collection of ACK helm chart deployments with IRSA for each of the ACK controllers.
+This pattern can be used to create a Terraform module with a set of add-ons that are not supported in the EKS Blueprints Add-ons today and wrap them in the same module definition. An example of this is the [ACK add-ons repository](https://github.com/aws-ia/terraform-aws-eks-ack-addons) which is a collection of ACK helm chart deployments with IRSA for each of the ACK controllers.
