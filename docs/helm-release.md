@@ -78,7 +78,7 @@ module "addons" {
 }
 ```
 
-With this pattern, the lifecycle of all your add-ons is tied to that of the `addons` module. This allows you to easily target the addon module in your terraform apply and destroy commands. E.g.
+With this pattern, the lifecycle of all your add-ons is tied to that of the `addons` module. This allows you to easily target the addon module in your Terraform apply and destroy commands. E.g.
 
 ```sh
 terraform apply -target=module.addons
