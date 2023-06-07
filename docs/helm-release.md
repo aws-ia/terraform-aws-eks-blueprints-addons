@@ -8,7 +8,7 @@ One of the reasons customers pick Kubernetes is because of its strong commercial
 
 ## With `helm_release` Terraform Resource
 
-The [helm_release](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) resource  is the most basic way to provision a helm chart via terraform.
+The [helm_release](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) resource is the most fundamental way to provision a helm chart via Terraform.
 
 Use this resource, if you need to control the lifecycle add-ons down to level of each add-on resource.
 
