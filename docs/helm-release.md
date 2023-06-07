@@ -1,6 +1,6 @@
 # Helm Release Add-ons
 
-Starting with [EKS Blueprints v5](https://github.com/aws-ia/terraform-aws-eks-blueprints/blob/main/docs/v4-to-v5/motivation.md) we have made a decision to only support the provisioning of a certain core set of [add-ons](./addons/). On an going basis, we will evaluate the current list to see if more add-ons need to be supported via this repo. Typically you can expect that any AWS created add-on that is not yet available via the [Amazon EKS add-ons](./amazon-eks-addons.md) will be prioritized to be provisioned through this repository. 
+Starting with [EKS Blueprints v5](https://github.com/aws-ia/terraform-aws-eks-blueprints/blob/main/docs/v4-to-v5/motivation.md) we have made a decision to only support the provisioning of a certain core set of [add-ons](./addons/). On an going basis, we will evaluate the current list to see if more add-ons need to be supported via this repo. Typically you can expect that any AWS created add-on that is not yet available via the [Amazon EKS add-ons](./amazon-eks-addons.md) will be prioritized to be provisioned through this repository.
 
 In addition to these AWS add-ons, we will also support the provisioning of certain OSS add-ons that we think customers will benefit from. These are selected based on customer demand (e.g. [metrics-server](./addons/metrics-server.md)) and certain patterns ([gitops](./addons/argocd.md)) that are foundational elements a complete blueprint of an EKS cluster.
 
@@ -40,7 +40,7 @@ module "addons" {
   enable_aws_cloudwatch_metrics                = true
   enable_cert_manager                          = true
   ...
-  
+
   # Pass in any number of Helm charts to be created for those that are not natively supported
   helm_releases = {
     prometheus-adapter = {
@@ -84,11 +84,11 @@ With this pattern, the lifecycle of all your add-ons is tied to that of the `add
 terraform apply -target=module.addons
 
 terraform destroy -target=module.addons
-``` 
+```
 
 ## With EKS Blueprints Add-on Module
 
-If you have any add-on that requires setting up of an IAM Role for Service Account (IRSA), we have created a new terraform module [terraform-aws-eks-blueprints-addon](https://registry.terraform.io/modules/aws-ia/eks-blueprints-addon/aws/latest) that can help provision a helm chart along with an IAM role and policies with permissions required for the add-on to function properly. We use this module for all of the add-ons that are provisioned by EKS Blueprints Add-ons today. 
+If you have any add-on that requires setting up of an IAM Role for Service Account (IRSA), we have created a new terraform module [terraform-aws-eks-blueprints-addon](https://registry.terraform.io/modules/aws-ia/eks-blueprints-addon/aws/latest) that can help provision a helm chart along with an IAM role and policies with permissions required for the add-on to function properly. We use this module for all of the add-ons that are provisioned by EKS Blueprints Add-ons today.
 
 You can optionally use this module for add-ons that do not need IRSA or even just to create the IAM resources for IRSA and skip the helm release. Detailed usage of how to consume this module can be found in its [readme](https://github.com/aws-ia/terraform-aws-eks-blueprints-addon#readme).
 
