@@ -14,7 +14,7 @@ Use this resource, if you need to control the lifecycle add-ons down to level of
 
 ## With `helm_releases` Variable
 
-You can use the `helm_releases` variable in [EKS Blueprints Add-ons](https://registry.terraform.io/modules/aws-ia/eks-blueprints-addons/aws/latest?tab=inputs) to provide a map of add-ons and their respective helm configuration. Under the hood, we just iterate through the provided map and pass it to the terraform [helm_release](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) resource.
+You can use the `helm_releases` variable in [EKS Blueprints Add-ons](https://registry.terraform.io/modules/aws-ia/eks-blueprints-addons/aws/latest?tab=inputs) to provide a map of add-ons and their respective Helm configuration. Under the hood, we just iterate through the provided map and pass each configuration to the Terraform [helm_release](https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release) resource.
 
 E.g.
 
