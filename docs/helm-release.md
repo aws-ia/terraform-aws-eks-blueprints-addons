@@ -4,7 +4,7 @@ Starting with [EKS Blueprints v5](https://github.com/aws-ia/terraform-aws-eks-bl
 
 In addition to these AWS add-ons, we will also support the provisioning of certain OSS add-ons that we think customers will benefit from. These are selected based on customer demand (e.g. [metrics-server](./addons/metrics-server.md)) and certain patterns ([gitops](./addons/argocd.md)) that are foundational elements for a complete blueprint of an EKS cluster.
 
-One of the reasons customers pick kubernetes is because of its strong commercial and open-source software ecosystem and would like to provision add-ons that are not necessarily supported by EKS Blueprints. For such add-ons the options are as following:
+One of the reasons customers pick Kubernetes is because of its strong commercial and open-source software ecosystem and would like to provision add-ons that are not necessarily supported by EKS Blueprints. For such add-ons the options are as following:
 
 ## With `helm_release` Terraform Resource
 
