@@ -543,13 +543,13 @@ variable "vpa" {
 #  AWS Gateway API Controller
 ################################################################################
 
-variable "enable_aws_gateway_api_contoller" {
+variable "enable_aws_gateway_api_controller" {
   description = "Enable AWS Gateway API Controller add-on"
   type        = bool
   default     = false
 }
 
-variable "aws_gateway_api_contoller" {
+variable "aws_gateway_api_controller" {
   description = "AWS Gateway API Controller add-on configuration values"
   type        = any
   default     = {}

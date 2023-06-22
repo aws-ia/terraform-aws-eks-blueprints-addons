@@ -83,7 +83,7 @@ module "eks_blueprints_addons" {
 | <a name="module_aws_efs_csi_driver"></a> [aws\_efs\_csi\_driver](#module\_aws\_efs\_csi\_driver) | aws-ia/eks-blueprints-addon/aws | 1.0.0 |
 | <a name="module_aws_for_fluentbit"></a> [aws\_for\_fluentbit](#module\_aws\_for\_fluentbit) | aws-ia/eks-blueprints-addon/aws | 1.0.0 |
 | <a name="module_aws_fsx_csi_driver"></a> [aws\_fsx\_csi\_driver](#module\_aws\_fsx\_csi\_driver) | aws-ia/eks-blueprints-addon/aws | 1.0.0 |
-| <a name="module_aws_gateway_api_contoller"></a> [aws\_gateway\_api\_contoller](#module\_aws\_gateway\_api\_contoller) | aws-ia/eks-blueprints-addon/aws | 1.0.0 |
+| <a name="module_aws_gateway_api_controller"></a> [aws\_gateway\_api\_controller](#module\_aws\_gateway\_api\_controller) | aws-ia/eks-blueprints-addon/aws | 1.0.0 |
 | <a name="module_aws_load_balancer_controller"></a> [aws\_load\_balancer\_controller](#module\_aws\_load\_balancer\_controller) | aws-ia/eks-blueprints-addon/aws | 1.0.0 |
 | <a name="module_aws_node_termination_handler"></a> [aws\_node\_termination\_handler](#module\_aws\_node\_termination\_handler) | aws-ia/eks-blueprints-addon/aws | 1.0.0 |
 | <a name="module_aws_node_termination_handler_sqs"></a> [aws\_node\_termination\_handler\_sqs](#module\_aws\_node\_termination\_handler\_sqs) | terraform-aws-modules/sqs/aws | 4.0.1 |
@@ -131,7 +131,7 @@ module "eks_blueprints_addons" {
 | [aws_iam_policy_document.aws_efs_csi_driver](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.aws_for_fluentbit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.aws_fsx_csi_driver](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_iam_policy_document.aws_gateway_api_contoller](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.aws_gateway_api_controller](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.aws_load_balancer_controller](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.aws_node_termination_handler](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.aws_privateca_issuer](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
@@ -158,7 +158,7 @@ module "eks_blueprints_addons" {
 | <a name="input_aws_for_fluentbit"></a> [aws\_for\_fluentbit](#input\_aws\_for\_fluentbit) | AWS Fluentbit add-on configurations | `any` | `{}` | no |
 | <a name="input_aws_for_fluentbit_cw_log_group"></a> [aws\_for\_fluentbit\_cw\_log\_group](#input\_aws\_for\_fluentbit\_cw\_log\_group) | AWS Fluentbit CloudWatch Log Group configurations | `any` | `{}` | no |
 | <a name="input_aws_fsx_csi_driver"></a> [aws\_fsx\_csi\_driver](#input\_aws\_fsx\_csi\_driver) | FSX CSI Driver add-on configuration values | `any` | `{}` | no |
-| <a name="input_aws_gateway_api_contoller"></a> [aws\_gateway\_api\_contoller](#input\_aws\_gateway\_api\_contoller) | AWS Gateway API Controller add-on configuration values | `any` | `{}` | no |
+| <a name="input_aws_gateway_api_controller"></a> [aws\_gateway\_api\_controller](#input\_aws\_gateway\_api\_controller) | AWS Gateway API Controller add-on configuration values | `any` | `{}` | no |
 | <a name="input_aws_load_balancer_controller"></a> [aws\_load\_balancer\_controller](#input\_aws\_load\_balancer\_controller) | AWS Load Balancer Controller add-on configuration values | `any` | `{}` | no |
 | <a name="input_aws_node_termination_handler"></a> [aws\_node\_termination\_handler](#input\_aws\_node\_termination\_handler) | AWS Node Termination Handler add-on configuration values | `any` | `{}` | no |
 | <a name="input_aws_node_termination_handler_asg_arns"></a> [aws\_node\_termination\_handler\_asg\_arns](#input\_aws\_node\_termination\_handler\_asg\_arns) | List of Auto Scaling group ARNs that AWS Node Termination Handler will monitor for EC2 events | `list(string)` | `[]` | no |
@@ -182,7 +182,7 @@ module "eks_blueprints_addons" {
 | <a name="input_enable_aws_efs_csi_driver"></a> [enable\_aws\_efs\_csi\_driver](#input\_enable\_aws\_efs\_csi\_driver) | Enable AWS EFS CSI Driver add-on | `bool` | `false` | no |
 | <a name="input_enable_aws_for_fluentbit"></a> [enable\_aws\_for\_fluentbit](#input\_enable\_aws\_for\_fluentbit) | Enable AWS for FluentBit add-on | `bool` | `false` | no |
 | <a name="input_enable_aws_fsx_csi_driver"></a> [enable\_aws\_fsx\_csi\_driver](#input\_enable\_aws\_fsx\_csi\_driver) | Enable AWS FSX CSI Driver add-on | `bool` | `false` | no |
-| <a name="input_enable_aws_gateway_api_contoller"></a> [enable\_aws\_gateway\_api\_contoller](#input\_enable\_aws\_gateway\_api\_contoller) | Enable AWS Gateway API Controller add-on | `bool` | `false` | no |
+| <a name="input_enable_aws_gateway_api_controller"></a> [enable\_aws\_gateway\_api\_controller](#input\_enable\_aws\_gateway\_api\_controller) | Enable AWS Gateway API Controller add-on | `bool` | `false` | no |
 | <a name="input_enable_aws_load_balancer_controller"></a> [enable\_aws\_load\_balancer\_controller](#input\_enable\_aws\_load\_balancer\_controller) | Enable AWS Load Balancer Controller add-on | `bool` | `false` | no |
 | <a name="input_enable_aws_node_termination_handler"></a> [enable\_aws\_node\_termination\_handler](#input\_enable\_aws\_node\_termination\_handler) | Enable AWS Node Termination Handler add-on | `bool` | `false` | no |
 | <a name="input_enable_aws_privateca_issuer"></a> [enable\_aws\_privateca\_issuer](#input\_enable\_aws\_privateca\_issuer) | Enable AWS PCA Issuer | `bool` | `false` | no |

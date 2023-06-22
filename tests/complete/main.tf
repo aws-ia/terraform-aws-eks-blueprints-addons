@@ -169,9 +169,9 @@ module "eks_blueprints_addons" {
     s3_backup_location = "${module.velero_backup_s3_bucket.s3_bucket_arn}/backups"
   }
 
-  enable_aws_gateway_api_contoller = true
+  enable_aws_gateway_api_controller = true
   # ECR login required
-  aws_gateway_api_contoller = {
+  aws_gateway_api_controller = {
     repository_username = data.aws_ecrpublic_authorization_token.token.user_name
     repository_password = data.aws_ecrpublic_authorization_token.token.password
   }

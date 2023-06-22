@@ -7,16 +7,16 @@
 AWS Gateway API Controller can be deployed by enabling the add-on via the following.
 
 ```hcl
-enable_aws_gateway_api_contoller = true
+enable_aws_gateway_api_controller = true
 ```
 
 You can optionally customize the Helm chart that deploys AWS Gateway API Controller via the following configuration.
 
 ```hcl
-  enable_aws_gateway_api_contoller = true
+  enable_aws_gateway_api_controller = true
 
-  aws_gateway_api_contoller = {
-    name          = "aws-gateway-api-contoller"
+  aws_gateway_api_controller = {
+    name          = "aws-gateway-api-controller"
     chart_version = "v0.0.12"
     repository    = "oci://public.ecr.aws/aws-application-networking-k8s"
     namespace     = "aws-application-networking-system"
@@ -29,8 +29,8 @@ Verify aws-gateway-api-contoller pods are running.
 ```sh
 $ kubectl get pods -n aws-application-networking-system
 NAME                                                              READY   STATUS    RESTARTS   AGE
-aws-gateway-api-contoller-aws-gateway-controller-chart-8f42q426   1/1     Running   0          40s
-aws-gateway-api-contoller-aws-gateway-controller-chart-8f4tbl9g   1/1     Running   0          71s
+aws-gateway-api-controller-aws-gateway-controller-chart-8f42q426   1/1     Running   0          40s
+aws-gateway-api-controller-aws-gateway-controller-chart-8f4tbl9g   1/1     Running   0          71s
 ```
 
 Deploy example GatewayClass
