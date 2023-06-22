@@ -9,6 +9,11 @@ variable "cluster_name" {
   type        = string
 }
 
+variable "cluster_vpc_id" {
+  description = "VPC Id of the EKS Cluster"
+  type        = string
+}
+
 variable "cluster_endpoint" {
   description = "Endpoint for your Kubernetes API server"
   type        = string
@@ -57,7 +62,7 @@ variable "enable_argo_rollouts" {
 }
 
 variable "argo_rollouts" {
-  description = "Argo Rollouts addon configuration values"
+  description = "Argo Rollouts add-on configuration values"
   type        = any
   default     = {}
 }
@@ -73,7 +78,7 @@ variable "enable_argo_workflows" {
 }
 
 variable "argo_workflows" {
-  description = "Argo Workflows addon configuration values"
+  description = "Argo Workflows add-on configuration values"
   type        = any
   default     = {}
 }
@@ -89,7 +94,7 @@ variable "enable_argocd" {
 }
 
 variable "argocd" {
-  description = "ArgoCD addon configuration values"
+  description = "ArgoCD add-on configuration values"
   type        = any
   default     = {}
 }
@@ -105,7 +110,7 @@ variable "enable_aws_cloudwatch_metrics" {
 }
 
 variable "aws_cloudwatch_metrics" {
-  description = "Cloudwatch Metrics addon configuration values"
+  description = "Cloudwatch Metrics add-on configuration values"
   type        = any
   default     = {}
 }
@@ -121,7 +126,7 @@ variable "enable_aws_efs_csi_driver" {
 }
 
 variable "aws_efs_csi_driver" {
-  description = "EFS CSI Driver addon configuration values"
+  description = "EFS CSI Driver add-on configuration values"
   type        = any
   default     = {}
 }
@@ -159,7 +164,7 @@ variable "enable_aws_fsx_csi_driver" {
 }
 
 variable "aws_fsx_csi_driver" {
-  description = "FSX CSI Driver addon configuration values"
+  description = "FSX CSI Driver add-on configuration values"
   type        = any
   default     = {}
 }
@@ -175,7 +180,7 @@ variable "enable_aws_load_balancer_controller" {
 }
 
 variable "aws_load_balancer_controller" {
-  description = "AWS Load Balancer Controller addon configuration values"
+  description = "AWS Load Balancer Controller add-on configuration values"
   type        = any
   default     = {}
 }
@@ -191,7 +196,7 @@ variable "enable_aws_node_termination_handler" {
 }
 
 variable "aws_node_termination_handler" {
-  description = "AWS Node Termination Handler addon configuration values"
+  description = "AWS Node Termination Handler add-on configuration values"
   type        = any
   default     = {}
 }
@@ -235,7 +240,7 @@ variable "enable_cert_manager" {
 }
 
 variable "cert_manager" {
-  description = "cert-manager addon configuration values"
+  description = "cert-manager add-on configuration values"
   type        = any
   default     = {}
 }
@@ -257,7 +262,7 @@ variable "enable_cluster_autoscaler" {
 }
 
 variable "cluster_autoscaler" {
-  description = "Cluster Autoscaler addon configuration values"
+  description = "Cluster Autoscaler add-on configuration values"
   type        = any
   default     = {}
 }
@@ -279,17 +284,17 @@ variable "cluster_proportional_autoscaler" {
 }
 
 ################################################################################
-# EKS Addons
+# EKS add-ons
 ################################################################################
 
 variable "eks_addons" {
-  description = "Map of EKS addon configurations to enable for the cluster. Addon name can be the map keys or set with `name`"
+  description = "Map of EKS add-on configurations to enable for the cluster. Add-on name can be the map keys or set with `name`"
   type        = any
   default     = {}
 }
 
 variable "eks_addons_timeouts" {
-  description = "Create, update, and delete timeout configurations for the EKS addons"
+  description = "Create, update, and delete timeout configurations for the EKS add-ons"
   type        = map(string)
   default     = {}
 }
@@ -305,7 +310,7 @@ variable "enable_external_dns" {
 }
 
 variable "external_dns" {
-  description = "external-dns addon configuration values"
+  description = "external-dns add-on configuration values"
   type        = any
   default     = {}
 }
@@ -327,7 +332,7 @@ variable "enable_external_secrets" {
 }
 
 variable "external_secrets" {
-  description = "External Secrets addon configuration values"
+  description = "External Secrets add-on configuration values"
   type        = any
   default     = {}
 }
@@ -415,7 +420,7 @@ variable "enable_karpenter" {
 }
 
 variable "karpenter" {
-  description = "Karpenter addon configuration values"
+  description = "Karpenter add-on configuration values"
   type        = any
   default     = {}
 }
@@ -513,7 +518,7 @@ variable "enable_velero" {
 }
 
 variable "velero" {
-  description = "Velero addon configuration values"
+  description = "Velero add-on configuration values"
   type        = any
   default     = {}
 }
@@ -529,7 +534,23 @@ variable "enable_vpa" {
 }
 
 variable "vpa" {
-  description = "Vertical Pod Autoscaler addon configuration values"
+  description = "Vertical Pod Autoscaler add-on configuration values"
+  type        = any
+  default     = {}
+}
+
+################################################################################
+#  AWS Gateway API Controller
+################################################################################
+
+variable "enable_aws_gateway_api_contoller" {
+  description = "Enable AWS Gateway API Controller add-on"
+  type        = bool
+  default     = false
+}
+
+variable "aws_gateway_api_contoller" {
+  description = "AWS Gateway API Controller add-on configuration values"
   type        = any
   default     = {}
 }

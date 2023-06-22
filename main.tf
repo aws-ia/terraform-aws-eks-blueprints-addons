@@ -3067,3 +3067,118 @@ module "vpa" {
 
   tags = var.tags
 }
+
+################################################################################
+# AWS Gateway API Controller
+################################################################################
+
+locals {
+  aws_gateway_api_contoller_service_account = try(var.aws_gateway_api_contoller.service_account_name, "gateway-api-controller")
+}
+
+data "aws_iam_policy_document" "aws_gateway_api_contoller" {
+  count = var.enable_aws_gateway_api_contoller ? 1 : 0
+
+  statement {
+    actions = [
+      "vpc-lattice:*",
+      "iam:CreateServiceLinkedRole",
+      "ec2:DescribeVpcs",
+      "ec2:DescribeSubnets"
+    ]
+    resources = ["*"]
+  }
+}
+
+module "aws_gateway_api_contoller" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
+
+  create = var.enable_aws_gateway_api_contoller
+
+  # https://github.com/aws/aws-application-networking-k8s/blob/main/helm/Chart.yaml
+  name             = try(var.aws_gateway_api_contoller.name, "aws-gateway-api-contoller")
+  description      = try(var.aws_gateway_api_contoller.description, "A Helm chart to deploy aws-gateway-api-contoller")
+  namespace        = try(var.aws_gateway_api_contoller.namespace, "aws-application-networking-system")
+  create_namespace = try(var.aws_gateway_api_contoller.create_namespace, true)
+  chart            = "aws-gateway-controller-chart"
+  chart_version    = try(var.aws_gateway_api_contoller.chart_version, "v0.0.12")
+  repository       = try(var.aws_gateway_api_contoller.repository, "oci://public.ecr.aws/aws-application-networking-k8s")
+  values           = try(var.aws_gateway_api_contoller.values, [])
+
+  timeout                    = try(var.aws_gateway_api_contoller.timeout, null)
+  repository_key_file        = try(var.aws_gateway_api_contoller.repository_key_file, null)
+  repository_cert_file       = try(var.aws_gateway_api_contoller.repository_cert_file, null)
+  repository_ca_file         = try(var.aws_gateway_api_contoller.repository_ca_file, null)
+  repository_username        = try(var.aws_gateway_api_contoller.repository_username, null)
+  repository_password        = try(var.aws_gateway_api_contoller.repository_password, null)
+  devel                      = try(var.aws_gateway_api_contoller.devel, null)
+  verify                     = try(var.aws_gateway_api_contoller.verify, null)
+  keyring                    = try(var.aws_gateway_api_contoller.keyring, null)
+  disable_webhooks           = try(var.aws_gateway_api_contoller.disable_webhooks, null)
+  reuse_values               = try(var.aws_gateway_api_contoller.reuse_values, null)
+  reset_values               = try(var.aws_gateway_api_contoller.reset_values, null)
+  force_update               = try(var.aws_gateway_api_contoller.force_update, null)
+  recreate_pods              = try(var.aws_gateway_api_contoller.recreate_pods, null)
+  cleanup_on_fail            = try(var.aws_gateway_api_contoller.cleanup_on_fail, null)
+  max_history                = try(var.aws_gateway_api_contoller.max_history, null)
+  atomic                     = try(var.aws_gateway_api_contoller.atomic, null)
+  skip_crds                  = try(var.aws_gateway_api_contoller.skip_crds, null)
+  render_subchart_notes      = try(var.aws_gateway_api_contoller.render_subchart_notes, null)
+  disable_openapi_validation = try(var.aws_gateway_api_contoller.disable_openapi_validation, null)
+  wait                       = try(var.aws_gateway_api_contoller.wait, false)
+  wait_for_jobs              = try(var.aws_gateway_api_contoller.wait_for_jobs, null)
+  dependency_update          = try(var.aws_gateway_api_contoller.dependency_update, null)
+  replace                    = try(var.aws_gateway_api_contoller.replace, null)
+  lint                       = try(var.aws_gateway_api_contoller.lint, null)
+
+  postrender = try(var.aws_gateway_api_contoller.postrender, [])
+  set = concat([
+    {
+      name  = "serviceAccount.name"
+      value = local.aws_gateway_api_contoller_service_account
+      }, {
+      name  = "awsRegion"
+      value = local.region
+      }, {
+      name  = "clusterVpcId"
+      value = var.cluster_vpc_id
+      }, {
+      name  = "awsAccountId"
+      value = local.account_id
+    }],
+    try(var.aws_gateway_api_contoller.set, [])
+  )
+  set_sensitive = try(var.aws_gateway_api_contoller.set_sensitive, [])
+
+  # IAM role for service account (IRSA)
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  create_role                   = try(var.aws_gateway_api_contoller.create_role, true)
+  role_name                     = try(var.aws_gateway_api_contoller.role_name, "aws-gateway-api-contoller")
+  role_name_use_prefix          = try(var.aws_gateway_api_contoller.role_name_use_prefix, true)
+  role_path                     = try(var.aws_gateway_api_contoller.role_path, "/")
+  role_permissions_boundary_arn = lookup(var.aws_gateway_api_contoller, "role_permissions_boundary_arn", null)
+  role_description              = try(var.aws_gateway_api_contoller.role_description, "IRSA for aws-gateway-api-contoller")
+  role_policies                 = lookup(var.aws_gateway_api_contoller, "role_policies", {})
+
+  source_policy_documents = compact(concat(
+    data.aws_iam_policy_document.aws_gateway_api_contoller[*].json,
+    lookup(var.aws_gateway_api_contoller, "source_policy_documents", [])
+  ))
+  override_policy_documents = lookup(var.aws_gateway_api_contoller, "override_policy_documents", [])
+  policy_statements         = lookup(var.aws_gateway_api_contoller, "policy_statements", [])
+  policy_name               = try(var.aws_gateway_api_contoller.policy_name, null)
+  policy_name_use_prefix    = try(var.aws_gateway_api_contoller.policy_name_use_prefix, true)
+  policy_path               = try(var.aws_gateway_api_contoller.policy_path, null)
+  policy_description        = try(var.aws_gateway_api_contoller.policy_description, "IAM Policy for aws-gateway-api-contoller")
+
+  oidc_providers = {
+    this = {
+      provider_arn = local.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = local.aws_gateway_api_contoller_service_account
+    }
+  }
+
+  tags = var.tags
+}

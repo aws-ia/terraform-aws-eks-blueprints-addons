@@ -102,6 +102,7 @@ module "eks_blueprints_addons" {
   source = "../../"
 
   cluster_name      = module.eks.cluster_name
+  cluster_vpc_id    = module.vpc.vpc_id
   cluster_endpoint  = module.eks.cluster_endpoint
   cluster_version   = module.eks.cluster_version
   oidc_provider_arn = module.eks.oidc_provider_arn
@@ -166,6 +167,13 @@ module "eks_blueprints_addons" {
   ## An S3 Bucket ARN is required. This can be declared with or without a Prefix.
   velero = {
     s3_backup_location = "${module.velero_backup_s3_bucket.s3_bucket_arn}/backups"
+  }
+
+  enable_aws_gateway_api_contoller = true
+  # ECR login required
+  aws_gateway_api_contoller = {
+    repository_username = data.aws_ecrpublic_authorization_token.token.user_name
+    repository_password = data.aws_ecrpublic_authorization_token.token.password
   }
 
   # Pass in any number of Helm charts to be created for those that are not natively supported
