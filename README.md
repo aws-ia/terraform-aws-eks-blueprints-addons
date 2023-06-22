@@ -237,6 +237,7 @@ module "eks_blueprints_addons" {
 | <a name="output_aws_efs_csi_driver"></a> [aws\_efs\_csi\_driver](#output\_aws\_efs\_csi\_driver) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_aws_for_fluentbit"></a> [aws\_for\_fluentbit](#output\_aws\_for\_fluentbit) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_aws_fsx_csi_driver"></a> [aws\_fsx\_csi\_driver](#output\_aws\_fsx\_csi\_driver) | Map of attributes of the Helm release and IRSA created |
+| <a name="output_aws_gateway_api_controller"></a> [aws\_gateway\_api\_controller](#output\_aws\_gateway\_api\_controller) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_aws_load_balancer_controller"></a> [aws\_load\_balancer\_controller](#output\_aws\_load\_balancer\_controller) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_aws_node_termination_handler"></a> [aws\_node\_termination\_handler](#output\_aws\_node\_termination\_handler) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_aws_privateca_issuer"></a> [aws\_privateca\_issuer](#output\_aws\_privateca\_issuer) | Map of attributes of the Helm release and IRSA created |
