@@ -24,7 +24,7 @@ You can optionally customize the Helm chart that deploys AWS Gateway API Control
   }
 ```
 
-Verify aws-gateway-api-contoller pods are running.
+Verify aws-gateway-api-controller pods are running.
 
 ```sh
 $ kubectl get pods -n aws-application-networking-system
