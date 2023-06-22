@@ -9,11 +9,6 @@ variable "cluster_name" {
   type        = string
 }
 
-variable "cluster_vpc_id" {
-  description = "VPC Id of the EKS Cluster"
-  type        = string
-}
-
 variable "cluster_endpoint" {
   description = "Endpoint for your Kubernetes API server"
   type        = string
@@ -26,6 +21,11 @@ variable "cluster_version" {
 
 variable "oidc_provider_arn" {
   description = "The ARN of the cluster OIDC Provider"
+  type        = string
+}
+
+variable "vpc_id" {
+  description = "VPC Id of the EKS Cluster"
   type        = string
 }
 

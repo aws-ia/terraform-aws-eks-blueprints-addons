@@ -171,7 +171,6 @@ module "eks_blueprints_addons" {
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the EKS cluster | `string` | n/a | yes |
 | <a name="input_cluster_proportional_autoscaler"></a> [cluster\_proportional\_autoscaler](#input\_cluster\_proportional\_autoscaler) | Cluster Proportional Autoscaler add-on configurations | `any` | `{}` | no |
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Kubernetes `<major>.<minor>` version to use for the EKS cluster (i.e.: `1.24`) | `string` | n/a | yes |
-| <a name="input_cluster_vpc_id"></a> [cluster\_vpc\_id](#input\_cluster\_vpc\_id) | VPC Id of the EKS Cluster | `string` | n/a | yes |
 | <a name="input_create_delay_dependencies"></a> [create\_delay\_dependencies](#input\_create\_delay\_dependencies) | Dependency attribute which must be resolved before starting the `create_delay_duration` | `list(string)` | `[]` | no |
 | <a name="input_create_delay_duration"></a> [create\_delay\_duration](#input\_create\_delay\_duration) | The duration to wait before creating resources | `string` | `"30s"` | no |
 | <a name="input_eks_addons"></a> [eks\_addons](#input\_eks\_addons) | Map of EKS add-on configurations to enable for the cluster. Add-on name can be the map keys or set with `name` | `any` | `{}` | no |
@@ -225,6 +224,7 @@ module "eks_blueprints_addons" {
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources | `map(string)` | `{}` | no |
 | <a name="input_velero"></a> [velero](#input\_velero) | Velero add-on configuration values | `any` | `{}` | no |
 | <a name="input_vpa"></a> [vpa](#input\_vpa) | Vertical Pod Autoscaler add-on configuration values | `any` | `{}` | no |
+| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC Id of the EKS Cluster | `string` | n/a | yes |
 
 ## Outputs
 

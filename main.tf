@@ -3142,7 +3142,7 @@ module "aws_gateway_api_contoller" {
       value = local.region
       }, {
       name  = "clusterVpcId"
-      value = var.cluster_vpc_id
+      value = var.vpc_id
       }, {
       name  = "awsAccountId"
       value = local.account_id
