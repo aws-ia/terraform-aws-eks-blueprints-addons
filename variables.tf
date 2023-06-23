@@ -24,11 +24,6 @@ variable "oidc_provider_arn" {
   type        = string
 }
 
-variable "vpc_id" {
-  description = "VPC Id of the EKS Cluster"
-  type        = string
-}
-
 variable "create_delay_duration" {
   description = "The duration to wait before creating resources"
   type        = string

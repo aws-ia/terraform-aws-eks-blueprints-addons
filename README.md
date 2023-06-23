@@ -224,7 +224,6 @@ module "eks_blueprints_addons" {
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to add to all resources | `map(string)` | `{}` | no |
 | <a name="input_velero"></a> [velero](#input\_velero) | Velero add-on configuration values | `any` | `{}` | no |
 | <a name="input_vpa"></a> [vpa](#input\_vpa) | Vertical Pod Autoscaler add-on configuration values | `any` | `{}` | no |
-| <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC Id of the EKS Cluster | `string` | n/a | yes |
 
 ## Outputs
 

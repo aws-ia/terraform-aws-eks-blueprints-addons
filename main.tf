@@ -3141,9 +3141,6 @@ module "aws_gateway_api_controller" {
       name  = "awsRegion"
       value = local.region
       }, {
-      name  = "clusterVpcId"
-      value = var.vpc_id
-      }, {
       name  = "awsAccountId"
       value = local.account_id
     }],

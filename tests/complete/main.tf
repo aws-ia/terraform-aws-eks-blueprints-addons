@@ -105,7 +105,6 @@ module "eks_blueprints_addons" {
   cluster_endpoint  = module.eks.cluster_endpoint
   cluster_version   = module.eks.cluster_version
   oidc_provider_arn = module.eks.oidc_provider_arn
-  vpc_id            = module.vpc.vpc_id
 
   eks_addons = {
     aws-ebs-csi-driver = {
@@ -174,6 +173,10 @@ module "eks_blueprints_addons" {
   aws_gateway_api_controller = {
     repository_username = data.aws_ecrpublic_authorization_token.token.user_name
     repository_password = data.aws_ecrpublic_authorization_token.token.password
+    set = [{
+      name  = "clusterVpcId"
+      value = module.vpc.vpc_id
+    }]
   }
 
   # Pass in any number of Helm charts to be created for those that are not natively supported
