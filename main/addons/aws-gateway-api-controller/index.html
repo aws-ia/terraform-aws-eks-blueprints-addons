@@ -10,20 +10,20 @@
         <meta name="author" content="AWS">
       
       
-        <link rel="canonical" href="https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/metrics-server/">
+        <link rel="canonical" href="https://aws-ia.github.io/terraform-aws-eks-blueprints-addons/main/addons/aws-gateway-api-controller/">
       
       
-        <link rel="prev" href="../kube-prometheus-stack/">
+        <link rel="prev" href="../aws-fsx-csi-driver/">
       
       
-        <link rel="next" href="../opa-gatekeeper/">
+        <link rel="next" href="../aws-load-balancer-controller/">
       
       <link rel="icon" href="../../images/colored-logo.png">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.4">
     
     
       
-        <title>Metrics Server - Amazon EKS Blueprints Addons</title>
+        <title>AWS Gateway API Controller - Amazon EKS Blueprints Addons</title>
       
     
     
@@ -112,7 +112,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#metrics-server" class="md-skip">
+        <a href="#aws-gateway-api-controller" class="md-skip">
           Skip to content
         </a>
       
@@ -150,7 +150,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Metrics Server
+              AWS Gateway API Controller
             
           </span>
         </div>
@@ -459,11 +459,52 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../aws-gateway-api-controller/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          AWS Gateway API Controller
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         AWS Gateway API Controller
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -641,52 +682,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Metrics Server
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../metrics-server/" class="md-nav__link">
         Metrics Server
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
-    Usage
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -805,28 +805,70 @@
   
 
 
-<h1 id="metrics-server">Metrics Server<a class="headerlink" href="#metrics-server" title="Permanent link">&para;</a></h1>
-<p><a href="https://github.com/kubernetes-sigs/metrics-server">Metrics Server</a> is a scalable, efficient source of container resource metrics for Kubernetes built-in autoscaling pipelines.</p>
-<p>Metrics Server collects resource metrics from Kubelets and exposes them in Kubernetes apiserver through Metrics API for use by Horizontal Pod Autoscaler and Vertical Pod Autoscaler. Metrics API can also be accessed by kubectl top, making it easier to debug autoscaling pipelines.</p>
+<h1 id="aws-gateway-api-controller">AWS Gateway API Controller<a class="headerlink" href="#aws-gateway-api-controller" title="Permanent link">&para;</a></h1>
+<p><a href="https://www.gateway-api-controller.eks.aws.dev/">AWS Gateway API Controller</a> lets you connect services across multiple Kubernetes clusters through the Kubernetes <a href="https://gateway-api.sigs.k8s.io/">Gateway API</a> interface. It is also designed to connect services running on EC2 instances, containers, and as serverless functions. It does this by leveraging <a href="https://aws.amazon.com/vpc/lattice/">Amazon VPC Lattice</a>, which works with Kubernetes Gateway API calls to manage Kubernetes objects.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
-<p>Metrics Server can be deployed by enabling the add-on via the following.</p>
-<div class="language-hcl highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="na">enable_metrics_server</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+<p>AWS Gateway API Controller can be deployed by enabling the add-on via the following.</p>
+<div class="language-hcl highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="w">  </span><span class="na">enable_aws_gateway_api_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nb">aws_gateway_api_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="na">repository_username</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">data.aws_ecrpublic_authorization_token.token.user_name</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="na">repository_password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">data.aws_ecrpublic_authorization_token.token.password</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="na">set</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[{</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">      </span><span class="na">name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;clusterVpcId&quot;</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">      </span><span class="na">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;vpc-12345abcd&quot;</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="p">}]</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">}</span>
 </span></code></pre></div>
-<p>You can optionally customize the Helm chart that deploys External DNS via the following configuration.</p>
-<div class="language-hcl highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="w">  </span><span class="na">enable_metrics_server</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nb">metrics_server</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="na">name</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;metrics-server&quot;</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="na">chart_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;3.10.0&quot;</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="na">repository</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;https://kubernetes-sigs.github.io/metrics-server/&quot;</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="na">namespace</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;kube-system&quot;</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="na">values</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="nf">templatefile</span><span class="p">(</span><span class="s2">&quot;${path.module}/values.yaml&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{})]</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">  </span><span class="p">}</span>
+<p>You can optionally customize the Helm chart that deploys AWS Gateway API Controller via the following configuration.</p>
+<div class="language-hcl highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="w">  </span><span class="na">enable_aws_gateway_api_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nb">aws_gateway_api_controller</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="na">name</span><span class="w">                </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;aws-gateway-api-controller&quot;</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="na">chart_version</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;v0.0.12&quot;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="na">repository</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;oci://public.ecr.aws/aws-application-networking-k8s&quot;</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="na">repository_username</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">data.aws_ecrpublic_authorization_token.token.user_name</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="na">repository_password</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">data.aws_ecrpublic_authorization_token.token.password</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="na">namespace</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;aws-application-networking-system&quot;</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="na">values</span><span class="w">              </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="nf">templatefile</span><span class="p">(</span><span class="s2">&quot;${path.module}/values.yaml&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{})]</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="na">set</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[{</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">      </span><span class="na">name</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;clusterVpcId&quot;</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">      </span><span class="na">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;vpc-12345abcd&quot;</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="p">}]</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">  </span><span class="p">}</span>
 </span></code></pre></div>
-<p>Verify metrics-server pods are running.</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>NAME<span class="w">                                   </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">       </span>AGE
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>metrics-server-6f9cdd486c-njh8b<span class="w">        </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">1</span><span class="w"> </span><span class="o">(</span>2d2h<span class="w"> </span>ago<span class="o">)</span><span class="w">   </span>2d7h
+<p>Verify aws-gateway-api-controller pods are running.</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>aws-application-networking-system
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>NAME<span class="w">                                                               </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>aws-gateway-api-controller-aws-gateway-controller-chart-8f42q426<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>40s
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>aws-gateway-api-controller-aws-gateway-controller-chart-8f4tbl9g<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>71s
+</span></code></pre></div>
+<p>Deploy example GatewayClass</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>https://raw.githubusercontent.com/aws/aws-application-networking-k8s/main/examples/gatewayclass.yaml
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>gatewayclass.gateway.networking.k8s.io/amazon-vpc-lattice<span class="w"> </span>created
+</span></code></pre></div>
+<p>Describe GatewayClass</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>$<span class="w"> </span>kubectl<span class="w"> </span>describe<span class="w"> </span>gatewayclass
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Name:<span class="w">         </span>amazon-vpc-lattice
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Namespace:
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>Labels:<span class="w">       </span>&lt;none&gt;
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>Annotations:<span class="w">  </span>&lt;none&gt;
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>API<span class="w"> </span>Version:<span class="w">  </span>gateway.networking.k8s.io/v1beta1
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>Kind:<span class="w">         </span>GatewayClass
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>Metadata:
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">  </span>Creation<span class="w"> </span>Timestamp:<span class="w">  </span><span class="m">2023</span>-06-22T22:33:32Z
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">  </span>Generation:<span class="w">          </span><span class="m">1</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">  </span>Resource<span class="w"> </span>Version:<span class="w">    </span><span class="m">819021</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">  </span>UID:<span class="w">                 </span>aac59195-8f37-4c23-a2a5-b0f363deda77
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>Spec:
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">  </span>Controller<span class="w"> </span>Name:<span class="w">  </span>application-networking.k8s.aws/gateway-api-controller
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>Status:
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">  </span>Conditions:
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">    </span>Last<span class="w"> </span>Transition<span class="w"> </span>Time:<span class="w">  </span><span class="m">2023</span>-06-22T22:33:32Z
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="w">    </span>Message:<span class="w">               </span>Accepted
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="w">    </span>Observed<span class="w"> </span>Generation:<span class="w">   </span><span class="m">1</span>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="w">    </span>Reason:<span class="w">                </span>Accepted
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="w">    </span>Status:<span class="w">                </span>True
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="w">    </span>Type:<span class="w">                  </span>Accepted
+</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a>Events:<span class="w">                    </span>&lt;none&gt;
 </span></code></pre></div>
 
 
