@@ -948,8 +948,7 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
     sid    = "AllowGetCertificates"
     effect = "Allow"
     resources = [
-      "arn:${local.partition}:acm:${local.region}:${local.account_id}:*",
-      "arn:${local.partition}:acm:${local.region}:${local.account_id}:certificate/*"
+      "*",
     ]
 
     actions = [
