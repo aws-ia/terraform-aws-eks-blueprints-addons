@@ -616,6 +616,14 @@ module "aws_for_fluentbit" {
     {
       name  = "serviceAccount.name"
       value = local.aws_for_fluentbit_service_account
+    },
+    {
+      name  = "cloudWatch.region"
+      value = local.region
+    },
+    {
+      name  = "cloudWatchLogs.region"
+      value = local.region
     }],
     try(var.aws_for_fluentbit.set, [])
   )
