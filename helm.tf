@@ -68,4 +68,9 @@ resource "helm_release" "this" {
       type  = try(set_sensitive.value.type, null)
     }
   }
+
+  depends_on = [
+    # Wait for EBS CSI, etc. to be installed first
+    aws_eks_addon.this,
+  ]
 }
