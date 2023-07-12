@@ -624,26 +624,6 @@ module "aws_for_fluentbit" {
     {
       name  = "cloudWatchLogs.region"
       value = local.region
-    },
-    {
-      name  = "firehose.region"
-      value = local.region
-    },
-    {
-      name  = "kinesis.region"
-      value = local.region
-    },
-    {
-      name  = "elasticsearch.awsRegion"
-      value = local.region
-    },
-    {
-      name  = "s3.region"
-      value = local.region
-    },
-    {
-      name  = "opensearch.awsRegion"
-      value = local.region
     }],
     try(var.aws_for_fluentbit.set, [])
   )
