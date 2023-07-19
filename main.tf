@@ -673,7 +673,7 @@ locals {
 }
 
 data "aws_iam_policy_document" "aws_fsx_csi_driver" {
-  create = var.enable_aws_fsx_csi_driver ? 1 : 0
+  count = var.enable_aws_fsx_csi_driver ? 1 : 0
 
   statement {
     sid       = "AllowCreateServiceLinkedRoles"
