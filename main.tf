@@ -673,6 +673,8 @@ locals {
 }
 
 data "aws_iam_policy_document" "aws_fsx_csi_driver" {
+  create = var.enable_aws_fsx_csi_driver ? 1 : 0
+
   statement {
     sid       = "AllowCreateServiceLinkedRoles"
     resources = ["arn:${local.partition}:iam::*:role/aws-service-role/s3.data-source.lustre.fsx.${local.dns_suffix}/*"]
@@ -825,6 +827,8 @@ locals {
 }
 
 data "aws_iam_policy_document" "aws_load_balancer_controller" {
+  count = var.enable_aws_load_balancer_controller ? 1 : 0
+
   statement {
     sid       = "AllowCreateServiceLinkedRole"
     effect    = "Allow"
