@@ -13,6 +13,11 @@ output "argocd" {
   value       = module.argocd
 }
 
+output "argo_events" {
+  description = "Map of attributes of the Helm release created"
+  value       = module.argo_events
+}
+
 output "aws_cloudwatch_metrics" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = module.aws_cloudwatch_metrics
