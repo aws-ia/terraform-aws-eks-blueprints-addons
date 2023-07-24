@@ -77,6 +77,7 @@ module "eks_blueprints_addons" {
 
 | Name | Source | Version |
 |------|--------|---------|
+| <a name="module_argo_events"></a> [argo\_events](#module\_argo\_events) | aws-ia/eks-blueprints-addon/aws | 1.0.0 |
 | <a name="module_argo_rollouts"></a> [argo\_rollouts](#module\_argo\_rollouts) | aws-ia/eks-blueprints-addon/aws | 1.0.0 |
 | <a name="module_argo_workflows"></a> [argo\_workflows](#module\_argo\_workflows) | aws-ia/eks-blueprints-addon/aws | 1.0.0 |
 | <a name="module_argocd"></a> [argocd](#module\_argocd) | aws-ia/eks-blueprints-addon/aws | 1.0.0 |
@@ -151,6 +152,7 @@ module "eks_blueprints_addons" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_argo_events"></a> [argo\_events](#input\_argo\_events) | Argo Events add-on configuration values | `any` | `{}` | no |
 | <a name="input_argo_rollouts"></a> [argo\_rollouts](#input\_argo\_rollouts) | Argo Rollouts add-on configuration values | `any` | `{}` | no |
 | <a name="input_argo_workflows"></a> [argo\_workflows](#input\_argo\_workflows) | Argo Workflows add-on configuration values | `any` | `{}` | no |
 | <a name="input_argocd"></a> [argocd](#input\_argocd) | ArgoCD add-on configuration values | `any` | `{}` | no |
@@ -176,6 +178,7 @@ module "eks_blueprints_addons" {
 | <a name="input_create_delay_duration"></a> [create\_delay\_duration](#input\_create\_delay\_duration) | The duration to wait before creating resources | `string` | `"30s"` | no |
 | <a name="input_eks_addons"></a> [eks\_addons](#input\_eks\_addons) | Map of EKS add-on configurations to enable for the cluster. Add-on name can be the map keys or set with `name` | `any` | `{}` | no |
 | <a name="input_eks_addons_timeouts"></a> [eks\_addons\_timeouts](#input\_eks\_addons\_timeouts) | Create, update, and delete timeout configurations for the EKS add-ons | `map(string)` | `{}` | no |
+| <a name="input_enable_argo_events"></a> [enable\_argo\_events](#input\_enable\_argo\_events) | Enable Argo Events add-on | `bool` | `false` | no |
 | <a name="input_enable_argo_rollouts"></a> [enable\_argo\_rollouts](#input\_enable\_argo\_rollouts) | Enable Argo Rollouts add-on | `bool` | `false` | no |
 | <a name="input_enable_argo_workflows"></a> [enable\_argo\_workflows](#input\_enable\_argo\_workflows) | Enable Argo workflows add-on | `bool` | `false` | no |
 | <a name="input_enable_argocd"></a> [enable\_argocd](#input\_enable\_argocd) | Enable Argo CD Kubernetes add-on | `bool` | `false` | no |
@@ -230,6 +233,7 @@ module "eks_blueprints_addons" {
 
 | Name | Description |
 |------|-------------|
+| <a name="output_argo_events"></a> [argo\_events](#output\_argo\_events) | Map of attributes of the Helm release created |
 | <a name="output_argo_rollouts"></a> [argo\_rollouts](#output\_argo\_rollouts) | Map of attributes of the Helm release created |
 | <a name="output_argo_workflows"></a> [argo\_workflows](#output\_argo\_workflows) | Map of attributes of the Helm release created |
 | <a name="output_argocd"></a> [argocd](#output\_argocd) | Map of attributes of the Helm release created |

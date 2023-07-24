@@ -226,6 +226,60 @@ module "argocd" {
 }
 
 ################################################################################
+# Argo Events
+################################################################################
+
+module "argo_events" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.0.0"
+
+  create = var.enable_argo_events
+
+  # https://github.com/argoproj/argo-helm/tree/main/charts/argo-events
+  # (there is no offical helm chart for argo-events)
+  name             = try(var.argo_events.name, "argo-events")
+  description      = try(var.argo_events.description, "A Helm chart to install the Argo Events")
+  namespace        = try(var.argo_events.namespace, "argo-events")
+  create_namespace = try(var.argo_events.create_namespace, true)
+  chart            = "argo-events"
+  chart_version    = try(var.argo_events.chart_version, "2.4.0")
+  repository       = try(var.argo_events.repository, "https://argoproj.github.io/argo-helm")
+  values           = try(var.argo_events.values, [])
+
+  timeout                    = try(var.argo_events.timeout, null)
+  repository_key_file        = try(var.argo_events.repository_key_file, null)
+  repository_cert_file       = try(var.argo_events.repository_cert_file, null)
+  repository_ca_file         = try(var.argo_events.repository_ca_file, null)
+  repository_username        = try(var.argo_events.repository_username, null)
+  repository_password        = try(var.argo_events.repository_password, null)
+  devel                      = try(var.argo_events.devel, null)
+  verify                     = try(var.argo_events.verify, null)
+  keyring                    = try(var.argo_events.keyring, null)
+  disable_webhooks           = try(var.argo_events.disable_webhooks, null)
+  reuse_values               = try(var.argo_events.reuse_values, null)
+  reset_values               = try(var.argo_events.reset_values, null)
+  force_update               = try(var.argo_events.force_update, null)
+  recreate_pods              = try(var.argo_events.recreate_pods, null)
+  cleanup_on_fail            = try(var.argo_events.cleanup_on_fail, null)
+  max_history                = try(var.argo_events.max_history, null)
+  atomic                     = try(var.argo_events.atomic, null)
+  skip_crds                  = try(var.argo_events.skip_crds, null)
+  render_subchart_notes      = try(var.argo_events.render_subchart_notes, null)
+  disable_openapi_validation = try(var.argo_events.disable_openapi_validation, null)
+  wait                       = try(var.argo_events.wait, false)
+  wait_for_jobs              = try(var.argo_events.wait_for_jobs, null)
+  dependency_update          = try(var.argo_events.dependency_update, null)
+  replace                    = try(var.argo_events.replace, null)
+  lint                       = try(var.argo_events.lint, null)
+
+  postrender    = try(var.argo_events.postrender, [])
+  set           = try(var.argo_events.set, [])
+  set_sensitive = try(var.argo_events.set_sensitive, [])
+
+  tags = var.tags
+}
+
+################################################################################
 # AWS Cloudwatch Metrics
 ################################################################################
 

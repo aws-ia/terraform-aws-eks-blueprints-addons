@@ -95,6 +95,22 @@ variable "argocd" {
 }
 
 ################################################################################
+# Argo Events
+################################################################################
+
+variable "enable_argo_events" {
+  description = "Enable Argo Events add-on"
+  type        = bool
+  default     = false
+}
+
+variable "argo_events" {
+  description = "Argo Events add-on configuration values"
+  type        = any
+  default     = {}
+}
+
+################################################################################
 # AWS Cloudwatch Metrics
 ################################################################################
 
