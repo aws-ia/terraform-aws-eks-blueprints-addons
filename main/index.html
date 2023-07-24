@@ -442,6 +442,20 @@
   
   
     <li class="md-nav__item">
+      <a href="addons/argo-events/" class="md-nav__link">
+        Argo Events
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="addons/argo-rollouts/" class="md-nav__link">
         Argo Rollouts
       </a>
@@ -1006,6 +1020,11 @@
 </thead>
 <tbody>
 <tr>
+<td><a name="module_argo_events"></a> <a href="..#module_argo_events">argo_events</a></td>
+<td>aws-ia/eks-blueprints-addon/aws</td>
+<td>1.0.0</td>
+</tr>
+<tr>
 <td><a name="module_argo_rollouts"></a> <a href="..#module_argo_rollouts">argo_rollouts</a></td>
 <td>aws-ia/eks-blueprints-addon/aws</td>
 <td>1.0.0</td>
@@ -1314,6 +1333,13 @@
 </thead>
 <tbody>
 <tr>
+<td><a name="input_argo_events"></a> <a href="..#input_argo_events">argo_events</a></td>
+<td>Argo Events add-on configuration values</td>
+<td><code>any</code></td>
+<td><code>{}</code></td>
+<td align="center">no</td>
+</tr>
+<tr>
 <td><a name="input_argo_rollouts"></a> <a href="..#input_argo_rollouts">argo_rollouts</a></td>
 <td>Argo Rollouts add-on configuration values</td>
 <td><code>any</code></td>
@@ -1486,6 +1512,13 @@
 <td>Create, update, and delete timeout configurations for the EKS add-ons</td>
 <td><code>map(string)</code></td>
 <td><code>{}</code></td>
+<td align="center">no</td>
+</tr>
+<tr>
+<td><a name="input_enable_argo_events"></a> <a href="..#input_enable_argo_events">enable_argo_events</a></td>
+<td>Enable Argo Events add-on</td>
+<td><code>bool</code></td>
+<td><code>false</code></td>
 <td align="center">no</td>
 </tr>
 <tr>
@@ -1842,6 +1875,10 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><a name="output_argo_events"></a> <a href="..#output_argo_events">argo_events</a></td>
+<td>Map of attributes of the Helm release created</td>
+</tr>
 <tr>
 <td><a name="output_argo_rollouts"></a> <a href="..#output_argo_rollouts">argo_rollouts</a></td>
 <td>Map of attributes of the Helm release created</td>
