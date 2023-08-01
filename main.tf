@@ -2182,7 +2182,7 @@ module "external_secrets" {
 
 locals {
   fargate_fluentbit_policy_name = try(var.fargate_fluentbit_cw_log_group.create, true) ? try(var.fargate_fluentbit.policy_name, "${var.cluster_name}-fargate-fluentbit-logs") : null
-  fargate_fluentbit_cw_log_group_name = try(var.fargate_fluentbit_cw_log_group.create, true) ? try(var.fargate_fluentbit_cw_log_group.name, "/${var.cluster_name}/fargate-fluentbit-logs") : null
+  fargate_fluentbit_cw_log_group_name = try(var.fargate_fluentbit_cw_log_group.name, "/${var.cluster_name}/fargate-fluentbit-logs")
 }
 
 resource "aws_cloudwatch_log_group" "fargate_fluentbit" {
