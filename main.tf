@@ -2189,7 +2189,7 @@ resource "aws_cloudwatch_log_group" "fargate_fluentbit" {
   count = try(var.fargate_fluentbit_cw_log_group.create, true) && var.enable_fargate_fluentbit ? 1 : 0
 
   name              = try(var.fargate_fluentbit_cw_log_group.use_name_prefix, true) ? null : local.fargate_fluentbit_cw_log_group_name
-  name_prefix       = try(var.fargate_fluentbit_cw_log_group.use_name_prefix, true) ? try(var.fargate_fluentbit_cw_log_group.name_prefix, "${local.fargate_fluentbit_cw_log_group_name}-") : null
+  name_prefix       = try(var.fargate_fluentbit_cw_log_group.use_name_prefix, true) ? local.fargate_fluentbit_cw_log_group_name : null
   retention_in_days = try(var.fargate_fluentbit_cw_log_group.retention, 90)
   kms_key_id        = try(var.fargate_fluentbit_cw_log_group.kms_key_arn, null)
   skip_destroy      = try(var.fargate_fluentbit_cw_log_group.skip_destroy, false)
