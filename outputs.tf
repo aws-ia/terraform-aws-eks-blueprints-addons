@@ -185,24 +185,24 @@ output "gitops_metadata" {
     metadata_aws_cluster_autoscaler_service_account = var.enable_cluster_autoscaler ? local.cluster_autoscaler_service_account : null
     metadata_aws_cluster_autoscaler_image_tag       = var.enable_cluster_autoscaler ? local.cluster_autoscaler_image_tag_selected : null
 
-    enable_aws_cloudwatch_metrics               = var.enable_aws_cloudwatch_metrics ? true : null
+    enable_aws_cloudwatch_metrics                   = var.enable_aws_cloudwatch_metrics ? true : null
     metadata_aws_cloudwatch_metrics_iam_role_arn    = var.enable_aws_cloudwatch_metrics ? module.aws_cloudwatch_metrics.iam_role_arn : null
     metadata_aws_cloudwatch_metrics_namespace       = var.enable_aws_cloudwatch_metrics ? local.aws_cloudwatch_metrics_namespace : null
     metadata_aws_cloudwatch_metrics_service_account = var.enable_aws_cloudwatch_metrics ? local.aws_cloudwatch_metrics_service_account : null
 
-    enable_aws_efs_csi_driver                          = var.enable_aws_efs_csi_driver ? true : null
+    enable_aws_efs_csi_driver                              = var.enable_aws_efs_csi_driver ? true : null
     metadata_aws_efs_csi_driver_iam_role_arn               = var.enable_aws_efs_csi_driver ? module.aws_efs_csi_driver.iam_role_arn : null
     metadata_aws_efs_csi_driver_namespace                  = var.enable_aws_efs_csi_driver ? local.aws_efs_csi_driver_namespace : null
     metadata_aws_efs_csi_driver_controller_service_account = var.enable_aws_efs_csi_driver ? local.aws_efs_csi_driver_controller_service_account : null
     metadata_aws_efs_csi_driver_node_service_account       = var.enable_aws_efs_csi_driver ? local.aws_efs_csi_driver_node_service_account : null
 
-    enable_aws_fsx_csi_driver                          = var.enable_aws_fsx_csi_driver ? true : null
+    enable_aws_fsx_csi_driver                              = var.enable_aws_fsx_csi_driver ? true : null
     metadata_aws_fsx_csi_driver_iam_role_arn               = var.enable_aws_fsx_csi_driver ? module.aws_fsx_csi_driver.iam_role_arn : null
     metadata_aws_fsx_csi_driver_namespace                  = var.enable_aws_fsx_csi_driver ? local.aws_fsx_csi_driver_namespace : null
     metadata_aws_fsx_csi_driver_controller_service_account = var.enable_aws_fsx_csi_driver ? local.aws_fsx_csi_driver_controller_service_account : null
     metadata_aws_fsx_csi_driver_node_service_account       = var.enable_aws_fsx_csi_driver ? local.aws_fsx_csi_driver_node_service_account : null
 
-    enable_aws_privateca_issuer               = var.enable_aws_privateca_issuer ? true : null
+    enable_aws_privateca_issuer                   = var.enable_aws_privateca_issuer ? true : null
     metadata_aws_privateca_issuer_iam_role_arn    = var.enable_aws_privateca_issuer ? module.aws_privateca_issuer.iam_role_arn : null
     metadata_aws_privateca_issuer_namespace       = var.enable_aws_privateca_issuer ? local.aws_privateca_issuer_namespace : null
     metadata_aws_privateca_issuer_service_account = var.enable_aws_privateca_issuer ? local.aws_privateca_issuer_service_account : null
@@ -217,18 +217,18 @@ output "gitops_metadata" {
     metadata_aws_external_secrets_namespace       = var.enable_external_dns ? local.external_secrets_namespace : null
     metadata_aws_external_secrets_service_account = var.enable_external_dns ? local.external_secrets_service_account : null
 
-    enable_aws_load_balancer_controller               = var.enable_aws_load_balancer_controller ? true : null
+    enable_aws_load_balancer_controller                   = var.enable_aws_load_balancer_controller ? true : null
     metadata_aws_load_balancer_controller_iam_role_arn    = var.enable_aws_load_balancer_controller ? module.aws_load_balancer_controller.iam_role_arn : null
     metadata_aws_load_balancer_controller_namespace       = var.enable_aws_load_balancer_controller ? local.aws_load_balancer_controller_namespace : null
     metadata_aws_load_balancer_controller_service_account = var.enable_aws_load_balancer_controller ? local.aws_load_balancer_controller_service_account : null
 
-    enable_aws_for_fluentbit               = var.enable_aws_for_fluentbit ? true : null
+    enable_aws_for_fluentbit                   = var.enable_aws_for_fluentbit ? true : null
     metadata_aws_for_fluentbit_iam_role_arn    = var.enable_aws_for_fluentbit ? module.aws_for_fluentbit.iam_role_arn : null
     metadata_aws_for_fluentbit_namespace       = var.enable_aws_for_fluentbit ? local.aws_for_fluentbit_namespace : null
     metadata_aws_for_fluentbit_service_account = var.enable_aws_for_fluentbit ? local.aws_for_fluentbit_service_account : null
     metadata_aws_for_fluentbit_log_group_name  = var.enable_aws_for_fluentbit && try(var.aws_for_fluentbit_cw_log_group.create, true) ? aws_cloudwatch_log_group.aws_for_fluentbit[0].name : null
 
-    enable_aws_node_termination_handler               = var.enable_aws_node_termination_handler ? true : null
+    enable_aws_node_termination_handler                   = var.enable_aws_node_termination_handler ? true : null
     metadata_aws_node_termination_handler_iam_role_arn    = var.enable_aws_node_termination_handler ? module.aws_node_termination_handler.iam_role_arn : null
     metadata_aws_node_termination_handler_namespace       = var.enable_aws_node_termination_handler ? local.aws_node_termination_handler_namespace : null
     metadata_aws_node_termination_handler_service_account = var.enable_aws_node_termination_handler ? local.aws_node_termination_handler_service_account : null
@@ -249,7 +249,7 @@ output "gitops_metadata" {
     metadata_aws_velero_backup_s3_bucket_prefix = var.enable_velero ? local.velero_backup_s3_bucket_prefix : null
     metadata_aws_velero_backup_s3_bucket_name   = var.enable_velero ? local.velero_backup_s3_bucket_name : null
 
-    enable_aws_gateway_api_controller               = var.enable_aws_gateway_api_controller ? true : null
+    enable_aws_gateway_api_controller                   = var.enable_aws_gateway_api_controller ? true : null
     metadata_aws_gateway_api_controller_iam_role_arn    = var.enable_aws_gateway_api_controller ? module.aws_gateway_api_controller.iam_role_arn : null
     metadata_aws_gateway_api_controller_namespace       = var.enable_aws_gateway_api_controller ? local.aws_gateway_api_controller_namespace : null
     metadata_aws_gateway_api_controller_service_account = var.enable_aws_gateway_api_controller ? local.aws_gateway_api_controller_service_account : null
