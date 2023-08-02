@@ -570,6 +570,7 @@ variable "aws_gateway_api_controller" {
 # GitOps Bridge
 ################################################################################
 
+# Only required when enable_aws_gateway_api_controller is true
 variable "vpc_id" {
   description = "Cluster VPC Id"
   type        = string
