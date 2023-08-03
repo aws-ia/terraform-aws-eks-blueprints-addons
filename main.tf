@@ -81,7 +81,7 @@ module "argo_rollouts" {
   namespace        = try(var.argo_rollouts.namespace, "argo-rollouts")
   create_namespace = try(var.argo_rollouts.create_namespace, true)
   chart            = try(var.argo_rollouts.chart, "argo-rollouts")
-  chart_version    = try(var.argo_rollouts.chart_version, "2.22.3")
+  chart_version    = try(var.argo_rollouts.chart_version, "2.31.3")
   repository       = try(var.argo_rollouts.repository, "https://argoproj.github.io/argo-helm")
   values           = try(var.argo_rollouts.values, [])
 
@@ -134,7 +134,7 @@ module "argo_workflows" {
   namespace        = try(var.argo_workflows.namespace, "argo-workflows")
   create_namespace = try(var.argo_workflows.create_namespace, true)
   chart            = try(var.argo_workflows.chart, "argo-workflows")
-  chart_version    = try(var.argo_workflows.chart_version, "0.28.2")
+  chart_version    = try(var.argo_workflows.chart_version, "0.32.1")
   repository       = try(var.argo_workflows.repository, "https://argoproj.github.io/argo-helm")
   values           = try(var.argo_workflows.values, [])
 
@@ -182,13 +182,13 @@ module "argocd" {
   create = var.enable_argocd
 
   # https://github.com/argoproj/argo-helm/blob/main/charts/argo-cd/Chart.yaml
-  # (there is no offical helm chart for argocd)
+  # (there is no official helm chart for argocd)
   name             = try(var.argocd.name, "argo-cd")
   description      = try(var.argocd.description, "A Helm chart to install the ArgoCD")
   namespace        = try(var.argocd.namespace, "argocd")
   create_namespace = try(var.argocd.create_namespace, true)
   chart            = try(var.argocd.chart, "argo-cd")
-  chart_version    = try(var.argocd.chart_version, "5.29.1")
+  chart_version    = try(var.argocd.chart_version, "5.42.1")
   repository       = try(var.argocd.repository, "https://argoproj.github.io/argo-helm")
   values           = try(var.argocd.values, [])
 
@@ -236,7 +236,7 @@ module "argo_events" {
   create = var.enable_argo_events
 
   # https://github.com/argoproj/argo-helm/tree/main/charts/argo-events
-  # (there is no offical helm chart for argo-events)
+  # (there is no official helm chart for argo-events)
   name             = try(var.argo_events.name, "argo-events")
   description      = try(var.argo_events.description, "A Helm chart to install the Argo Events")
   namespace        = try(var.argo_events.namespace, "argo-events")
@@ -461,7 +461,7 @@ module "aws_efs_csi_driver" {
   namespace        = try(var.aws_efs_csi_driver.namespace, "kube-system")
   create_namespace = try(var.aws_efs_csi_driver.create_namespace, false)
   chart            = try(var.aws_efs_csi_driver.chart, "aws-efs-csi-driver")
-  chart_version    = try(var.aws_efs_csi_driver.chart_version, "2.4.1")
+  chart_version    = try(var.aws_efs_csi_driver.chart_version, "2.4.8")
   repository       = try(var.aws_efs_csi_driver.repository, "https://kubernetes-sigs.github.io/aws-efs-csi-driver/")
   values           = try(var.aws_efs_csi_driver.values, [])
 
@@ -635,7 +635,7 @@ module "aws_for_fluentbit" {
   namespace        = try(var.aws_for_fluentbit.namespace, "kube-system")
   create_namespace = try(var.aws_for_fluentbit.create_namespace, false)
   chart            = try(var.aws_for_fluentbit.chart, "aws-for-fluent-bit")
-  chart_version    = try(var.aws_for_fluentbit.chart_version, "0.1.24")
+  chart_version    = try(var.aws_for_fluentbit.chart_version, "0.1.28")
   repository       = try(var.aws_for_fluentbit.repository, "https://aws.github.io/eks-charts")
   values           = try(var.aws_for_fluentbit.values, [])
 
@@ -790,7 +790,7 @@ module "aws_fsx_csi_driver" {
   namespace        = try(var.aws_fsx_csi_driver.namespace, "kube-system")
   create_namespace = try(var.aws_fsx_csi_driver.create_namespace, false)
   chart            = try(var.aws_fsx_csi_driver.chart, "aws-fsx-csi-driver")
-  chart_version    = try(var.aws_fsx_csi_driver.chart_version, "1.6.0")
+  chart_version    = try(var.aws_fsx_csi_driver.chart_version, "1.7.0")
   repository       = try(var.aws_fsx_csi_driver.repository, "https://kubernetes-sigs.github.io/aws-fsx-csi-driver/")
   values           = try(var.aws_fsx_csi_driver.values, [])
 
@@ -1152,7 +1152,7 @@ module "aws_load_balancer_controller" {
   # namespace creation is false here as kube-system already exists by default
   create_namespace = try(var.aws_load_balancer_controller.create_namespace, false)
   chart            = try(var.aws_load_balancer_controller.chart, "aws-load-balancer-controller")
-  chart_version    = try(var.aws_load_balancer_controller.chart_version, "1.4.8")
+  chart_version    = try(var.aws_load_balancer_controller.chart_version, "1.5.5")
   repository       = try(var.aws_load_balancer_controller.repository, "https://aws.github.io/eks-charts")
   values           = try(var.aws_load_balancer_controller.values, [])
 
@@ -1598,7 +1598,7 @@ module "cert_manager" {
   namespace        = try(var.cert_manager.namespace, "cert-manager")
   create_namespace = try(var.cert_manager.create_namespace, true)
   chart            = try(var.cert_manager.chart, "cert-manager")
-  chart_version    = try(var.cert_manager.chart_version, "v1.11.1")
+  chart_version    = try(var.cert_manager.chart_version, "v1.12.3")
   repository       = try(var.cert_manager.repository, "https://charts.jetstack.io")
   values           = try(var.cert_manager.values, [])
 
@@ -1684,10 +1684,10 @@ locals {
     "1.21" = "v1.21.3"
     "1.22" = "v1.22.3"
     "1.23" = "v1.23.1"
-    "1.24" = "v1.24.1"
-    "1.25" = "v1.25.1"
-    "1.26" = "v1.26.2"
-    "1.27" = "v1.27.2"
+    "1.24" = "v1.24.3"
+    "1.25" = "v1.25.3"
+    "1.26" = "v1.26.4"
+    "1.27" = "v1.27.3"
   }
 }
 
@@ -1740,7 +1740,7 @@ module "cluster_autoscaler" {
   namespace        = try(var.cluster_autoscaler.namespace, "kube-system")
   create_namespace = try(var.cluster_autoscaler.create_namespace, false)
   chart            = try(var.cluster_autoscaler.chart, "cluster-autoscaler")
-  chart_version    = try(var.cluster_autoscaler.chart_version, "9.29.0")
+  chart_version    = try(var.cluster_autoscaler.chart_version, "9.29.1")
   repository       = try(var.cluster_autoscaler.repository, "https://kubernetes.github.io/autoscaler")
   values           = try(var.cluster_autoscaler.values, [])
 
@@ -1955,7 +1955,7 @@ module "external_dns" {
   namespace        = try(var.external_dns.namespace, "external-dns")
   create_namespace = try(var.external_dns.create_namespace, true)
   chart            = try(var.external_dns.chart, "external-dns")
-  chart_version    = try(var.external_dns.chart_version, "1.12.2")
+  chart_version    = try(var.external_dns.chart_version, "1.13.0")
   repository       = try(var.external_dns.repository, "https://kubernetes-sigs.github.io/external-dns/")
   values           = try(var.external_dns.values, ["provider: aws"])
 
@@ -2104,7 +2104,7 @@ module "external_secrets" {
   namespace        = try(var.external_secrets.namespace, "external-secrets")
   create_namespace = try(var.external_secrets.create_namespace, true)
   chart            = try(var.external_secrets.chart, "external-secrets")
-  chart_version    = try(var.external_secrets.chart_version, "0.8.1")
+  chart_version    = try(var.external_secrets.chart_version, "0.9.1")
   repository       = try(var.external_secrets.repository, "https://charts.external-secrets.io")
   values           = try(var.external_secrets.values, [])
 
@@ -2632,7 +2632,7 @@ module "karpenter" {
   namespace        = try(var.karpenter.namespace, "karpenter")
   create_namespace = try(var.karpenter.create_namespace, true)
   chart            = try(var.karpenter.chart, "karpenter")
-  chart_version    = try(var.karpenter.chart_version, "v0.27.2")
+  chart_version    = try(var.karpenter.chart_version, "v0.29.2")
   repository       = try(var.karpenter.repository, "oci://public.ecr.aws/karpenter")
   values           = try(var.karpenter.values, [])
 
@@ -2749,7 +2749,7 @@ module "kube_prometheus_stack" {
   namespace        = try(var.kube_prometheus_stack.namespace, "kube-prometheus-stack")
   create_namespace = try(var.kube_prometheus_stack.create_namespace, true)
   chart            = try(var.kube_prometheus_stack.chart, "kube-prometheus-stack")
-  chart_version    = try(var.kube_prometheus_stack.chart_version, "46.6.0")
+  chart_version    = try(var.kube_prometheus_stack.chart_version, "48.2.3")
   repository       = try(var.kube_prometheus_stack.repository, "https://prometheus-community.github.io/helm-charts")
   values           = try(var.kube_prometheus_stack.values, [])
 
@@ -2802,7 +2802,7 @@ module "metrics_server" {
   namespace        = try(var.metrics_server.namespace, "kube-system")
   create_namespace = try(var.metrics_server.create_namespace, false)
   chart            = try(var.metrics_server.chart, "metrics-server")
-  chart_version    = try(var.metrics_server.chart_version, "3.10.0")
+  chart_version    = try(var.metrics_server.chart_version, "3.11.0")
   repository       = try(var.metrics_server.repository, "https://kubernetes-sigs.github.io/metrics-server/")
   values           = try(var.metrics_server.values, [])
 
@@ -2855,7 +2855,7 @@ module "secrets_store_csi_driver" {
   namespace        = try(var.secrets_store_csi_driver.namespace, "kube-system")
   create_namespace = try(var.secrets_store_csi_driver.create_namespace, false)
   chart            = try(var.secrets_store_csi_driver.chart, "secrets-store-csi-driver")
-  chart_version    = try(var.secrets_store_csi_driver.chart_version, "1.3.3")
+  chart_version    = try(var.secrets_store_csi_driver.chart_version, "1.3.4")
   repository       = try(var.secrets_store_csi_driver.repository, "https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts")
   values           = try(var.secrets_store_csi_driver.values, [])
 
@@ -2908,7 +2908,7 @@ module "secrets_store_csi_driver_provider_aws" {
   namespace        = try(var.secrets_store_csi_driver_provider_aws.namespace, "kube-system")
   create_namespace = try(var.secrets_store_csi_driver_provider_aws.create_namespace, false)
   chart            = try(var.secrets_store_csi_driver_provider_aws.chart, "secrets-store-csi-driver-provider-aws")
-  chart_version    = try(var.secrets_store_csi_driver_provider_aws.chart_version, "0.3.2")
+  chart_version    = try(var.secrets_store_csi_driver_provider_aws.chart_version, "0.3.4")
   repository       = try(var.secrets_store_csi_driver_provider_aws.repository, "https://aws.github.io/secrets-store-csi-driver-provider-aws")
   values           = try(var.secrets_store_csi_driver_provider_aws.values, [])
 
@@ -3014,7 +3014,7 @@ module "velero" {
   namespace        = try(var.velero.namespace, "velero")
   create_namespace = try(var.velero.create_namespace, true)
   chart            = try(var.velero.chart, "velero")
-  chart_version    = try(var.velero.chart_version, "3.1.6")
+  chart_version    = try(var.velero.chart_version, "3.2.0") # TODO - 4.0.0 is out
   repository       = try(var.velero.repository, "https://vmware-tanzu.github.io/helm-charts/")
   values           = try(var.velero.values, [])
 
@@ -3132,13 +3132,13 @@ module "vpa" {
   create = var.enable_vpa
 
   # https://github.com/FairwindsOps/charts/blob/master/stable/vpa/Chart.yaml
-  # (there is no offical helm chart for VPA)
+  # (there is no official helm chart for VPA)
   name             = try(var.vpa.name, "vpa")
   description      = try(var.vpa.description, "A Helm chart to install the Vertical Pod Autoscaler")
   namespace        = try(var.vpa.namespace, "vpa")
   create_namespace = try(var.vpa.create_namespace, true)
   chart            = try(var.vpa.chart, "vpa")
-  chart_version    = try(var.vpa.chart_version, "1.7.5")
+  chart_version    = try(var.vpa.chart_version, "1.7.5") # TODO - 2.0.0 is out
   repository       = try(var.vpa.repository, "https://charts.fairwinds.com/stable")
   values           = try(var.vpa.values, [])
 
@@ -3215,7 +3215,7 @@ module "aws_gateway_api_controller" {
   namespace        = try(var.aws_gateway_api_controller.namespace, "aws-application-networking-system")
   create_namespace = try(var.aws_gateway_api_controller.create_namespace, true)
   chart            = try(var.aws_gateway_api_controller.chart, "aws-gateway-controller-chart")
-  chart_version    = try(var.aws_gateway_api_controller.chart_version, "v0.0.12")
+  chart_version    = try(var.aws_gateway_api_controller.chart_version, "v0.0.15")
   repository       = try(var.aws_gateway_api_controller.repository, "oci://public.ecr.aws/aws-application-networking-k8s")
   values           = try(var.aws_gateway_api_controller.values, [])
 
