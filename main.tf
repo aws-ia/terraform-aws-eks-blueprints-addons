@@ -2632,7 +2632,7 @@ module "karpenter" {
   name             = try(var.karpenter.name, "karpenter")
   description      = try(var.karpenter.description, "A Helm chart to deploy Karpenter")
   namespace        = local.karpenter_namespace
-  create_namespace = try(var.karpenter.create_namespace, !var.enable_karpenter_crd)
+  create_namespace = try(var.karpenter.create_namespace, false)
   chart            = try(var.karpenter.chart, "karpenter")
   chart_version    = local.karpenter_chart_version
   repository       = try(var.karpenter.repository, "oci://public.ecr.aws/karpenter")
