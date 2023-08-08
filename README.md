@@ -98,6 +98,7 @@ module "eks_blueprints_addons" {
 | <a name="module_gatekeeper"></a> [gatekeeper](#module\_gatekeeper) | aws-ia/eks-blueprints-addon/aws | 1.1.0 |
 | <a name="module_ingress_nginx"></a> [ingress\_nginx](#module\_ingress\_nginx) | aws-ia/eks-blueprints-addon/aws | 1.1.0 |
 | <a name="module_karpenter"></a> [karpenter](#module\_karpenter) | aws-ia/eks-blueprints-addon/aws | 1.1.0 |
+| <a name="module_karpenter_crd"></a> [karpenter\_crd](#module\_karpenter\_crd) | aws-ia/eks-blueprints-addon/aws | 1.1.0 |
 | <a name="module_karpenter_sqs"></a> [karpenter\_sqs](#module\_karpenter\_sqs) | terraform-aws-modules/sqs/aws | 4.0.1 |
 | <a name="module_kube_prometheus_stack"></a> [kube\_prometheus\_stack](#module\_kube\_prometheus\_stack) | aws-ia/eks-blueprints-addon/aws | 1.1.0 |
 | <a name="module_metrics_server"></a> [metrics\_server](#module\_metrics\_server) | aws-ia/eks-blueprints-addon/aws | 1.1.0 |
@@ -199,6 +200,7 @@ module "eks_blueprints_addons" {
 | <a name="input_enable_gatekeeper"></a> [enable\_gatekeeper](#input\_enable\_gatekeeper) | Enable Gatekeeper add-on | `bool` | `false` | no |
 | <a name="input_enable_ingress_nginx"></a> [enable\_ingress\_nginx](#input\_enable\_ingress\_nginx) | Enable Ingress Nginx | `bool` | `false` | no |
 | <a name="input_enable_karpenter"></a> [enable\_karpenter](#input\_enable\_karpenter) | Enable Karpenter controller add-on | `bool` | `false` | no |
+| <a name="input_enable_karpenter_crd"></a> [enable\_karpenter\_crd](#input\_enable\_karpenter\_crd) | Enable Karpenter CRDs add-on | `bool` | `false` | no |
 | <a name="input_enable_kube_prometheus_stack"></a> [enable\_kube\_prometheus\_stack](#input\_enable\_kube\_prometheus\_stack) | Enable Kube Prometheus Stack | `bool` | `false` | no |
 | <a name="input_enable_metrics_server"></a> [enable\_metrics\_server](#input\_enable\_metrics\_server) | Enable metrics server add-on | `bool` | `false` | no |
 | <a name="input_enable_secrets_store_csi_driver"></a> [enable\_secrets\_store\_csi\_driver](#input\_enable\_secrets\_store\_csi\_driver) | Enable CSI Secrets Store Provider | `bool` | `false` | no |
@@ -217,6 +219,7 @@ module "eks_blueprints_addons" {
 | <a name="input_helm_releases"></a> [helm\_releases](#input\_helm\_releases) | A map of Helm releases to create. This provides the ability to pass in an arbitrary map of Helm chart definitions to create | `any` | `{}` | no |
 | <a name="input_ingress_nginx"></a> [ingress\_nginx](#input\_ingress\_nginx) | Ingress Nginx add-on configurations | `any` | `{}` | no |
 | <a name="input_karpenter"></a> [karpenter](#input\_karpenter) | Karpenter add-on configuration values | `any` | `{}` | no |
+| <a name="input_karpenter_crd"></a> [karpenter\_crd](#input\_karpenter\_crd) | Karpenter CRDs add-on configuration values | `any` | `{}` | no |
 | <a name="input_karpenter_enable_spot_termination"></a> [karpenter\_enable\_spot\_termination](#input\_karpenter\_enable\_spot\_termination) | Determines whether to enable native node termination handling | `bool` | `true` | no |
 | <a name="input_karpenter_node"></a> [karpenter\_node](#input\_karpenter\_node) | Karpenter IAM role and IAM instance profile configuration values | `any` | `{}` | no |
 | <a name="input_karpenter_sqs"></a> [karpenter\_sqs](#input\_karpenter\_sqs) | Karpenter SQS queue for native node termination handling configuration values | `any` | `{}` | no |

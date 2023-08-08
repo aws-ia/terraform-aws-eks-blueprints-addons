@@ -2422,6 +2422,8 @@ module "ingress_nginx" {
 
 locals {
   karpenter_service_account_name    = try(var.karpenter.service_account_name, "karpenter")
+  karpenter_namespace               = try(var.karpenter.namespace, "karpenter")
+  karpenter_chart_version           = try(var.karpenter.chart_version, "v0.29.2")
   karpenter_enable_spot_termination = var.enable_karpenter && var.karpenter_enable_spot_termination
 
   create_karpenter_node_iam_role = var.enable_karpenter && try(var.karpenter_node.create_iam_role, true)
@@ -2629,10 +2631,10 @@ module "karpenter" {
   # https://github.com/aws/karpenter/blob/main/charts/karpenter/Chart.yaml
   name             = try(var.karpenter.name, "karpenter")
   description      = try(var.karpenter.description, "A Helm chart to deploy Karpenter")
-  namespace        = try(var.karpenter.namespace, "karpenter")
-  create_namespace = try(var.karpenter.create_namespace, true)
+  namespace        = local.karpenter_namespace
+  create_namespace = try(var.karpenter.create_namespace, !var.enable_karpenter_crd)
   chart            = try(var.karpenter.chart, "karpenter")
-  chart_version    = try(var.karpenter.chart_version, "v0.29.2")
+  chart_version    = local.karpenter_chart_version
   repository       = try(var.karpenter.repository, "oci://public.ecr.aws/karpenter")
   values           = try(var.karpenter.values, [])
 
@@ -2653,7 +2655,7 @@ module "karpenter" {
   cleanup_on_fail            = try(var.karpenter.cleanup_on_fail, null)
   max_history                = try(var.karpenter.max_history, null)
   atomic                     = try(var.karpenter.atomic, null)
-  skip_crds                  = try(var.karpenter.skip_crds, null)
+  skip_crds                  = try(var.karpenter.skip_crds, true) # Skipping this as the CRDs are deployed through the karpenter_crd module
   render_subchart_notes      = try(var.karpenter.render_subchart_notes, null)
   disable_openapi_validation = try(var.karpenter.disable_openapi_validation, null)
   wait                       = try(var.karpenter.wait, false)
@@ -2721,6 +2723,56 @@ module "karpenter" {
 
   tags = var.tags
 }
+
+module "karpenter_crd" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.1.0"
+
+  create = var.enable_karpenter && var.enable_karpenter_crd
+
+  # https://github.com/aws/karpenter/blob/main/charts/karpenter/Chart.yaml
+  name             = try(var.karpenter_crd.name, "karpenter-crd")
+  description      = try(var.karpenter_crd.description, "A Helm chart for Karpenter Custom Resource Definitions (CRDs)")
+  namespace        = local.karpenter_namespace
+  create_namespace = try(var.karpenter_crd.create_namespace, true)
+  chart            = try(var.karpenter_crd.chart, "karpenter-crd")
+  chart_version    = local.karpenter_chart_version
+  repository       = try(var.karpenter_crd.repository, "oci://public.ecr.aws/karpenter")
+  values           = try(var.karpenter_crd.values, [])
+
+  timeout                    = try(var.karpenter_crd.timeout, null)
+  repository_key_file        = try(var.karpenter_crd.repository_key_file, null)
+  repository_cert_file       = try(var.karpenter_crd.repository_cert_file, null)
+  repository_ca_file         = try(var.karpenter_crd.repository_ca_file, null)
+  repository_username        = try(var.karpenter_crd.repository_username, null)
+  repository_password        = try(var.karpenter_crd.repository_password, null)
+  devel                      = try(var.karpenter_crd.devel, null)
+  verify                     = try(var.karpenter_crd.verify, null)
+  keyring                    = try(var.karpenter_crd.keyring, null)
+  disable_webhooks           = try(var.karpenter_crd.disable_webhooks, null)
+  reuse_values               = try(var.karpenter_crd.reuse_values, null)
+  reset_values               = try(var.karpenter_crd.reset_values, null)
+  force_update               = try(var.karpenter_crd.force_update, null)
+  recreate_pods              = try(var.karpenter_crd.recreate_pods, null)
+  cleanup_on_fail            = try(var.karpenter_crd.cleanup_on_fail, null)
+  max_history                = try(var.karpenter_crd.max_history, null)
+  atomic                     = try(var.karpenter_crd.atomic, null)
+  skip_crds                  = try(var.karpenter_crd.skip_crds, null)
+  render_subchart_notes      = try(var.karpenter_crd.render_subchart_notes, null)
+  disable_openapi_validation = try(var.karpenter_crd.disable_openapi_validation, null)
+  wait                       = try(var.karpenter_crd.wait, false)
+  wait_for_jobs              = try(var.karpenter_crd.wait_for_jobs, null)
+  dependency_update          = try(var.karpenter_crd.dependency_update, null)
+  replace                    = try(var.karpenter_crd.replace, null)
+  lint                       = try(var.karpenter_crd.lint, null)
+
+  postrender    = try(var.karpenter.postrender, [])
+  set           = try(var.karpenter.set, [])
+  set_sensitive = try(var.karpenter.set_sensitive, [])
+
+  tags = var.tags
+}
+
 
 ################################################################################
 # Kube Prometheus stack

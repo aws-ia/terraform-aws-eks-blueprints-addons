@@ -436,6 +436,18 @@ variable "karpenter" {
   default     = {}
 }
 
+variable "enable_karpenter_crd" {
+  description = "Enable Karpenter CRDs add-on"
+  type        = bool
+  default     = false
+}
+
+variable "karpenter_crd" {
+  description = "Karpenter CRDs add-on configuration values"
+  type        = any
+  default     = {}
+}
+
 variable "karpenter_enable_spot_termination" {
   description = "Determines whether to enable native node termination handling"
   type        = bool
