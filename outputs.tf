@@ -175,6 +175,7 @@ output "gitops_metadata" {
   description = "GitOps Bridge metadata"
   value = merge(
     {
+      aws_cluster_name   = local.cluster_name
       aws_region     = local.region
       aws_account_id = local.account_id
     },
