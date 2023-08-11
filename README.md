@@ -256,6 +256,7 @@ module "eks_blueprints_addons" {
 | <a name="output_fargate_fluentbit"></a> [fargate\_fluentbit](#output\_fargate\_fluentbit) | Map of attributes of the configmap and IAM policy created |
 | <a name="output_gatekeeper"></a> [gatekeeper](#output\_gatekeeper) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_gitops_metadata"></a> [gitops\_metadata](#output\_gitops\_metadata) | GitOps Bridge metadata |
+| <a name="output_gitops_metadata_old"></a> [gitops\_metadata\_old](#output\_gitops\_metadata\_old) | GitOps Bridge metadata |
 | <a name="output_helm_releases"></a> [helm\_releases](#output\_helm\_releases) | Map of attributes of the Helm release created |
 | <a name="output_ingress_nginx"></a> [ingress\_nginx](#output\_ingress\_nginx) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_karpenter"></a> [karpenter](#output\_karpenter) | Map of attributes of the Helm release and IRSA created |
