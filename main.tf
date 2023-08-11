@@ -591,7 +591,7 @@ data "aws_iam_policy_document" "aws_for_fluentbit" {
       sid    = "CreateCWLogs"
       effect = "Allow"
       resources = [
-        "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${try(var.aws_for_fluentbit_cw_log_group.name, "*")}",
+        "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${try(var.aws_for_fluentbit_cw_log_group.name, "*")}:*",
       ]
 
       actions = [
@@ -674,6 +674,10 @@ module "aws_for_fluentbit" {
     {
       name  = "cloudWatch.region"
       value = local.region
+    },
+    {
+      name  = "cloudWatchLogs.logGroupName"
+      value = local.aws_for_fluentbit_cw_log_group_name
     },
     {
       name  = "cloudWatchLogs.region"
