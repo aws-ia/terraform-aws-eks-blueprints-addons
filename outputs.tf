@@ -239,8 +239,11 @@ output "gitops_metadata" {
       iam_role_arn    = module.aws_for_fluentbit.iam_role_arn
       namespace       = local.aws_for_fluentbit_namespace
       service_account = local.aws_for_fluentbit_service_account
-      log_group_name  = try(var.aws_for_fluentbit_cw_log_group.create, true) ? aws_cloudwatch_log_group.aws_for_fluentbit[0].name : null
       } : "aws_for_fluentbit_${k}" => v if var.enable_aws_for_fluentbit
+    },
+    { for k, v in {
+      log_group_name  = aws_cloudwatch_log_group.aws_for_fluentbit[0].name
+      } : "aws_for_fluentbit_${k}" => v if var.enable_aws_for_fluentbit && try(var.aws_for_fluentbit_cw_log_group.create, true)
     },
     { for k, v in {
       iam_role_arn    = module.aws_node_termination_handler.iam_role_arn
