@@ -680,6 +680,14 @@ module "aws_for_fluentbit" {
       value = local.aws_for_fluentbit_cw_log_group_name
     },
     {
+      name  = "cloudWatchLogs.logGroupTemplate"
+      value = ""
+    },
+    {
+      name  = "cloudWatchLogs.autoCreateGroup"
+      value = false
+    },
+    {
       name  = "cloudWatchLogs.region"
       value = local.region
     }],
