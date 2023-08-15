@@ -892,14 +892,13 @@ locals {
   aws_load_balancer_controller_service_account = try(var.aws_load_balancer_controller.service_account_name, "aws-load-balancer-controller-sa")
 }
 
+# https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/main/docs/install/iam_policy.json
 data "aws_iam_policy_document" "aws_load_balancer_controller" {
   count = var.enable_aws_load_balancer_controller ? 1 : 0
 
   statement {
-    sid       = "AllowCreateServiceLinkedRole"
-    effect    = "Allow"
-    resources = ["arn:${local.partition}:iam::${local.account_id}:role/aws-service-role/elasticloadbalancing.amazonaws.com/AWSServiceRoleForElasticLoadBalancing"]
     actions   = ["iam:CreateServiceLinkedRole"]
+    resources = ["*"]
 
     condition {
       test     = "StringEquals"
@@ -909,245 +908,244 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
   }
 
   statement {
-    sid       = "AllowDescribeElbTags"
-    effect    = "Allow"
-    resources = ["*"] #tfsec:ignore:aws-iam-no-policy-wildcards
-
-    actions = ["elasticloadbalancing:DescribeTags"]
-  }
-
-  statement {
-    sid       = "AllowGetResources"
-    effect    = "Allow"
-    resources = ["*"]
-
     actions = [
-      "elasticloadbalancing:DescribeListenerCertificates",
-      "elasticloadbalancing:DescribeListeners",
-      "elasticloadbalancing:DescribeLoadBalancerAttributes",
-      "elasticloadbalancing:DescribeLoadBalancers",
-      "elasticloadbalancing:DescribeRules",
-      "elasticloadbalancing:DescribeSSLPolicies",
-      "elasticloadbalancing:DescribeTargetGroupAttributes",
-      "elasticloadbalancing:DescribeTargetGroups",
-      "elasticloadbalancing:DescribeTargetHealth",
       "ec2:DescribeAccountAttributes",
       "ec2:DescribeAddresses",
       "ec2:DescribeAvailabilityZones",
-      "ec2:DescribeCoipPools",
-      "ec2:DescribeInstances",
       "ec2:DescribeInternetGateways",
-      "ec2:DescribeNetworkInterfaces",
-      "ec2:DescribeSecurityGroups",
-      "ec2:DescribeSubnets",
-      "ec2:DescribeTags",
-      "ec2:DescribeVpcPeeringConnections",
       "ec2:DescribeVpcs",
+      "ec2:DescribeVpcPeeringConnections",
+      "ec2:DescribeSubnets",
+      "ec2:DescribeSecurityGroups",
+      "ec2:DescribeInstances",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DescribeTags",
       "ec2:GetCoipPoolUsage",
+      "ec2:DescribeCoipPools",
+      "elasticloadbalancing:DescribeLoadBalancers",
+      "elasticloadbalancing:DescribeLoadBalancerAttributes",
+      "elasticloadbalancing:DescribeListeners",
+      "elasticloadbalancing:DescribeListenerCertificates",
+      "elasticloadbalancing:DescribeSSLPolicies",
+      "elasticloadbalancing:DescribeRules",
+      "elasticloadbalancing:DescribeTargetGroups",
+      "elasticloadbalancing:DescribeTargetGroupAttributes",
+      "elasticloadbalancing:DescribeTargetHealth",
+      "elasticloadbalancing:DescribeTags",
     ]
+    resources = ["*"]
   }
 
   statement {
-    sid    = "AllowManageElbs"
-    effect = "Allow"
-
-    resources = [
-      "arn:${local.partition}:elasticloadbalancing:${local.region}:${local.account_id}:loadbalancer/app/*/*",
-      "arn:${local.partition}:elasticloadbalancing:${local.region}:${local.account_id}:loadbalancer/net/*/*",
-      "arn:${local.partition}:elasticloadbalancing:${local.region}:${local.account_id}:targetgroup/*/*",
-    ]
-
     actions = [
-      "elasticloadbalancing:AddTags",
-      "elasticloadbalancing:DeleteTargetGroup",
-      "elasticloadbalancing:RemoveTags",
-      "elasticloadbalancing:CreateLoadBalancer",
-      "elasticloadbalancing:CreateListener",
-      "elasticloadbalancing:DeleteLoadBalancer",
-      "elasticloadbalancing:ModifyLoadBalancerAttributes",
-      "elasticloadbalancing:SetIpAddressType",
-      "elasticloadbalancing:SetSecurityGroups",
-      "elasticloadbalancing:SetSubnets",
-    ]
-  }
-
-  statement {
-    sid    = "AllowManageTargetGroup"
-    effect = "Allow"
-    resources = [
-      "arn:${local.partition}:elasticloadbalancing:${local.region}:${local.account_id}:targetgroup/*/*",
-    ]
-
-    actions = [
-      "elasticloadbalancing:CreateTargetGroup",
-      "elasticloadbalancing:DeleteTargetGroup",
-      "elasticloadbalancing:ModifyTargetGroup",
-      "elasticloadbalancing:ModifyTargetGroupAttributes",
-    ]
-  }
-
-  statement {
-    sid    = "AllowManageListeners"
-    effect = "Allow"
-    resources = [
-      "arn:${local.partition}:elasticloadbalancing:${local.region}:${local.account_id}:listener/app/*/*/*",
-      "arn:${local.partition}:elasticloadbalancing:${local.region}:${local.account_id}:listener/net/*/*/*",
-    ]
-
-    actions = [
-      "elasticloadbalancing:CreateRule",
-      "elasticloadbalancing:DeleteListener",
-      "elasticloadbalancing:ModifyListener",
-      "elasticloadbalancing:AddListenerCertificates",
-      "elasticloadbalancing:RemoveListenerCertificates"
-    ]
-  }
-
-  statement {
-    sid    = "AllowManageRules"
-    effect = "Allow"
-    resources = [
-      "arn:${local.partition}:elasticloadbalancing:${local.region}:${local.account_id}:listener-rule/app/*/*/*/*",
-      "arn:${local.partition}:elasticloadbalancing:${local.region}:${local.account_id}:listener-rule/net/*/*/*/*",
-    ]
-
-    actions = [
-      "elasticloadbalancing:DeleteRule",
-      "elasticloadbalancing:ModifyRule"
-    ]
-  }
-
-  statement {
-    sid    = "AllowManageResourceTags"
-    effect = "Allow"
-
-    resources = [
-      "arn:${local.partition}:elasticloadbalancing:${local.region}:${local.account_id}:loadbalancer/app/*/*",
-      "arn:${local.partition}:elasticloadbalancing:${local.region}:${local.account_id}:loadbalancer/net/*/*",
-      "arn:${local.partition}:elasticloadbalancing:${local.region}:${local.account_id}:listener/app/*/*/*",
-      "arn:${local.partition}:elasticloadbalancing:${local.region}:${local.account_id}:listener/net/*/*/*",
-      "arn:${local.partition}:elasticloadbalancing:${local.region}:${local.account_id}:listener-rule/app/*/*/*/*",
-      "arn:${local.partition}:elasticloadbalancing:${local.region}:${local.account_id}:listener-rule/net/*/*/*/*",
-      "arn:${local.partition}:elasticloadbalancing:${local.region}:${local.account_id}:targetgroup/*/*",
-    ]
-
-    actions = [
-      "elasticloadbalancing:AddTags",
-      "elasticloadbalancing:RemoveTags",
-    ]
-  }
-
-  statement {
-    sid       = "AllowManageTargets"
-    effect    = "Allow"
-    resources = ["arn:${local.partition}:elasticloadbalancing:${local.region}:${local.account_id}:targetgroup/*/*"]
-
-    actions = [
-      "elasticloadbalancing:DeregisterTargets",
-      "elasticloadbalancing:RegisterTargets"
-    ]
-  }
-
-  statement {
-    sid    = "AllowGetCertificates"
-    effect = "Allow"
-    resources = [
-      "*",
-    ]
-
-    actions = [
+      "cognito-idp:DescribeUserPoolClient",
+      "acm:ListCertificates",
       "acm:DescribeCertificate",
-      "acm:ListCertificates"
-    ]
-  }
-
-  statement {
-    sid       = "AllowDescribeCognitoIdp"
-    effect    = "Allow"
-    resources = ["arn:${local.partition}:cognito-idp:${local.region}:${local.account_id}:userpool/*"]
-
-    actions = ["cognito-idp:DescribeUserPoolClient"]
-  }
-
-  statement {
-    sid    = "AllowGetServerCertificates"
-    effect = "Allow"
-    resources = [
-      "arn:${local.partition}:iam::${local.account_id}:*",
-      "arn:${local.partition}:iam::${local.account_id}:server-certificate/*"
-    ]
-
-    actions = [
-      "iam:GetServerCertificate",
       "iam:ListServerCertificates",
-    ]
-  }
-
-  statement {
-    sid    = "AllowShield"
-    effect = "Allow"
-    resources = [
-      "arn:${local.partition}:shield::${local.account_id}:*",
-      "arn:${local.partition}:shield::${local.account_id}:protection/*"
-    ]
-
-    actions = [
-      "shield:CreateProtection",
-      "shield:DeleteProtection",
-      "shield:DescribeProtection",
-      "shield:GetSubscriptionState",
-    ]
-  }
-
-  statement {
-    sid    = "AllowManageWebAcl"
-    effect = "Allow"
-    resources = [
-      "arn:${local.partition}:elasticloadbalancing:${local.region}:${local.account_id}:loadbalancer/app/*/*",
-      "arn:${local.partition}:apigateway:${local.region}::/restapis/*/stages/*",
-      "arn:${local.partition}:appsync:${local.region}:${local.account_id}:apis/*",
-      "arn:${local.partition}:cognito-idp:${local.region}:${local.account_id}:userpool/*",
-      "arn:${local.partition}:wafv2:${local.region}:${local.account_id}:*",
-      "arn:${local.partition}:wafv2:${local.region}:${local.account_id}:*/webacl/*/*",
-      "arn:${local.partition}:waf-regional:${local.region}:${local.account_id}:*",
-      "arn:${local.partition}:waf-regional:${local.region}:${local.account_id}:webacl/*"
-    ]
-
-    actions = [
-      "elasticloadbalancing:SetWebAcl",
-      "waf-regional:AssociateWebACL",
-      "waf-regional:DisassociateWebACL",
+      "iam:GetServerCertificate",
       "waf-regional:GetWebACL",
       "waf-regional:GetWebACLForResource",
-      "wafv2:AssociateWebACL",
-      "wafv2:DisassociateWebACL",
+      "waf-regional:AssociateWebACL",
+      "waf-regional:DisassociateWebACL",
       "wafv2:GetWebACL",
       "wafv2:GetWebACLForResource",
+      "wafv2:AssociateWebACL",
+      "wafv2:DisassociateWebACL",
+      "shield:GetSubscriptionState",
+      "shield:DescribeProtection",
+      "shield:CreateProtection",
+      "shield:DeleteProtection",
     ]
+    resources = ["*"]
   }
 
   statement {
-    sid       = "AllowManageSecurityGroups"
-    effect    = "Allow"
-    resources = ["arn:${local.partition}:ec2:${local.region}:${local.account_id}:security-group/*"]
+    actions = [
+      "ec2:AuthorizeSecurityGroupIngress",
+      "ec2:RevokeSecurityGroupIngress",
+    ]
+    resources = ["*"]
+  }
 
+  statement {
+    actions   = ["ec2:CreateSecurityGroup"]
+    resources = ["*"]
+  }
+
+  statement {
+    actions   = ["ec2:CreateTags"]
+    resources = ["arn:${local.partition}:ec2:*:*:security-group/*", ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "ec2:CreateAction"
+      values   = ["CreateSecurityGroup"]
+    }
+
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    actions = [
+      "ec2:CreateTags",
+      "ec2:DeleteTags",
+    ]
+    resources = ["arn:${local.partition}:ec2:*:*:security-group/*"]
+
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["true"]
+    }
+
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
     actions = [
       "ec2:AuthorizeSecurityGroupIngress",
       "ec2:RevokeSecurityGroupIngress",
       "ec2:DeleteSecurityGroup",
-      "ec2:CreateTags",
-      "ec2:DeleteTags",
+    ]
+    resources = ["*"]
+
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    actions = [
+      "elasticloadbalancing:CreateLoadBalancer",
+      "elasticloadbalancing:CreateTargetGroup",
+    ]
+    resources = ["*"]
+
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    actions = [
+      "elasticloadbalancing:CreateListener",
+      "elasticloadbalancing:DeleteListener",
+      "elasticloadbalancing:CreateRule",
+      "elasticloadbalancing:DeleteRule",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    actions = [
+      "elasticloadbalancing:AddTags",
+      "elasticloadbalancing:RemoveTags",
+    ]
+    resources = [
+      "arn:${local.partition}:elasticloadbalancing:*:*:targetgroup/*/*",
+      "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/net/*/*",
+      "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/app/*/*"
+    ]
+
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["true"]
+    }
+
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    actions = [
+      "elasticloadbalancing:AddTags",
+      "elasticloadbalancing:RemoveTags",
+    ]
+    resources = [
+      "arn:${local.partition}:elasticloadbalancing:*:*:listener/net/*/*/*",
+      "arn:${local.partition}:elasticloadbalancing:*:*:listener/app/*/*/*",
+      "arn:${local.partition}:elasticloadbalancing:*:*:listener-rule/net/*/*/*",
+      "arn:${local.partition}:elasticloadbalancing:*:*:listener-rule/app/*/*/*",
     ]
   }
 
   statement {
-    sid    = "AllowCreateSecurityGroups"
-    effect = "Allow"
-    resources = [
-      "arn:${local.partition}:ec2:${local.region}:${local.account_id}:security-group/*",
-      "arn:${local.partition}:ec2:${local.region}:${local.account_id}:vpc/*",
+    actions = [
+      "elasticloadbalancing:ModifyLoadBalancerAttributes",
+      "elasticloadbalancing:SetIpAddressType",
+      "elasticloadbalancing:SetSecurityGroups",
+      "elasticloadbalancing:SetSubnets",
+      "elasticloadbalancing:DeleteLoadBalancer",
+      "elasticloadbalancing:ModifyTargetGroup",
+      "elasticloadbalancing:ModifyTargetGroupAttributes",
+      "elasticloadbalancing:DeleteTargetGroup",
     ]
-    actions = ["ec2:CreateSecurityGroup"]
+    resources = ["*"]
+
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    actions = ["elasticloadbalancing:AddTags"]
+    resources = [
+      "arn:${local.partition}:elasticloadbalancing:*:*:targetgroup/*/*",
+      "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/net/*/*",
+      "arn:${local.partition}:elasticloadbalancing:*:*:loadbalancer/app/*/*",
+    ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "elasticloadbalancing:CreateAction"
+      values = [
+        "CreateTargetGroup",
+        "CreateLoadBalancer",
+      ]
+    }
+
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+  }
+
+  statement {
+    actions = [
+      "elasticloadbalancing:RegisterTargets",
+      "elasticloadbalancing:DeregisterTargets",
+    ]
+    resources = ["arn:${local.partition}:elasticloadbalancing:*:*:targetgroup/*/*"]
+  }
+
+  statement {
+    actions = [
+      "elasticloadbalancing:SetWebAcl",
+      "elasticloadbalancing:ModifyListener",
+      "elasticloadbalancing:AddListenerCertificates",
+      "elasticloadbalancing:RemoveListenerCertificates",
+      "elasticloadbalancing:ModifyRule",
+    ]
+    resources = ["*"]
   }
 }
 
