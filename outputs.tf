@@ -175,9 +175,9 @@ output "gitops_metadata" {
   description = "GitOps Bridge metadata"
   value = merge(
     {
-      aws_cluster_name   = local.cluster_name
-      aws_region     = local.region
-      aws_account_id = local.account_id
+      aws_cluster_name = local.cluster_name
+      aws_region       = local.region
+      aws_account_id   = local.account_id
     },
     { for k, v in {
       iam_role_arn    = module.cert_manager.iam_role_arn
@@ -240,7 +240,7 @@ output "gitops_metadata" {
       iam_role_arn    = module.aws_for_fluentbit.iam_role_arn
       namespace       = local.aws_for_fluentbit_namespace
       service_account = local.aws_for_fluentbit_service_account
-      log_group_name  = try(aws_cloudwatch_log_group.aws_for_fluentbit[0].name,null)
+      log_group_name  = try(aws_cloudwatch_log_group.aws_for_fluentbit[0].name, null)
       } : "aws_for_fluentbit_${k}" => v if var.enable_aws_for_fluentbit && v != null
     },
     { for k, v in {
@@ -274,7 +274,7 @@ output "gitops_metadata" {
       } : "aws_gateway_api_controller_${k}" => v if var.enable_aws_gateway_api_controller
     },
     { for k, v in {
-      group_name    = try(var.fargate_fluentbit.cwlog_group, aws_cloudwatch_log_group.fargate_fluentbit[0].name,null)
+      group_name    = try(var.fargate_fluentbit.cwlog_group, aws_cloudwatch_log_group.fargate_fluentbit[0].name, null)
       stream_prefix = local.fargate_fluentbit_cwlog_stream_prefix
       } : "fargate_fluentbit_log_${k}" => v if var.enable_fargate_fluentbit && v != null
     }
