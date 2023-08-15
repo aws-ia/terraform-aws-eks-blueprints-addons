@@ -1162,7 +1162,7 @@ module "aws_load_balancer_controller" {
   # namespace creation is false here as kube-system already exists by default
   create_namespace = try(var.aws_load_balancer_controller.create_namespace, false)
   chart            = try(var.aws_load_balancer_controller.chart, "aws-load-balancer-controller")
-  chart_version    = try(var.aws_load_balancer_controller.chart_version, "1.5.5")
+  chart_version    = try(var.aws_load_balancer_controller.chart_version, "1.6.0")
   repository       = try(var.aws_load_balancer_controller.repository, "https://aws.github.io/eks-charts")
   values           = try(var.aws_load_balancer_controller.values, [])
 
