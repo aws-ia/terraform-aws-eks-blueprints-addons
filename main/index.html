@@ -17,7 +17,7 @@
         <link rel="next" href="architectures/">
       
       <link rel="icon" href="images/colored-logo.png">
-      <meta name="generator" content="mkdocs-1.5.1, mkdocs-material-9.1.4">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.1.4">
     
     
       
@@ -1501,6 +1501,13 @@
 <td style="text-align: center;">no</td>
 </tr>
 <tr>
+<td><a name="input_create_kubernetes_resources"></a> <a href="..#input_create_kubernetes_resources">create_kubernetes_resources</a></td>
+<td>Create Kubernetes resource with Helm or Kubernetes provider</td>
+<td><code>bool</code></td>
+<td><code>true</code></td>
+<td style="text-align: center;">no</td>
+</tr>
+<tr>
 <td><a name="input_eks_addons"></a> <a href="..#input_eks_addons">eks_addons</a></td>
 <td>Map of EKS add-on configurations to enable for the cluster. Add-on name can be the map keys or set with <code>name</code></td>
 <td><code>any</code></td>
@@ -1954,6 +1961,10 @@
 <tr>
 <td><a name="output_gatekeeper"></a> <a href="..#output_gatekeeper">gatekeeper</a></td>
 <td>Map of attributes of the Helm release and IRSA created</td>
+</tr>
+<tr>
+<td><a name="output_gitops_metadata"></a> <a href="..#output_gitops_metadata">gitops_metadata</a></td>
+<td>GitOps Bridge metadata</td>
 </tr>
 <tr>
 <td><a name="output_helm_releases"></a> <a href="..#output_helm_releases">helm_releases</a></td>
