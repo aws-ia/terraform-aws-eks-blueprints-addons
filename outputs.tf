@@ -253,9 +253,9 @@ output "gitops_metadata" {
       } : "karpenter_${k}" => v if var.enable_karpenter
     },
     { for k, v in {
-      iam_role_arn            = module.velero.iam_role_arn
-      namespace               = local.velero_namespace
-      service_account         = local.velero_service_account
+      iam_role_arn    = module.velero.iam_role_arn
+      namespace       = local.velero_namespace
+      service_account = local.velero_service_account
       } : "velero_${k}" => v if var.enable_velero
     },
     { for k, v in {
@@ -265,7 +265,7 @@ output "gitops_metadata" {
       } : "aws_gateway_api_controller_${k}" => v if var.enable_aws_gateway_api_controller
     },
     { for k, v in {
-      group_name    = try(var.fargate_fluentbit.cwlog_group, aws_cloudwatch_log_group.fargate_fluentbit[0].name, null)
+      group_name = try(var.fargate_fluentbit.cwlog_group, aws_cloudwatch_log_group.fargate_fluentbit[0].name, null)
       } : "fargate_fluentbit_log_${k}" => v if var.enable_fargate_fluentbit && v != null
     }
   )
