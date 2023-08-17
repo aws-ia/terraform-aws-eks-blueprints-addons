@@ -174,11 +174,6 @@ added or an addon is updated, and new metadata for the Helm chart is needed.
 output "gitops_metadata" {
   description = "GitOps Bridge metadata"
   value = merge(
-    {
-      aws_cluster_name = local.cluster_name
-      aws_region       = local.region
-      aws_account_id   = local.account_id
-    },
     { for k, v in {
       iam_role_arn    = module.cert_manager.iam_role_arn
       namespace       = local.cert_manager_namespace
@@ -255,7 +250,6 @@ output "gitops_metadata" {
       namespace                  = local.karpenter_namespace
       service_account            = local.karpenter_service_account_name
       sqs_queue_name             = module.karpenter_sqs.queue_name
-      cluster_endpoint           = local.cluster_endpoint
       node_instance_profile_name = local.karpenter_node_instance_profile_name
       } : "karpenter_${k}" => v if var.enable_karpenter
     },
@@ -263,8 +257,6 @@ output "gitops_metadata" {
       iam_role_arn            = module.velero.iam_role_arn
       namespace               = local.velero_namespace
       service_account         = local.velero_service_account
-      backup_s3_bucket_prefix = local.velero_backup_s3_bucket_prefix
-      backup_s3_bucket_name   = local.velero_backup_s3_bucket_name
       } : "velero_${k}" => v if var.enable_velero
     },
     { for k, v in {
