@@ -184,7 +184,6 @@ output "gitops_metadata" {
       iam_role_arn    = module.cluster_autoscaler.iam_role_arn
       namespace       = local.cluster_autoscaler_namespace
       service_account = local.cluster_autoscaler_service_account
-      image_tag       = local.cluster_autoscaler_image_tag_selected
       } : "cluster_autoscaler_${k}" => v if var.enable_cluster_autoscaler
     },
     { for k, v in {
@@ -267,7 +266,6 @@ output "gitops_metadata" {
     },
     { for k, v in {
       group_name    = try(var.fargate_fluentbit.cwlog_group, aws_cloudwatch_log_group.fargate_fluentbit[0].name, null)
-      stream_prefix = local.fargate_fluentbit_cwlog_stream_prefix
       } : "fargate_fluentbit_log_${k}" => v if var.enable_fargate_fluentbit && v != null
     }
   )
