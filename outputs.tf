@@ -265,7 +265,8 @@ output "gitops_metadata" {
       } : "aws_gateway_api_controller_${k}" => v if var.enable_aws_gateway_api_controller
     },
     { for k, v in {
-      group_name = try(var.fargate_fluentbit.cwlog_group, aws_cloudwatch_log_group.fargate_fluentbit[0].name, null)
+      group_name    = try(var.fargate_fluentbit.cwlog_group, aws_cloudwatch_log_group.fargate_fluentbit[0].name, null)
+      stream_prefix = local.fargate_fluentbit_cwlog_stream_prefix
       } : "fargate_fluentbit_log_${k}" => v if var.enable_fargate_fluentbit && v != null
     }
   )
