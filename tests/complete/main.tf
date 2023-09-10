@@ -145,12 +145,21 @@ module "eks_blueprints_addons" {
   enable_external_dns                          = true
   enable_external_secrets                      = true
   # enable_gatekeeper                            = true
-  enable_ingress_nginx                = true
+  enable_ingress_nginx = true
+
+  # Turn off mutation webhook for services to avoid ordering issue
   enable_aws_load_balancer_controller = true
-  enable_metrics_server               = true
-  enable_vpa                          = true
-  enable_fargate_fluentbit            = true
-  enable_aws_for_fluentbit            = true
+  aws_load_balancer_controller = {
+    set = [{
+      name  = "enableServiceMutatorWebhook"
+      value = "false"
+    }]
+  }
+
+  enable_metrics_server    = true
+  enable_vpa               = true
+  enable_fargate_fluentbit = true
+  enable_aws_for_fluentbit = true
   aws_for_fluentbit = {
     s3_bucket_arns = [
       module.velero_backup_s3_bucket.s3_bucket_arn,
