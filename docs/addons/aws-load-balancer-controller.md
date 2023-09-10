@@ -20,6 +20,10 @@ module "eks_blueprints_addons" {
         name  = "podDisruptionBudget.maxUnavailable"
         value = 1
       },
+      {
+        name  = "enableServiceMutatorWebhook"
+        value = "false"
+      }
     ]
   }
 ```
