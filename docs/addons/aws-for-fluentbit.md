@@ -29,7 +29,7 @@ You can optionally customize the Helm chart that deploys AWS for Fluent Bit via 
   }
 ```
 
-If you want to enable [Container Insights on Amazon EKS](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-EKS-quickstart.html) through Fluent Bit, you need to add the following parameter in your configuration
+If you want to enable [Container Insights on Amazon EKS](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-EKS-quickstart.html) through Fluent Bit, you need to add the following parameter in your configuration:
 
 ```hcl
   enable_aws_for_fluentbit = true
