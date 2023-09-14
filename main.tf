@@ -656,7 +656,7 @@ module "aws_for_fluentbit" {
   namespace        = local.aws_for_fluentbit_namespace
   create_namespace = try(var.aws_for_fluentbit.create_namespace, false)
   chart            = try(var.aws_for_fluentbit.chart, "aws-for-fluent-bit")
-  chart_version    = try(var.aws_for_fluentbit.chart_version, "0.1.28")
+  chart_version    = try(var.aws_for_fluentbit.chart_version, "0.1.30")
   repository       = try(var.aws_for_fluentbit.repository, "https://aws.github.io/eks-charts")
   values           = try(var.aws_for_fluentbit.values, [])
 
@@ -748,6 +748,232 @@ module "aws_for_fluentbit" {
   }
 
   tags = var.tags
+}
+
+resource "kubernetes_config_map_v1_data" "aws_for_fluentbit_containerinsights" {
+  count      = var.enable_aws_for_fluentbit && try(var.aws_for_fluentbit.enable_containerinsights, false) ? 1 : 0
+  depends_on = [module.aws_for_fluentbit]
+  force      = true
+
+  metadata {
+    name      = "aws-for-fluent-bit"
+    namespace = local.aws_for_fluentbit_namespace
+  }
+
+  data = {
+    "fluent-bit.conf" = try(
+      var.aws_for_fluentbit.fluentbit_conf,
+      <<-EOT
+        [SERVICE]
+          Flush 5
+          Grace 30
+          Log_Level info
+          Daemon off
+          Parsers_File parsers.conf
+          HTTP_Server On
+          HTTP_Listen 0.0.0.0
+          HTTP_Port 2020
+          storage.path /var/fluent-bit/state/flb-storage/
+          storage.sync normal
+          storage.checksum off
+          storage.backlog.mem_limit 5M
+
+        @INCLUDE application-log.conf
+        @INCLUDE dataplane-log.conf
+        @INCLUDE host-log.conf
+      EOT
+    )
+    "application-log.conf" = try(
+      var.aws_for_fluentbit.application_log_conf,
+      <<-EOT
+        [INPUT]
+            Name tail
+            Tag application.*
+            Exclude_Path /var/log/containers/cloudwatch-agent*, /var/log/containers/fluent-bit*, /var/log/containers/aws-node*, /var/log/containers/kube-proxy*
+            Path /var/log/containers/*.log
+            multiline.parser docker, cri
+            DB /var/fluent-bit/state/flb_container.db
+            Mem_Buf_Limit 50MB
+            Skip_Long_Lines On
+            Refresh_Interval 10
+            Rotate_Wait 30
+            storage.type filesystem
+            Read_from_Head Off
+
+        [INPUT]
+            Name tail
+            Tag application.*
+            Path /var/log/containers/fluent-bit*
+            multiline.parser docker, cri
+            DB /var/fluent-bit/state/flb_log.db
+            Mem_Buf_Limit 5MB
+            Skip_Long_Lines On
+            Refresh_Interval 10
+            Read_from_Head Off
+
+        [INPUT]
+            Name tail
+            Tag application.*
+            Path /var/log/containers/cloudwatch-agent*
+            multiline.parser docker, cri
+            DB /var/fluent-bit/state/flb_cwagent.db
+            Mem_Buf_Limit 5MB
+            Skip_Long_Lines On
+            Refresh_Interval 10
+            Read_from_Head Off
+
+        [FILTER]
+            Name kubernetes
+            Match application.*
+            Kube_URL https://kubernetes.default.svc:443
+            Kube_Tag_Prefix application.var.log.containers.
+            Merge_Log On
+            Merge_Log_Key log_processed
+            K8S-Logging.Parser On
+            K8S-Logging.Exclude Off
+            Labels Off
+            Annotations Off
+            Use_Kubelet On
+            Kubelet_Port 10250
+            Buffer_Size 0
+
+        [OUTPUT]
+            Name cloudwatch_logs
+            Match application.*
+            region ${local.region}
+            log_group_name /aws/containerinsights/${local.cluster_name}/application
+            log_stream_prefix $${HOSTNAME}-
+            auto_create_group true
+            extra_user_agent container-insights
+            workers 1
+      EOT
+    )
+    "dataplane-log.conf" = try(
+      var.aws_for_fluentbit.dataplane_log_conf,
+      <<-EOT
+        [INPUT]
+            Name systemd
+            Tag dataplane.systemd.*
+            Systemd_Filter _SYSTEMD_UNIT=docker.service
+            Systemd_Filter _SYSTEMD_UNIT=containerd.service
+            Systemd_Filter _SYSTEMD_UNIT=kubelet.service
+            DB /var/fluent-bit/state/systemd.db
+            Path /var/log/journal
+            Read_From_Tail On
+
+        [INPUT]
+            Name tail
+            Tag dataplane.tail.*
+            Path /var/log/containers/aws-node*, /var/log/containers/kube-proxy*
+            multiline.parser docker, cri
+            DB /var/fluent-bit/state/flb_dataplane_tail.db
+            Mem_Buf_Limit 50MB
+            Skip_Long_Lines On
+            Refresh_Interval 10
+            Rotate_Wait 30
+            storage.type filesystem
+            Read_from_Head Off
+
+        [FILTER]
+            Name modify
+            Match dataplane.systemd.*
+            Rename _HOSTNAME hostname
+            Rename _SYSTEMD_UNIT systemd_unit
+            Rename MESSAGE message
+            Remove_regex ^((?!hostname|systemd_unit|message).)*$
+
+        [FILTER]
+            Name aws
+            Match dataplane.*
+            imds_version v2
+
+        [OUTPUT]
+            Name cloudwatch_logs
+            Match dataplane.*
+            region ${local.region}
+            log_group_name /aws/containerinsights/${local.cluster_name}/dataplane
+            log_stream_prefix $${HOSTNAME}-
+            auto_create_group true
+            extra_user_agent container-insights
+      EOT
+    )
+    "host-log.conf" = try(
+      var.aws_for_fluentbit.host_log_conf,
+      <<-EOT
+        [INPUT]
+            Name tail
+            Tag host.dmesg
+            Path /var/log/dmesg
+            Key message
+            DB /var/fluent-bit/state/flb_dmesg.db
+            Mem_Buf_Limit 5MB
+            Skip_Long_Lines On
+            Refresh_Interval 10
+            Read_from_Head Off
+
+        [INPUT]
+            Name tail
+            Tag host.messages
+            Path /var/log/messages
+            Parser syslog
+            DB /var/fluent-bit/state/flb_messages.db
+            Mem_Buf_Limit 5MB
+            Skip_Long_Lines On
+            Refresh_Interval 10
+            Read_from_Head Off
+
+        [INPUT]
+            Name tail
+            Tag host.secure
+            Path /var/log/secure
+            Parser syslog
+            DB /var/fluent-bit/state/flb_secure.db
+            Mem_Buf_Limit 5MB
+            Skip_Long_Lines On
+            Refresh_Interval 10
+            Read_from_Head Off
+
+        [FILTER]
+            Name aws
+            Match host.*
+            imds_version v2
+
+        [OUTPUT]
+            Name cloudwatch_logs
+            Match host.*
+            region ${local.region}
+            log_group_name /aws/containerinsights/${local.cluster_name}/host
+            log_stream_prefix $${HOSTNAME}.
+            auto_create_group true
+            extra_user_agent container-insights
+      EOT
+    )
+    "parsers.conf" = try(
+      var.aws_for_fluentbit.parsers_conf,
+      <<-EOT
+        [PARSER]
+            Name syslog
+            Format regex
+            Regex ^(?<time>[^ ]* {1,2}[^ ]* [^ ]*) (?<host>[^ ]*) (?<ident>[a-zA-Z0-9_\/\.\-]*)(?:\[(?<pid>[0-9]+)\])?(?:[^\:]*\:)? *(?<message>.*)$
+            Time_Key time
+            Time_Format %b %d %H:%M:%S
+
+        [PARSER]
+            Name container_firstline
+            Format regex
+            Regex (?<log>(?<="log":")\S(?!\.).*?)(?<!\\)".*(?<stream>(?<="stream":").*?)".*(?<time>\d{4}-\d{1,2}-\d{1,2}T\d{2}:\d{2}:\d{2}\.\w*).*(?=})
+            Time_Key time
+            Time_Format %Y-%m-%dT%H:%M:%S.%LZ
+
+        [PARSER]
+            Name cwagent_firstline
+            Format regex
+            Regex (?<log>(?<="log":")\d{4}[\/-]\d{1,2}[\/-]\d{1,2}[ T]\d{2}:\d{2}:\d{2}(?!\.).*?)(?<!\\)".*(?<stream>(?<="stream":").*?)".*(?<time>\d{4}-\d{1,2}-\d{1,2}T\d{2}:\d{2}:\d{2}\.\w*).*(?=})
+            Time_Key time
+            Time_Format %Y-%m-%dT%H:%M:%S.%LZ
+      EOT
+    )
+  }
 }
 
 ################################################################################
