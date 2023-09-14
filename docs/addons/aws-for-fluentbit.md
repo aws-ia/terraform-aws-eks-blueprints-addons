@@ -43,7 +43,7 @@ If you want to enable [Container Insights on Amazon EKS](https://docs.aws.amazon
 Verify aws-for-fluentbit pods are running.
 
 ```sh
-$ kubectl -n kube-system get pods -l app.kubernetes.io/name=aws-for-fluent-bit 
+$ kubectl -n kube-system get pods -l app.kubernetes.io/name=aws-for-fluent-bit
 NAME                       READY   STATUS    RESTARTS   AGE
 aws-for-fluent-bit-6lhkj   1/1     Running   0          15m
 aws-for-fluent-bit-sbn9b   1/1     Running   0          15m
