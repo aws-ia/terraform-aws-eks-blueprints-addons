@@ -145,7 +145,7 @@ module "eks_blueprints_addons" {
   enable_external_dns                          = true
   enable_external_secrets                      = true
   enable_gatekeeper                            = true
-  # enable_ingress_nginx                         = true
+  enable_ingress_nginx                         = true
 
   # Turn off mutation webhook for services to avoid ordering issue
   enable_aws_load_balancer_controller = true
