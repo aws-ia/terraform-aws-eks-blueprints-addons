@@ -168,11 +168,21 @@ module "eks_blueprints_addons" {
   }
   aws_for_fluentbit = {
     enable_containerinsights = true
+    kubelet_monitoring       = true
     chart_version            = "0.1.28"
     set = [{
       name  = "cloudWatchLogs.autoCreateGroup"
       value = true
-    }]
+      },
+      {
+        name  = "hostNetwork"
+        value = true
+      },
+      {
+        name  = "dnsPolicy"
+        value = "ClusterFirstWithHostNet"
+      }
+    ]
     s3_bucket_arns = [
       module.velero_backup_s3_bucket.s3_bucket_arn,
       "${module.velero_backup_s3_bucket.s3_bucket_arn}/logs/*"
