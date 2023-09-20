@@ -833,6 +833,8 @@ resource "kubernetes_config_map_v1_data" "aws_for_fluentbit_containerinsights" {
             K8S-Logging.Exclude Off
             Labels Off
             Annotations Off
+            ${try(var.aws_for_fluentbit.kubelet_monitoring, false) ? "Use_Kubelet On" : ""}
+            ${try(var.aws_for_fluentbit.kubelet_monitoring, false) ? "Kubelet_Port 10250" : ""}
             Buffer_Size 0
 
         [OUTPUT]

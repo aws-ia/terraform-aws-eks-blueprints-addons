@@ -38,6 +38,29 @@ If you want to enable [Container Insights on Amazon EKS](https://docs.aws.amazon
   }
 ```
 
+By default, ClusterInsights will not enable the `kubelet` monitoring feature, with AWS for FluentBit integration, since this is an optional feature that is suggested to be enabled only on large clusters. To enable the [ClusterInsights Use_Kubelet feature](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-use-kubelet.html) you'll need to provide a few more parametees:
+
+```hcl
+  enable_aws_for_fluentbit = true
+  aws_for_fluentbit = {
+    enable_containerinsights = true
+    kubelet_monitoring       = true
+    set = [{
+        name  = "cloudWatchLogs.autoCreateGroup"
+        value = true
+      },
+      {
+        name  = "hostNetwork"
+        value = true
+      },
+      {
+        name  = "dnsPolicy"
+        value = "ClusterFirstWithHostNet"
+      }
+    ]
+  }
+```
+
 ## Verify the Fluent Bit setup
 
 Verify aws-for-fluentbit pods are running.
