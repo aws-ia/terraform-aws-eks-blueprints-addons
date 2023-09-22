@@ -2221,6 +2221,11 @@ data "aws_iam_policy_document" "external_dns" {
   }
 
   statement {
+    actions   = ["route53:ListTagsForResource"]
+    resources = var.external_dns_route53_zone_arns
+  }
+
+  statement {
     actions = [
       "route53:ListHostedZones",
       "route53:ListResourceRecordSets",
