@@ -73,6 +73,7 @@ module "argo_rollouts" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_argo_rollouts ? 1 : 0)
   create = var.enable_argo_rollouts
 
   # Disable helm release
@@ -129,6 +130,7 @@ module "argo_workflows" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_argo_workflows ? 1 : 0)
   create = var.enable_argo_workflows
 
   # Disable helm release
@@ -185,6 +187,7 @@ module "argocd" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_argocd ? 1 : 0)
   create = var.enable_argocd
 
   # Disable helm release
@@ -242,6 +245,7 @@ module "argo_events" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_argo_events ? 1 : 0)
   create = var.enable_argo_events
 
   # https://github.com/argoproj/argo-helm/tree/main/charts/argo-events
@@ -301,6 +305,7 @@ module "aws_cloudwatch_metrics" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_aws_cloudwatch_metrics ? 1 : 0)
   create = var.enable_aws_cloudwatch_metrics
 
   # Disable helm release
@@ -467,6 +472,7 @@ module "aws_efs_csi_driver" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_aws_efs_csi_driver ? 1 : 0)
   create = var.enable_aws_efs_csi_driver
 
   # Disable helm release
@@ -645,6 +651,7 @@ module "aws_for_fluentbit" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_aws_for_fluentbit ? 1 : 0)
   create = var.enable_aws_for_fluentbit
 
   # Disable helm release
@@ -752,7 +759,7 @@ module "aws_for_fluentbit" {
 
 resource "kubernetes_config_map_v1_data" "aws_for_fluentbit_containerinsights" {
   count      = var.enable_aws_for_fluentbit && try(var.aws_for_fluentbit.enable_containerinsights, false) ? 1 : 0
-  depends_on = [module.aws_for_fluentbit]
+  depends_on = [module.aws_for_fluentbit[0]]
   force      = true
 
   metadata {
@@ -1042,6 +1049,7 @@ module "aws_fsx_csi_driver" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_aws_fsx_csi_driver ? 1 : 0)
   create = var.enable_aws_fsx_csi_driver
 
   # Disable helm release
@@ -1405,6 +1413,7 @@ module "aws_load_balancer_controller" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_aws_load_balancer_controller ? 1 : 0)
   create = var.enable_aws_load_balancer_controller
 
   # Disable helm release
@@ -1518,6 +1527,7 @@ module "aws_node_termination_handler_sqs" {
   source  = "terraform-aws-modules/sqs/aws"
   version = "4.0.1"
 
+  count = (var.enable_aws_node_termination_handler ? 1 : 0)
   create = var.enable_aws_node_termination_handler
 
   name = try(var.aws_node_termination_handler_sqs.queue_name, "aws-nth-${var.cluster_name}")
@@ -1587,7 +1597,7 @@ resource "aws_cloudwatch_event_target" "aws_node_termination_handler" {
 
   rule      = aws_cloudwatch_event_rule.aws_node_termination_handler[each.key].name
   target_id = "AWSNodeTerminationHandlerQueueTarget"
-  arn       = module.aws_node_termination_handler_sqs.queue_arn
+  arn       = module.aws_node_termination_handler_sqs.queue_arn[0]
 }
 
 data "aws_iam_policy_document" "aws_node_termination_handler" {
@@ -1612,7 +1622,7 @@ data "aws_iam_policy_document" "aws_node_termination_handler" {
       "sqs:DeleteMessage",
       "sqs:ReceiveMessage",
     ]
-    resources = [module.aws_node_termination_handler_sqs.queue_arn]
+    resources = [module.aws_node_termination_handler_sqs.queue_arn[0]]
   }
 }
 
@@ -1620,6 +1630,7 @@ module "aws_node_termination_handler" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_aws_node_termination_handler ? 1 : 0)
   create = var.enable_aws_node_termination_handler
 
   # Disable helm release
@@ -1673,7 +1684,7 @@ module "aws_node_termination_handler" {
         value = local.region
       },
       { name  = "queueURL"
-        value = module.aws_node_termination_handler_sqs.queue_url
+        value = module.aws_node_termination_handler_sqs.queue_url[0]
       },
       {
         name  = "enableSqsTerminationDraining"
@@ -1745,6 +1756,7 @@ module "aws_privateca_issuer" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_aws_privateca_issuer ? 1 : 0)
   create = var.enable_aws_privateca_issuer
 
   # Disable helm release
@@ -1864,6 +1876,7 @@ module "cert_manager" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_cert_manager ? 1 : 0)
   create = var.enable_cert_manager
 
   # Disable helm release
@@ -2011,6 +2024,7 @@ module "cluster_autoscaler" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_cluster_autoscaler ? 1 : 0)
   create = var.enable_cluster_autoscaler
 
   # Disable helm release
@@ -2116,6 +2130,7 @@ module "cluster_proportional_autoscaler" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_cluster_proportional_autoscaler ? 1 : 0)
   create = var.enable_cluster_proportional_autoscaler
 
   # Disable helm release
@@ -2198,8 +2213,8 @@ resource "aws_eks_addon" "this" {
   tags = var.tags
 
   depends_on = [
-    module.cert_manager.name,
-    module.cert_manager.namespace,
+    module.cert_manager.name,[0]
+    module.cert_manager.namespace,[0]
   ]
 }
 
@@ -2238,6 +2253,7 @@ module "external_dns" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_external_dns ? 1 : 0)
   create = var.enable_external_dns
 
   # Disable helm release
@@ -2391,6 +2407,7 @@ module "external_secrets" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_external_secrets ? 1 : 0)
   create = var.enable_external_secrets
 
   # Disable helm release
@@ -2617,6 +2634,7 @@ module "gatekeeper" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_gatekeeper ? 1 : 0)
   create = var.enable_gatekeeper
 
   # Disable helm release
@@ -2673,6 +2691,7 @@ module "ingress_nginx" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_ingress_nginx ? 1 : 0)
   create = var.enable_ingress_nginx
 
   # Disable helm release
@@ -2809,7 +2828,7 @@ data "aws_iam_policy_document" "karpenter" {
         "sqs:GetQueueUrl",
         "sqs:ReceiveMessage",
       ]
-      resources = [module.karpenter_sqs.queue_arn]
+      resources = [module.karpenter_sqs.queue_arn[0]]
     }
   }
 }
@@ -2865,7 +2884,7 @@ resource "aws_cloudwatch_event_target" "karpenter" {
 
   rule      = aws_cloudwatch_event_rule.karpenter[each.key].name
   target_id = "KarpenterQueueTarget"
-  arn       = module.karpenter_sqs.queue_arn
+  arn       = module.karpenter_sqs.queue_arn[0]
 }
 
 data "aws_iam_policy_document" "karpenter_assume_role" {
@@ -2931,6 +2950,7 @@ module "karpenter" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_karpenter ? 1 : 0)
   create = var.enable_karpenter
 
   # Disable helm release
@@ -2989,7 +3009,7 @@ module "karpenter" {
       },
       {
         name  = "settings.aws.interruptionQueueName"
-        value = local.karpenter_enable_spot_termination ? module.karpenter_sqs.queue_name : ""
+        value = local.karpenter_enable_spot_termination ? module.karpenter_sqs.queue_name : ""[0]
       },
       {
         name  = "serviceAccount.name"
@@ -3051,6 +3071,7 @@ module "kube_prometheus_stack" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_kube_prometheus_stack ? 1 : 0)
   create = var.enable_kube_prometheus_stack
 
   # Disable helm release
@@ -3107,6 +3128,7 @@ module "metrics_server" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_metrics_server ? 1 : 0)
   create = var.enable_metrics_server
 
   # Disable helm release
@@ -3163,6 +3185,7 @@ module "secrets_store_csi_driver" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_secrets_store_csi_driver ? 1 : 0)
   create = var.enable_secrets_store_csi_driver
 
   # Disable helm release
@@ -3219,6 +3242,7 @@ module "secrets_store_csi_driver_provider_aws" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_secrets_store_csi_driver_provider_aws ? 1 : 0)
   create = var.enable_secrets_store_csi_driver_provider_aws
 
   # Disable helm release
@@ -3329,6 +3353,7 @@ module "velero" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_velero ? 1 : 0)
   create = var.enable_velero
 
   # Disable helm release
@@ -3455,6 +3480,7 @@ module "vpa" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_vpa ? 1 : 0)
   create = var.enable_vpa
 
   # Disable helm release
@@ -3538,6 +3564,7 @@ module "aws_gateway_api_controller" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.1.0"
 
+  count = (var.enable_aws_gateway_api_controller ? 1 : 0)
   create = var.enable_aws_gateway_api_controller
 
   # Disable helm release
