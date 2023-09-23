@@ -1,76 +1,76 @@
 output "argo_rollouts" {
   description = "Map of attributes of the Helm release created"
-  value       = module.argo_rollouts
+  value       = try(module.argo_rollouts[0],null)
 }
 
 output "argo_workflows" {
   description = "Map of attributes of the Helm release created"
-  value       = module.argo_workflows
+  value       = try(module.argo_workflows[0],null)
 }
 
 output "argocd" {
   description = "Map of attributes of the Helm release created"
-  value       = module.argocd
+  value       = try(module.argocd[0],null)
 }
 
 output "argo_events" {
   description = "Map of attributes of the Helm release created"
-  value       = module.argo_events
+  value       = try(module.argo_events[0],null)
 }
 
 output "aws_cloudwatch_metrics" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.aws_cloudwatch_metrics
+  value       = try(module.aws_cloudwatch_metrics[0],null)
 }
 
 output "aws_efs_csi_driver" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.aws_efs_csi_driver
+  value       = try(module.aws_efs_csi_driver[0],null)
 }
 
 output "aws_for_fluentbit" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.aws_for_fluentbit
+  value       = try(module.aws_for_fluentbit[0],null)
 }
 
 output "aws_fsx_csi_driver" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.aws_fsx_csi_driver
+  value       = try(module.aws_fsx_csi_driver[0],null)
 }
 
 output "aws_load_balancer_controller" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.aws_load_balancer_controller
+  value       = try(module.aws_load_balancer_controller[0],null)
 }
 
 output "aws_node_termination_handler" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value = merge(
+  value = try(merge(
     module.aws_node_termination_handler,
     {
       sqs = module.aws_node_termination_handler_sqs
     }
-  )
+  ),null)
 }
 
 output "aws_privateca_issuer" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.aws_privateca_issuer
+  value       = try(module.aws_privateca_issuer[0],null)
 }
 
 output "cert_manager" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.cert_manager
+  value       = try(module.cert_manager[0],null)
 }
 
 output "cluster_autoscaler" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.cluster_autoscaler
+  value       = try(module.cluster_autoscaler[0],null)
 }
 
 output "cluster_proportional_autoscaler" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.cluster_proportional_autoscaler
+  value       = try(module.cluster_proportional_autoscaler[0],null)
 }
 
 output "eks_addons" {
@@ -80,12 +80,12 @@ output "eks_addons" {
 
 output "external_dns" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.external_dns
+  value       = try(module.external_dns[0],null)
 }
 
 output "external_secrets" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.external_secrets
+  value       = try(module.external_secrets[0],null)
 }
 
 output "fargate_fluentbit" {
@@ -98,12 +98,12 @@ output "fargate_fluentbit" {
 
 output "gatekeeper" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.gatekeeper
+  value       = try(module.gatekeeper[0],null)
 }
 
 output "ingress_nginx" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.ingress_nginx
+  value       = try(module.ingress_nginx[0],null)
 }
 
 output "karpenter" {
@@ -120,37 +120,37 @@ output "karpenter" {
 
 output "kube_prometheus_stack" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.kube_prometheus_stack
+  value       = try(module.kube_prometheus_stack[0],null)
 }
 
 output "metrics_server" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.metrics_server
+  value       = try(module.metrics_server[0],null)
 }
 
 output "secrets_store_csi_driver" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.secrets_store_csi_driver
+  value       = try(module.secrets_store_csi_driver[0],null)
 }
 
 output "secrets_store_csi_driver_provider_aws" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.secrets_store_csi_driver_provider_aws
+  value       = try(module.secrets_store_csi_driver_provider_aws[0],null)
 }
 
 output "velero" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.velero
+  value       = try(module.velero[0],null)
 }
 
 output "vpa" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.vpa
+  value       = try(module.vpa[0],null)
 }
 
 output "aws_gateway_api_controller" {
   description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.aws_gateway_api_controller
+  value       = try(module.aws_gateway_api_controller[0],null)
 }
 
 ################################################################################
@@ -175,91 +175,91 @@ output "gitops_metadata" {
   description = "GitOps Bridge metadata"
   value = merge(
     { for k, v in {
-      iam_role_arn    = module.cert_manager.iam_role_arn
+      iam_role_arn    = module.cert_manager[0].iam_role_arn
       namespace       = local.cert_manager_namespace
       service_account = local.cert_manager_service_account
       } : "cert_manager_${k}" => v if var.enable_cert_manager
     },
     { for k, v in {
-      iam_role_arn    = module.cluster_autoscaler.iam_role_arn
+      iam_role_arn    = module.cluster_autoscaler[0].iam_role_arn
       namespace       = local.cluster_autoscaler_namespace
       service_account = local.cluster_autoscaler_service_account
       } : "cluster_autoscaler_${k}" => v if var.enable_cluster_autoscaler
     },
     { for k, v in {
-      iam_role_arn    = module.aws_cloudwatch_metrics.iam_role_arn
+      iam_role_arn    = module.aws_cloudwatch_metrics[0].iam_role_arn
       namespace       = local.aws_cloudwatch_metrics_namespace
       service_account = local.aws_cloudwatch_metrics_service_account
       } : "aws_cloudwatch_metrics_${k}" => v if var.enable_aws_cloudwatch_metrics
     },
     { for k, v in {
-      iam_role_arn               = module.aws_efs_csi_driver.iam_role_arn
+      iam_role_arn               = module.aws_efs_csi_driver[0].iam_role_arn
       namespace                  = local.aws_efs_csi_driver_namespace
       controller_service_account = local.aws_efs_csi_driver_controller_service_account
       node_service_account       = local.aws_efs_csi_driver_node_service_account
       } : "aws_efs_csi_driver_${k}" => v if var.enable_aws_efs_csi_driver
     },
     { for k, v in {
-      iam_role_arn               = module.aws_fsx_csi_driver.iam_role_arn
+      iam_role_arn               = module.aws_fsx_csi_driver[0].iam_role_arn
       namespace                  = local.aws_fsx_csi_driver_namespace
       controller_service_account = local.aws_fsx_csi_driver_controller_service_account
       node_service_account       = local.aws_fsx_csi_driver_node_service_account
       } : "aws_fsx_csi_driver_${k}" => v if var.enable_aws_fsx_csi_driver
     },
     { for k, v in {
-      iam_role_arn    = module.aws_privateca_issuer.iam_role_arn
+      iam_role_arn    = module.aws_privateca_issuer[0].iam_role_arn
       namespace       = local.aws_privateca_issuer_namespace
       service_account = local.aws_privateca_issuer_service_account
       } : "aws_privateca_issuer_${k}" => v if var.enable_aws_privateca_issuer
     },
     { for k, v in {
-      iam_role_arn    = module.external_dns.iam_role_arn
+      iam_role_arn    = module.external_dns[0].iam_role_arn
       namespace       = local.external_dns_namespace
       service_account = local.external_dns_service_account
       } : "external_dns_${k}" => v if var.enable_external_dns
     },
     { for k, v in {
-      iam_role_arn    = module.external_secrets.iam_role_arn
+      iam_role_arn    = module.external_secrets[0].iam_role_arn
       namespace       = local.external_secrets_namespace
       service_account = local.external_secrets_service_account
       } : "external_secrets_${k}" => v if var.enable_external_secrets
     },
     { for k, v in {
-      iam_role_arn    = module.aws_load_balancer_controller.iam_role_arn
+      iam_role_arn    = module.aws_load_balancer_controller[0].iam_role_arn
       namespace       = local.aws_load_balancer_controller_namespace
       service_account = local.aws_load_balancer_controller_service_account
       } : "aws_load_balancer_controller_${k}" => v if var.enable_aws_load_balancer_controller
     },
     { for k, v in {
-      iam_role_arn    = module.aws_for_fluentbit.iam_role_arn
+      iam_role_arn    = module.aws_for_fluentbit[0].iam_role_arn
       namespace       = local.aws_for_fluentbit_namespace
       service_account = local.aws_for_fluentbit_service_account
       log_group_name  = try(aws_cloudwatch_log_group.aws_for_fluentbit[0].name, null)
       } : "aws_for_fluentbit_${k}" => v if var.enable_aws_for_fluentbit && v != null
     },
     { for k, v in {
-      iam_role_arn    = module.aws_node_termination_handler.iam_role_arn
+      iam_role_arn    = module.aws_node_termination_handler[0].iam_role_arn
       namespace       = local.aws_node_termination_handler_namespace
       service_account = local.aws_node_termination_handler_service_account
       sqs_queue_url   = module.aws_node_termination_handler_sqs.queue_url
       } : "aws_node_termination_handler_${k}" => v if var.enable_aws_node_termination_handler
     },
     { for k, v in {
-      iam_role_arn               = module.karpenter.iam_role_arn
+      iam_role_arn               = module.karpenter[0].iam_role_arn
       namespace                  = local.karpenter_namespace
       service_account            = local.karpenter_service_account_name
-      sqs_queue_name             = module.karpenter_sqs.queue_name
+      sqs_queue_name             = module.karpenter_sqs[0].queue_name
       node_instance_profile_name = local.karpenter_node_instance_profile_name
       } : "karpenter_${k}" => v if var.enable_karpenter
     },
     { for k, v in {
-      iam_role_arn    = module.velero.iam_role_arn
+      iam_role_arn    = module.velero[0].iam_role_arn
       namespace       = local.velero_namespace
       service_account = local.velero_service_account
       } : "velero_${k}" => v if var.enable_velero
     },
     { for k, v in {
-      iam_role_arn    = module.aws_gateway_api_controller.iam_role_arn
+      iam_role_arn    = module.aws_gateway_api_controller[0].iam_role_arn
       namespace       = local.aws_gateway_api_controller_namespace
       service_account = local.aws_gateway_api_controller_service_account
       } : "aws_gateway_api_controller_${k}" => v if var.enable_aws_gateway_api_controller
