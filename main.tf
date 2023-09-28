@@ -1923,6 +1923,9 @@ module "cert_manager" {
   role_description              = try(var.cert_manager.role_description, "IRSA for cert-manger project")
   role_policies                 = lookup(var.cert_manager, "role_policies", {})
 
+  # it seems that with 1.12.3+ and 1.13.0, this is be required for IRSA to work
+  allow_self_assume_role        = local.create_cert_manager_irsa && try(var.cert_manager.create_role, true)
+
   source_policy_documents = data.aws_iam_policy_document.cert_manager[*].json
   policy_statements       = lookup(var.cert_manager, "policy_statements", [])
   policy_name             = try(var.cert_manager.policy_name, null)
