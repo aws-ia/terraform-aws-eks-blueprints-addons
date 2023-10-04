@@ -567,7 +567,7 @@ module "aws_efs_csi_driver" {
 
 locals {
   aws_for_fluentbit_service_account   = try(var.aws_for_fluentbit.service_account_name, "aws-for-fluent-bit-sa")
-  aws_for_fluentbit_cw_log_group_name = try(var.aws_for_fluentbit_cw_log_group.create, true) ? try(var.aws_for_fluentbit_cw_log_group.name, "/aws/eks/${var.cluster_name}/aws-fluentbit-logs") : null
+  aws_for_fluentbit_cw_log_group_name = try(var.aws_for_fluentbit_cw_log_group.create, true) ? try(var.aws_for_fluentbit_cw_log_group.name, "/aws/eks/${var.cluster_name}/aws-fluentbit-logs") : ""
   aws_for_fluentbit_namespace         = try(var.aws_for_fluentbit.namespace, "kube-system")
 }
 
@@ -1907,6 +1907,10 @@ module "cert_manager" {
     {
       name  = "installCRDs"
       value = true
+    },
+    {
+      name  = "serviceAccount.name"
+      value = local.cert_manager_service_account
     }
     ],
     try(var.cert_manager.set, [])
@@ -1963,6 +1967,7 @@ locals {
     "1.25" = "v1.25.3"
     "1.26" = "v1.26.4"
     "1.27" = "v1.27.3"
+    "1.28" = "v1.28.0"
   }
 }
 
