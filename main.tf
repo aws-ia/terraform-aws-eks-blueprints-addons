@@ -1927,6 +1927,7 @@ module "cert_manager" {
   role_description              = try(var.cert_manager.role_description, "IRSA for cert-manger project")
   role_policies                 = lookup(var.cert_manager, "role_policies", {})
 
+  allow_self_assume_role  = try(var.cert_manager.allow_self_assume_role, true)
   source_policy_documents = data.aws_iam_policy_document.cert_manager[*].json
   policy_statements       = lookup(var.cert_manager, "policy_statements", [])
   policy_name             = try(var.cert_manager.policy_name, null)
