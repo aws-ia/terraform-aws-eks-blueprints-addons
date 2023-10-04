@@ -1907,6 +1907,10 @@ module "cert_manager" {
     {
       name  = "installCRDs"
       value = true
+    },
+    {
+      name  = "serviceAccount.name"
+      value = local.cert_manager_service_account
     }
     ],
     try(var.cert_manager.set, [])
