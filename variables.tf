@@ -367,6 +367,22 @@ variable "external_secrets_kms_key_arns" {
 }
 
 ################################################################################
+# Flux v2
+################################################################################
+
+variable "enable_flux2" {
+  description = "Enable Flux v2 add-on"
+  type        = bool
+  default     = false
+}
+
+variable "flux2" {
+  description = "Flux v2 add-on config"
+  type        = any
+  default     = {}
+}
+
+################################################################################
 # Fargate Fluentbit
 ################################################################################
 

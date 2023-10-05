@@ -2606,6 +2606,22 @@ resource "kubernetes_config_map_v1" "aws_logging" {
 }
 
 ################################################################################
+# Flux v2
+################################################################################
+module "flux2" {
+  source = "modules/kubernetes/"
+
+  create = var.enable_flux2
+
+  create_kubernetes_resources = var.create_kubernetes_resources
+
+  addon_defs = var.flux2
+
+  tags = var.tags
+}
+
+
+################################################################################
 # Gatekeeper
 ################################################################################
 

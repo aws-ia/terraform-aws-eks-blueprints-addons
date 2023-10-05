@@ -88,6 +88,11 @@ output "external_secrets" {
   value       = module.external_secrets
 }
 
+output "flux2" {
+  description = "Map of attributes of the configmap and IAM policy created"
+  value = module.flux2
+}
+
 output "fargate_fluentbit" {
   description = "Map of attributes of the configmap and IAM policy created"
   value = {
@@ -237,6 +242,7 @@ output "gitops_metadata" {
       log_group_name  = try(aws_cloudwatch_log_group.aws_for_fluentbit[0].name, null)
       } : "aws_for_fluentbit_${k}" => v if var.enable_aws_for_fluentbit && v != null
     },
+    var.enable_flux2 ? module.flux2.gitops_metadata : {},
     { for k, v in {
       iam_role_arn    = module.aws_node_termination_handler.iam_role_arn
       namespace       = local.aws_node_termination_handler_namespace
