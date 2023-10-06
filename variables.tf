@@ -382,6 +382,17 @@ variable "flux2" {
   default     = {}
 }
 
+variable "source_buckets_s3_names" { # https://fluxcd.io/flux/components/source/buckets/#aws
+  type        = list(string)
+  default     = []
+}
+
+variable "kustomize_sops_kms_arns" { # https://fluxcd.io/flux/guides/mozilla-sops/#aws
+  type        = list(string)
+  default     = []
+}
+
+
 ################################################################################
 # Fargate Fluentbit
 ################################################################################

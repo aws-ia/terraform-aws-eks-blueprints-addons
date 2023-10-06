@@ -110,6 +110,19 @@ variable "addon_defs" {
 #   }
 # }
 
+# # TODO: consider whether to make this explicitly configurable (it can be overrideable via var.addon_defs.role_policies)
+# variable "source_helmrepos_policy"
+
+variable "source_buckets_s3_names" { # https://fluxcd.io/flux/components/source/buckets/#aws
+  type        = list(string)
+  default     = []
+}
+
+variable "kustomize_sops_kms_arns" { # https://fluxcd.io/flux/guides/mozilla-sops/#aws
+  type        = list(string)
+  default     = []
+}
+
 variable "tags" {
   type        = map(string)
   default     = {}

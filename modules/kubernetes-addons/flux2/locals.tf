@@ -1,4 +1,8 @@
 locals {
+  # data "aws_partition" "current" {}
+  # data "aws_caller_identity" "current" {}
+  # data "aws_region" "current" {}
+
   defaults = {
     name      = "flux2"
     namespace = "flux-system"
@@ -20,6 +24,8 @@ locals {
 
   addon_values = try(var.addon_defs.values, [])
 
+  create_role = try(var.addon_defs.create_role, true)
+
   # it seems flux2 doesn't allow customization of service account (as per https://github.com/fluxcd-community/helm-charts/issues/191)
   # so we hardwiring the names to be used in policies
 
@@ -39,4 +45,9 @@ locals {
     # "notification"     = { sa_name = "notification-controller",     helm_base = "notificationController.serviceAccount.annotations" }
     # "image_automation" = { sa_name = "image-automation-controller", helm_base = "imageAutomationController.serviceAccount.annotations" }
   }
+
+  source_buckets_s3_names = toset(try(var.source_buckets_s3_names, []))
+  kustomize_sops_kms_arns = toset(try(var.kustomize_sops_kms_arns, [
+    # TODO: consider whether to add the a default KMS alias - will require adding data sources to translate to ARNs and would only make sense if there is a natural alias
+  ]))
 }

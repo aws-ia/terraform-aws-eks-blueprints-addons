@@ -1,97 +1,59 @@
 # https://fluxcd.io/flux/installation/configuration/workload-identity/#aws-iam-roles-for-service-accounts
+# https://fluxcd.io/flux/security/contextual-authorization/
+#   https://fluxcd.io/flux/components/source/ocirepositories/#aws
+#   https://fluxcd.io/flux/components/source/buckets/#aws
+#   https://fluxcd.io/flux/components/source/helmrepositories/#aws
+#   https://fluxcd.io/flux/components/image/imagerepositories/#aws
+#   https://fluxcd.io/flux/guides/mozilla-sops/#aws
 #
-# apiVersion: kustomize.config.k8s.io/v1beta1
-# kind: Kustomization
-# resources:
-#   - gotk-components.yaml
-#   - gotk-sync.yaml
-# patches:
-#   - patch: |
-#       apiVersion: v1
-#       kind: ServiceAccount
-#       metadata:
-#         name: controller
-#         annotations:
-#           eks.amazonaws.com/role-arn: <ECR ROLE ARN>
-#     target:
-#       kind: ServiceAccount
-#       name: "(source-controller|image-reflector-controller)"
-#   - patch: |
-#       apiVersion: v1
-#       kind: ServiceAccount
-#       metadata:
-#         name: controller
-#         annotations:
-#           eks.amazonaws.com/role-arn: <KMS ROLE ARN>
-#     target:
-#       kind: ServiceAccount
-#       name: "kustomize-controller"
+# as of 2023-10-05, the following controllers are available:
+# Supported	      Source Controller	              Bucket Repository Authentication	    AWS	Guide
+# Supported	      Source Controller	              OCI Repository Authentication	        AWS	Guide
+# Supported	      Image Reflector Controller      Container Registry Authentication	    AWS	Guide
+# Supported	      Kustomize Controller            SOPS Integration with Cloud KMS	      AWS	Guide
+# Supported	      Source Controller	              Helm OCI Repository Authentication	  AWS	Guide
+# Not Supported	  Source Controller	              Git Repository Authentication (RO)	  AWS	fluxcd/source-controller#835
+# Not Supported	  Image Automation Controller	    Git Repository Authentication (RW)	  AWS
+#
 
+data "aws_iam_policy_document" "flux2_all" {
+  count = var.enable_flux2 ? 1 : 0
 
-data "aws_iam_policy_document" "aws_efs_csi_driver" {
-  count = var.enable_aws_efs_csi_driver ? 1 : 0
+  source_policy_documents   = try(var.flux2.source_policy_documents, [])
+  override_policy_documents = try(var.flux2.override_policy_documents, [])
 
-  source_policy_documents   = lookup(var.aws_efs_csi_driver, "source_policy_documents", [])
-  override_policy_documents = lookup(var.aws_efs_csi_driver, "override_policy_documents", [])
-
+  # https://fluxcd.io/flux/components/source/buckets/#aws
   statement {
-    sid       = "AllowDescribeAvailabilityZones"
-    actions   = ["ec2:DescribeAvailabilityZones"]
-    resources = ["*"]
-  }
+    for_each = local.source_buckets_s3_names
 
-  statement {
-    sid = "AllowDescribeFileSystems"
-    actions = [
-      "elasticfilesystem:DescribeAccessPoints",
-      "elasticfilesystem:DescribeFileSystems",
-      "elasticfilesystem:DescribeMountTargets"
+    sid       = "AllowBucketS3_1"
+    actions   = [
+      "s3:GetObject"
     ]
-    resources = flatten([
-      local.efs_arns,
-      local.efs_access_point_arns,
-    ])
+    resources = ["arn:aws:s3:::${each.value}/*"]
   }
 
+  # https://fluxcd.io/flux/components/source/buckets/#aws
   statement {
+    for_each = local.source_buckets_s3_names
+
+    sid       = "AllowBucketS3_2"
     actions = [
-      "elasticfilesystem:CreateAccessPoint",
-      "elasticfilesystem:TagResource",
+      "s3:ListBucket"
     ]
-    resources = local.efs_arns
-
-    condition {
-      test     = "StringLike"
-      variable = "aws:RequestTag/efs.csi.aws.com/cluster"
-      values   = ["true"]
-    }
+    resources = ["arn:aws:s3:::${each.value}"]
   }
 
+  # https://fluxcd.io/flux/guides/mozilla-sops/#aws
   statement {
-    sid       = "AllowDeleteAccessPoint"
-    actions   = ["elasticfilesystem:DeleteAccessPoint"]
-    resources = local.efs_access_point_arns
+    for_each = local.kustomize_sops_kms_arns
 
-    condition {
-      test     = "StringLike"
-      variable = "aws:ResourceTag/efs.csi.aws.com/cluster"
-      values   = ["true"]
-    }
-  }
-
-  statement {
-    sid = "ClientReadWrite"
-    actions = [
-      "elasticfilesystem:ClientRootAccess",
-      "elasticfilesystem:ClientWrite",
-      "elasticfilesystem:ClientMount",
+    sid       = "AllowKMSDecrypt"
+    actions   = [
+      "kms:Decrypt",
+      "kms:DescribeKey"
     ]
-    resources = local.efs_arns
-
-    condition {
-      test     = "Bool"
-      variable = "elasticfilesystem:AccessedViaMountTarget"
-      values   = ["true"]
-    }
+    resources = [each.value]
   }
+
 }

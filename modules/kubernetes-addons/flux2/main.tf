@@ -54,19 +54,26 @@ module "flux2" {
     for c, c_spec in local.controllers_irsa : join(".", [
           c_spec.helm_sa_annotations,
           "eks\\.amazonaws\\.com/role-arn",
-        ]) if (c_spec.helm_sa_annotations!=null)
+        ]
+      ) if (c_spec.helm_sa_annotations!=null)
   ]
 
-  create_role                   = try(var.addon_defs.create_role, true)
+  create_role                   = local.create_role
+  allow_self_assume_role        = true
   role_name                     = try(var.addon_defs.role_name, "flux2-all") # 231005-JC: keeping "-all" suffix for now to make it explicit we are mapping all controllers here
   role_name_use_prefix          = try(var.addon_defs.role_name_use_prefix, true)
   role_path                     = try(var.addon_defs.role_path, "/")
   role_permissions_boundary_arn = try(var.addon_defs.role_permissions_boundary_arn, null)
   role_description              = try(var.addon_defs.role_description, "IRSA for Flux v2 project (multiple controllers)")
-  role_policies                 = try(var.addon_defs.role_policies, {})
+  role_policies                 = try(var.addon_defs.role_policies,
+    {
+      # https://fluxcd.io/flux/components/source/helmrepositories/#aws
+      "AmazonEC2ContainerRegistryReadOnly" = "arn:${local.partition}:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+    }
+  )
 
-  source_policy_documents = data.aws_iam_policy_document.aws_efs_csi_driver[*].json
-  policy_statements       = try(var.aws_efs_csi_driver.policy_statements, [])
+  source_policy_documents = data.aws_iam_policy_document.flux2_all[*].json
+  policy_statements       = try(var.addon_defs.policy_statements, [])
   policy_name             = try(var.addon_defs.policy_name, null)
   policy_name_use_prefix  = try(var.addon_defs.policy_name_use_prefix, true)
   policy_path             = try(var.addon_defs.policy_path, null)

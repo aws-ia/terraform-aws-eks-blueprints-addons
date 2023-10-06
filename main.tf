@@ -2611,11 +2611,15 @@ resource "kubernetes_config_map_v1" "aws_logging" {
 module "flux2" {
   source = "modules/kubernetes/"
 
+  count  = var.enable_flux2 ? 1 : 0
   create = var.enable_flux2
 
   create_kubernetes_resources = var.create_kubernetes_resources
 
   addon_defs = var.flux2
+
+  source_buckets_s3_names = var.flux2_source_buckets_s3_names
+  kustomize_sops_kms_arns = var.flux2_kustomize_sops_kms_arns
 
   tags = var.tags
 }
