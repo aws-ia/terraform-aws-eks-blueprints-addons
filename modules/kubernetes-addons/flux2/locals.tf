@@ -7,9 +7,9 @@ locals {
     name      = "flux2"
     namespace = "flux-system"
 
-    chart         = try(var.addon_defs.chart, "flux2")
-    chart_version = try(var.addon_defs.chart_version, "2.10.1")  # using non-exact version specifiers ("~X.Y.Z") will cause helm_release to always detect changes!!!
-    repository    = try(var.addon_defs.repository, "https://fluxcd-community.github.io/helm-charts")
+    chart         = "flux2"
+    chart_version = "2.10.1"  # using non-exact version specifiers ("~X.Y.Z") will cause helm_release to always detect changes!!!
+    repository    = "https://fluxcd-community.github.io/helm-charts"
 
     description = "A Helm chart to deploy Flux v2"
   }
