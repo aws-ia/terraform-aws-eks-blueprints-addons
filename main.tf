@@ -140,7 +140,7 @@ module "argo_workflows" {
   namespace        = try(var.argo_workflows.namespace, "argo-workflows")
   create_namespace = try(var.argo_workflows.create_namespace, true)
   chart            = try(var.argo_workflows.chart, "argo-workflows")
-  chart_version    = try(var.argo_workflows.chart_version, "0.32.1")
+  chart_version    = try(var.argo_workflows.chart_version, "0.36.1")
   repository       = try(var.argo_workflows.repository, "https://argoproj.github.io/argo-helm")
   values           = try(var.argo_workflows.values, [])
 
