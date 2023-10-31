@@ -442,6 +442,12 @@ variable "karpenter_enable_spot_termination" {
   default     = true
 }
 
+variable "karpenter_enable_instance_profile_creation" {
+  description = "Determines whether Karpenter will be allowed to create the IAM instance profile (v1beta1) or if Terraform will (v1alpha1)"
+  type        = bool
+  default     = false
+}
+
 variable "karpenter_sqs" {
   description = "Karpenter SQS queue for native node termination handling configuration values"
   type        = any
