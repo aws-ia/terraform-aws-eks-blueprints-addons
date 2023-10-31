@@ -2793,8 +2793,8 @@ data "aws_iam_policy_document" "karpenter" {
 
     condition {
       test     = "StringLike"
-      variable = "ec2:ResourceTag/Name"
-      values   = ["*karpenter*"]
+      variable = "ec2:ResourceTag/karpenter.sh/provisioner-name"
+      values   = ["*"]
     }
   }
 
