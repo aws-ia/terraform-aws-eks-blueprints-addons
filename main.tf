@@ -2731,21 +2731,26 @@ locals {
   karpenter_node_instance_profile_name = try(aws_iam_instance_profile.karpenter[0].name, var.karpenter_node.instance_profile_name, "")
   karpenter_namespace                  = try(var.karpenter.namespace, "karpenter")
 
+  # Due to change in v0.32.0
+  # TODO - remove at next breaking change
+  karpenter_aws_scope = var.karpenter_enable_instance_profile_creation ? "" : "aws."
+
   karpenter_set = [
     {
-      name  = "settings.aws.clusterName"
+      name  = "settings.${local.karpenter_aws_scope}clusterName"
       value = local.cluster_name
     },
     {
-      name  = "settings.aws.clusterEndpoint"
+      name  = "settings.${local.karpenter_aws_scope}clusterEndpoint"
       value = local.cluster_endpoint
     },
     {
-      name  = "settings.aws.interruptionQueueName"
+      name  = "settings.${local.karpenter_aws_scope}interruptionQueueName"
       value = local.karpenter_enable_spot_termination ? module.karpenter_sqs.queue_name : null
     },
+    # TODO - remove at next breaking change
     {
-      name  = "settings.aws.defaultInstanceProfile"
+      name  = "settings.${local.karpenter_aws_scope}defaultInstanceProfile"
       value = var.karpenter_enable_instance_profile_creation ? null : local.karpenter_node_instance_profile_name
     },
     {
