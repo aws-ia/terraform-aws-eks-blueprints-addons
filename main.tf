@@ -2730,6 +2730,34 @@ locals {
   karpenter_node_iam_role_name         = try(var.karpenter_node.iam_role_name, "karpenter-${var.cluster_name}")
   karpenter_node_instance_profile_name = try(aws_iam_instance_profile.karpenter[0].name, var.karpenter_node.instance_profile_name, "")
   karpenter_namespace                  = try(var.karpenter.namespace, "karpenter")
+
+  # Due to change in v0.32.0
+  # TODO - remove at next breaking change
+  karpenter_aws_scope = var.karpenter_enable_instance_profile_creation ? "" : "aws."
+
+  karpenter_set = [
+    {
+      name  = "settings.${local.karpenter_aws_scope}clusterName"
+      value = local.cluster_name
+    },
+    {
+      name  = "settings.${local.karpenter_aws_scope}clusterEndpoint"
+      value = local.cluster_endpoint
+    },
+    {
+      name  = "settings.${local.karpenter_aws_scope}interruptionQueueName"
+      value = local.karpenter_enable_spot_termination ? module.karpenter_sqs.queue_name : null
+    },
+    # TODO - remove at next breaking change
+    {
+      name  = "settings.${local.karpenter_aws_scope}defaultInstanceProfile"
+      value = var.karpenter_enable_instance_profile_creation ? null : local.karpenter_node_instance_profile_name
+    },
+    {
+      name  = "serviceAccount.name"
+      value = local.karpenter_service_account_name
+    },
+  ]
 }
 
 data "aws_iam_policy_document" "karpenter" {
@@ -2809,6 +2837,22 @@ data "aws_iam_policy_document" "karpenter" {
         "sqs:ReceiveMessage",
       ]
       resources = [module.karpenter_sqs.queue_arn]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = var.karpenter_enable_instance_profile_creation ? [1] : []
+
+    content {
+      actions = [
+        "iam:AddRoleToInstanceProfile",
+        "iam:CreateInstanceProfile",
+        "iam:DeleteInstanceProfile",
+        "iam:GetInstanceProfile",
+        "iam:RemoveRoleFromInstanceProfile",
+        "iam:TagInstanceProfile",
+      ]
+      resources = ["*"]
     }
   }
 }
@@ -2916,7 +2960,7 @@ resource "aws_iam_role_policy_attachment" "additional" {
 }
 
 resource "aws_iam_instance_profile" "karpenter" {
-  count = var.enable_karpenter && try(var.karpenter_node.create_instance_profile, true) ? 1 : 0
+  count = var.enable_karpenter && try(var.karpenter_node.create_instance_profile, true) && !var.karpenter_enable_instance_profile_creation ? 1 : 0
 
   name        = try(var.karpenter_node.iam_role_use_name_prefix, true) ? null : local.karpenter_node_iam_role_name
   name_prefix = try(var.karpenter_node.iam_role_use_name_prefix, true) ? "${local.karpenter_node_iam_role_name}-" : null
@@ -2941,7 +2985,7 @@ module "karpenter" {
   namespace        = local.karpenter_namespace
   create_namespace = try(var.karpenter.create_namespace, true)
   chart            = try(var.karpenter.chart, "karpenter")
-  chart_version    = try(var.karpenter.chart_version, "v0.30.0")
+  chart_version    = try(var.karpenter.chart_version, "v0.32.1")
   repository       = try(var.karpenter.repository, "oci://public.ecr.aws/karpenter")
   values           = try(var.karpenter.values, [])
 
@@ -2973,28 +3017,7 @@ module "karpenter" {
 
   postrender = try(var.karpenter.postrender, [])
   set = concat(
-    [
-      {
-        name  = "settings.aws.clusterName"
-        value = local.cluster_name
-      },
-      {
-        name  = "settings.aws.clusterEndpoint"
-        value = local.cluster_endpoint
-      },
-      {
-        name  = "settings.aws.defaultInstanceProfile"
-        value = local.karpenter_node_instance_profile_name
-      },
-      {
-        name  = "settings.aws.interruptionQueueName"
-        value = local.karpenter_enable_spot_termination ? module.karpenter_sqs.queue_name : ""
-      },
-      {
-        name  = "serviceAccount.name"
-        value = local.karpenter_service_account_name
-      },
-    ],
+    [for s in local.karpenter_set : s if s.value != null],
     try(var.karpenter.set, [])
   )
   set_sensitive = try(var.karpenter.set_sensitive, [])
@@ -3373,13 +3396,13 @@ module "velero" {
     {
       name  = "initContainers"
       value = <<-EOT
-   - name: velero-plugin-for-aws
-     image: velero/velero-plugin-for-aws:v1.7.1
-     imagePullPolicy: IfNotPresent
-     volumeMounts:
-       - mountPath: /target
-         name: plugins
-            EOT
+        - name: velero-plugin-for-aws
+          image: velero/velero-plugin-for-aws:v1.7.1
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /target
+              name: plugins
+      EOT
     },
     {
       name  = "serviceAccount.server.name"
