@@ -93,6 +93,7 @@ output "fargate_fluentbit" {
   value = {
     configmap  = kubernetes_config_map_v1.aws_logging
     iam_policy = aws_iam_policy.fargate_fluentbit
+    cloudwatch_log_group = aws_cloudwatch_log_group.fargate_fluentbit
   }
 }
 
