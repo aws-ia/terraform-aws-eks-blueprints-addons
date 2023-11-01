@@ -34,8 +34,3 @@ repos:
           - '--args=--only=terraform_empty_list_equality'
           - '--args=--only=terraform_unused_required_providers'
       - id: terraform_validate
-      - id: terraform_tfsec
-        args:
-          - --args=--config-file=__GIT_WORKING_DIR__/.tfsec.yaml
-          - --args=--concise-output
-          - --args=--exclude-path=tests/

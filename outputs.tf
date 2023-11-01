@@ -113,6 +113,7 @@ output "karpenter" {
     {
       node_instance_profile_name = try(aws_iam_instance_profile.karpenter[0].name, "")
       node_iam_role_arn          = try(aws_iam_role.karpenter[0].arn, "")
+      node_iam_role_name         = try(aws_iam_role.karpenter[0].name, "")
       sqs                        = module.karpenter_sqs
     }
   )
@@ -250,6 +251,7 @@ output "gitops_metadata" {
       service_account            = local.karpenter_service_account_name
       sqs_queue_name             = module.karpenter_sqs.queue_name
       node_instance_profile_name = local.karpenter_node_instance_profile_name
+      node_iam_role_name         = try(aws_iam_role.karpenter[0].name, "")
       } : "karpenter_${k}" => v if var.enable_karpenter
     },
     { for k, v in {
