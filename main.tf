@@ -2731,28 +2731,44 @@ locals {
   karpenter_node_instance_profile_name = try(aws_iam_instance_profile.karpenter[0].name, var.karpenter_node.instance_profile_name, "")
   karpenter_namespace                  = try(var.karpenter.namespace, "karpenter")
 
-  # Due to change in v0.32.0
-  # TODO - remove at next breaking change
-  karpenter_aws_scope = var.karpenter_enable_instance_profile_creation ? "" : "aws."
-
   karpenter_set = [
+    # TODO - remove at next breaking change
+    # Pre 0.32.x
     {
-      name  = "settings.${local.karpenter_aws_scope}clusterName"
+      name  = "settings.aws.clusterName"
       value = local.cluster_name
     },
     {
-      name  = "settings.${local.karpenter_aws_scope}clusterEndpoint"
+      name  = "settings.aws.clusterEndpoint"
       value = local.cluster_endpoint
     },
     {
-      name  = "settings.${local.karpenter_aws_scope}interruptionQueueName"
+      name  = "settings.aws.interruptionQueueName"
       value = local.karpenter_enable_spot_termination ? module.karpenter_sqs.queue_name : null
     },
-    # TODO - remove at next breaking change
     {
-      name  = "settings.${local.karpenter_aws_scope}defaultInstanceProfile"
+      name  = "settings.aws.defaultInstanceProfile"
       value = var.karpenter_enable_instance_profile_creation ? null : local.karpenter_node_instance_profile_name
     },
+    # Post 0.32.x
+    {
+      name  = "settings.clusterName"
+      value = local.cluster_name
+    },
+    {
+      name  = "settings.clusterEndpoint"
+      value = local.cluster_endpoint
+    },
+    {
+      name  = "settings.interruptionQueue"
+      value = local.karpenter_enable_spot_termination ? module.karpenter_sqs.queue_name : null
+    },
+    # TODO - this is not valid but being discussed as a re-addition. TBD on what the schema will be though
+    # {
+    #   name  = "settings.defaultInstanceProfile"
+    #   value = var.karpenter_enable_instance_profile_creation ? null : local.karpenter_node_instance_profile_name
+    # },
+    # Agnostic of version difference
     {
       name  = "serviceAccount.name"
       value = local.karpenter_service_account_name
@@ -2822,7 +2838,7 @@ data "aws_iam_policy_document" "karpenter" {
     condition {
       test     = "StringLike"
       variable = "ec2:ResourceTag/Name"
-      values   = ["*karpenter*"]
+      values   = ["*karpenter*", "*compute.internal"]
     }
   }
 
