@@ -1,7 +1,9 @@
 data "aws_partition" "current" {}
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
-
+data "aws_eks_cluster" "this" {
+  name = time_sleep.this.triggers.cluster_name
+}
 # This resource is used to provide a means of mapping an implicit dependency
 # between the cluster and the addons.
 resource "time_sleep" "this" {
@@ -2961,7 +2963,7 @@ resource "aws_iam_role_policy_attachment" "karpenter" {
   for_each = { for k, v in {
     AmazonEKSWorkerNodePolicy          = "${local.iam_role_policy_prefix}/AmazonEKSWorkerNodePolicy",
     AmazonEC2ContainerRegistryReadOnly = "${local.iam_role_policy_prefix}/AmazonEC2ContainerRegistryReadOnly",
-    AmazonEKS_CNI_Policy               = "${local.iam_role_policy_prefix}/AmazonEKS_CNI_Policy"
+    AmazonEKS_CNI_Policy               = data.aws_eks_cluster.this.kubernetes_network_config[0].ip_family == "ipv6" ? "arn:${local.partition}:iam::${local.account_id}:policy/AmazonEKS_CNI_IPv6_Policy" : "${local.iam_role_policy_prefix}/AmazonEKS_CNI_Policy",
   } : k => v if local.create_karpenter_node_iam_role }
 
   policy_arn = each.value
