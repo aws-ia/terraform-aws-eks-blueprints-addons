@@ -2540,7 +2540,7 @@ data "aws_iam_policy_document" "fargate_fluentbit" {
   }
 
   dynamic "statement" {
-    for_each = length(lookup(var.fargate_fluentbit, "data_firehose_arns", [])) > 0 ? [1] : []
+    for_each = try(var.fargate_fluentbit.send_to_firehose, false) ? [1] : []
 
     content {
       sid = "FirehoseEvent"
