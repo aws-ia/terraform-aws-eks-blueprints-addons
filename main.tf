@@ -2849,8 +2849,8 @@ data "aws_iam_policy_document" "karpenter" {
 
     condition {
       test     = "StringLike"
-      variable = "ec2:ResourceTag/Name"
-      values   = ["*karpenter*", "*compute.internal"]
+      variable = "ec2:ResourceTag/${try(var.karpenter.irsa_tag_key, "Name")}"
+      values   = try(var.karpenter.irsa_tag_values, ["*karpenter*", "*compute.internal", "*ec2.internal"])
     }
   }
 
@@ -2988,7 +2988,7 @@ resource "aws_iam_role_policy_attachment" "additional" {
 }
 
 resource "aws_iam_instance_profile" "karpenter" {
-  count = var.enable_karpenter && try(var.karpenter_node.create_instance_profile, true) && !var.karpenter_enable_instance_profile_creation ? 1 : 0
+  count = var.enable_karpenter && try(var.karpenter_node.create_instance_profile, true) ? 1 : 0
 
   name        = try(var.karpenter_node.iam_role_use_name_prefix, true) ? null : local.karpenter_node_iam_role_name
   name_prefix = try(var.karpenter_node.iam_role_use_name_prefix, true) ? "${local.karpenter_node_iam_role_name}-" : null
