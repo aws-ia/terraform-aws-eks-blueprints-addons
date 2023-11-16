@@ -2548,7 +2548,7 @@ data "aws_iam_policy_document" "fargate_fluentbit" {
          "firehose:PutRecord",
           "firehose:PutRecordBatch"
       ]
-      resources = var.fargate_fluentbit.data_firehose_arns
+      resources = lookup(var.fargate_fluentbit, "firehose_arns", ["*"]) 
     }
 }
 }
