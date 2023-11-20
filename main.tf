@@ -3558,13 +3558,21 @@ data "aws_iam_policy_document" "aws_gateway_api_controller" {
   source_policy_documents   = lookup(var.aws_gateway_api_controller, "source_policy_documents", [])
   override_policy_documents = lookup(var.aws_gateway_api_controller, "override_policy_documents", [])
 
+  #see https://www.gateway-api-controller.eks.aws.dev/guides/deploy/
   statement {
     actions = [
       "vpc-lattice:*",
       "iam:CreateServiceLinkedRole",
       "ec2:DescribeVpcs",
       "ec2:DescribeSubnets",
-      "ec2:DescribeTags"
+      "ec2:DescribeTags",
+      "ec2:DescribeSecurityGroups",
+      "logs:CreateLogDelivery",
+      "logs:GetLogDelivery",
+      "logs:UpdateLogDelivery",
+      "logs:DeleteLogDelivery",
+      "logs:ListLogDeliveries",
+      "tag:GetResources"
     ]
     resources = ["*"]
   }
@@ -3585,7 +3593,7 @@ module "aws_gateway_api_controller" {
   namespace        = local.aws_gateway_api_controller_namespace
   create_namespace = try(var.aws_gateway_api_controller.create_namespace, true)
   chart            = try(var.aws_gateway_api_controller.chart, "aws-gateway-controller-chart")
-  chart_version    = try(var.aws_gateway_api_controller.chart_version, "v0.0.16")
+  chart_version    = try(var.aws_gateway_api_controller.chart_version, "v1.0.0")
   repository       = try(var.aws_gateway_api_controller.repository, "oci://public.ecr.aws/aws-application-networking-k8s")
   values           = try(var.aws_gateway_api_controller.values, [])
 
