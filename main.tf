@@ -2823,7 +2823,7 @@ data "aws_iam_policy_document" "karpenter" {
 
   statement {
     actions   = ["ssm:GetParameter"]
-    resources = ["arn:${local.partition}:ssm:${local.region}::parameter/*"]
+    resources = ["arn:${local.partition}:ssm:${local.region}::parameter/aws/service/*"]
   }
 
   statement {
