@@ -1498,7 +1498,7 @@ locals {
   aws_node_termination_handler_events = merge(
     {
       autoscaling_terminate = {
-        name        = "ASGTerminiate"
+        name        = "ASGTerminate"
         description = "Auto scaling instance terminate event"
         event_pattern = {
           source      = ["aws.autoscaling"]
