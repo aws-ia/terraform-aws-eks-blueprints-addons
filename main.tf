@@ -2795,6 +2795,7 @@ data "aws_iam_policy_document" "karpenter" {
       "ec2:DescribeSubnets",
     ]
     resources = ["*"]
+    sid       = "AllowDescribeResources"
   }
 
   statement {
@@ -2809,6 +2810,7 @@ data "aws_iam_policy_document" "karpenter" {
       "arn:${local.partition}:ec2:${local.region}:${local.account_id}:*",
       "arn:${local.partition}:ec2:${local.region}::image/*"
     ]
+    sid = "AllowCreateResources"
   }
 
   statement {
@@ -2819,19 +2821,23 @@ data "aws_iam_policy_document" "karpenter" {
   statement {
     actions   = ["pricing:GetProducts"]
     resources = ["*"]
+    sid       = "AllowGetProducts"
   }
 
   statement {
     actions   = ["ssm:GetParameter"]
     resources = ["arn:${local.partition}:ssm:${local.region}::parameter/aws/service/*"]
+    sid       = "AllowGetSSMParameter"
   }
 
   statement {
     actions   = ["eks:DescribeCluster"]
     resources = ["arn:${local.partition}:eks:*:${local.account_id}:cluster/${var.cluster_name}"]
+    sid       = "AllowDescribeCluster"
   }
 
   statement {
+    sid       = "AllowTerminateInstances"
     actions   = ["ec2:TerminateInstances"]
     resources = ["arn:${local.partition}:ec2:${local.region}:${local.account_id}:instance/*"]
 
@@ -2853,6 +2859,7 @@ data "aws_iam_policy_document" "karpenter" {
         "sqs:ReceiveMessage",
       ]
       resources = [module.karpenter_sqs.queue_arn]
+      sid       = "AllowSQS"
     }
   }
 
@@ -2869,6 +2876,7 @@ data "aws_iam_policy_document" "karpenter" {
         "iam:TagInstanceProfile",
       ]
       resources = ["*"]
+      sid       = "AllowIAMInstanceProfileActions"
     }
   }
 }
