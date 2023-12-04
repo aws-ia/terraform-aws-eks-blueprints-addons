@@ -2978,8 +2978,8 @@ resource "aws_iam_role_policy_attachment" "additional" {
 resource "aws_iam_instance_profile" "karpenter" {
   count = var.enable_karpenter && try(var.karpenter_node.create_instance_profile, true) ? 1 : 0
 
-  name        = try(var.karpenter_node.iam_role_use_name_prefix, true) ? null : local.karpenter_node_iam_role_name
-  name_prefix = try(var.karpenter_node.iam_role_use_name_prefix, true) ? "${local.karpenter_node_iam_role_name}-" : null
+  name        = try(var.karpenter_node.iam_role_use_name_prefix, true) ? null : coalesce(var.karpenter_node.instance_profile_name, local.karpenter_node_iam_role_name)
+  name_prefix = try(var.karpenter_node.iam_role_use_name_prefix, true) ? "${coalesce(var.karpenter_node.instance_profile_name, local.karpenter_node_iam_role_name)}-" : null
   path        = try(var.karpenter_node.iam_role_path, null)
   role        = try(aws_iam_role.karpenter[0].name, var.karpenter_node.iam_role_name, "")
 
