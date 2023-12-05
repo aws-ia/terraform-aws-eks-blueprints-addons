@@ -2728,7 +2728,7 @@ locals {
   create_karpenter_node_iam_role       = var.enable_karpenter && try(var.karpenter_node.create_iam_role, true)
   karpenter_node_iam_role_arn          = try(aws_iam_role.karpenter[0].arn, var.karpenter_node.iam_role_arn, "")
   karpenter_node_iam_role_name         = try(var.karpenter_node.iam_role_name, "karpenter-${var.cluster_name}")
-  karpenter_node_instance_profile_name = coalesce(try(var.karpenter_node.instance_profile_name, null), local.karpenter_node_iam_role_name)
+  karpenter_node_instance_profile_name = try(var.karpenter_node.instance_profile_name, local.karpenter_node_iam_role_name)
   karpenter_namespace                  = try(var.karpenter.namespace, "karpenter")
 
   karpenter_set = [
