@@ -2545,7 +2545,6 @@ data "aws_iam_policy_document" "fargate_fluentbit" {
     content {
       sid = "FirehoseEvent"
       actions = [
-         "firehose:PutRecord",
           "firehose:PutRecordBatch"
       ]
       resources = lookup(var.fargate_fluentbit, "firehose_arns", ["*"]) 
