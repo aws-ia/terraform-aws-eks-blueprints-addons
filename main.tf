@@ -2545,11 +2545,11 @@ data "aws_iam_policy_document" "fargate_fluentbit" {
     content {
       sid = "FirehoseEvent"
       actions = [
-          "firehose:PutRecordBatch"
+        "firehose:PutRecordBatch"
       ]
-      resources = lookup(var.fargate_fluentbit, "firehose_arns", ["*"]) 
+      resources = lookup(var.fargate_fluentbit, "firehose_arns", ["*"])
     }
-}
+  }
 }
 # Help on Fargate Logging with Fluentbit and CloudWatch
 # https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html
