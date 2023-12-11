@@ -3313,6 +3313,242 @@ module "secrets_store_csi_driver_provider_aws" {
 }
 
 ################################################################################
+# HashiCorp Vault
+################################################################################
+
+data "aws_iam_policy_document" "vault-bucket-policy" {
+  count = var.enable_vault ? 1 : 0
+  statement {
+    sid    = "EnsureEncryptionInTransit"
+    effect = "Deny"
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+    actions = [
+      "*",
+    ]
+    resources = [
+      "${aws_s3_bucket.vault[0].arn}/*",
+    ]
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values = [
+        "false"
+      ]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "vault" {
+  count = var.enable_vault ? 1 : 0
+
+  statement {
+    sid    = "VaultListBucketPolicy"
+    effect = "Allow"
+    actions = [
+      "s3:ListBucket",
+    ]
+    resources = [
+      aws_s3_bucket.vault[0].arn,
+    ]
+  }
+
+  statement {
+    sid    = "VaultBucketPolicy"
+    effect = "Allow"
+    actions = [
+      "s3:DeleteObject",
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:PutObjectAcl",
+      "s3:GetObjectVersion",
+    ]
+    resources = [
+      "${aws_s3_bucket.vault[0].arn}/*",
+    ]
+  }
+
+  statement {
+    sid    = "VaultKmsPolicy"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:Encrypt",
+      "kms:List*",
+      "kms:Describe*",
+    ]
+    resources = [
+      "*"
+    ]
+
+    condition {
+      test     = "ForAnyValue:StringEquals"
+      variable = "kms:ResourceAliases"
+      values = [
+        "var.vault.kms_alias",
+      ]
+    }
+  }
+
+  statement {
+    sid    = "VaultKmsKeyPolicyGenerate"
+    effect = "Allow"
+    actions = [
+      "kms:GenerateDataKey",
+    ]
+    resources = [
+      "*"
+    ]
+
+    condition {
+      test     = "ForAnyValue:StringEquals"
+      variable = "kms:ResourceAliases"
+      values = [
+        "var.vault.kms_alias",
+      ]
+    }
+  }
+}
+
+resource "aws_kms_key" "vault" {
+  count                   = var.enable_vault ? 1 : 0
+  description             = "KMS key for vault unseal keys encryption"
+  enable_key_rotation     = true
+  deletion_window_in_days = 10
+  tags                    = var.tags
+}
+
+resource "aws_kms_alias" "vault" {
+  count         = var.enable_vault ? 1 : 0
+  name          = var.vault.kms_alias
+  target_key_id = aws_kms_key.vault[0].key_id
+}
+
+resource "aws_s3_bucket" "vault" {
+  count         = var.enable_vault ? 1 : 0
+  bucket        = var.vault.s3_bucket_name
+  force_destroy = "false"
+  tags          = var.tags
+}
+
+resource "aws_s3_bucket_versioning" "vault" {
+  count  = var.enable_vault ? 1 : 0
+  bucket = aws_s3_bucket.vault[0].id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "vault" {
+  count  = var.enable_vault ? 1 : 0
+  bucket = aws_s3_bucket.vault[0].id
+
+  rule {
+    bucket_key_enabled = true
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.vault[0].arn
+      sse_algorithm     = "aws:kms"
+    }
+  }
+
+}
+
+resource "aws_s3_bucket_public_access_block" "vault" {
+  count  = var.enable_vault ? 1 : 0
+  bucket = aws_s3_bucket.vault[0].id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_policy" "vault" {
+  count  = var.enable_vault ? 1 : 0
+  bucket = aws_s3_bucket.vault[0].id
+  policy = data.aws_iam_policy_document.vault-bucket-policy[0].json
+}
+
+module "vault" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.1.1"
+
+  create = var.enable_vault
+
+  # Disable helm release
+  create_release = var.create_kubernetes_resources
+
+  # https://github.com/aws/secrets-store-csi-driver-provider-aws/blob/main/charts/secrets-store-csi-driver-provider-aws/Chart.yaml
+  name             = try(var.vault.name, "secrets-store-csi-driver-provider-aws")
+  description      = try(var.vault.description, "A Helm chart to install the Hashcorp vault with the banzaicloud operator inside a Kubernetes cluster.")
+  namespace        = try(var.vault.namespace, "vault")
+  create_namespace = try(var.vault.create_namespace, false)
+  chart            = try(var.vault.chart, "vault-cluster")
+  chart_version    = try(var.vault.chart_version, "0.4.0")
+  repository       = try(var.vault.repository, "s3://cp-helm-chart-repository/charts")
+  values           = try(var.vault.values, [])
+
+  timeout                    = try(var.vault.timeout, null)
+  repository_key_file        = try(var.vault.repository_key_file, null)
+  repository_cert_file       = try(var.vault.repository_cert_file, null)
+  repository_ca_file         = try(var.vault.repository_ca_file, null)
+  repository_username        = try(var.vault.repository_username, null)
+  repository_password        = try(var.vault.repository_password, null)
+  devel                      = try(var.vault.devel, null)
+  verify                     = try(var.vault.verify, null)
+  keyring                    = try(var.vault.keyring, null)
+  disable_webhooks           = try(var.vault.disable_webhooks, null)
+  reuse_values               = try(var.vault.reuse_values, null)
+  reset_values               = try(var.vault.reset_values, null)
+  force_update               = try(var.vault.force_update, null)
+  recreate_pods              = try(var.vault.recreate_pods, null)
+  cleanup_on_fail            = try(var.vault.cleanup_on_fail, null)
+  max_history                = try(var.vault.max_history, null)
+  atomic                     = try(var.vault.atomic, null)
+  skip_crds                  = try(var.vault.skip_crds, null)
+  render_subchart_notes      = try(var.vault.render_subchart_notes, null)
+  disable_openapi_validation = try(var.vault.disable_openapi_validation, null)
+  wait                       = try(var.vault.wait, false)
+  wait_for_jobs              = try(var.vault.wait_for_jobs, null)
+  dependency_update          = try(var.vault.dependency_update, null)
+  replace                    = try(var.vault.replace, null)
+  lint                       = try(var.vault.lint, null)
+
+  postrender    = try(var.vault.postrender, [])
+  set           = try(var.vault.set, [])
+  set_sensitive = try(var.vault.set_sensitive, [])
+
+  # IAM role for service account (IRSA)
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  create_role                   = try(var.vault.create_role, true)
+  role_name                     = try(var.vault.role_name, "vault")
+  role_name_use_prefix          = try(var.vault.role_name_use_prefix, true)
+  role_path                     = try(var.vault.role_path, "/")
+  role_permissions_boundary_arn = lookup(var.vault, "role_permissions_boundary_arn", null)
+  role_description              = try(var.vault.role_description, "IRSA for Vault")
+  role_policies                 = lookup(var.vault, "role_policies", {})
+
+  source_policy_documents = data.aws_iam_policy_document.vault[*].json
+  policy_statements       = lookup(var.vault, "policy_statements", [])
+  policy_name             = try(var.vault.policy_name, null)
+  policy_name_use_prefix  = try(var.vault.policy_name_use_prefix, true)
+  policy_path             = try(var.vault.policy_path, null)
+  policy_description      = try(var.vault.policy_description, "IAM Policy for vault")
+
+  oidc_providers = {
+    this = {
+      provider_arn = local.oidc_provider_arn
+      # namespace is inherited from chart
+      service_account = try(var.vault.service_account_name, "vault")
+    }
+  }
+
+
+  tags = var.tags
+}
+################################################################################
 # Velero
 ################################################################################
 

@@ -140,6 +140,19 @@ output "secrets_store_csi_driver_provider_aws" {
   value       = module.secrets_store_csi_driver_provider_aws
 }
 
+output "vault" {
+  description = "Map of attributes of the Helm release and IRSA created"
+  value = merge(
+    module.vault,
+    {
+      s3_bucket_arn  = try(aws_s3_bucket.vault[0].arn, "")
+      s3_bucket_name = try(aws_s3_bucket.vault[0].id, "")
+      kms_key_arn    = try(aws_kms_key.vault[0].arn, "")
+      kms_key_id     = try(aws_kms_key.vault[0].key_id, "")
+    }
+  )
+}
+
 output "velero" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = module.velero

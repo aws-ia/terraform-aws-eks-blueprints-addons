@@ -525,6 +525,22 @@ variable "secrets_store_csi_driver_provider_aws" {
 }
 
 ################################################################################
+# Vault
+################################################################################
+
+variable "enable_vault" {
+  description = "Enable Vault add-on"
+  type        = bool
+  default     = false
+}
+
+variable "vault" {
+  description = "Vault add-on configuration values"
+  type        = any
+  default     = {}
+}
+
+################################################################################
 # Velero
 ################################################################################
 
