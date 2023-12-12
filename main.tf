@@ -2538,8 +2538,19 @@ data "aws_iam_policy_document" "fargate_fluentbit" {
       resources = var.fargate_fluentbit.s3_bucket_arns
     }
   }
-}
 
+  dynamic "statement" {
+    for_each = try(var.fargate_fluentbit.send_to_firehose, false) ? [1] : []
+
+    content {
+      sid = "FirehoseEvent"
+      actions = [
+        "firehose:PutRecordBatch"
+      ]
+      resources = lookup(var.fargate_fluentbit, "firehose_arns", ["*"])
+    }
+  }
+}
 # Help on Fargate Logging with Fluentbit and CloudWatch
 # https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html
 resource "kubernetes_namespace_v1" "aws_observability" {
@@ -3575,7 +3586,14 @@ data "aws_iam_policy_document" "aws_gateway_api_controller" {
       "iam:CreateServiceLinkedRole",
       "ec2:DescribeVpcs",
       "ec2:DescribeSubnets",
-      "ec2:DescribeTags"
+      "ec2:DescribeTags",
+      "ec2:DescribeSecurityGroups",
+      "logs:CreateLogDelivery",
+      "logs:GetLogDelivery",
+      "logs:UpdateLogDelivery",
+      "logs:DeleteLogDelivery",
+      "logs:ListLogDeliveries",
+      "tag:GetResources"
     ]
     resources = ["*"]
   }
