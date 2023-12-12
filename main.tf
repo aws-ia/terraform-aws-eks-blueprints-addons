@@ -3546,17 +3546,6 @@ module "vpa" {
     {
       name  = "admissionController.enabled"
       value = true
-    },
-    # Certificate creation shifted from OpenSSL to kube-webhook-certgen for simplicity.
-    # Configuration keys (.Values.admissionController.certGen) remain, reuse of previous values fails.
-    # Mitigate by updating the image for the upgrade.
-    {
-      name  = "admissionController.certGen.image.repository"
-      value = "registry.k8s.io/ingress-nginx/kube-webhook-certgen"
-    },
-    {
-      name  = "admissionController.certGen.image.tag"
-      value = "v20230312-helm-chart-4.5.2-28-g66a760794"
     }],
     try(var.vpa.set, [])
   )
