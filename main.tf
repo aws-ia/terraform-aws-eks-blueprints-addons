@@ -3500,7 +3500,7 @@ module "vpa" {
   namespace        = try(var.vpa.namespace, "vpa")
   create_namespace = try(var.vpa.create_namespace, true)
   chart            = try(var.vpa.chart, "vpa")
-  chart_version    = try(var.vpa.chart_version, "1.7.5") # TODO - 2.0.0 is out
+  chart_version    = try(var.vpa.chart_version, "2.0.0")
   repository       = try(var.vpa.repository, "https://charts.fairwinds.com/stable")
   values           = try(var.vpa.values, [])
 
@@ -3535,6 +3535,17 @@ module "vpa" {
     {
       name  = "admissionController.enabled"
       value = true
+    },
+    # Certificate creation shifted from OpenSSL to kube-webhook-certgen for simplicity.
+    # Configuration keys (.Values.admissionController.certGen) remain, reuse of previous values fails.
+    # Mitigate by updating the image for the upgrade.
+    {
+      name = "admissionController.certGen.image.repository"
+      value = "registry.k8s.io/ingress-nginx/kube-webhook-certgen"
+    },
+    {
+      name = "admissionController.certGen.image.tag"
+      value = "v20230312-helm-chart-4.5.2-28-g66a760794"
     }],
     try(var.vpa.set, [])
   )
