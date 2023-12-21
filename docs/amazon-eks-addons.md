@@ -100,10 +100,10 @@ You can supply custom configuration values to each addon via the `configuration_
 
 ```sh
 aws eks describe-addon-configuration \
- --addon-name coredns \
- --addon-version v1.8.7-eksbuild.2 \
- --query 'configurationSchema' \
- --output text | jq
+--addon-name coredns \
+--addon-version v1.10.1-eksbuild.2 \
+--query 'configurationSchema' \
+--output text | jq
 ```
 
 Which returns the formatted JSON schema like below:
@@ -116,6 +116,63 @@ Which returns the formatted JSON schema like below:
     "Coredns": {
       "additionalProperties": false,
       "properties": {
+        "affinity": {
+          "default": {
+            "affinity": {
+              "nodeAffinity": {
+                "requiredDuringSchedulingIgnoredDuringExecution": {
+                  "nodeSelectorTerms": [
+                    {
+                      "matchExpressions": [
+                        {
+                          "key": "kubernetes.io/os",
+                          "operator": "In",
+                          "values": [
+                            "linux"
+                          ]
+                        },
+                        {
+                          "key": "kubernetes.io/arch",
+                          "operator": "In",
+                          "values": [
+                            "amd64",
+                            "arm64"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              },
+              "podAntiAffinity": {
+                "preferredDuringSchedulingIgnoredDuringExecution": [
+                  {
+                    "podAffinityTerm": {
+                      "labelSelector": {
+                        "matchExpressions": [
+                          {
+                            "key": "k8s-app",
+                            "operator": "In",
+                            "values": [
+                              "kube-dns"
+                            ]
+                          }
+                        ]
+                      },
+                      "topologyKey": "kubernetes.io/hostname"
+                    },
+                    "weight": 100
+                  }
+                ]
+              }
+            }
+          },
+          "description": "Affinity of the coredns pods",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
         "computeType": {
           "type": "string"
         },
@@ -134,6 +191,27 @@ Which returns the formatted JSON schema like below:
         },
         "resources": {
           "$ref": "#/definitions/Resources"
+        },
+        "tolerations": {
+          "default": [
+            {
+              "key": "CriticalAddonsOnly",
+              "operator": "Exists"
+            },
+            {
+              "key": "node-role.kubernetes.io/master",
+              "operator": "NoSchedule"
+            }
+          ],
+          "description": "Tolerations of the coredns pod",
+          "items": {
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "topologySpreadConstraints": {
+          "description": "The coredns pod topology spread constraints",
+          "type": "array"
         }
       },
       "title": "Coredns",
@@ -178,23 +256,113 @@ module "eks_blueprints_addons" {
   # ... truncated for brevity
 
   eks_addons = {
-    coredns = {
+     coredns = {
       most_recent = true
-
       configuration_values = jsonencode({
         replicaCount = 4
+        tolerations = [
+        {
+          key      = "dedicated",
+          operator = "Equal",
+          effect   = "NoSchedule",
+          value    = "orchestration-seb"
+        }
+        ]
+
+        topologySpreadConstraints = [
+          {
+            maxSkew = 1
+            topologyKey = "topology.kubernetes.io/zone"
+            whenUnsatisfiable = "ScheduleAnyway"
+            labelSelector = {
+              matchLabels = {
+                k8s-app: "kube-dns"
+              }
+            }
+          }
+        ]
+
+        affinity = {
+          nodeAffinity = {
+            requiredDuringSchedulingIgnoredDuringExecution = {
+              nodeSelectorTerms = [
+              {
+                matchExpressions = [
+                  {
+                    key = "kubernetes.io/os"
+                    operator = "In"
+                    values = ["linux"]
+                  },
+                  {
+                    key = "kubernetes.io/arch"
+                    operator = "In"
+                    values = ["amd64"]
+                  }
+                ]
+              }]
+            }
+          }
+        
+          podAffinity = {
+            requiredDuringSchedulingIgnoredDuringExecution = [{
+                labelSelector = {
+                  matchExpressions = [
+                    {
+                      key = "k8s-app"
+                      operator = "NotIn"
+                      values = ["kube-dns"]
+                    }
+                  ]
+                }
+                topologyKey = "kubernetes.io/hostname"
+            }
+            ]
+          }
+
+          podAntiAffinity = {
+            preferredDuringSchedulingIgnoredDuringExecution = [{
+              podAffinityTerm = {
+                labelSelector = {
+                  matchExpressions = [
+                    {
+                      key = "k8s-app"
+                      operator = "In"
+                      values = ["kube-dns"]
+                    }
+                  ]
+                }
+                topologyKey = "kubernetes.io/hostname"
+              }
+              weight = 100
+              }
+            ]
+          
+            requiredDuringSchedulingIgnoredDuringExecution = [{
+                labelSelector = {
+                  matchExpressions = [
+                    {
+                      key = "k8s-app"
+                      operator = "In"
+                      values = ["kube-dns"]
+                    }
+                  ]
+                }
+                topologyKey = "kubernetes.io/hostname"
+              }
+            ]
+          }          
+
+        }
+
         resources = {
           limits = {
-            cpu    = "100m"
-            memory = "150Mi"
+            memory = "170Mi"
           }
           requests = {
-            cpu    = "100m"
-            memory = "150Mi"
+            cpu    = "250m"
+            memory = "70Mi"
           }
         }
-      })
+      })     
     }
-  }
-}
 ```
