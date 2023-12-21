@@ -356,12 +356,12 @@ module "eks_blueprints_addons" {
 
         resources = {
           limits = {
-            memory = "170Mi"
+            cpu    = "100m"
+            memory = "150Mi"
           }
           requests = {
-            cpu    = "250m"
-            memory = "70Mi"
-          }
+            cpu    = "100m"
+            memory = "150Mi"
         }
       })     
     }
