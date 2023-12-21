@@ -3593,7 +3593,7 @@ module "aws_gateway_api_controller" {
   namespace        = local.aws_gateway_api_controller_namespace
   create_namespace = try(var.aws_gateway_api_controller.create_namespace, true)
   chart            = try(var.aws_gateway_api_controller.chart, "aws-gateway-controller-chart")
-  chart_version    = try(var.aws_gateway_api_controller.chart_version, "v1.0.0")
+  chart_version    = try(var.aws_gateway_api_controller.chart_version, "v1.0.2")
   repository       = try(var.aws_gateway_api_controller.repository, "oci://public.ecr.aws/aws-application-networking-k8s")
   values           = try(var.aws_gateway_api_controller.values, [])
 
