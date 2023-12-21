@@ -302,7 +302,7 @@ module "eks_blueprints_addons" {
               }]
             }
           }
-        
+
           podAffinity = {
             requiredDuringSchedulingIgnoredDuringExecution = [{
                 labelSelector = {
@@ -336,7 +336,7 @@ module "eks_blueprints_addons" {
               weight = 100
               }
             ]
-          
+
             requiredDuringSchedulingIgnoredDuringExecution = [{
                 labelSelector = {
                   matchExpressions = [
@@ -350,7 +350,7 @@ module "eks_blueprints_addons" {
                 topologyKey = "kubernetes.io/hostname"
               }
             ]
-          }          
+          }  
 
         }
 
@@ -363,6 +363,6 @@ module "eks_blueprints_addons" {
             cpu    = "100m"
             memory = "150Mi"
         }
-      })     
+      })  
     }
 ```
