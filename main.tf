@@ -2325,6 +2325,7 @@ module "external_dns" {
 locals {
   external_secrets_service_account = try(var.external_secrets.service_account_name, "external-secrets-sa")
   external_secrets_namespace       = try(var.external_secrets.namespace, "external-secrets")
+  external_secrets_service_account_namespace = try(var.external_secrets.service_account_namespace, "external-secrets")
 }
 
 data "aws_iam_policy_document" "external_secrets" {
@@ -2462,7 +2463,7 @@ module "external_secrets" {
   oidc_providers = {
     this = {
       provider_arn = local.oidc_provider_arn
-      # namespace is inherited from chart
+      namespace = local.external_secrets_service_account_namespace
       service_account = local.external_secrets_service_account
     }
   }
