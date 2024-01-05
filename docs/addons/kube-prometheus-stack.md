@@ -17,8 +17,8 @@ You can optionally customize the Helm chart that deploys Kube Prometheus Stack v
 
   kube_prometheus_stack = {
     name          = "kube-prometheus-stack"
-    chart_version = "45.10.1"
-    repository    = "https://charts.external-secrets.io"
+    chart_version = "51.2.0"
+    repository    = "https://prometheus-community.github.io/helm-charts"
     namespace     = "kube-prometheus-stack"
     values        = [templatefile("${path.module}/values.yaml", {})]
   }

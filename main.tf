@@ -71,7 +71,7 @@ locals {
 
 module "argo_rollouts" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_argo_rollouts
 
@@ -127,7 +127,7 @@ module "argo_rollouts" {
 
 module "argo_workflows" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_argo_workflows
 
@@ -140,7 +140,7 @@ module "argo_workflows" {
   namespace        = try(var.argo_workflows.namespace, "argo-workflows")
   create_namespace = try(var.argo_workflows.create_namespace, true)
   chart            = try(var.argo_workflows.chart, "argo-workflows")
-  chart_version    = try(var.argo_workflows.chart_version, "0.32.1")
+  chart_version    = try(var.argo_workflows.chart_version, "0.36.1")
   repository       = try(var.argo_workflows.repository, "https://argoproj.github.io/argo-helm")
   values           = try(var.argo_workflows.values, [])
 
@@ -183,7 +183,7 @@ module "argo_workflows" {
 
 module "argocd" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_argocd
 
@@ -240,7 +240,7 @@ module "argocd" {
 
 module "argo_events" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_argo_events
 
@@ -299,7 +299,7 @@ locals {
 
 module "aws_cloudwatch_metrics" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_aws_cloudwatch_metrics
 
@@ -401,6 +401,9 @@ locals {
 data "aws_iam_policy_document" "aws_efs_csi_driver" {
   count = var.enable_aws_efs_csi_driver ? 1 : 0
 
+  source_policy_documents   = lookup(var.aws_efs_csi_driver, "source_policy_documents", [])
+  override_policy_documents = lookup(var.aws_efs_csi_driver, "override_policy_documents", [])
+
   statement {
     sid       = "AllowDescribeAvailabilityZones"
     actions   = ["ec2:DescribeAvailabilityZones"]
@@ -465,7 +468,7 @@ data "aws_iam_policy_document" "aws_efs_csi_driver" {
 
 module "aws_efs_csi_driver" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_aws_efs_csi_driver
 
@@ -535,16 +538,12 @@ module "aws_efs_csi_driver" {
   role_description              = try(var.aws_efs_csi_driver.role_description, "IRSA for aws-efs-csi-driver project")
   role_policies                 = lookup(var.aws_efs_csi_driver, "role_policies", {})
 
-  source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.aws_efs_csi_driver[*].json,
-    lookup(var.aws_efs_csi_driver, "source_policy_documents", [])
-  ))
-  override_policy_documents = lookup(var.aws_efs_csi_driver, "override_policy_documents", [])
-  policy_statements         = lookup(var.aws_efs_csi_driver, "policy_statements", [])
-  policy_name               = try(var.aws_efs_csi_driver.policy_name, null)
-  policy_name_use_prefix    = try(var.aws_efs_csi_driver.policy_name_use_prefix, true)
-  policy_path               = try(var.aws_efs_csi_driver.policy_path, null)
-  policy_description        = try(var.aws_efs_csi_driver.policy_description, "IAM Policy for AWS EFS CSI Driver")
+  source_policy_documents = data.aws_iam_policy_document.aws_efs_csi_driver[*].json
+  policy_statements       = lookup(var.aws_efs_csi_driver, "policy_statements", [])
+  policy_name             = try(var.aws_efs_csi_driver.policy_name, null)
+  policy_name_use_prefix  = try(var.aws_efs_csi_driver.policy_name_use_prefix, true)
+  policy_path             = try(var.aws_efs_csi_driver.policy_path, null)
+  policy_description      = try(var.aws_efs_csi_driver.policy_description, "IAM Policy for AWS EFS CSI Driver")
 
   oidc_providers = {
     controller = {
@@ -568,7 +567,7 @@ module "aws_efs_csi_driver" {
 
 locals {
   aws_for_fluentbit_service_account   = try(var.aws_for_fluentbit.service_account_name, "aws-for-fluent-bit-sa")
-  aws_for_fluentbit_cw_log_group_name = try(var.aws_for_fluentbit_cw_log_group.create, true) ? try(var.aws_for_fluentbit_cw_log_group.name, "/aws/eks/${var.cluster_name}/aws-fluentbit-logs") : null
+  aws_for_fluentbit_cw_log_group_name = try(var.aws_for_fluentbit_cw_log_group.create, true) ? try(var.aws_for_fluentbit_cw_log_group.name, "/aws/eks/${var.cluster_name}/aws-fluentbit-logs") : ""
   aws_for_fluentbit_namespace         = try(var.aws_for_fluentbit.namespace, "kube-system")
 }
 
@@ -585,6 +584,9 @@ resource "aws_cloudwatch_log_group" "aws_for_fluentbit" {
 
 data "aws_iam_policy_document" "aws_for_fluentbit" {
   count = (try(var.aws_for_fluentbit_cw_log_group.create, true) || length(lookup(var.aws_for_fluentbit, "s3_bucket_arns", [])) > 0) && var.enable_aws_for_fluentbit ? 1 : 0
+
+  source_policy_documents   = lookup(var.aws_for_fluentbit, "source_policy_documents", [])
+  override_policy_documents = lookup(var.aws_for_fluentbit, "override_policy_documents", [])
 
   dynamic "statement" {
     for_each = try(var.aws_for_fluentbit_cw_log_group.create, true) ? [1] : []
@@ -643,7 +645,7 @@ data "aws_iam_policy_document" "aws_for_fluentbit" {
 
 module "aws_for_fluentbit" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_aws_for_fluentbit
 
@@ -656,7 +658,7 @@ module "aws_for_fluentbit" {
   namespace        = local.aws_for_fluentbit_namespace
   create_namespace = try(var.aws_for_fluentbit.create_namespace, false)
   chart            = try(var.aws_for_fluentbit.chart, "aws-for-fluent-bit")
-  chart_version    = try(var.aws_for_fluentbit.chart_version, "0.1.28")
+  chart_version    = try(var.aws_for_fluentbit.chart_version, "0.1.30")
   repository       = try(var.aws_for_fluentbit.repository, "https://aws.github.io/eks-charts")
   values           = try(var.aws_for_fluentbit.values, [])
 
@@ -728,16 +730,12 @@ module "aws_for_fluentbit" {
   role_description              = try(var.aws_for_fluentbit.role_description, "IRSA for aws-for-fluent-bit")
   role_policies                 = lookup(var.aws_for_fluentbit, "role_policies", {})
 
-  source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.aws_for_fluentbit[*].json,
-    lookup(var.aws_for_fluentbit, "source_policy_documents", [])
-  ))
-  override_policy_documents = lookup(var.aws_for_fluentbit, "override_policy_documents", [])
-  policy_statements         = lookup(var.aws_for_fluentbit, "policy_statements", [])
-  policy_name               = try(var.aws_for_fluentbit.policy_name, "aws-for-fluent-bit")
-  policy_name_use_prefix    = try(var.aws_for_fluentbit.policy_name_use_prefix, true)
-  policy_path               = try(var.aws_for_fluentbit.policy_path, null)
-  policy_description        = try(var.aws_for_fluentbit.policy_description, "IAM Policy for AWS Fluentbit")
+  source_policy_documents = data.aws_iam_policy_document.aws_for_fluentbit[*].json
+  policy_statements       = lookup(var.aws_for_fluentbit, "policy_statements", [])
+  policy_name             = try(var.aws_for_fluentbit.policy_name, "aws-for-fluent-bit")
+  policy_name_use_prefix  = try(var.aws_for_fluentbit.policy_name_use_prefix, true)
+  policy_path             = try(var.aws_for_fluentbit.policy_path, null)
+  policy_description      = try(var.aws_for_fluentbit.policy_description, "IAM Policy for AWS Fluentbit")
 
   oidc_providers = {
     this = {
@@ -748,6 +746,232 @@ module "aws_for_fluentbit" {
   }
 
   tags = var.tags
+}
+
+resource "kubernetes_config_map_v1_data" "aws_for_fluentbit_containerinsights" {
+  count      = var.enable_aws_for_fluentbit && try(var.aws_for_fluentbit.enable_containerinsights, false) ? 1 : 0
+  depends_on = [module.aws_for_fluentbit]
+  force      = true
+
+  metadata {
+    name      = "aws-for-fluent-bit"
+    namespace = local.aws_for_fluentbit_namespace
+  }
+
+  data = {
+    "fluent-bit.conf" = try(
+      var.aws_for_fluentbit.fluentbit_conf,
+      <<-EOT
+        [SERVICE]
+          Flush 5
+          Grace 30
+          Log_Level info
+          Daemon off
+          Parsers_File parsers.conf
+          HTTP_Server On
+          HTTP_Listen 0.0.0.0
+          HTTP_Port 2020
+          storage.path /var/fluent-bit/state/flb-storage/
+          storage.sync normal
+          storage.checksum off
+          storage.backlog.mem_limit 5M
+
+        @INCLUDE application-log.conf
+        @INCLUDE dataplane-log.conf
+        @INCLUDE host-log.conf
+      EOT
+    )
+    "application-log.conf" = try(
+      var.aws_for_fluentbit.application_log_conf,
+      <<-EOT
+        [INPUT]
+            Name tail
+            Tag application.*
+            Exclude_Path /var/log/containers/cloudwatch-agent*, /var/log/containers/fluent-bit*, /var/log/containers/aws-node*, /var/log/containers/kube-proxy*
+            Path /var/log/containers/*.log
+            multiline.parser docker, cri
+            DB /var/fluent-bit/state/flb_container.db
+            Mem_Buf_Limit 50MB
+            Skip_Long_Lines On
+            Refresh_Interval 10
+            Rotate_Wait 30
+            storage.type filesystem
+            Read_from_Head Off
+
+        [INPUT]
+            Name tail
+            Tag application.*
+            Path /var/log/containers/fluent-bit*
+            multiline.parser docker, cri
+            DB /var/fluent-bit/state/flb_log.db
+            Mem_Buf_Limit 5MB
+            Skip_Long_Lines On
+            Refresh_Interval 10
+            Read_from_Head Off
+
+        [INPUT]
+            Name tail
+            Tag application.*
+            Path /var/log/containers/cloudwatch-agent*
+            multiline.parser docker, cri
+            DB /var/fluent-bit/state/flb_cwagent.db
+            Mem_Buf_Limit 5MB
+            Skip_Long_Lines On
+            Refresh_Interval 10
+            Read_from_Head Off
+
+        [FILTER]
+            Name kubernetes
+            Match application.*
+            Kube_URL https://kubernetes.default.svc:443
+            Kube_Tag_Prefix application.var.log.containers.
+            Merge_Log On
+            Merge_Log_Key log_processed
+            K8S-Logging.Parser On
+            K8S-Logging.Exclude Off
+            Labels Off
+            Annotations Off
+            ${try(var.aws_for_fluentbit.kubelet_monitoring, false) ? "Use_Kubelet On" : ""}
+            ${try(var.aws_for_fluentbit.kubelet_monitoring, false) ? "Kubelet_Port 10250" : ""}
+            Buffer_Size 0
+
+        [OUTPUT]
+            Name cloudwatch_logs
+            Match application.*
+            region ${local.region}
+            log_group_name /aws/containerinsights/${local.cluster_name}/application
+            log_stream_prefix $${HOSTNAME}-
+            auto_create_group true
+            extra_user_agent container-insights
+            workers 1
+      EOT
+    )
+    "dataplane-log.conf" = try(
+      var.aws_for_fluentbit.dataplane_log_conf,
+      <<-EOT
+        [INPUT]
+            Name systemd
+            Tag dataplane.systemd.*
+            Systemd_Filter _SYSTEMD_UNIT=docker.service
+            Systemd_Filter _SYSTEMD_UNIT=containerd.service
+            Systemd_Filter _SYSTEMD_UNIT=kubelet.service
+            DB /var/fluent-bit/state/systemd.db
+            Path /var/log/journal
+            Read_From_Tail On
+
+        [INPUT]
+            Name tail
+            Tag dataplane.tail.*
+            Path /var/log/containers/aws-node*, /var/log/containers/kube-proxy*
+            multiline.parser docker, cri
+            DB /var/fluent-bit/state/flb_dataplane_tail.db
+            Mem_Buf_Limit 50MB
+            Skip_Long_Lines On
+            Refresh_Interval 10
+            Rotate_Wait 30
+            storage.type filesystem
+            Read_from_Head Off
+
+        [FILTER]
+            Name modify
+            Match dataplane.systemd.*
+            Rename _HOSTNAME hostname
+            Rename _SYSTEMD_UNIT systemd_unit
+            Rename MESSAGE message
+            Remove_regex ^((?!hostname|systemd_unit|message).)*$
+
+        [FILTER]
+            Name aws
+            Match dataplane.*
+            imds_version v2
+
+        [OUTPUT]
+            Name cloudwatch_logs
+            Match dataplane.*
+            region ${local.region}
+            log_group_name /aws/containerinsights/${local.cluster_name}/dataplane
+            log_stream_prefix $${HOSTNAME}-
+            auto_create_group true
+            extra_user_agent container-insights
+      EOT
+    )
+    "host-log.conf" = try(
+      var.aws_for_fluentbit.host_log_conf,
+      <<-EOT
+        [INPUT]
+            Name tail
+            Tag host.dmesg
+            Path /var/log/dmesg
+            Key message
+            DB /var/fluent-bit/state/flb_dmesg.db
+            Mem_Buf_Limit 5MB
+            Skip_Long_Lines On
+            Refresh_Interval 10
+            Read_from_Head Off
+
+        [INPUT]
+            Name tail
+            Tag host.messages
+            Path /var/log/messages
+            Parser syslog
+            DB /var/fluent-bit/state/flb_messages.db
+            Mem_Buf_Limit 5MB
+            Skip_Long_Lines On
+            Refresh_Interval 10
+            Read_from_Head Off
+
+        [INPUT]
+            Name tail
+            Tag host.secure
+            Path /var/log/secure
+            Parser syslog
+            DB /var/fluent-bit/state/flb_secure.db
+            Mem_Buf_Limit 5MB
+            Skip_Long_Lines On
+            Refresh_Interval 10
+            Read_from_Head Off
+
+        [FILTER]
+            Name aws
+            Match host.*
+            imds_version v2
+
+        [OUTPUT]
+            Name cloudwatch_logs
+            Match host.*
+            region ${local.region}
+            log_group_name /aws/containerinsights/${local.cluster_name}/host
+            log_stream_prefix $${HOSTNAME}.
+            auto_create_group true
+            extra_user_agent container-insights
+      EOT
+    )
+    "parsers.conf" = try(
+      var.aws_for_fluentbit.parsers_conf,
+      <<-EOT
+        [PARSER]
+            Name syslog
+            Format regex
+            Regex ^(?<time>[^ ]* {1,2}[^ ]* [^ ]*) (?<host>[^ ]*) (?<ident>[a-zA-Z0-9_\/\.\-]*)(?:\[(?<pid>[0-9]+)\])?(?:[^\:]*\:)? *(?<message>.*)$
+            Time_Key time
+            Time_Format %b %d %H:%M:%S
+
+        [PARSER]
+            Name container_firstline
+            Format regex
+            Regex (?<log>(?<="log":")\S(?!\.).*?)(?<!\\)".*(?<stream>(?<="stream":").*?)".*(?<time>\d{4}-\d{1,2}-\d{1,2}T\d{2}:\d{2}:\d{2}\.\w*).*(?=})
+            Time_Key time
+            Time_Format %Y-%m-%dT%H:%M:%S.%LZ
+
+        [PARSER]
+            Name cwagent_firstline
+            Format regex
+            Regex (?<log>(?<="log":")\d{4}[\/-]\d{1,2}[\/-]\d{1,2}[ T]\d{2}:\d{2}:\d{2}(?!\.).*?)(?<!\\)".*(?<stream>(?<="stream":").*?)".*(?<time>\d{4}-\d{1,2}-\d{1,2}T\d{2}:\d{2}:\d{2}\.\w*).*(?=})
+            Time_Key time
+            Time_Format %Y-%m-%dT%H:%M:%S.%LZ
+      EOT
+    )
+  }
 }
 
 ################################################################################
@@ -762,6 +986,9 @@ locals {
 
 data "aws_iam_policy_document" "aws_fsx_csi_driver" {
   count = var.enable_aws_fsx_csi_driver ? 1 : 0
+
+  source_policy_documents   = lookup(var.aws_fsx_csi_driver, "source_policy_documents", [])
+  override_policy_documents = lookup(var.aws_fsx_csi_driver, "override_policy_documents", [])
 
   statement {
     sid       = "AllowCreateServiceLinkedRoles"
@@ -814,7 +1041,7 @@ data "aws_iam_policy_document" "aws_fsx_csi_driver" {
 
 module "aws_fsx_csi_driver" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_aws_fsx_csi_driver
 
@@ -884,16 +1111,12 @@ module "aws_fsx_csi_driver" {
   role_description              = try(var.aws_fsx_csi_driver.role_description, "IRSA for aws-fsx-csi-driver")
   role_policies                 = lookup(var.aws_fsx_csi_driver, "role_policies", {})
 
-  source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.aws_fsx_csi_driver[*].json,
-    lookup(var.aws_fsx_csi_driver, "source_policy_documents", [])
-  ))
-  override_policy_documents = lookup(var.aws_fsx_csi_driver, "override_policy_documents", [])
-  policy_statements         = lookup(var.aws_fsx_csi_driver, "policy_statements", [])
-  policy_name               = try(var.aws_fsx_csi_driver.policy_name, "aws-fsx-csi-driver")
-  policy_name_use_prefix    = try(var.aws_fsx_csi_driver.policy_name_use_prefix, true)
-  policy_path               = try(var.aws_fsx_csi_driver.policy_path, null)
-  policy_description        = try(var.aws_fsx_csi_driver.policy_description, "IAM Policy for AWS FSX CSI Driver")
+  source_policy_documents = data.aws_iam_policy_document.aws_fsx_csi_driver[*].json
+  policy_statements       = lookup(var.aws_fsx_csi_driver, "policy_statements", [])
+  policy_name             = try(var.aws_fsx_csi_driver.policy_name, "aws-fsx-csi-driver")
+  policy_name_use_prefix  = try(var.aws_fsx_csi_driver.policy_name_use_prefix, true)
+  policy_path             = try(var.aws_fsx_csi_driver.policy_path, null)
+  policy_description      = try(var.aws_fsx_csi_driver.policy_description, "IAM Policy for AWS FSX CSI Driver")
 
   oidc_providers = {
     controller = {
@@ -921,6 +1144,9 @@ locals {
 # https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/main/docs/install/iam_policy.json
 data "aws_iam_policy_document" "aws_load_balancer_controller" {
   count = var.enable_aws_load_balancer_controller ? 1 : 0
+
+  source_policy_documents   = lookup(var.aws_load_balancer_controller, "source_policy_documents", [])
+  override_policy_documents = lookup(var.aws_load_balancer_controller, "override_policy_documents", [])
 
   statement {
     actions   = ["iam:CreateServiceLinkedRole"]
@@ -1177,7 +1403,7 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
 
 module "aws_load_balancer_controller" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_aws_load_balancer_controller
 
@@ -1244,16 +1470,12 @@ module "aws_load_balancer_controller" {
   role_description              = try(var.aws_load_balancer_controller.role_description, "IRSA for aws-load-balancer-controller project")
   role_policies                 = lookup(var.aws_load_balancer_controller, "role_policies", {})
 
-  source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.aws_load_balancer_controller[*].json,
-    lookup(var.aws_load_balancer_controller, "source_policy_documents", [])
-  ))
-  override_policy_documents = lookup(var.aws_load_balancer_controller, "override_policy_documents", [])
-  policy_statements         = lookup(var.aws_load_balancer_controller, "policy_statements", [])
-  policy_name               = try(var.aws_load_balancer_controller.policy_name, null)
-  policy_name_use_prefix    = try(var.aws_load_balancer_controller.policy_name_use_prefix, true)
-  policy_path               = try(var.aws_load_balancer_controller.policy_path, null)
-  policy_description        = try(var.aws_load_balancer_controller.policy_description, "IAM Policy for AWS Load Balancer Controller")
+  source_policy_documents = data.aws_iam_policy_document.aws_load_balancer_controller[*].json
+  policy_statements       = lookup(var.aws_load_balancer_controller, "policy_statements", [])
+  policy_name             = try(var.aws_load_balancer_controller.policy_name, null)
+  policy_name_use_prefix  = try(var.aws_load_balancer_controller.policy_name_use_prefix, true)
+  policy_path             = try(var.aws_load_balancer_controller.policy_path, null)
+  policy_description      = try(var.aws_load_balancer_controller.policy_description, "IAM Policy for AWS Load Balancer Controller")
 
   oidc_providers = {
     this = {
@@ -1367,6 +1589,9 @@ resource "aws_cloudwatch_event_target" "aws_node_termination_handler" {
 data "aws_iam_policy_document" "aws_node_termination_handler" {
   count = var.enable_aws_node_termination_handler ? 1 : 0
 
+  source_policy_documents   = lookup(var.aws_node_termination_handler, "source_policy_documents", [])
+  override_policy_documents = lookup(var.aws_node_termination_handler, "override_policy_documents", [])
+
   statement {
     actions = [
       "autoscaling:DescribeAutoScalingInstances",
@@ -1392,7 +1617,7 @@ data "aws_iam_policy_document" "aws_node_termination_handler" {
 
 module "aws_node_termination_handler" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_aws_node_termination_handler
 
@@ -1468,16 +1693,12 @@ module "aws_node_termination_handler" {
   role_description              = try(var.aws_node_termination_handler.role_description, "IRSA for AWS Node Termination Handler project")
   role_policies                 = lookup(var.aws_node_termination_handler, "role_policies", {})
 
-  source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.aws_node_termination_handler[*].json,
-    lookup(var.aws_node_termination_handler, "source_policy_documents", [])
-  ))
-  override_policy_documents = lookup(var.aws_node_termination_handler, "override_policy_documents", [])
-  policy_statements         = lookup(var.aws_node_termination_handler, "policy_statements", [])
-  policy_name               = try(var.aws_node_termination_handler.policy_name, null)
-  policy_name_use_prefix    = try(var.aws_node_termination_handler.policy_name_use_prefix, true)
-  policy_path               = try(var.aws_node_termination_handler.policy_path, null)
-  policy_description        = try(var.aws_node_termination_handler.policy_description, "IAM Policy for AWS Node Termination Handler")
+  source_policy_documents = data.aws_iam_policy_document.aws_node_termination_handler[*].json
+  policy_statements       = lookup(var.aws_node_termination_handler, "policy_statements", [])
+  policy_name             = try(var.aws_node_termination_handler.policy_name, null)
+  policy_name_use_prefix  = try(var.aws_node_termination_handler.policy_name_use_prefix, true)
+  policy_path             = try(var.aws_node_termination_handler.policy_path, null)
+  policy_description      = try(var.aws_node_termination_handler.policy_description, "IAM Policy for AWS Node Termination Handler")
 
   oidc_providers = {
     this = {
@@ -1502,6 +1723,9 @@ locals {
 data "aws_iam_policy_document" "aws_privateca_issuer" {
   count = var.enable_aws_privateca_issuer ? 1 : 0
 
+  source_policy_documents   = lookup(var.aws_privateca_issuer, "source_policy_documents", [])
+  override_policy_documents = lookup(var.aws_privateca_issuer, "override_policy_documents", [])
+
   statement {
     actions = [
       "acm-pca:DescribeCertificateAuthority",
@@ -1517,7 +1741,7 @@ data "aws_iam_policy_document" "aws_privateca_issuer" {
 
 module "aws_privateca_issuer" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_aws_privateca_issuer
 
@@ -1580,16 +1804,12 @@ module "aws_privateca_issuer" {
   role_description              = try(var.aws_privateca_issuer.role_description, "IRSA for AWS Private CA Issuer")
   role_policies                 = lookup(var.aws_privateca_issuer, "role_policies", {})
 
-  source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.aws_privateca_issuer[*].json,
-    lookup(var.aws_privateca_issuer, "source_policy_documents", [])
-  ))
-  override_policy_documents = lookup(var.aws_privateca_issuer, "override_policy_documents", [])
-  policy_statements         = lookup(var.aws_privateca_issuer, "policy_statements", [])
-  policy_name               = try(var.aws_privateca_issuer.policy_name, "aws-privateca-issuer")
-  policy_name_use_prefix    = try(var.aws_privateca_issuer.policy_name_use_prefix, true)
-  policy_path               = try(var.aws_privateca_issuer.policy_path, null)
-  policy_description        = try(var.aws_privateca_issuer.policy_description, "IAM Policy for AWS Private CA Issuer")
+  source_policy_documents = data.aws_iam_policy_document.aws_privateca_issuer[*].json
+  policy_statements       = lookup(var.aws_privateca_issuer, "policy_statements", [])
+  policy_name             = try(var.aws_privateca_issuer.policy_name, "aws-privateca-issuer")
+  policy_name_use_prefix  = try(var.aws_privateca_issuer.policy_name_use_prefix, true)
+  policy_path             = try(var.aws_privateca_issuer.policy_path, null)
+  policy_description      = try(var.aws_privateca_issuer.policy_description, "IAM Policy for AWS Private CA Issuer")
 
   oidc_providers = {
     controller = {
@@ -1615,6 +1835,9 @@ locals {
 data "aws_iam_policy_document" "cert_manager" {
   count = local.create_cert_manager_irsa ? 1 : 0
 
+  source_policy_documents   = lookup(var.cert_manager, "source_policy_documents", [])
+  override_policy_documents = lookup(var.cert_manager, "override_policy_documents", [])
+
   statement {
     actions   = ["route53:GetChange", ]
     resources = ["arn:${local.partition}:route53:::change/*"]
@@ -1636,7 +1859,7 @@ data "aws_iam_policy_document" "cert_manager" {
 
 module "cert_manager" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_cert_manager
 
@@ -1684,6 +1907,10 @@ module "cert_manager" {
     {
       name  = "installCRDs"
       value = true
+    },
+    {
+      name  = "serviceAccount.name"
+      value = local.cert_manager_service_account
     }
     ],
     try(var.cert_manager.set, [])
@@ -1700,16 +1927,13 @@ module "cert_manager" {
   role_description              = try(var.cert_manager.role_description, "IRSA for cert-manger project")
   role_policies                 = lookup(var.cert_manager, "role_policies", {})
 
-  source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.cert_manager[*].json,
-    lookup(var.cert_manager, "source_policy_documents", [])
-  ))
-  override_policy_documents = lookup(var.cert_manager, "override_policy_documents", [])
-  policy_statements         = lookup(var.cert_manager, "policy_statements", [])
-  policy_name               = try(var.cert_manager.policy_name, null)
-  policy_name_use_prefix    = try(var.cert_manager.policy_name_use_prefix, true)
-  policy_path               = try(var.cert_manager.policy_path, null)
-  policy_description        = try(var.cert_manager.policy_description, "IAM Policy for cert-manager")
+  allow_self_assume_role  = try(var.cert_manager.allow_self_assume_role, true)
+  source_policy_documents = data.aws_iam_policy_document.cert_manager[*].json
+  policy_statements       = lookup(var.cert_manager, "policy_statements", [])
+  policy_name             = try(var.cert_manager.policy_name, null)
+  policy_name_use_prefix  = try(var.cert_manager.policy_name_use_prefix, true)
+  policy_path             = try(var.cert_manager.policy_path, null)
+  policy_description      = try(var.cert_manager.policy_description, "IAM Policy for cert-manager")
 
   oidc_providers = {
     this = {
@@ -1741,11 +1965,15 @@ locals {
     "1.25" = "v1.25.3"
     "1.26" = "v1.26.4"
     "1.27" = "v1.27.3"
+    "1.28" = "v1.28.0"
   }
 }
 
 data "aws_iam_policy_document" "cluster_autoscaler" {
   count = var.enable_cluster_autoscaler ? 1 : 0
+
+  source_policy_documents   = lookup(var.cluster_autoscaler, "source_policy_documents", [])
+  override_policy_documents = lookup(var.cluster_autoscaler, "override_policy_documents", [])
 
   statement {
     actions = [
@@ -1783,7 +2011,7 @@ data "aws_iam_policy_document" "cluster_autoscaler" {
 
 module "cluster_autoscaler" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_cluster_autoscaler
 
@@ -1860,16 +2088,12 @@ module "cluster_autoscaler" {
   role_description              = try(var.cluster_autoscaler.role_description, "IRSA for cluster-autoscaler operator")
   role_policies                 = lookup(var.cluster_autoscaler, "role_policies", {})
 
-  source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.cluster_autoscaler[*].json,
-    lookup(var.cluster_autoscaler, "source_policy_documents", [])
-  ))
-  override_policy_documents = lookup(var.cluster_autoscaler, "override_policy_documents", [])
-  policy_statements         = lookup(var.cluster_autoscaler, "policy_statements", [])
-  policy_name               = try(var.cluster_autoscaler.policy_name, null)
-  policy_name_use_prefix    = try(var.cluster_autoscaler.policy_name_use_prefix, true)
-  policy_path               = try(var.cluster_autoscaler.policy_path, null)
-  policy_description        = try(var.cluster_autoscaler.policy_description, "IAM Policy for cluster-autoscaler operator")
+  source_policy_documents = data.aws_iam_policy_document.cluster_autoscaler[*].json
+  policy_statements       = lookup(var.cluster_autoscaler, "policy_statements", [])
+  policy_name             = try(var.cluster_autoscaler.policy_name, null)
+  policy_name_use_prefix  = try(var.cluster_autoscaler.policy_name_use_prefix, true)
+  policy_path             = try(var.cluster_autoscaler.policy_path, null)
+  policy_description      = try(var.cluster_autoscaler.policy_description, "IAM Policy for cluster-autoscaler operator")
 
   oidc_providers = {
     this = {
@@ -1888,7 +2112,7 @@ module "cluster_autoscaler" {
 
 module "cluster_proportional_autoscaler" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_cluster_proportional_autoscaler
 
@@ -1989,8 +2213,16 @@ locals {
 data "aws_iam_policy_document" "external_dns" {
   count = var.enable_external_dns && length(var.external_dns_route53_zone_arns) > 0 ? 1 : 0
 
+  source_policy_documents   = lookup(var.external_dns, "source_policy_documents", [])
+  override_policy_documents = lookup(var.external_dns, "override_policy_documents", [])
+
   statement {
     actions   = ["route53:ChangeResourceRecordSets"]
+    resources = var.external_dns_route53_zone_arns
+  }
+
+  statement {
+    actions   = ["route53:ListTagsForResource"]
     resources = var.external_dns_route53_zone_arns
   }
 
@@ -2005,7 +2237,7 @@ data "aws_iam_policy_document" "external_dns" {
 
 module "external_dns" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_external_dns
 
@@ -2068,16 +2300,12 @@ module "external_dns" {
   role_description              = try(var.external_dns.role_description, "IRSA for external-dns operator")
   role_policies                 = lookup(var.external_dns, "role_policies", {})
 
-  source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.external_dns[*].json,
-    lookup(var.external_dns, "source_policy_documents", [])
-  ))
-  override_policy_documents = lookup(var.external_dns, "override_policy_documents", [])
-  policy_statements         = lookup(var.external_dns, "policy_statements", [])
-  policy_name               = try(var.external_dns.policy_name, null)
-  policy_name_use_prefix    = try(var.external_dns.policy_name_use_prefix, true)
-  policy_path               = try(var.external_dns.policy_path, null)
-  policy_description        = try(var.external_dns.policy_description, "IAM Policy for external-dns operator")
+  source_policy_documents = data.aws_iam_policy_document.external_dns[*].json
+  policy_statements       = lookup(var.external_dns, "policy_statements", [])
+  policy_name             = try(var.external_dns.policy_name, null)
+  policy_name_use_prefix  = try(var.external_dns.policy_name_use_prefix, true)
+  policy_path             = try(var.external_dns.policy_path, null)
+  policy_description      = try(var.external_dns.policy_description, "IAM Policy for external-dns operator")
 
   oidc_providers = {
     this = {
@@ -2101,6 +2329,9 @@ locals {
 
 data "aws_iam_policy_document" "external_secrets" {
   count = var.enable_external_secrets ? 1 : 0
+
+  source_policy_documents   = lookup(var.external_secrets, "source_policy_documents", [])
+  override_policy_documents = lookup(var.external_secrets, "override_policy_documents", [])
 
   dynamic "statement" {
     for_each = length(var.external_secrets_ssm_parameter_arns) > 0 ? [1] : []
@@ -2158,7 +2389,7 @@ data "aws_iam_policy_document" "external_secrets" {
 
 module "external_secrets" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_external_secrets
 
@@ -2221,16 +2452,12 @@ module "external_secrets" {
   role_description              = try(var.external_secrets.role_description, "IRSA for external-secrets operator")
   role_policies                 = lookup(var.external_secrets, "role_policies", {})
 
-  source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.external_secrets[*].json,
-    lookup(var.external_secrets, "source_policy_documents", [])
-  ))
-  override_policy_documents = lookup(var.external_secrets, "override_policy_documents", [])
-  policy_statements         = lookup(var.external_secrets, "policy_statements", [])
-  policy_name               = try(var.external_secrets.policy_name, null)
-  policy_name_use_prefix    = try(var.external_secrets.policy_name_use_prefix, true)
-  policy_path               = try(var.external_secrets.policy_path, null)
-  policy_description        = try(var.external_secrets.policy_description, "IAM Policy for external-secrets operator")
+  source_policy_documents = data.aws_iam_policy_document.external_secrets[*].json
+  policy_statements       = lookup(var.external_secrets, "policy_statements", [])
+  policy_name             = try(var.external_secrets.policy_name, null)
+  policy_name_use_prefix  = try(var.external_secrets.policy_name_use_prefix, true)
+  policy_path             = try(var.external_secrets.policy_path, null)
+  policy_description      = try(var.external_secrets.policy_description, "IAM Policy for external-secrets operator")
 
   oidc_providers = {
     this = {
@@ -2311,8 +2538,19 @@ data "aws_iam_policy_document" "fargate_fluentbit" {
       resources = var.fargate_fluentbit.s3_bucket_arns
     }
   }
-}
 
+  dynamic "statement" {
+    for_each = try(var.fargate_fluentbit.send_to_firehose, false) ? [1] : []
+
+    content {
+      sid = "FirehoseEvent"
+      actions = [
+        "firehose:PutRecordBatch"
+      ]
+      resources = lookup(var.fargate_fluentbit, "firehose_arns", ["*"])
+    }
+  }
+}
 # Help on Fargate Logging with Fluentbit and CloudWatch
 # https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html
 resource "kubernetes_namespace_v1" "aws_observability" {
@@ -2384,7 +2622,7 @@ resource "kubernetes_config_map_v1" "aws_logging" {
 
 module "gatekeeper" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_gatekeeper
 
@@ -2440,7 +2678,7 @@ module "gatekeeper" {
 
 module "ingress_nginx" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_ingress_nginx
 
@@ -2503,10 +2741,57 @@ locals {
   karpenter_node_iam_role_name         = try(var.karpenter_node.iam_role_name, "karpenter-${var.cluster_name}")
   karpenter_node_instance_profile_name = try(aws_iam_instance_profile.karpenter[0].name, var.karpenter_node.instance_profile_name, "")
   karpenter_namespace                  = try(var.karpenter.namespace, "karpenter")
+
+  karpenter_set = [
+    # TODO - remove at next breaking change
+    # Pre 0.32.x
+    {
+      name  = "settings.aws.clusterName"
+      value = local.cluster_name
+    },
+    {
+      name  = "settings.aws.clusterEndpoint"
+      value = local.cluster_endpoint
+    },
+    {
+      name  = "settings.aws.interruptionQueueName"
+      value = local.karpenter_enable_spot_termination ? module.karpenter_sqs.queue_name : null
+    },
+    {
+      name  = "settings.aws.defaultInstanceProfile"
+      value = var.karpenter_enable_instance_profile_creation ? null : local.karpenter_node_instance_profile_name
+    },
+    # Post 0.32.x
+    {
+      name  = "settings.clusterName"
+      value = local.cluster_name
+    },
+    {
+      name  = "settings.clusterEndpoint"
+      value = local.cluster_endpoint
+    },
+    {
+      name  = "settings.interruptionQueue"
+      value = local.karpenter_enable_spot_termination ? module.karpenter_sqs.queue_name : null
+    },
+    # TODO - this is not valid but being discussed as a re-addition. TBD on what the schema will be though
+    # {
+    #   name  = "settings.defaultInstanceProfile"
+    #   value = var.karpenter_enable_instance_profile_creation ? null : local.karpenter_node_instance_profile_name
+    # },
+    # Agnostic of version difference
+    {
+      name  = "serviceAccount.name"
+      value = local.karpenter_service_account_name
+    },
+  ]
 }
 
 data "aws_iam_policy_document" "karpenter" {
   count = var.enable_karpenter ? 1 : 0
+
+  source_policy_documents   = lookup(var.karpenter, "source_policy_documents", [])
+  override_policy_documents = lookup(var.karpenter, "override_policy_documents", [])
 
   statement {
     actions = [
@@ -2549,7 +2834,7 @@ data "aws_iam_policy_document" "karpenter" {
 
   statement {
     actions   = ["ssm:GetParameter"]
-    resources = ["arn:${local.partition}:ssm:${local.region}::parameter/*"]
+    resources = ["arn:${local.partition}:ssm:${local.region}::parameter/aws/service/*"]
   }
 
   statement {
@@ -2563,13 +2848,13 @@ data "aws_iam_policy_document" "karpenter" {
 
     condition {
       test     = "StringLike"
-      variable = "ec2:ResourceTag/Name"
-      values   = ["*karpenter*"]
+      variable = "ec2:ResourceTag/${try(var.karpenter.irsa_tag_key, "Name")}"
+      values   = try(var.karpenter.irsa_tag_values, ["*karpenter*", "*compute.internal", "*ec2.internal"])
     }
   }
 
   dynamic "statement" {
-    for_each = var.karpenter_enable_spot_termination ? [1] : []
+    for_each = local.karpenter_enable_spot_termination ? [1] : []
 
     content {
       actions = [
@@ -2579,6 +2864,22 @@ data "aws_iam_policy_document" "karpenter" {
         "sqs:ReceiveMessage",
       ]
       resources = [module.karpenter_sqs.queue_arn]
+    }
+  }
+
+  dynamic "statement" {
+    for_each = var.karpenter_enable_instance_profile_creation ? [1] : []
+
+    content {
+      actions = [
+        "iam:AddRoleToInstanceProfile",
+        "iam:CreateInstanceProfile",
+        "iam:DeleteInstanceProfile",
+        "iam:GetInstanceProfile",
+        "iam:RemoveRoleFromInstanceProfile",
+        "iam:TagInstanceProfile",
+      ]
+      resources = ["*"]
     }
   }
 }
@@ -2698,7 +2999,7 @@ resource "aws_iam_instance_profile" "karpenter" {
 
 module "karpenter" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_karpenter
 
@@ -2711,7 +3012,7 @@ module "karpenter" {
   namespace        = local.karpenter_namespace
   create_namespace = try(var.karpenter.create_namespace, true)
   chart            = try(var.karpenter.chart, "karpenter")
-  chart_version    = try(var.karpenter.chart_version, "v0.29.2")
+  chart_version    = try(var.karpenter.chart_version, "v0.32.1")
   repository       = try(var.karpenter.repository, "oci://public.ecr.aws/karpenter")
   values           = try(var.karpenter.values, [])
 
@@ -2743,28 +3044,7 @@ module "karpenter" {
 
   postrender = try(var.karpenter.postrender, [])
   set = concat(
-    [
-      {
-        name  = "settings.aws.clusterName"
-        value = local.cluster_name
-      },
-      {
-        name  = "settings.aws.clusterEndpoint"
-        value = local.cluster_endpoint
-      },
-      {
-        name  = "settings.aws.defaultInstanceProfile"
-        value = local.karpenter_node_instance_profile_name
-      },
-      {
-        name  = "settings.aws.interruptionQueueName"
-        value = module.karpenter_sqs.queue_name
-      },
-      {
-        name  = "serviceAccount.name"
-        value = local.karpenter_service_account_name
-      },
-    ],
+    [for s in local.karpenter_set : s if s.value != null],
     try(var.karpenter.set, [])
   )
   set_sensitive = try(var.karpenter.set_sensitive, [])
@@ -2779,16 +3059,12 @@ module "karpenter" {
   role_description              = try(var.karpenter.role_description, "IRSA for Karpenter")
   role_policies                 = lookup(var.karpenter, "role_policies", {})
 
-  source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.karpenter[*].json,
-    lookup(var.karpenter, "source_policy_documents", [])
-  ))
-  override_policy_documents = lookup(var.karpenter, "override_policy_documents", [])
-  policy_statements         = lookup(var.karpenter, "policy_statements", [])
-  policy_name               = try(var.karpenter.policy_name, null)
-  policy_name_use_prefix    = try(var.karpenter.policy_name_use_prefix, true)
-  policy_path               = try(var.karpenter.policy_path, null)
-  policy_description        = try(var.karpenter.policy_description, "IAM Policy for karpenter")
+  source_policy_documents = data.aws_iam_policy_document.karpenter[*].json
+  policy_statements       = lookup(var.karpenter, "policy_statements", [])
+  policy_name             = try(var.karpenter.policy_name, null)
+  policy_name_use_prefix  = try(var.karpenter.policy_name_use_prefix, true)
+  policy_path             = try(var.karpenter.policy_path, null)
+  policy_description      = try(var.karpenter.policy_description, "IAM Policy for karpenter")
 
   oidc_providers = {
     this = {
@@ -2818,7 +3094,7 @@ module "karpenter" {
 
 module "kube_prometheus_stack" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_kube_prometheus_stack
 
@@ -2874,7 +3150,7 @@ module "kube_prometheus_stack" {
 
 module "metrics_server" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_metrics_server
 
@@ -2930,7 +3206,7 @@ module "metrics_server" {
 
 module "secrets_store_csi_driver" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_secrets_store_csi_driver
 
@@ -2986,7 +3262,7 @@ module "secrets_store_csi_driver" {
 
 module "secrets_store_csi_driver_provider_aws" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_secrets_store_csi_driver_provider_aws
 
@@ -3054,6 +3330,9 @@ locals {
 data "aws_iam_policy_document" "velero" {
   count = var.enable_velero ? 1 : 0
 
+  source_policy_documents   = lookup(var.velero, "source_policy_documents", [])
+  override_policy_documents = lookup(var.velero, "override_policy_documents", [])
+
   statement {
     actions = [
       "ec2:CreateSnapshot",
@@ -3096,7 +3375,7 @@ data "aws_iam_policy_document" "velero" {
 
 module "velero" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_velero
 
@@ -3144,13 +3423,13 @@ module "velero" {
     {
       name  = "initContainers"
       value = <<-EOT
-   - name: velero-plugin-for-aws
-     image: velero/velero-plugin-for-aws:v1.7.0
-     imagePullPolicy: IfNotPresent
-     volumeMounts:
-       - mountPath: /target
-         name: plugins
-            EOT
+        - name: velero-plugin-for-aws
+          image: velero/velero-plugin-for-aws:v1.7.1
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /target
+              name: plugins
+      EOT
     },
     {
       name  = "serviceAccount.server.name"
@@ -3194,16 +3473,12 @@ module "velero" {
   role_description              = try(var.velero.role_description, "IRSA for Velero")
   role_policies                 = lookup(var.velero, "role_policies", {})
 
-  source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.velero[*].json,
-    lookup(var.velero, "source_policy_documents", [])
-  ))
-  override_policy_documents = lookup(var.velero, "override_policy_documents", [])
-  policy_statements         = lookup(var.velero, "policy_statements", [])
-  policy_name               = try(var.velero.policy_name, "velero")
-  policy_name_use_prefix    = try(var.velero.policy_name_use_prefix, true)
-  policy_path               = try(var.velero.policy_path, null)
-  policy_description        = try(var.velero.policy_description, "IAM Policy for Velero")
+  source_policy_documents = data.aws_iam_policy_document.velero[*].json
+  policy_statements       = lookup(var.velero, "policy_statements", [])
+  policy_name             = try(var.velero.policy_name, "velero")
+  policy_name_use_prefix  = try(var.velero.policy_name_use_prefix, true)
+  policy_path             = try(var.velero.policy_path, null)
+  policy_description      = try(var.velero.policy_description, "IAM Policy for Velero")
 
   oidc_providers = {
     controller = {
@@ -3222,7 +3497,7 @@ module "velero" {
 
 module "vpa" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_vpa
 
@@ -3291,12 +3566,23 @@ locals {
 data "aws_iam_policy_document" "aws_gateway_api_controller" {
   count = var.enable_aws_gateway_api_controller ? 1 : 0
 
+  source_policy_documents   = lookup(var.aws_gateway_api_controller, "source_policy_documents", [])
+  override_policy_documents = lookup(var.aws_gateway_api_controller, "override_policy_documents", [])
+
   statement {
     actions = [
       "vpc-lattice:*",
       "iam:CreateServiceLinkedRole",
       "ec2:DescribeVpcs",
-      "ec2:DescribeSubnets"
+      "ec2:DescribeSubnets",
+      "ec2:DescribeTags",
+      "ec2:DescribeSecurityGroups",
+      "logs:CreateLogDelivery",
+      "logs:GetLogDelivery",
+      "logs:UpdateLogDelivery",
+      "logs:DeleteLogDelivery",
+      "logs:ListLogDeliveries",
+      "tag:GetResources"
     ]
     resources = ["*"]
   }
@@ -3304,7 +3590,7 @@ data "aws_iam_policy_document" "aws_gateway_api_controller" {
 
 module "aws_gateway_api_controller" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.0"
+  version = "1.1.1"
 
   create = var.enable_aws_gateway_api_controller
 
@@ -3317,7 +3603,7 @@ module "aws_gateway_api_controller" {
   namespace        = local.aws_gateway_api_controller_namespace
   create_namespace = try(var.aws_gateway_api_controller.create_namespace, true)
   chart            = try(var.aws_gateway_api_controller.chart, "aws-gateway-controller-chart")
-  chart_version    = try(var.aws_gateway_api_controller.chart_version, "v0.0.15")
+  chart_version    = try(var.aws_gateway_api_controller.chart_version, "v0.0.16")
   repository       = try(var.aws_gateway_api_controller.repository, "oci://public.ecr.aws/aws-application-networking-k8s")
   values           = try(var.aws_gateway_api_controller.values, [])
 
@@ -3373,16 +3659,12 @@ module "aws_gateway_api_controller" {
   role_description              = try(var.aws_gateway_api_controller.role_description, "IRSA for aws-gateway-api-controller")
   role_policies                 = lookup(var.aws_gateway_api_controller, "role_policies", {})
 
-  source_policy_documents = compact(concat(
-    data.aws_iam_policy_document.aws_gateway_api_controller[*].json,
-    lookup(var.aws_gateway_api_controller, "source_policy_documents", [])
-  ))
-  override_policy_documents = lookup(var.aws_gateway_api_controller, "override_policy_documents", [])
-  policy_statements         = lookup(var.aws_gateway_api_controller, "policy_statements", [])
-  policy_name               = try(var.aws_gateway_api_controller.policy_name, null)
-  policy_name_use_prefix    = try(var.aws_gateway_api_controller.policy_name_use_prefix, true)
-  policy_path               = try(var.aws_gateway_api_controller.policy_path, null)
-  policy_description        = try(var.aws_gateway_api_controller.policy_description, "IAM Policy for aws-gateway-api-controller")
+  source_policy_documents = data.aws_iam_policy_document.aws_gateway_api_controller[*].json
+  policy_statements       = lookup(var.aws_gateway_api_controller, "policy_statements", [])
+  policy_name             = try(var.aws_gateway_api_controller.policy_name, null)
+  policy_name_use_prefix  = try(var.aws_gateway_api_controller.policy_name_use_prefix, true)
+  policy_path             = try(var.aws_gateway_api_controller.policy_path, null)
+  policy_description      = try(var.aws_gateway_api_controller.policy_description, "IAM Policy for aws-gateway-api-controller")
 
   oidc_providers = {
     this = {

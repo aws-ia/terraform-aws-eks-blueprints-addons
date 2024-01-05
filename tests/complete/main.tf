@@ -57,13 +57,12 @@ locals {
 # Cluster
 ################################################################################
 
-#tfsec:ignore:aws-eks-enable-control-plane-logging
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 19.13"
+  version = "~> 19.17"
 
   cluster_name                   = local.name
-  cluster_version                = "1.26"
+  cluster_version                = "1.28"
   cluster_endpoint_public_access = true
 
   vpc_id     = module.vpc.vpc_id
@@ -144,14 +143,45 @@ module "eks_blueprints_addons" {
   enable_kube_prometheus_stack                 = true
   enable_external_dns                          = true
   enable_external_secrets                      = true
-  # enable_gatekeeper                            = true
-  enable_ingress_nginx                = true
+  enable_gatekeeper                            = true
+  enable_ingress_nginx                         = true
+
+  # Turn off mutation webhook for services to avoid ordering issue
   enable_aws_load_balancer_controller = true
-  enable_metrics_server               = true
-  enable_vpa                          = true
-  enable_fargate_fluentbit            = true
-  enable_aws_for_fluentbit            = true
+  aws_load_balancer_controller = {
+    set = [{
+      name  = "enableServiceMutatorWebhook"
+      value = "false"
+    }]
+  }
+
+  enable_metrics_server    = true
+  enable_vpa               = true
+  enable_fargate_fluentbit = true
+  enable_aws_for_fluentbit = true
+  aws_for_fluentbit_cw_log_group = {
+    create          = true
+    use_name_prefix = true # Set this to true to enable name prefix
+    name_prefix     = "eks-cluster-logs-"
+    retention       = 7
+  }
   aws_for_fluentbit = {
+    enable_containerinsights = true
+    kubelet_monitoring       = true
+    chart_version            = "0.1.28"
+    set = [{
+      name  = "cloudWatchLogs.autoCreateGroup"
+      value = true
+      },
+      {
+        name  = "hostNetwork"
+        value = true
+      },
+      {
+        name  = "dnsPolicy"
+        value = "ClusterFirstWithHostNet"
+      }
+    ]
     s3_bucket_arns = [
       module.velero_backup_s3_bucket.s3_bucket_arn,
       "${module.velero_backup_s3_bucket.s3_bucket_arn}/logs/*"
@@ -161,7 +191,8 @@ module "eks_blueprints_addons" {
   enable_aws_node_termination_handler   = true
   aws_node_termination_handler_asg_arns = [for asg in module.eks.self_managed_node_groups : asg.autoscaling_group_arn]
 
-  enable_karpenter = true
+  enable_karpenter                           = true
+  karpenter_enable_instance_profile_creation = true
   # ECR login required
   karpenter = {
     repository_username = data.aws_ecrpublic_authorization_token.token.user_name
@@ -207,7 +238,7 @@ module "eks_blueprints_addons" {
       namespace        = "gpu-operator"
       create_namespace = true
       chart            = "gpu-operator"
-      chart_version    = "v23.3.2"
+      chart_version    = "v23.9.0"
       repository       = "https://nvidia.github.io/gpu-operator"
       values = [
         <<-EOT

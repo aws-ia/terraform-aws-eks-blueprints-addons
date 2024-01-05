@@ -6,6 +6,9 @@
 
 In order to deploy the AWS Load Balancer Controller Addon via [EKS Blueprints Addons](https://github.com/aws-ia/terraform-aws-eks-blueprints-addons), reference the following parameters under the `module.eks_blueprints_addons`.
 
+
+> **_NOTE_**: In versions 2.5 and newer, the AWS Load Balancer Controller becomes the default controller for Kubernetes service resources with the type: LoadBalancer and makes an AWS Network Load Balancer (NLB) for each service. It does this by making a mutating webhook for services, which sets the spec.loadBalancerClass field to service.k8s.aws/nlb for new services of type: LoadBalancer. You can turn off this feature and revert to using the legacy Cloud Provider as the default controller, by setting the helm chart value enableServiceMutatorWebhook to false. The cluster won't provision new Classic Load Balancers for your services unless you turn off this feature. Existing Classic Load Balancers will continue to work.
+
 ```hcl
 module "eks_blueprints_addons" {
 
@@ -20,6 +23,10 @@ module "eks_blueprints_addons" {
         name  = "podDisruptionBudget.maxUnavailable"
         value = 1
       },
+      {
+        name  = "enableServiceMutatorWebhook"
+        value = "false"
+      }
     ]
   }
 ```

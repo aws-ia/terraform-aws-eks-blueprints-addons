@@ -22,10 +22,42 @@ You can optionally customize the Helm chart that deploys AWS for Fluent Bit via 
   }
   aws_for_fluentbit = {
     name          = "aws-for-fluent-bit"
-    chart_version = "0.1.24"
+    chart_version = "0.1.28"
     repository    = "https://aws.github.io/eks-charts"
     namespace     = "kube-system"
     values        = [templatefile("${path.module}/values.yaml", {})]
+  }
+```
+
+If you want to enable [Container Insights on Amazon EKS](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-EKS-quickstart.html) through Fluent Bit, you need to add the following parameter in your configuration:
+
+```hcl
+  enable_aws_for_fluentbit = true
+  aws_for_fluentbit = {
+    enable_containerinsights = true
+  }
+```
+
+By default, ClusterInsights will not enable the `kubelet` monitoring feature, with AWS for FluentBit integration, since this is an optional feature that is suggested to be enabled only on large clusters. To enable the [ClusterInsights Use_Kubelet feature](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-use-kubelet.html) you'll need to provide a few more parametees:
+
+```hcl
+  enable_aws_for_fluentbit = true
+  aws_for_fluentbit = {
+    enable_containerinsights = true
+    kubelet_monitoring       = true
+    set = [{
+        name  = "cloudWatchLogs.autoCreateGroup"
+        value = true
+      },
+      {
+        name  = "hostNetwork"
+        value = true
+      },
+      {
+        name  = "dnsPolicy"
+        value = "ClusterFirstWithHostNet"
+      }
+    ]
   }
 ```
 
@@ -34,9 +66,11 @@ You can optionally customize the Helm chart that deploys AWS for Fluent Bit via 
 Verify aws-for-fluentbit pods are running.
 
 ```sh
-$ kuebctl get pods -n kube-system
-NAME                                                         READY   STATUS    RESTARTS       AGE
-aws-for-fluent-bit-6kp66                                     1/1     Running   0              172m
+$ kubectl -n kube-system get pods -l app.kubernetes.io/name=aws-for-fluent-bit
+NAME                       READY   STATUS    RESTARTS   AGE
+aws-for-fluent-bit-6lhkj   1/1     Running   0          15m
+aws-for-fluent-bit-sbn9b   1/1     Running   0          15m
+aws-for-fluent-bit-svhwq   1/1     Running   0          15m
 ```
 
 Open the CloudWatch console at https://console.aws.amazon.com/cloudwatch/
@@ -47,6 +81,12 @@ In the navigation pane, choose Log groups.
 Make sure that you're in the Region where you deployed Fluent Bit.
 
 Check the list of log groups in the Region. You should see the following:
+
+```
+/aws/eks/complete/aws-fluentbit-logs
+```
+
+If you enabled Container Insights, you should also see the following Log Groups in your CloudWatch Console.
 
 ```
 /aws/containerinsights/Cluster_Name/application
