@@ -2209,6 +2209,9 @@ resource "aws_eks_addon" "this" {
 locals {
   external_dns_service_account = try(var.external_dns.service_account_name, "external-dns-sa")
   external_dns_namespace       = try(var.external_dns.namespace, "external-dns")
+  external_dns_zone_id_filters = [
+    for zone_arn in var.external_dns_route53_zone_arns : replace(zone_arn, "arn:aws:route53:::hostedzone/", "--zone-id-filter=")
+  ]
 }
 
 data "aws_iam_policy_document" "external_dns" {
@@ -2253,7 +2256,7 @@ module "external_dns" {
   chart            = try(var.external_dns.chart, "external-dns")
   chart_version    = try(var.external_dns.chart_version, "1.13.0")
   repository       = try(var.external_dns.repository, "https://kubernetes-sigs.github.io/external-dns/")
-  values           = try(var.external_dns.values, ["provider: aws"])
+  values           = try(var.external_dns.values, ["provider: aws", "extraArgs: [${join(", ", local.external_dns_zone_id_filters)}]"])
 
   timeout                    = try(var.external_dns.timeout, null)
   repository_key_file        = try(var.external_dns.repository_key_file, null)
