@@ -2848,8 +2848,8 @@ data "aws_iam_policy_document" "karpenter" {
 
     condition {
       test     = "StringLike"
-      variable = "ec2:ResourceTag/${try(var.karpenter.irsa_tag_key, "Name")}"
-      values   = try(var.karpenter.irsa_tag_values, ["*karpenter*", "*compute.internal", "*ec2.internal"])
+      variable = "ec2:ResourceTag/kubernetes.io/cluster/${var.cluster_name}"
+      values   = ["*"]
     }
   }
 
