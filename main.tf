@@ -38,7 +38,7 @@ locals {
         detail-type = ["AWS Health Event"]
       }
     }
-    spot_interupt = {
+    spot_interrupt = {
       name        = "SpotInterrupt"
       description = "EC2 spot instance interruption warning"
       event_pattern = {
