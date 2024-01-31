@@ -3681,52 +3681,6 @@ module "aws_gateway_api_controller" {
 # Bottlerocket Update Operator
 ################################################################################
 
-module "bottlerocket_update_operator_crds" {
-  source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "~> 1.1.1"
-
-  create = var.bottlerocket_update_operator
-
-  name          = try(var.bottlerocket_update_operator_crds.name, "bottlerocket-update-operator-crds")
-  description   = try(var.bottlerocket_update_operator_crds.description, "CRDs for Bottlerocket Update Operator")
-  chart         = try(var.bottlerocket_update_operator_crds.chart, "bottlerocket-shadow")
-  chart_version = try(var.bottlerocket_update_operator_crds.chart_version, "1.0.0")
-  repository    = try(var.bottlerocket_update_operator_crds.repository, "https://bottlerocket-os.github.io/bottlerocket-update-operator/")
-  values        = try(var.bottlerocket_update_operator_crds.values, [])
-
-  timeout                    = try(var.bottlerocket_update_operator_crds.timeout, null)
-  repository_key_file        = try(var.bottlerocket_update_operator_crds.repository_key_file, null)
-  repository_cert_file       = try(var.bottlerocket_update_operator_crds.repository_cert_file, null)
-  repository_ca_file         = try(var.bottlerocket_update_operator_crds.repository_ca_file, null)
-  repository_username        = try(var.bottlerocket_update_operator_crds.repository_username, null)
-  repository_password        = try(var.bottlerocket_update_operator_crds.repository_password, null)
-  devel                      = try(var.bottlerocket_update_operator_crds.devel, null)
-  verify                     = try(var.bottlerocket_update_operator_crds.verify, null)
-  keyring                    = try(var.bottlerocket_update_operator_crds.keyring, null)
-  disable_webhooks           = try(var.bottlerocket_update_operator_crds.disable_webhooks, null)
-  reuse_values               = try(var.bottlerocket_update_operator_crds.reuse_values, null)
-  reset_values               = try(var.bottlerocket_update_operator_crds.reset_values, null)
-  force_update               = try(var.bottlerocket_update_operator_crds.force_update, null)
-  recreate_pods              = try(var.bottlerocket_update_operator_crds.recreate_pods, null)
-  cleanup_on_fail            = try(var.bottlerocket_update_operator_crds.cleanup_on_fail, null)
-  max_history                = try(var.bottlerocket_update_operator_crds.max_history, null)
-  atomic                     = try(var.bottlerocket_update_operator_crds.atomic, null)
-  skip_crds                  = try(var.bottlerocket_update_operator_crds.skip_crds, null)
-  render_subchart_notes      = try(var.bottlerocket_update_operator_crds.render_subchart_notes, null)
-  disable_openapi_validation = try(var.bottlerocket_update_operator_crds.disable_openapi_validation, null)
-  wait                       = try(var.bottlerocket_update_operator_crds.wait, false)
-  wait_for_jobs              = try(var.bottlerocket_update_operator_crds.wait_for_jobs, null)
-  dependency_update          = try(var.bottlerocket_update_operator_crds.dependency_update, null)
-  replace                    = try(var.bottlerocket_update_operator_crds.replace, null)
-  lint                       = try(var.bottlerocket_update_operator_crds.lint, null)
-
-  postrender    = try(var.bottlerocket_update_operator_crds.postrender, [])
-  set           = try(var.bottlerocket_update_operator_crds.set, [])
-  set_sensitive = try(var.bottlerocket_update_operator_crds.set_sensitive, [])
-
-  tags = var.tags
-}
-
 module "bottlerocket_update_operator" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "~> 1.1.1"
@@ -3773,4 +3727,53 @@ module "bottlerocket_update_operator" {
   set_sensitive = try(var.bottlerocket_update_operator.set_sensitive, [])
 
   tags = var.tags
+}
+
+module "bottlerocket_update_operator_crds" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "~> 1.1.1"
+
+  create = var.bottlerocket_update_operator
+
+  name          = try(var.bottlerocket_update_operator_crds.name, "bottlerocket-update-operator-crds")
+  description   = try(var.bottlerocket_update_operator_crds.description, "CRDs for Bottlerocket Update Operator")
+  chart         = try(var.bottlerocket_update_operator_crds.chart, "bottlerocket-shadow")
+  chart_version = try(var.bottlerocket_update_operator_crds.chart_version, "1.0.0")
+  repository    = try(var.bottlerocket_update_operator_crds.repository, "https://bottlerocket-os.github.io/bottlerocket-update-operator/")
+  values        = try(var.bottlerocket_update_operator_crds.values, [])
+
+  timeout                    = try(var.bottlerocket_update_operator_crds.timeout, null)
+  repository_key_file        = try(var.bottlerocket_update_operator_crds.repository_key_file, null)
+  repository_cert_file       = try(var.bottlerocket_update_operator_crds.repository_cert_file, null)
+  repository_ca_file         = try(var.bottlerocket_update_operator_crds.repository_ca_file, null)
+  repository_username        = try(var.bottlerocket_update_operator_crds.repository_username, null)
+  repository_password        = try(var.bottlerocket_update_operator_crds.repository_password, null)
+  devel                      = try(var.bottlerocket_update_operator_crds.devel, null)
+  verify                     = try(var.bottlerocket_update_operator_crds.verify, null)
+  keyring                    = try(var.bottlerocket_update_operator_crds.keyring, null)
+  disable_webhooks           = try(var.bottlerocket_update_operator_crds.disable_webhooks, null)
+  reuse_values               = try(var.bottlerocket_update_operator_crds.reuse_values, null)
+  reset_values               = try(var.bottlerocket_update_operator_crds.reset_values, null)
+  force_update               = try(var.bottlerocket_update_operator_crds.force_update, null)
+  recreate_pods              = try(var.bottlerocket_update_operator_crds.recreate_pods, null)
+  cleanup_on_fail            = try(var.bottlerocket_update_operator_crds.cleanup_on_fail, null)
+  max_history                = try(var.bottlerocket_update_operator_crds.max_history, null)
+  atomic                     = try(var.bottlerocket_update_operator_crds.atomic, null)
+  skip_crds                  = try(var.bottlerocket_update_operator_crds.skip_crds, null)
+  render_subchart_notes      = try(var.bottlerocket_update_operator_crds.render_subchart_notes, null)
+  disable_openapi_validation = try(var.bottlerocket_update_operator_crds.disable_openapi_validation, null)
+  wait                       = try(var.bottlerocket_update_operator_crds.wait, false)
+  wait_for_jobs              = try(var.bottlerocket_update_operator_crds.wait_for_jobs, null)
+  dependency_update          = try(var.bottlerocket_update_operator_crds.dependency_update, null)
+  replace                    = try(var.bottlerocket_update_operator_crds.replace, null)
+  lint                       = try(var.bottlerocket_update_operator_crds.lint, null)
+
+  postrender    = try(var.bottlerocket_update_operator_crds.postrender, [])
+  set           = try(var.bottlerocket_update_operator_crds.set, [])
+  set_sensitive = try(var.bottlerocket_update_operator_crds.set_sensitive, [])
+
+  tags = var.tags
+
+  depends_on = [module.bottlerocket_update_operator]
+
 }
