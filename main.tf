@@ -3681,10 +3681,6 @@ module "aws_gateway_api_controller" {
 # Bottlerocket Update Operator
 ################################################################################
 
-locals {
-  bottlerocket_update_operator_namespace = try(var.bottlerocket_update_operator.namespace, "brupop-bottlerocket-aws")
-}
-
 module "bottlerocket_update_operator_crds" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "~> 1.1.1"
@@ -3727,7 +3723,7 @@ module "bottlerocket_update_operator_crds" {
   postrender    = try(var.bottlerocket_update_operator_crds.postrender, [])
   set           = try(var.bottlerocket_update_operator_crds.set, [])
   set_sensitive = try(var.bottlerocket_update_operator_crds.set_sensitive, [])
-  
+
   tags = var.tags
 }
 
@@ -3737,41 +3733,44 @@ module "bottlerocket_update_operator" {
 
   create = var.bottlerocket_update_operator
 
-  description      = "A Helm chart for Bottlerocket Update Operator"
-  chart            = "bottlerocket-update-operator"
-  chart_version    = "1.3.0"
-  namespace        = "brupop-bottlerocket-aws"
-  create_namespace = true
-  repository       = "https://bottlerocket-os.github.io/bottlerocket-update-operator/"
-  set = [{
-    name  = "scheduler_cron_expression"
-    value = "0 * * * * * *" # Default Unix Cron syntax, set to check every hour. Example "0 0 23 * * Sat *" Perform update checks every Saturday at 23H / 11PM
-    },
-    {
-      name  = "placement.agent.tolerations[0].key"
-      value = "CriticalAddonsOnly"
-    },
-    {
-      name  = "placement.agent.tolerations[0].operator"
-      value = "Exists"
-    },
-    {
-      name  = "placement.controller.tolerations[0].key"
-      value = "CriticalAddonsOnly"
-    },
-    {
-      name  = "placement.controller.tolerations[0].operator"
-      value = "Exists"
-    },
-    {
-      name  = "placement.apiserver.tolerations[0].key"
-      value = "CriticalAddonsOnly"
-    },
-    {
-      name  = "placement.apiserver.tolerations[0].operator"
-      value = "Exists"
-    }
-  ]
+  name             = try(var.bottlerocket_update_operator.name, "bottlerocket-update-operator-crds")
+  description      = try(var.bottlerocket_update_operator.description, "A Helm chart for Bottlerocket Update Operator")
+  chart            = try(var.bottlerocket_update_operator.chart, "bottlerocket-update-operator")
+  chart_version    = try(var.bottlerocket_update_operator.version, "1.3.0")
+  namespace        = try(var.bottlerocket_update_operator.namespace, "brupop-bottlerocket-aws")
+  create_namespace = try(var.bottlerocket_update_operator.create_namespace, true)
+  repository       = try(var.bottlerocket_update_operator.repository, "https://bottlerocket-os.github.io/bottlerocket-update-operator/")
+  values           = try(var.bottlerocket_update_operator_crds.values, [])
 
-  depends_on = [module.eks_blueprints_addons]
+  timeout                    = try(var.bottlerocket_update_operator.timeout, null)
+  repository_key_file        = try(var.bottlerocket_update_operator.repository_key_file, null)
+  repository_cert_file       = try(var.bottlerocket_update_operator.repository_cert_file, null)
+  repository_ca_file         = try(var.bottlerocket_update_operator.repository_ca_file, null)
+  repository_username        = try(var.bottlerocket_update_operator.repository_username, null)
+  repository_password        = try(var.bottlerocket_update_operator.repository_password, null)
+  devel                      = try(var.bottlerocket_update_operator.devel, null)
+  verify                     = try(var.bottlerocket_update_operator.verify, null)
+  keyring                    = try(var.bottlerocket_update_operator.keyring, null)
+  disable_webhooks           = try(var.bottlerocket_update_operator.disable_webhooks, null)
+  reuse_values               = try(var.bottlerocket_update_operator.reuse_values, null)
+  reset_values               = try(var.bottlerocket_update_operator.reset_values, null)
+  force_update               = try(var.bottlerocket_update_operator.force_update, null)
+  recreate_pods              = try(var.bottlerocket_update_operator.recreate_pods, null)
+  cleanup_on_fail            = try(var.bottlerocket_update_operator.cleanup_on_fail, null)
+  max_history                = try(var.bottlerocket_update_operator.max_history, null)
+  atomic                     = try(var.bottlerocket_update_operator.atomic, null)
+  skip_crds                  = try(var.bottlerocket_update_operator.skip_crds, null)
+  render_subchart_notes      = try(var.bottlerocket_update_operator.render_subchart_notes, null)
+  disable_openapi_validation = try(var.bottlerocket_update_operator.disable_openapi_validation, null)
+  wait                       = try(var.bottlerocket_update_operator.wait, false)
+  wait_for_jobs              = try(var.bottlerocket_update_operator.wait_for_jobs, null)
+  dependency_update          = try(var.bottlerocket_update_operator.dependency_update, null)
+  replace                    = try(var.bottlerocket_update_operator.replace, null)
+  lint                       = try(var.bottlerocket_update_operator.lint, null)
+
+  postrender    = try(var.bottlerocket_update_operator.postrender, [])
+  set           = try(var.bottlerocket_update_operator.set, [])
+  set_sensitive = try(var.bottlerocket_update_operator.set_sensitive, [])
+
+  tags = var.tags
 }
