@@ -26,7 +26,7 @@ module "eks" {
       platform = "bottlerocket"
       ami_type       = "BOTTLEROCKET_x86_64"
       instance_types = ["m5.large", "m5a.large"]
-    
+
       iam_role_attach_cni_policy = true
 
       min_size     = 1
@@ -67,7 +67,7 @@ spec:
     "shutdown-grace-period" = "30s"
     "shutdown-grace-period-for-critical-pods" = "30s"
     [settings.kubernetes.eviction-hard]
-    "memory.available" = "20%"    
+    "memory.available" = "20%"  
     [settings.kubernetes.node-labels]
      "bottlerocket.aws/updater-interface-version" = "2.0.0"
 ```
@@ -143,9 +143,9 @@ NAME                                                      DESIRED   CURRENT   RE
 replicaset.apps/brupop-apiserver-6ccb74f599               3         3         3       33h
 replicaset.apps/brupop-controller-deployment-58d46595cc   1         1         1       33h
 
-$ kubectl describe apiservices.apiregistration.k8s.io v2.brupop.bottlerocket.aws 
+$ kubectl describe apiservices.apiregistration.k8s.io v2.brupop.bottlerocket.aws
 Name:         v2.brupop.bottlerocket.aws
-Namespace:    
+Namespace:  
 Labels:       kube-aggregator.kubernetes.io/automanaged=true
 Annotations:  <none>
 API Version:  apiregistration.k8s.io/v1
@@ -175,7 +175,7 @@ Events:                    <none>
 $ kubectl label node ip-10-0-34-87.us-west-2.compute.internal bottlerocket.aws/updater-interface-version=2.0.0
 node/ip-10-0-34-87.us-west-2.compute.internal labeled
 
-$ kubectl get nodes -L bottlerocket.aws/updater-interface-version                                              
+$ kubectl get nodes -L bottlerocket.aws/updater-interface-version  
 NAME                                        STATUS                     ROLES    AGE   VERSION               UPDATER-INTERFACE-VERSION
 ip-10-0-34-87.us-west-2.compute.internal    Ready                      <none>   34h   v1.28.1-eks-d91a302   2.0.0
 ```
@@ -183,7 +183,7 @@ ip-10-0-34-87.us-west-2.compute.internal    Ready                      <none>   
 4. Because the default cron schedule for BRUPOP is set to check for updates every minute, you'll be able to see in a few minutes that the Node had it's version updated automatically with no downtime.
 
 ```bash
-kubectl get nodes 
-NAME                                        STATUS                     ROLES    AGE   VERSION             
-ip-10-0-34-87.us-west-2.compute.internal    Ready                      <none>   34h   v1.28.4-eks-d91a302 
+kubectl get nodes
+NAME                                        STATUS                     ROLES    AGE   VERSION  
+ip-10-0-34-87.us-west-2.compute.internal    Ready                      <none>   34h   v1.28.4-eks-d91a302
 ```
