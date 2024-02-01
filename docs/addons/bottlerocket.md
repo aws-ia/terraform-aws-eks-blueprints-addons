@@ -74,7 +74,7 @@ spec:
 
 ## Usage
 
-[BRUPOP](https://github.com/aws-ia/terraform-aws-eks-blueprints-addons/) can be deployed with the default configuration by enabling the add-on via the following. Notice the parameter `wait = true` set for Cert-Manager, this is needed since BROPUP requires that Cert-Manager CRDs are already present in the cluster to be deployed.
+[BRUPOP](https://github.com/aws-ia/terraform-aws-eks-blueprints-addons/) can be deployed with the default configuration by enabling the add-on via the following. Notice the parameter `wait = true` set for Cert-Manager, this is needed since BRUPOP requires that Cert-Manager CRDs are already present in the cluster to be deployed.
 
 ```hcl
 module "eks_blueprints_addons" {
