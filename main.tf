@@ -3681,7 +3681,7 @@ module "aws_gateway_api_controller" {
 # Bottlerocket Update Operator
 ################################################################################
 locals {
-  wait_for_cert_manager = var.cert_manager.wait ? [ module.cert_manager ] : []
+  wait_for_cert_manager = var.cert_manager.wait ? [module.cert_manager] : []
 }
 
 module "bottlerocket_update_operator_crds" {
@@ -3731,7 +3731,7 @@ module "bottlerocket_update_operator_crds" {
   set           = try(var.bottlerocket_update_operator_crds.set, [])
   set_sensitive = try(var.bottlerocket_update_operator_crds.set_sensitive, [])
 
-  depends_on = [ local.wait_for_cert_manager ]
+  depends_on = [local.wait_for_cert_manager]
 
   tags = var.tags
 }
