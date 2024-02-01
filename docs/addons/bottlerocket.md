@@ -74,11 +74,24 @@ spec:
 
 ## Usage
 
-[BRUPOP](https://github.com/aws-ia/terraform-aws-eks-blueprints-addons/) can be deployed with the default configuration by enabling the add-on via the following.
+[BRUPOP](https://github.com/aws-ia/terraform-aws-eks-blueprints-addons/) can be deployed with the default configuration by enabling the add-on via the following. Notice the parameter `wait = true` set for Cert-Manager, this is needed since BROPUP requires that Cert-Manager CRDs are already present in the cluster to be deployed.
 
 ```hcl
-enable_cert_manager                 = true
-enable_bottlerocket_update_operator = true
+module "eks_blueprints_addons" {
+  source  = "aws-ia/eks-blueprints-addons/aws"
+  version = "~> 1.13"
+
+  cluster_name      = module.eks.cluster_name
+  cluster_endpoint  = module.eks.cluster_endpoint
+  cluster_version   = module.eks.cluster_version
+  oidc_provider_arn = module.eks.oidc_provider_arn
+
+  enable_cert_manager = true
+  cert_manager = {
+    wait = true
+  }
+  enable_bottlerocket_update_operator = true
+}
 ```
 
 You can also customize the Helm charts that deploys `bottlerocket_update_operator` and the `bottlerocket_update_operator_crds` via the following configuration:
