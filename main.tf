@@ -3680,11 +3680,18 @@ module "aws_gateway_api_controller" {
 ################################################################################
 # Bottlerocket Update Operator
 ################################################################################
+locals {
+  wait_for_cert_manager = var.cert_manager.wait ? [ module.cert_manager ] : []
+}
+
 module "bottlerocket_update_operator_crds" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "~> 1.1.1"
 
   create = var.enable_bottlerocket_update_operator
+
+  # Disable helm release
+  create_release = var.create_kubernetes_resources
 
   # https://github.com/bottlerocket-os/bottlerocket-update-operator/blob/develop/deploy/charts/bottlerocket-shadow/Chart.yaml
   name          = try(var.bottlerocket_update_operator_crds.name, "bottlerocket-update-operator-crds")
@@ -3724,6 +3731,8 @@ module "bottlerocket_update_operator_crds" {
   set           = try(var.bottlerocket_update_operator_crds.set, [])
   set_sensitive = try(var.bottlerocket_update_operator_crds.set_sensitive, [])
 
+  depends_on = [ local.wait_for_cert_manager ]
+
   tags = var.tags
 }
 
@@ -3732,6 +3741,9 @@ module "bottlerocket_update_operator" {
   version = "~> 1.1.1"
 
   create = var.enable_bottlerocket_update_operator
+
+  # Disable helm release
+  create_release = var.create_kubernetes_resources
 
   # https://github.com/bottlerocket-os/bottlerocket-update-operator/blob/develop/deploy/charts/bottlerocket-update-operator/Chart.yaml
   name             = try(var.bottlerocket_update_operator.name, "bottlerocket-update-operator-crds")
