@@ -2725,11 +2725,14 @@ locals {
   karpenter_service_account_name    = try(var.karpenter.service_account_name, "karpenter")
   karpenter_enable_spot_termination = var.enable_karpenter && var.karpenter_enable_spot_termination
 
-  create_karpenter_node_iam_role       = var.enable_karpenter && try(var.karpenter_node.create_iam_role, true)
-  karpenter_node_iam_role_arn          = try(aws_iam_role.karpenter[0].arn, var.karpenter_node.iam_role_arn, "")
-  karpenter_node_iam_role_name         = try(var.karpenter_node.iam_role_name, "karpenter-${var.cluster_name}")
-  karpenter_node_instance_profile_name = try(var.karpenter_node.instance_profile_name, local.karpenter_node_iam_role_name)
-  karpenter_namespace                  = try(var.karpenter.namespace, "karpenter")
+  create_karpenter_node_iam_role = var.enable_karpenter && try(var.karpenter_node.create_iam_role, true)
+  karpenter_node_iam_role_arn    = try(aws_iam_role.karpenter[0].arn, var.karpenter_node.iam_role_arn, "")
+  karpenter_node_iam_role_name   = try(var.karpenter_node.iam_role_name, "karpenter-${var.cluster_name}")
+  # This is the name used when the instance profile is created by the module
+  input_karpenter_node_instance_profile_name = try(var.karpenter_node.instance_profile_name, local.karpenter_node_iam_role_name)
+  # This is the name passed to the Karpenter Helm chart - either the profile the module creates, or one provided by the user
+  output_karpenter_node_instance_profile_name = try(aws_iam_instance_profile.karpenter[0].name, var.karpenter_node.instance_profile_name, "")
+  karpenter_namespace                         = try(var.karpenter.namespace, "karpenter")
 
   karpenter_set = [
     # TODO - remove at next breaking change
@@ -2748,7 +2751,7 @@ locals {
     },
     {
       name  = "settings.aws.defaultInstanceProfile"
-      value = var.karpenter_enable_instance_profile_creation ? null : local.karpenter_node_instance_profile_name
+      value = var.karpenter_enable_instance_profile_creation ? null : local.output_karpenter_node_instance_profile_name
     },
     # Post 0.32.x
     {
@@ -2766,7 +2769,7 @@ locals {
     # TODO - this is not valid but being discussed as a re-addition. TBD on what the schema will be though
     # {
     #   name  = "settings.defaultInstanceProfile"
-    #   value = var.karpenter_enable_instance_profile_creation ? null : local.karpenter_node_instance_profile_name
+    #   value = var.karpenter_enable_instance_profile_creation ? null : local.output_karpenter_node_instance_profile_name
     # },
     # Agnostic of version difference
     {
@@ -2978,8 +2981,8 @@ resource "aws_iam_role_policy_attachment" "additional" {
 resource "aws_iam_instance_profile" "karpenter" {
   count = var.enable_karpenter && try(var.karpenter_node.create_instance_profile, true) ? 1 : 0
 
-  name        = try(var.karpenter_node.iam_role_use_name_prefix, true) ? null : local.karpenter_node_instance_profile_name
-  name_prefix = try(var.karpenter_node.iam_role_use_name_prefix, true) ? "${local.karpenter_node_instance_profile_name}-" : null
+  name        = try(var.karpenter_node.iam_role_use_name_prefix, true) ? null : local.input_karpenter_node_instance_profile_name
+  name_prefix = try(var.karpenter_node.iam_role_use_name_prefix, true) ? "${local.input_karpenter_node_instance_profile_name}-" : null
   path        = try(var.karpenter_node.iam_role_path, null)
   role        = try(aws_iam_role.karpenter[0].name, var.karpenter_node.iam_role_name, "")
 
