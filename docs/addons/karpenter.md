@@ -46,27 +46,28 @@ fargate-ip-10-0-45-112.us-west-2.compute.internal   Ready    <none>   2m33s   v1
 
 ```sh
 kubectl apply -f - <<EOF
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: inflate
+  name: inflate
 spec:
-    replicas: 0
-    selector:
+  replicas: 0
+  selector:
     matchLabels:
-        app: inflate
-    template:
+      app: inflate
+  template:
     metadata:
-        labels:
+      labels:
         app: inflate
     spec:
-        terminationGracePeriodSeconds: 0
-        containers:
+      terminationGracePeriodSeconds: 0
+      containers:
         - name: inflate
-            image: public.ecr.aws/eks-distro/kubernetes/pause:3.7
-            resources:
+          image: public.ecr.aws/eks-distro/kubernetes/pause:3.7
+          resources:
             requests:
-                cpu: 1
+              cpu: 1
 EOF
 ```
 
