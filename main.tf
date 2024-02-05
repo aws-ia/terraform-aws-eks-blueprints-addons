@@ -3750,7 +3750,7 @@ module "bottlerocket_update_operator" {
   create_release = var.create_kubernetes_resources
 
   # https://github.com/bottlerocket-os/bottlerocket-update-operator/blob/develop/deploy/charts/bottlerocket-update-operator/Chart.yaml
-  name             = try(var.bottlerocket_update_operator.name, "bottlerocket-update-operator-crds")
+  name             = try(var.bottlerocket_update_operator.name, "bottlerocket-update-operator")
   description      = try(var.bottlerocket_update_operator.description, "A Helm chart for Bottlerocket Update Operator")
   chart            = try(var.bottlerocket_update_operator.chart, "bottlerocket-update-operator")
   chart_version    = try(var.bottlerocket_update_operator.version, "1.3.0")
