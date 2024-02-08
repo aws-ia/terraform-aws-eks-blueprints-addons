@@ -588,7 +588,7 @@ variable "bottlerocket_update_operator" {
   default     = {}
 }
 
-variable "bottlerocket_update_operator_crds" {
+variable "bottlerocket_shadow" {
   description = "Bottlerocket Update Operator CRDs configuration values"
   type        = any
   default     = {}
