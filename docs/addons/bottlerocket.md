@@ -94,13 +94,13 @@ module "eks_blueprints_addons" {
 }
 ```
 
-You can also customize the Helm charts that deploys `bottlerocket_update_operator` and the `bottlerocket_update_operator_crds` via the following configuration:
+You can also customize the Helm charts that deploys `bottlerocket_update_operator` and the `bottlerocket_shadow` via the following configuration:
 
 ```hcl
 enable_bottlerocket_update_operator           = true
 
 bottlerocket_update_operator = {
-  name          = "brupop"
+  name          = "brupop-operator"
   description   = "A Helm chart for BRUPOP"
   chart_version = "1.3.0"
   namespace     = "brupop"
@@ -110,7 +110,7 @@ bottlerocket_update_operator = {
     }]
 }
 
-bottlerocket_update_operator_crds = {
+bottlerocket_shadow = {
   name          = "brupop-crds"
   description   = "A Helm chart for BRUPOP CRDs"
   chart_version = "1.0.0"
