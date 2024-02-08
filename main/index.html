@@ -727,6 +727,26 @@
   
   
     <li class="md-nav__item">
+      <a href="addons/bottlerocket/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Bottlerocket and Bottlerocket Update Operator
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="addons/cert-manager/" class="md-nav__link">
         
   
@@ -1287,6 +1307,16 @@
 <td>1.1.1</td>
 </tr>
 <tr>
+<td><a name="module_bottlerocket_shadow"></a> <a href="..#module_bottlerocket_shadow">bottlerocket_shadow</a></td>
+<td>aws-ia/eks-blueprints-addon/aws</td>
+<td>~&gt; 1.1.1</td>
+</tr>
+<tr>
+<td><a name="module_bottlerocket_update_operator"></a> <a href="..#module_bottlerocket_update_operator">bottlerocket_update_operator</a></td>
+<td>aws-ia/eks-blueprints-addon/aws</td>
+<td>~&gt; 1.1.1</td>
+</tr>
+<tr>
 <td><a name="module_cert_manager"></a> <a href="..#module_cert_manager">cert_manager</a></td>
 <td>aws-ia/eks-blueprints-addon/aws</td>
 <td>1.1.1</td>
@@ -1644,6 +1674,20 @@
 <td style="text-align: center;">no</td>
 </tr>
 <tr>
+<td><a name="input_bottlerocket_shadow"></a> <a href="..#input_bottlerocket_shadow">bottlerocket_shadow</a></td>
+<td>Bottlerocket Update Operator CRDs configuration values</td>
+<td><code>any</code></td>
+<td><code>{}</code></td>
+<td style="text-align: center;">no</td>
+</tr>
+<tr>
+<td><a name="input_bottlerocket_update_operator"></a> <a href="..#input_bottlerocket_update_operator">bottlerocket_update_operator</a></td>
+<td>Bottlerocket Update Operator add-on configuration values</td>
+<td><code>any</code></td>
+<td><code>{}</code></td>
+<td style="text-align: center;">no</td>
+</tr>
+<tr>
 <td><a name="input_cert_manager"></a> <a href="..#input_cert_manager">cert_manager</a></td>
 <td>cert-manager add-on configuration values</td>
 <td><code>any</code></td>
@@ -1807,6 +1851,13 @@
 <tr>
 <td><a name="input_enable_aws_privateca_issuer"></a> <a href="..#input_enable_aws_privateca_issuer">enable_aws_privateca_issuer</a></td>
 <td>Enable AWS PCA Issuer</td>
+<td><code>bool</code></td>
+<td><code>false</code></td>
+<td style="text-align: center;">no</td>
+</tr>
+<tr>
+<td><a name="input_enable_bottlerocket_update_operator"></a> <a href="..#input_enable_bottlerocket_update_operator">enable_bottlerocket_update_operator</a></td>
+<td>Enable Bottlerocket Update Operator add-on</td>
 <td><code>bool</code></td>
 <td><code>false</code></td>
 <td style="text-align: center;">no</td>
@@ -2141,6 +2192,10 @@
 </tr>
 <tr>
 <td><a name="output_aws_privateca_issuer"></a> <a href="..#output_aws_privateca_issuer">aws_privateca_issuer</a></td>
+<td>Map of attributes of the Helm release and IRSA created</td>
+</tr>
+<tr>
+<td><a name="output_bottlerocket_update_operator"></a> <a href="..#output_bottlerocket_update_operator">bottlerocket_update_operator</a></td>
 <td>Map of attributes of the Helm release and IRSA created</td>
 </tr>
 <tr>
