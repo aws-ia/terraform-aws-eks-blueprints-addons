@@ -155,6 +155,14 @@ output "aws_gateway_api_controller" {
   value       = module.aws_gateway_api_controller
 }
 
+output "bottlerocket_update_operator" {
+  description = "Map of attributes of the Helm release and IRSA created"
+  value = {
+    operator = module.bottlerocket_update_operator
+    crds     = module.bottlerocket_shadow
+  }
+}
+
 ################################################################################
 # (Generic) Helm Release
 ################################################################################

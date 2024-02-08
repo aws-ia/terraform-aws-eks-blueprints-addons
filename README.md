@@ -90,6 +90,8 @@ module "eks_blueprints_addons" {
 | <a name="module_aws_node_termination_handler"></a> [aws\_node\_termination\_handler](#module\_aws\_node\_termination\_handler) | aws-ia/eks-blueprints-addon/aws | 1.1.1 |
 | <a name="module_aws_node_termination_handler_sqs"></a> [aws\_node\_termination\_handler\_sqs](#module\_aws\_node\_termination\_handler\_sqs) | terraform-aws-modules/sqs/aws | 4.0.1 |
 | <a name="module_aws_privateca_issuer"></a> [aws\_privateca\_issuer](#module\_aws\_privateca\_issuer) | aws-ia/eks-blueprints-addon/aws | 1.1.1 |
+| <a name="module_bottlerocket_shadow"></a> [bottlerocket\_shadow](#module\_bottlerocket\_shadow) | aws-ia/eks-blueprints-addon/aws | ~> 1.1.1 |
+| <a name="module_bottlerocket_update_operator"></a> [bottlerocket\_update\_operator](#module\_bottlerocket\_update\_operator) | aws-ia/eks-blueprints-addon/aws | ~> 1.1.1 |
 | <a name="module_cert_manager"></a> [cert\_manager](#module\_cert\_manager) | aws-ia/eks-blueprints-addon/aws | 1.1.1 |
 | <a name="module_cluster_autoscaler"></a> [cluster\_autoscaler](#module\_cluster\_autoscaler) | aws-ia/eks-blueprints-addon/aws | 1.1.1 |
 | <a name="module_cluster_proportional_autoscaler"></a> [cluster\_proportional\_autoscaler](#module\_cluster\_proportional\_autoscaler) | aws-ia/eks-blueprints-addon/aws | 1.1.1 |
@@ -168,6 +170,8 @@ module "eks_blueprints_addons" {
 | <a name="input_aws_node_termination_handler_asg_arns"></a> [aws\_node\_termination\_handler\_asg\_arns](#input\_aws\_node\_termination\_handler\_asg\_arns) | List of Auto Scaling group ARNs that AWS Node Termination Handler will monitor for EC2 events | `list(string)` | `[]` | no |
 | <a name="input_aws_node_termination_handler_sqs"></a> [aws\_node\_termination\_handler\_sqs](#input\_aws\_node\_termination\_handler\_sqs) | AWS Node Termination Handler SQS queue configuration values | `any` | `{}` | no |
 | <a name="input_aws_privateca_issuer"></a> [aws\_privateca\_issuer](#input\_aws\_privateca\_issuer) | AWS PCA Issuer add-on configurations | `any` | `{}` | no |
+| <a name="input_bottlerocket_shadow"></a> [bottlerocket\_shadow](#input\_bottlerocket\_shadow) | Bottlerocket Update Operator CRDs configuration values | `any` | `{}` | no |
+| <a name="input_bottlerocket_update_operator"></a> [bottlerocket\_update\_operator](#input\_bottlerocket\_update\_operator) | Bottlerocket Update Operator add-on configuration values | `any` | `{}` | no |
 | <a name="input_cert_manager"></a> [cert\_manager](#input\_cert\_manager) | cert-manager add-on configuration values | `any` | `{}` | no |
 | <a name="input_cert_manager_route53_hosted_zone_arns"></a> [cert\_manager\_route53\_hosted\_zone\_arns](#input\_cert\_manager\_route53\_hosted\_zone\_arns) | List of Route53 Hosted Zone ARNs that are used by cert-manager to create DNS records | `list(string)` | <pre>[<br>  "arn:aws:route53:::hostedzone/*"<br>]</pre> | no |
 | <a name="input_cluster_autoscaler"></a> [cluster\_autoscaler](#input\_cluster\_autoscaler) | Cluster Autoscaler add-on configuration values | `any` | `{}` | no |
@@ -192,6 +196,7 @@ module "eks_blueprints_addons" {
 | <a name="input_enable_aws_load_balancer_controller"></a> [enable\_aws\_load\_balancer\_controller](#input\_enable\_aws\_load\_balancer\_controller) | Enable AWS Load Balancer Controller add-on | `bool` | `false` | no |
 | <a name="input_enable_aws_node_termination_handler"></a> [enable\_aws\_node\_termination\_handler](#input\_enable\_aws\_node\_termination\_handler) | Enable AWS Node Termination Handler add-on | `bool` | `false` | no |
 | <a name="input_enable_aws_privateca_issuer"></a> [enable\_aws\_privateca\_issuer](#input\_enable\_aws\_privateca\_issuer) | Enable AWS PCA Issuer | `bool` | `false` | no |
+| <a name="input_enable_bottlerocket_update_operator"></a> [enable\_bottlerocket\_update\_operator](#input\_enable\_bottlerocket\_update\_operator) | Enable Bottlerocket Update Operator add-on | `bool` | `false` | no |
 | <a name="input_enable_cert_manager"></a> [enable\_cert\_manager](#input\_enable\_cert\_manager) | Enable cert-manager add-on | `bool` | `false` | no |
 | <a name="input_enable_cluster_autoscaler"></a> [enable\_cluster\_autoscaler](#input\_enable\_cluster\_autoscaler) | Enable Cluster autoscaler add-on | `bool` | `false` | no |
 | <a name="input_enable_cluster_proportional_autoscaler"></a> [enable\_cluster\_proportional\_autoscaler](#input\_enable\_cluster\_proportional\_autoscaler) | Enable Cluster Proportional Autoscaler | `bool` | `false` | no |
@@ -248,6 +253,7 @@ module "eks_blueprints_addons" {
 | <a name="output_aws_load_balancer_controller"></a> [aws\_load\_balancer\_controller](#output\_aws\_load\_balancer\_controller) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_aws_node_termination_handler"></a> [aws\_node\_termination\_handler](#output\_aws\_node\_termination\_handler) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_aws_privateca_issuer"></a> [aws\_privateca\_issuer](#output\_aws\_privateca\_issuer) | Map of attributes of the Helm release and IRSA created |
+| <a name="output_bottlerocket_update_operator"></a> [bottlerocket\_update\_operator](#output\_bottlerocket\_update\_operator) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_cert_manager"></a> [cert\_manager](#output\_cert\_manager) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_cluster_autoscaler"></a> [cluster\_autoscaler](#output\_cluster\_autoscaler) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_cluster_proportional_autoscaler"></a> [cluster\_proportional\_autoscaler](#output\_cluster\_proportional\_autoscaler) | Map of attributes of the Helm release and IRSA created |

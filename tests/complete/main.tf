@@ -129,6 +129,8 @@ module "eks_blueprints_addons" {
     aws-guardduty-agent = {}
   }
 
+
+
   enable_aws_efs_csi_driver                    = true
   enable_aws_fsx_csi_driver                    = true
   enable_argocd                                = true
@@ -136,7 +138,6 @@ module "eks_blueprints_addons" {
   enable_argo_workflows                        = true
   enable_aws_cloudwatch_metrics                = true
   enable_aws_privateca_issuer                  = true
-  enable_cert_manager                          = true
   enable_cluster_autoscaler                    = true
   enable_secrets_store_csi_driver              = true
   enable_secrets_store_csi_driver_provider_aws = true
@@ -145,6 +146,12 @@ module "eks_blueprints_addons" {
   enable_external_secrets                      = true
   enable_gatekeeper                            = true
   enable_ingress_nginx                         = true
+
+  # Wait for all Cert-manager related resources to be ready
+  enable_cert_manager = true
+  cert_manager = {
+    wait = true
+  }
 
   # Turn off mutation webhook for services to avoid ordering issue
   enable_aws_load_balancer_controller = true
@@ -215,6 +222,8 @@ module "eks_blueprints_addons" {
       value = module.vpc.vpc_id
     }]
   }
+
+  enable_bottlerocket_update_operator = true
 
   # Pass in any number of Helm charts to be created for those that are not natively supported
   helm_releases = {

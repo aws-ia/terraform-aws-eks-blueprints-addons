@@ -573,6 +573,28 @@ variable "aws_gateway_api_controller" {
 }
 
 ################################################################################
+# Bottlerocket Update Operator
+################################################################################
+
+variable "enable_bottlerocket_update_operator" {
+  description = "Enable Bottlerocket Update Operator add-on"
+  type        = bool
+  default     = false
+}
+
+variable "bottlerocket_update_operator" {
+  description = "Bottlerocket Update Operator add-on configuration values"
+  type        = any
+  default     = {}
+}
+
+variable "bottlerocket_shadow" {
+  description = "Bottlerocket Update Operator CRDs configuration values"
+  type        = any
+  default     = {}
+}
+
+################################################################################
 # GitOps Bridge
 ################################################################################
 
