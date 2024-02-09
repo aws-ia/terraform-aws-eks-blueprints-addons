@@ -3685,7 +3685,7 @@ module "aws_gateway_api_controller" {
 # Bottlerocket Update Operator
 ################################################################################
 locals {
-  wait_for_cert_manager = var.cert_manager.wait ? [module.cert_manager] : []
+  wait_for_cert_manager = try(var.cert_manager.wait, false) ? [module.cert_manager] : []
 }
 
 module "bottlerocket_shadow" {
