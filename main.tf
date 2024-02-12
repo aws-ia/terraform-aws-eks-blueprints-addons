@@ -28,6 +28,11 @@ locals {
 
   iam_role_policy_prefix = "arn:${local.partition}:iam::aws:policy"
 
+  wait_for_cert_manager = [
+    module.cert_manager.name,
+    module.cert_manager.namespace
+  ]
+
   # Used by Karpenter & AWS Node Termination Handler
   ec2_events = {
     health_event = {
@@ -1820,6 +1825,8 @@ module "aws_privateca_issuer" {
     }
   }
 
+  depends_on = [local.wait_for_cert_manager]
+
   tags = var.tags
 }
 
@@ -2196,10 +2203,7 @@ resource "aws_eks_addon" "this" {
 
   tags = var.tags
 
-  depends_on = [
-    module.cert_manager.name,
-    module.cert_manager.namespace,
-  ]
+  depends_on = [local.wait_for_cert_manager]
 }
 
 ################################################################################
@@ -3684,9 +3688,6 @@ module "aws_gateway_api_controller" {
 ################################################################################
 # Bottlerocket Update Operator
 ################################################################################
-locals {
-  wait_for_cert_manager = try(var.cert_manager.wait, false) ? [module.cert_manager] : []
-}
 
 module "bottlerocket_shadow" {
   source  = "aws-ia/eks-blueprints-addon/aws"
