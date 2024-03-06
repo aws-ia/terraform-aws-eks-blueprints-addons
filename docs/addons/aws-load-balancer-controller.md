@@ -81,7 +81,7 @@ kubectl create ingress example-ingress --class alb --rule="/*=example-svc:80" \
 ```
 
 ```sh
-kubectl get ingress  
+kubectl get ingress
 NAME                CLASS   HOSTS   ADDRESS                                                                 PORTS   AGE
 example-ingress     alb     *       k8s-example-ingress-7e0d6f03e7-1234567890.us-west-2.elb.amazonaws.com   80      4m9s
 ```

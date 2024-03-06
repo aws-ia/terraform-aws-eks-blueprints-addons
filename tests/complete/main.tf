@@ -54,46 +54,6 @@ locals {
 }
 
 ################################################################################
-# Cluster
-################################################################################
-
-module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "~> 19.17"
-
-  cluster_name                   = local.name
-  cluster_version                = "1.28"
-  cluster_endpoint_public_access = true
-
-  vpc_id     = module.vpc.vpc_id
-  subnet_ids = module.vpc.private_subnets
-
-  manage_aws_auth_configmap = true
-
-  eks_managed_node_groups = {
-    initial = {
-      instance_types = ["m5.xlarge"]
-
-      min_size     = 2
-      max_size     = 10
-      desired_size = 3
-    }
-  }
-
-  self_managed_node_groups = {
-    default = {
-      instance_type = "m5.large"
-
-      min_size     = 2
-      max_size     = 10
-      desired_size = 3
-    }
-  }
-
-  tags = local.tags
-}
-
-################################################################################
 # Blueprints Addons
 ################################################################################
 
@@ -126,10 +86,7 @@ module "eks_blueprints_addons" {
       most_recent              = true
       service_account_role_arn = module.adot_irsa.iam_role_arn
     }
-    aws-guardduty-agent = {}
   }
-
-
 
   enable_aws_efs_csi_driver                    = true
   enable_aws_fsx_csi_driver                    = true
@@ -142,10 +99,15 @@ module "eks_blueprints_addons" {
   enable_secrets_store_csi_driver              = true
   enable_secrets_store_csi_driver_provider_aws = true
   enable_kube_prometheus_stack                 = true
-  enable_external_dns                          = true
-  enable_external_secrets                      = true
-  enable_gatekeeper                            = true
-  enable_ingress_nginx                         = true
+
+  enable_external_dns = true
+  external_dns_route53_zone_arns = [
+    "arn:aws:route53:::hostedzone/*",
+  ]
+
+  enable_external_secrets = true
+  enable_gatekeeper       = true
+  enable_ingress_nginx    = true
 
   # Wait for all Cert-manager related resources to be ready
   enable_cert_manager = true
@@ -210,6 +172,14 @@ module "eks_blueprints_addons" {
   ## An S3 Bucket ARN is required. This can be declared with or without a Prefix.
   velero = {
     s3_backup_location = "${module.velero_backup_s3_bucket.s3_bucket_arn}/backups"
+    values = [
+      # https://github.com/vmware-tanzu/helm-charts/issues/550#issuecomment-1959933230
+      <<-EOT
+        kubectl:
+          image:
+            tag: 1.29.2-debian-11-r5
+      EOT
+    ]
   }
 
   enable_aws_gateway_api_controller = true
@@ -247,7 +217,7 @@ module "eks_blueprints_addons" {
       namespace        = "gpu-operator"
       create_namespace = true
       chart            = "gpu-operator"
-      chart_version    = "v23.9.0"
+      chart_version    = "v23.9.1"
       repository       = "https://nvidia.github.io/gpu-operator"
       values = [
         <<-EOT
@@ -255,6 +225,49 @@ module "eks_blueprints_addons" {
             defaultRuntime: containerd
         EOT
       ]
+    }
+  }
+
+  tags = local.tags
+}
+
+################################################################################
+# Cluster
+################################################################################
+
+module "eks" {
+  source  = "terraform-aws-modules/eks/aws"
+  version = "~> 20.4"
+
+  cluster_name                   = local.name
+  cluster_version                = "1.29"
+  cluster_endpoint_public_access = true
+
+  vpc_id     = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
+
+  # Give the Terraform identity admin access to the cluster
+  # which will allow resources to be deployed into the cluster
+  enable_cluster_creator_admin_permissions = true
+
+  eks_managed_node_groups = {
+    initial = {
+      instance_types = ["m5.xlarge"]
+
+      min_size     = 2
+      max_size     = 10
+      desired_size = 5
+    }
+  }
+
+  # For demonstrating node-termination-handler
+  self_managed_node_groups = {
+    default = {
+      instance_type = "m5.large"
+
+      min_size     = 1
+      max_size     = 10
+      desired_size = 1
     }
   }
 
@@ -364,40 +377,6 @@ module "adot_irsa" {
       namespace_service_accounts = ["opentelemetry-operator-system:opentelemetry-operator"]
     }
   }
-
-  tags = local.tags
-}
-
-resource "aws_security_group" "guardduty" {
-  name        = "guardduty_vpce_allow_tls"
-  description = "Allow TLS inbound traffic"
-  vpc_id      = module.vpc.vpc_id
-
-  ingress {
-    description = "TLS from VPC"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = local.tags
-}
-
-resource "aws_vpc_endpoint" "guardduty" {
-  vpc_id              = module.vpc.vpc_id
-  service_name        = "com.amazonaws.${local.region}.guardduty-data"
-  subnet_ids          = module.vpc.private_subnets
-  vpc_endpoint_type   = "Interface"
-  security_group_ids  = [aws_security_group.guardduty.id]
-  private_dns_enabled = true
 
   tags = local.tags
 }

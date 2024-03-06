@@ -67,7 +67,7 @@ spec:
     "shutdown-grace-period" = "30s"
     "shutdown-grace-period-for-critical-pods" = "30s"
     [settings.kubernetes.eviction-hard]
-    "memory.available" = "20%"  
+    "memory.available" = "20%"
     [settings.kubernetes.node-labels]
      "bottlerocket.aws/updater-interface-version" = "2.0.0"
 ```
@@ -158,7 +158,7 @@ replicaset.apps/brupop-controller-deployment-58d46595cc   1         1         1 
 
 $ kubectl describe apiservices.apiregistration.k8s.io v2.brupop.bottlerocket.aws
 Name:         v2.brupop.bottlerocket.aws
-Namespace:  
+Namespace:
 Labels:       kube-aggregator.kubernetes.io/automanaged=true
 Annotations:  <none>
 API Version:  apiregistration.k8s.io/v1
@@ -188,7 +188,7 @@ Events:                    <none>
 $ kubectl label node ip-10-0-34-87.us-west-2.compute.internal bottlerocket.aws/updater-interface-version=2.0.0
 node/ip-10-0-34-87.us-west-2.compute.internal labeled
 
-$ kubectl get nodes -L bottlerocket.aws/updater-interface-version  
+$ kubectl get nodes -L bottlerocket.aws/updater-interface-version
 NAME                                        STATUS                     ROLES    AGE   VERSION               UPDATER-INTERFACE-VERSION
 ip-10-0-34-87.us-west-2.compute.internal    Ready                      <none>   34h   v1.28.1-eks-d91a302   2.0.0
 ```
@@ -197,6 +197,6 @@ ip-10-0-34-87.us-west-2.compute.internal    Ready                      <none>   
 
 ```bash
 kubectl get nodes
-NAME                                        STATUS                     ROLES    AGE   VERSION  
+NAME                                        STATUS                     ROLES    AGE   VERSION
 ip-10-0-34-87.us-west-2.compute.internal    Ready                      <none>   34h   v1.28.4-eks-d91a302
 ```

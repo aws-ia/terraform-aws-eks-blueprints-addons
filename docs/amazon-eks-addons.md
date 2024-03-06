@@ -350,7 +350,7 @@ module "eks_blueprints_addons" {
                 topologyKey = "kubernetes.io/hostname"
               }
             ]
-          }  
+          }
 
         }
 
@@ -363,6 +363,6 @@ module "eks_blueprints_addons" {
             cpu    = "100m"
             memory = "150Mi"
         }
-      })  
+      })
     }
 ```
