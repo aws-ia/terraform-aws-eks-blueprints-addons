@@ -5,15 +5,6 @@ Terraform module to deploy Kubernetes addons on Amazon EKS clusters.
 ## Usage
 
 ```hcl
-module "eks" {
-  source = "terraform-aws-modules/eks/aws"
-
-  cluster_name    = "my-cluster"
-  cluster_version = "1.27"
-
-  ... truncated for brevity
-}
-
 module "eks_blueprints_addons" {
   source = "aws-ia/eks-blueprints-addons/aws"
   version = "~> 1.0" #ensure to update this to the latest/desired version
@@ -50,6 +41,15 @@ module "eks_blueprints_addons" {
   tags = {
     Environment = "dev"
   }
+}
+
+module "eks" {
+  source = "terraform-aws-modules/eks/aws"
+
+  cluster_name    = "my-cluster"
+  cluster_version = "1.29"
+
+  ... truncated for brevity
 }
 ```
 
