@@ -1167,7 +1167,7 @@
 </span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="no">&quot;shutdown-grace-period&quot; = &quot;30s&quot;</span>
 </span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="no">&quot;shutdown-grace-period-for-critical-pods&quot; = &quot;30s&quot;</span>
 </span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="no">[settings.kubernetes.eviction-hard]</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">    </span><span class="no">&quot;memory.available&quot; = &quot;20%&quot;  </span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">    </span><span class="no">&quot;memory.available&quot; = &quot;20%&quot;</span>
 </span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">    </span><span class="no">[settings.kubernetes.node-labels]</span>
 </span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">     </span><span class="no">&quot;bottlerocket.aws/updater-interface-version&quot; = &quot;2.0.0&quot;</span>
 </span></code></pre></div>
@@ -1247,7 +1247,7 @@
 </span><span id="__span-5-26"><a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a>
 </span><span id="__span-5-27"><a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a>$<span class="w"> </span>kubectl<span class="w"> </span>describe<span class="w"> </span>apiservices.apiregistration.k8s.io<span class="w"> </span>v2.brupop.bottlerocket.aws
 </span><span id="__span-5-28"><a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a>Name:<span class="w">         </span>v2.brupop.bottlerocket.aws
-</span><span id="__span-5-29"><a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a>Namespace:<span class="w">  </span>
+</span><span id="__span-5-29"><a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a>Namespace:
 </span><span id="__span-5-30"><a id="__codelineno-5-30" name="__codelineno-5-30" href="#__codelineno-5-30"></a>Labels:<span class="w">       </span>kube-aggregator.kubernetes.io/automanaged<span class="o">=</span><span class="nb">true</span>
 </span><span id="__span-5-31"><a id="__codelineno-5-31" name="__codelineno-5-31" href="#__codelineno-5-31"></a>Annotations:<span class="w">  </span>&lt;none&gt;
 </span><span id="__span-5-32"><a id="__codelineno-5-32" name="__codelineno-5-32" href="#__codelineno-5-32"></a>API<span class="w"> </span>Version:<span class="w">  </span>apiregistration.k8s.io/v1
@@ -1276,7 +1276,7 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>$<span class="w"> </span>kubectl<span class="w"> </span>label<span class="w"> </span>node<span class="w"> </span>ip-10-0-34-87.us-west-2.compute.internal<span class="w"> </span>bottlerocket.aws/updater-interface-version<span class="o">=</span><span class="m">2</span>.0.0
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>node/ip-10-0-34-87.us-west-2.compute.internal<span class="w"> </span>labeled
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> </span>-L<span class="w"> </span>bottlerocket.aws/updater-interface-version<span class="w">  </span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> </span>-L<span class="w"> </span>bottlerocket.aws/updater-interface-version
 </span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>NAME<span class="w">                                        </span>STATUS<span class="w">                     </span>ROLES<span class="w">    </span>AGE<span class="w">   </span>VERSION<span class="w">               </span>UPDATER-INTERFACE-VERSION
 </span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>ip-10-0-34-87.us-west-2.compute.internal<span class="w">    </span>Ready<span class="w">                      </span>&lt;none&gt;<span class="w">   </span>34h<span class="w">   </span>v1.28.1-eks-d91a302<span class="w">   </span><span class="m">2</span>.0.0
 </span></code></pre></div>
@@ -1284,7 +1284,7 @@
 <li>Because the default cron schedule for BRUPOP is set to check for updates every minute, you'll be able to see in a few minutes that the Node had it's version updated automatically with no downtime.</li>
 </ol>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>nodes
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>NAME<span class="w">                                        </span>STATUS<span class="w">                     </span>ROLES<span class="w">    </span>AGE<span class="w">   </span>VERSION<span class="w">  </span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>NAME<span class="w">                                        </span>STATUS<span class="w">                     </span>ROLES<span class="w">    </span>AGE<span class="w">   </span>VERSION
 </span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>ip-10-0-34-87.us-west-2.compute.internal<span class="w">    </span>Ready<span class="w">                      </span>&lt;none&gt;<span class="w">   </span>34h<span class="w">   </span>v1.28.4-eks-d91a302
 </span></code></pre></div>
 
