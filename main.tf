@@ -17,7 +17,6 @@ resource "time_sleep" "this" {
 
 locals {
   account_id = data.aws_caller_identity.current.account_id
-  dns_suffix = data.aws_partition.current.dns_suffix
   partition  = data.aws_partition.current.partition
   region     = data.aws_region.current.name
 
@@ -990,7 +989,7 @@ data "aws_iam_policy_document" "aws_fsx_csi_driver" {
 
   statement {
     sid       = "AllowCreateServiceLinkedRoles"
-    resources = ["arn:${local.partition}:iam::*:role/aws-service-role/s3.data-source.lustre.fsx.${local.dns_suffix}/*"]
+    resources = ["arn:${local.partition}:iam::*:role/aws-service-role/s3.data-source.lustre.fsx.${data.aws_partition.current.dns_suffix}/*"]
 
     actions = [
       "iam:CreateServiceLinkedRole",
@@ -1007,7 +1006,7 @@ data "aws_iam_policy_document" "aws_fsx_csi_driver" {
     condition {
       test     = "StringLike"
       variable = "iam:AWSServiceName"
-      values   = ["fsx.${local.dns_suffix}"]
+      values   = ["fsx.amazonaws.com"]
     }
   }
 
@@ -1153,7 +1152,7 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
     condition {
       test     = "StringEquals"
       variable = "iam:AWSServiceName"
-      values   = ["elasticloadbalancing.${local.dns_suffix}"]
+      values   = ["elasticloadbalancing.amazonaws.com"]
     }
   }
 
@@ -1531,8 +1530,8 @@ module "aws_node_termination_handler_sqs" {
         {
           type = "Service"
           identifiers = [
-            "events.${local.dns_suffix}",
-            "sqs.${local.dns_suffix}",
+            "events.amazonaws.com",
+            "sqs.amazonaws.com",
           ]
         }
       ]
@@ -1965,7 +1964,7 @@ locals {
     "1.26" = "v1.26.6"
     "1.27" = "v1.27.5"
     "1.28" = "v1.28.2"
-    "1.29" = "v1.20.0"
+    "1.29" = "v1.29.0"
   }
 }
 
@@ -2909,8 +2908,8 @@ module "karpenter_sqs" {
         {
           type = "Service"
           identifiers = [
-            "events.${local.dns_suffix}",
-            "sqs.${local.dns_suffix}",
+            "events.amazonaws.com",
+            "sqs.amazonaws.com",
           ]
         }
       ]
@@ -2950,7 +2949,7 @@ data "aws_iam_policy_document" "karpenter_assume_role" {
 
     principals {
       type        = "Service"
-      identifiers = ["ec2.${local.dns_suffix}"]
+      identifiers = ["ec2.amazonaws.com"]
     }
   }
 }
