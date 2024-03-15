@@ -2436,6 +2436,10 @@ module "external_secrets" {
     {
       name  = "serviceAccount.name"
       value = local.external_secrets_service_account
+    },
+    {
+      name  = "webhook.port"
+      value = var.enable_eks_fargate ? "9443" : "10250"
     }],
     try(var.external_secrets.set, [])
   )
