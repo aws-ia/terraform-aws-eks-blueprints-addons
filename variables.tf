@@ -36,6 +36,12 @@ variable "create_delay_dependencies" {
   default     = []
 }
 
+variable "enable_eks_fargate" {
+  description = "Identifies whether or not respective addons should be modified to support deployment on EKS Fargate"
+  type        = bool
+  default     = false
+}
+
 ################################################################################
 # (Generic) Helm Release
 ################################################################################
