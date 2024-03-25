@@ -242,6 +242,9 @@ module "argo_events" {
 
   create = var.enable_argo_events
 
+  # Disable helm release
+  create_release = var.create_kubernetes_resources
+
   # https://github.com/argoproj/argo-helm/tree/main/charts/argo-events
   name             = try(var.argo_events.name, "argo-events")
   description      = try(var.argo_events.description, "A Helm chart to install the Argo Events")
