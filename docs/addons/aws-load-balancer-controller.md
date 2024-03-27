@@ -1,11 +1,10 @@
-# AWS Load Balancer Controller.
+# AWS Load Balancer Controller
 
-[AWS Load Balancer Controller ](https://kubernetes-sigs.github.io/aws-load-balancer-controller/) is a controller to help manage Elastic Load Balancers for a Kubernetes cluster. This Add-on deploys this controller in an Amazon EKS Cluster.
+[AWS Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/) is a controller to help manage Elastic Load Balancers for a Kubernetes cluster. This Add-on deploys this controller in an Amazon EKS Cluster.
 
 ## Usage
 
 In order to deploy the AWS Load Balancer Controller Addon via [EKS Blueprints Addons](https://github.com/aws-ia/terraform-aws-eks-blueprints-addons), reference the following parameters under the `module.eks_blueprints_addons`.
-
 
 > **_NOTE_**: In versions 2.5 and newer, the AWS Load Balancer Controller becomes the default controller for Kubernetes service resources with the type: LoadBalancer and makes an AWS Network Load Balancer (NLB) for each service. It does this by making a mutating webhook for services, which sets the spec.loadBalancerClass field to service.k8s.aws/nlb for new services of type: LoadBalancer. You can turn off this feature and revert to using the legacy Cloud Provider as the default controller, by setting the helm chart value enableServiceMutatorWebhook to false. The cluster won't provision new Classic Load Balancers for your services unless you turn off this feature. Existing Classic Load Balancers will continue to work.
 
@@ -30,6 +29,7 @@ module "eks_blueprints_addons" {
     ]
   }
 ```
+
 ### Helm Chart customization
 
 It's possible to customize your deployment using the Helm Chart parameters inside the `aws_load_balancer_controller` configuration block:
@@ -59,7 +59,6 @@ It's possible to customize your deployment using the Helm Chart parameters insid
 ```
 
 You can find all available Helm Chart parameter values [here](https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/main/helm/aws-load-balancer-controller/values.yaml).
-
 
 ## Validate
 

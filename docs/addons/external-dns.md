@@ -37,6 +37,6 @@ To further configure external-dns, refer to the examples:
 
 * [AWS Load Balancer Controller](https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/aws-load-balancer-controller.md)
 * [Route53](docs/tutorials/aws.md)
-    * [Same domain for public and private Route53 zones](https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/public-private-route53.md)
+  * [Same domain for public and private Route53 zones](https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/public-private-route53.md)
 * [Cloud Map](https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/aws-sd.md)
 * [Kube Ingress AWS Controller](https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/kube-ingress-aws.md)

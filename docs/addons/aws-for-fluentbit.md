@@ -1,6 +1,6 @@
 # AWS for Fluent Bit
 
-AWS provides a Fluent Bit image with plugins for both CloudWatch Logs and Kinesis Data Firehose. We recommend using Fluent Bit as your log router because it has a lower resource utilization rate than Fluentd.
+AWS provides a [Fluent Bit](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-logs-FluentBit.html) image with plugins for both CloudWatch Logs and Kinesis Data Firehose. We recommend using Fluent Bit as your log router because it has a lower resource utilization rate than Fluentd.
 
 ## Usage
 
@@ -73,8 +73,7 @@ aws-for-fluent-bit-sbn9b   1/1     Running   0          15m
 aws-for-fluent-bit-svhwq   1/1     Running   0          15m
 ```
 
-Open the CloudWatch console at https://console.aws.amazon.com/cloudwatch/
-
+Open the [CloudWatch console](https://console.aws.amazon.com/cloudwatch/)
 
 In the navigation pane, choose Log groups.
 
@@ -82,13 +81,13 @@ Make sure that you're in the Region where you deployed Fluent Bit.
 
 Check the list of log groups in the Region. You should see the following:
 
-```
+```sh
 /aws/eks/complete/aws-fluentbit-logs
 ```
 
 If you enabled Container Insights, you should also see the following Log Groups in your CloudWatch Console.
 
-```
+```sh
 /aws/containerinsights/Cluster_Name/application
 
 /aws/containerinsights/Cluster_Name/host
