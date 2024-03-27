@@ -56,7 +56,7 @@ NAME                        READY   STATUS   AGE
 selfsigned-cluster-issuer   True             3m
 ```
 
-2. Create a Certificate in a given Namespace.
+3. Create a Certificate in a given Namespace.
 
 ```yaml
 apiVersion: cert-manager.io/v1
@@ -77,7 +77,7 @@ spec:
     group: cert-manager.io
 ```
 
-3.  Check the `certificate` status in it should be in `Ready` state, and be pointing to a `secret` created in the same Namespace.
+4. Check the `certificate` status in it should be in `Ready` state, and be pointing to a `secret` created in the same Namespace.
 
 ```sh
 kubectl get certificate -o wide

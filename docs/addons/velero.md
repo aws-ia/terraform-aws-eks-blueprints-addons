@@ -7,7 +7,7 @@
 
 ## Usage
 
-[Velero](https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/modules/kubernetes-addons/velero) can be deployed by enabling the add-on via the following.
+Velero can be deployed by enabling the add-on via the following.
 
 ```hcl
 enable_velero           = true
@@ -35,7 +35,6 @@ velero = {
 To see a working example, see the [`stateful`](https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/stateful) example blueprint.
 
 ## Validate
-
 
 1. Run `update-kubeconfig` command:
 
