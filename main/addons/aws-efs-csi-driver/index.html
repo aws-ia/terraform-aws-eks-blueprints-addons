@@ -640,7 +640,7 @@
         
   
   <span class="md-ellipsis">
-    AWS Load Balancer Controller.
+    AWS Load Balancer Controller
   </span>
   
 
@@ -1058,7 +1058,7 @@
 <h1 id="aws-efs-csi-driver">AWS EFS CSI Driver<a class="headerlink" href="#aws-efs-csi-driver" title="Permanent link">&para;</a></h1>
 <p>This add-on deploys the <a href="https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html">AWS EFS CSI driver</a> into an EKS cluster.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
-<p>The <a href="https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/modules/kubernetes-addons/aws-efs-csi-driver">AWS EFS CSI driver</a> can be deployed by enabling the add-on via the following. Check out the full <a href="https://github.com/aws-ia/terraform-aws-eks-blueprints/blob/main/examples/stateful/main.tf">example</a> to deploy an EKS Cluster with EFS backing the dynamic provisioning of persistent volumes.</p>
+<p>The AWS EFS CSI driver can be deployed by enabling the add-on via the following. Check out the full <a href="https://github.com/aws-ia/terraform-aws-eks-blueprints/blob/main/examples/stateful/main.tf">example</a> to deploy an EKS Cluster with EFS backing the dynamic provisioning of persistent volumes.</p>
 <div class="language-hcl highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="w">  </span><span class="na">enable_aws_efs_csi_driver</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
 </span></code></pre></div>
 <p>You can optionally customize the Helm chart that deploys the driver via the following configuration.</p>

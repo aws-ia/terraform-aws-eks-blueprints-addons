@@ -640,7 +640,7 @@
         
   
   <span class="md-ellipsis">
-    AWS Load Balancer Controller.
+    AWS Load Balancer Controller
   </span>
   
 
@@ -1056,7 +1056,7 @@
 
 
 <h1 id="aws-for-fluent-bit">AWS for Fluent Bit<a class="headerlink" href="#aws-for-fluent-bit" title="Permanent link">&para;</a></h1>
-<p>AWS provides a Fluent Bit image with plugins for both CloudWatch Logs and Kinesis Data Firehose. We recommend using Fluent Bit as your log router because it has a lower resource utilization rate than Fluentd.</p>
+<p>AWS provides a <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-logs-FluentBit.html">Fluent Bit</a> image with plugins for both CloudWatch Logs and Kinesis Data Firehose. We recommend using Fluent Bit as your log router because it has a lower resource utilization rate than Fluentd.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
 <p>AWS for Fluent Bit can be deployed by enabling the add-on via the following.</p>
 <div class="language-hcl highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="na">enable_aws_for_fluentbit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
@@ -1111,14 +1111,14 @@
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>aws-for-fluent-bit-sbn9b<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>15m
 </span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>aws-for-fluent-bit-svhwq<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>15m
 </span></code></pre></div>
-<p>Open the CloudWatch console at https://console.aws.amazon.com/cloudwatch/</p>
+<p>Open the <a href="https://console.aws.amazon.com/cloudwatch/">CloudWatch console</a></p>
 <p>In the navigation pane, choose Log groups.</p>
 <p>Make sure that you're in the Region where you deployed Fluent Bit.</p>
 <p>Check the list of log groups in the Region. You should see the following:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>/aws/eks/complete/aws-fluentbit-logs
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>/aws/eks/complete/aws-fluentbit-logs
 </span></code></pre></div>
 <p>If you enabled Container Insights, you should also see the following Log Groups in your CloudWatch Console.</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>/aws/containerinsights/Cluster_Name/application
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>/aws/containerinsights/Cluster_Name/application
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>/aws/containerinsights/Cluster_Name/host
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
