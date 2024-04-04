@@ -2749,7 +2749,7 @@ locals {
   input_karpenter_node_instance_profile_name = try(var.karpenter_node.instance_profile_name, local.karpenter_node_iam_role_name)
   # This is the name passed to the Karpenter Helm chart - either the profile the module creates, or one provided by the user
   output_karpenter_node_instance_profile_name = try(aws_iam_instance_profile.karpenter[0].name, var.karpenter_node.instance_profile_name, "")
-  karpenter_namespace                         = try(var.karpenter.namespace, "karpenter")
+  karpenter_namespace                         = try(var.karpenter.namespace, "kube-system")
 
   karpenter_set = [
     # TODO - remove at next breaking change
