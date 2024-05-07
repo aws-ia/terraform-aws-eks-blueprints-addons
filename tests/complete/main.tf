@@ -86,6 +86,7 @@ module "eks_blueprints_addons" {
       most_recent              = true
       service_account_role_arn = module.adot_irsa.iam_role_arn
     }
+    eks-pod-identity-agent = {}
   }
 
   enable_aws_efs_csi_driver                    = true

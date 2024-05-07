@@ -112,10 +112,10 @@ output "karpenter" {
   value = merge(
     module.karpenter,
     {
-      node_instance_profile_name = try(aws_iam_instance_profile.karpenter[0].name, "")
-      node_iam_role_arn          = try(aws_iam_role.karpenter[0].arn, "")
-      node_iam_role_name         = try(aws_iam_role.karpenter[0].name, "")
-      sqs                        = module.karpenter_sqs
+      node_instance_profile_name = try(module.karpenter_resources[0].instance_profile_name, "")
+      node_iam_role_arn          = try(module.karpenter_resources[0].iam_role_arn, "")
+      node_iam_role_name         = try(module.karpenter_resources[0].iam_role_name, "")
+      sqs                        = try(module.karpenter_resources[0].queue_arn, "")
     }
   )
 }
@@ -258,9 +258,9 @@ output "gitops_metadata" {
       iam_role_arn               = module.karpenter.iam_role_arn
       namespace                  = local.karpenter_namespace
       service_account            = local.karpenter_service_account_name
-      sqs_queue_name             = module.karpenter_sqs.queue_name
+      sqs_queue_name             = module.karpenter_resources.queue_name
       node_instance_profile_name = local.output_karpenter_node_instance_profile_name
-      node_iam_role_name         = try(aws_iam_role.karpenter[0].name, "")
+      node_iam_role_name         = try(module.karpenter_resources[0].iam_role_name, "")
       } : "karpenter_${k}" => v if var.enable_karpenter
     },
     { for k, v in {
