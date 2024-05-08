@@ -38,6 +38,11 @@ output "aws_fsx_csi_driver" {
   value       = module.aws_fsx_csi_driver
 }
 
+output "aws_fsx_zfs_csi_driver" {
+  description = "Map of attributes of the Helm release and IRSA created"
+  value       = module.aws_fsx_zfs_csi_driver
+}
+
 output "aws_load_balancer_controller" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = module.aws_load_balancer_controller
@@ -215,6 +220,13 @@ output "gitops_metadata" {
       controller_service_account = local.aws_fsx_csi_driver_controller_service_account
       node_service_account       = local.aws_fsx_csi_driver_node_service_account
       } : "aws_fsx_csi_driver_${k}" => v if var.enable_aws_fsx_csi_driver
+    },
+    { for k, v in {
+      iam_role_arn               = module.aws_fsx_zfs_csi_driver.iam_role_arn
+      namespace                  = local.aws_fsx_zfs_csi_driver_namespace
+      controller_service_account = local.aws_fsx_zfs_csi_driver_controller_service_account
+      node_service_account       = local.aws_fsx_zfs_csi_driver_node_service_account
+      } : "aws_fsx_zfs_csi_driver_${k}" => v if var.enable_aws_fsx_zfs_csi_driver
     },
     { for k, v in {
       iam_role_arn    = module.aws_privateca_issuer.iam_role_arn

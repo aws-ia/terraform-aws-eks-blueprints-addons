@@ -149,6 +149,22 @@ variable "aws_efs_csi_driver" {
 }
 
 ################################################################################
+# AWS FSx for OpenZFS
+################################################################################
+
+variable "enable_aws_fsx_zfs_csi_driver" {
+  description = "Enable AWS FSx for OpenZFS CSI Driver add-on"
+  type        = bool
+  default     = false
+}
+
+variable "aws_fsx_zfs_csi_driver" {
+  description = "FSx for OpenZFS CSI Driver add-on configuration values"
+  type        = any
+  default     = {}
+}
+
+################################################################################
 # AWS for Fluentbit
 ################################################################################
 
