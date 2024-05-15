@@ -538,6 +538,7 @@ module "aws_efs_csi_driver" {
   role_description              = try(var.aws_efs_csi_driver.role_description, "IRSA for aws-efs-csi-driver project")
   role_policies                 = lookup(var.aws_efs_csi_driver, "role_policies", {})
 
+  create_policy           = try(var.aws_efs_csi_driver.create_policy, true)
   source_policy_documents = data.aws_iam_policy_document.aws_efs_csi_driver[*].json
   policy_statements       = lookup(var.aws_efs_csi_driver, "policy_statements", [])
   policy_name             = try(var.aws_efs_csi_driver.policy_name, null)
@@ -730,6 +731,7 @@ module "aws_for_fluentbit" {
   role_description              = try(var.aws_for_fluentbit.role_description, "IRSA for aws-for-fluent-bit")
   role_policies                 = lookup(var.aws_for_fluentbit, "role_policies", {})
 
+  create_policy           = try(var.aws_for_fluentbit.create_policy, true)
   source_policy_documents = data.aws_iam_policy_document.aws_for_fluentbit[*].json
   policy_statements       = lookup(var.aws_for_fluentbit, "policy_statements", [])
   policy_name             = try(var.aws_for_fluentbit.policy_name, "aws-for-fluent-bit")
@@ -1111,6 +1113,7 @@ module "aws_fsx_csi_driver" {
   role_description              = try(var.aws_fsx_csi_driver.role_description, "IRSA for aws-fsx-csi-driver")
   role_policies                 = lookup(var.aws_fsx_csi_driver, "role_policies", {})
 
+  create_policy           = try(var.aws_fsx_csi_driver.create_policy, true)
   source_policy_documents = data.aws_iam_policy_document.aws_fsx_csi_driver[*].json
   policy_statements       = lookup(var.aws_fsx_csi_driver, "policy_statements", [])
   policy_name             = try(var.aws_fsx_csi_driver.policy_name, "aws-fsx-csi-driver")
@@ -1471,6 +1474,7 @@ module "aws_load_balancer_controller" {
   role_description              = try(var.aws_load_balancer_controller.role_description, "IRSA for aws-load-balancer-controller project")
   role_policies                 = lookup(var.aws_load_balancer_controller, "role_policies", {})
 
+  create_policy           = try(var.aws_load_balancer_controller.create_policy, true)
   source_policy_documents = data.aws_iam_policy_document.aws_load_balancer_controller[*].json
   policy_statements       = lookup(var.aws_load_balancer_controller, "policy_statements", [])
   policy_name             = try(var.aws_load_balancer_controller.policy_name, null)
@@ -1805,6 +1809,7 @@ module "aws_privateca_issuer" {
   role_description              = try(var.aws_privateca_issuer.role_description, "IRSA for AWS Private CA Issuer")
   role_policies                 = lookup(var.aws_privateca_issuer, "role_policies", {})
 
+  create_policy           = try(var.aws_privateca_issuer.create_policy, true)
   source_policy_documents = data.aws_iam_policy_document.aws_privateca_issuer[*].json
   policy_statements       = lookup(var.aws_privateca_issuer, "policy_statements", [])
   policy_name             = try(var.aws_privateca_issuer.policy_name, "aws-privateca-issuer")
@@ -2090,6 +2095,7 @@ module "cluster_autoscaler" {
   role_description              = try(var.cluster_autoscaler.role_description, "IRSA for cluster-autoscaler operator")
   role_policies                 = lookup(var.cluster_autoscaler, "role_policies", {})
 
+  create_policy           = try(var.cluster_autoscaler.create_policy, true)
   source_policy_documents = data.aws_iam_policy_document.cluster_autoscaler[*].json
   policy_statements       = lookup(var.cluster_autoscaler, "policy_statements", [])
   policy_name             = try(var.cluster_autoscaler.policy_name, null)
@@ -2458,6 +2464,7 @@ module "external_secrets" {
   role_description              = try(var.external_secrets.role_description, "IRSA for external-secrets operator")
   role_policies                 = lookup(var.external_secrets, "role_policies", {})
 
+  create_policy           = try(var.external_secrets.create_policy, true)
   source_policy_documents = data.aws_iam_policy_document.external_secrets[*].json
   policy_statements       = lookup(var.external_secrets, "policy_statements", [])
   policy_name             = try(var.external_secrets.policy_name, null)
@@ -3068,6 +3075,7 @@ module "karpenter" {
   role_description              = try(var.karpenter.role_description, "IRSA for Karpenter")
   role_policies                 = lookup(var.karpenter, "role_policies", {})
 
+  create_policy           = try(var.karpenter.create_policy, true)
   source_policy_documents = data.aws_iam_policy_document.karpenter[*].json
   policy_statements       = lookup(var.karpenter, "policy_statements", [])
   policy_name             = try(var.karpenter.policy_name, null)
@@ -3482,6 +3490,7 @@ module "velero" {
   role_description              = try(var.velero.role_description, "IRSA for Velero")
   role_policies                 = lookup(var.velero, "role_policies", {})
 
+  create_policy           = try(var.velero.create_policy, true)
   source_policy_documents = data.aws_iam_policy_document.velero[*].json
   policy_statements       = lookup(var.velero, "policy_statements", [])
   policy_name             = try(var.velero.policy_name, "velero")
@@ -3668,6 +3677,7 @@ module "aws_gateway_api_controller" {
   role_description              = try(var.aws_gateway_api_controller.role_description, "IRSA for aws-gateway-api-controller")
   role_policies                 = lookup(var.aws_gateway_api_controller, "role_policies", {})
 
+  create_policy           = try(var.aws_gateway_api_controller.create_policy, true)
   source_policy_documents = data.aws_iam_policy_document.aws_gateway_api_controller[*].json
   policy_statements       = lookup(var.aws_gateway_api_controller, "policy_statements", [])
   policy_name             = try(var.aws_gateway_api_controller.policy_name, null)
