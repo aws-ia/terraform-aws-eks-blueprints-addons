@@ -2989,7 +2989,7 @@ resource "aws_iam_role_policy_attachment" "karpenter" {
 }
 
 resource "aws_iam_role_policy_attachment" "additional" {
-  for_each = { for k, v in try(var.karpenter_node.iam_role_additional_policies, {}) : k => v if local.create_karpenter_node_iam_role }
+  for_each = { for k, v in lookup(var.karpenter_node, "iam_role_additional_policies", {}) : k => v if local.create_karpenter_node_iam_role }
 
   policy_arn = each.value
   role       = aws_iam_role.karpenter[0].name
