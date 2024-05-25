@@ -609,3 +609,19 @@ variable "create_kubernetes_resources" {
   type        = bool
   default     = true
 }
+
+################################################################################
+# KEDA: Kubernetes Event-driven Autoscaling
+################################################################################
+
+variable "enable_keda" {
+  description = "Enable KEDA"
+  type        = bool
+  default     = false
+}
+
+variable "keda" {
+  description = "KEDA add-on configurations"
+  type        = any
+  default     = {}
+}
