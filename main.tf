@@ -3800,3 +3800,59 @@ module "bottlerocket_update_operator" {
   # https://github.com/bottlerocket-os/bottlerocket-update-operator/tree/develop/deploy/charts/bottlerocket-update-operator
   depends_on = [module.bottlerocket_shadow]
 }
+
+################################################################################
+# KEDA: Kubernetes Event-driven Autoscaling
+################################################################################
+
+module "keda" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.1.1"
+
+  create = var.enable_keda
+
+  # Disable helm release
+  create_release = var.create_kubernetes_resources
+
+  # https://github.com/kedacore/charts/tree/main/keda/Chart.yaml
+  name             = try(var.keda.name, "keda")
+  description      = try(var.keda.description, "A Helm chart to install the KEDA")
+  namespace        = try(var.keda.namespace, "keda ")
+  create_namespace = try(var.keda.create_namespace, true)
+  chart            = try(var.keda.chart, "keda")
+  chart_version    = try(var.keda.chart_version, "2.14.2")
+  repository       = try(var.keda.repository, "https://kedacore.github.io/charts")
+  values           = try(var.keda.values, [])
+
+  timeout                    = try(var.keda.timeout, null)
+  repository_key_file        = try(var.keda.repository_key_file, null)
+  repository_cert_file       = try(var.keda.repository_cert_file, null)
+  repository_ca_file         = try(var.keda.repository_ca_file, null)
+  repository_username        = try(var.keda.repository_username, null)
+  repository_password        = try(var.keda.repository_password, null)
+  devel                      = try(var.keda.devel, null)
+  verify                     = try(var.keda.verify, null)
+  keyring                    = try(var.keda.keyring, null)
+  disable_webhooks           = try(var.keda.disable_webhooks, null)
+  reuse_values               = try(var.keda.reuse_values, null)
+  reset_values               = try(var.keda.reset_values, null)
+  force_update               = try(var.keda.force_update, null)
+  recreate_pods              = try(var.keda.recreate_pods, null)
+  cleanup_on_fail            = try(var.keda.cleanup_on_fail, null)
+  max_history                = try(var.keda.max_history, null)
+  atomic                     = try(var.keda.atomic, null)
+  skip_crds                  = try(var.keda.skip_crds, null)
+  render_subchart_notes      = try(var.keda.render_subchart_notes, null)
+  disable_openapi_validation = try(var.keda.disable_openapi_validation, null)
+  wait                       = try(var.keda.wait, false)
+  wait_for_jobs              = try(var.keda.wait_for_jobs, null)
+  dependency_update          = try(var.keda.dependency_update, null)
+  replace                    = try(var.keda.replace, null)
+  lint                       = try(var.keda.lint, null)
+
+  postrender    = try(var.keda.postrender, [])
+  set           = try(var.keda.set, [])
+  set_sensitive = try(var.keda.set_sensitive, [])
+
+  tags = var.tags
+}
