@@ -81,7 +81,7 @@ module "eks_blueprints_addons" {
     vpc-cni = {
       most_recent = true
     }
-    kube-proxy = {}
+    kube-proxy             = {}
     eks-pod-identity-agent = {}
     adot = {
       most_recent              = true
@@ -164,7 +164,7 @@ module "eks_blueprints_addons" {
   enable_karpenter                           = true
   karpenter_enable_instance_profile_creation = true
   karpenter_create_access_entry              = true
-   karpenter = {
+  karpenter = {
     enable_pod_identity             = true
     create_pod_identity_association = true
     # ECR login required
@@ -307,7 +307,7 @@ module "vpc" {
 
   private_subnet_tags = {
     "kubernetes.io/role/internal-elb" = 1
-    "karpenter.sh/discovery" = local.name
+    "karpenter.sh/discovery"          = local.name
   }
 
   tags = local.tags

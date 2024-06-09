@@ -3096,14 +3096,14 @@ module "karpenter" {
   policy_name_use_prefix  = try(var.karpenter.policy_name_use_prefix, true)
   policy_path             = try(var.karpenter.policy_path, null)
   policy_description      = try(var.karpenter.policy_description, "IAM Policy for karpenter")
-  
+
   oidc_providers = {
     this = {
       provider_arn = local.oidc_provider_arn
       # namespace is inherited from chart
       service_account = local.karpenter_service_account_name
-    } 
-  } 
+    }
+  }
 
   tags = var.tags
 }
