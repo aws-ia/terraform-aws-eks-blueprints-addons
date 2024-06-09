@@ -3022,9 +3022,8 @@ resource "aws_eks_access_entry" "node" {
 }
 
 module "karpenter" {
-  source = "../terraform-aws-eks-blueprints-addon"
-  # source  = "aws-ia/eks-blueprints-addon/aws"
-  # version = "1.1.1"
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.1.1"
 
   create = var.enable_karpenter
 
