@@ -454,6 +454,12 @@ variable "karpenter_enable_instance_profile_creation" {
   default     = true
 }
 
+variable "karpenter_create_access_entry" {
+  description = "Determines whether to create Karpenter Access Entry for Cluster Access Management API."
+  type        = bool
+  default     = false
+}
+
 variable "karpenter_sqs" {
   description = "Karpenter SQS queue for native node termination handling configuration values"
   type        = any

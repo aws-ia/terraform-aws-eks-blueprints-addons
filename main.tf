@@ -2749,7 +2749,7 @@ locals {
   input_karpenter_node_instance_profile_name = try(var.karpenter_node.instance_profile_name, local.karpenter_node_iam_role_name)
   # This is the name passed to the Karpenter Helm chart - either the profile the module creates, or one provided by the user
   output_karpenter_node_instance_profile_name = try(aws_iam_instance_profile.karpenter[0].name, var.karpenter_node.instance_profile_name, "")
-  karpenter_namespace                         = try(var.karpenter.namespace, "karpenter")
+  karpenter_namespace                         = try(var.karpenter.namespace, "kube-system")
 
   karpenter_set = [
     # TODO - remove at next breaking change
@@ -3006,9 +3006,25 @@ resource "aws_iam_instance_profile" "karpenter" {
   tags = merge(var.tags, try(var.karpenter_node.instance_profile_tags, {}))
 }
 
+resource "aws_eks_access_entry" "node" {
+  count = var.enable_karpenter && var.karpenter_create_access_entry ? 1 : 0
+
+  cluster_name  = var.cluster_name
+  principal_arn = local.create_karpenter_node_iam_role ? aws_iam_role.karpenter[0].arn : var.karpenter.node_iam_role_arn
+  type          = "EC2_LINUX"
+
+  tags = var.tags
+
+  depends_on = [
+    # If we try to add this too quickly, it fails. So .... we wait
+    module.karpenter_sqs
+  ]
+}
+
 module "karpenter" {
-  source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  source = "../terraform-aws-eks-blueprints-addon"
+  # source  = "aws-ia/eks-blueprints-addon/aws"
+  # version = "1.1.1"
 
   create = var.enable_karpenter
 
@@ -3021,7 +3037,7 @@ module "karpenter" {
   namespace        = local.karpenter_namespace
   create_namespace = try(var.karpenter.create_namespace, true)
   chart            = try(var.karpenter.chart, "karpenter")
-  chart_version    = try(var.karpenter.chart_version, "0.35.0")
+  chart_version    = try(var.karpenter.chart_version, "0.37.0")
   repository       = try(var.karpenter.repository, "oci://public.ecr.aws/karpenter")
   values           = try(var.karpenter.values, [])
 
@@ -3058,6 +3074,12 @@ module "karpenter" {
   )
   set_sensitive = try(var.karpenter.set_sensitive, [])
 
+  # Pod Identity
+  enable_pod_identity             = try(var.karpenter.enable_pod_identity, false)
+  create_pod_identity_association = try(var.karpenter.create_pod_identity_association, false)
+  cluster_name                    = var.cluster_name
+  service_account                 = local.karpenter_service_account_name
+
   # IAM role for service account (IRSA)
   set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
   create_role                   = try(var.karpenter.create_role, true)
@@ -3074,14 +3096,14 @@ module "karpenter" {
   policy_name_use_prefix  = try(var.karpenter.policy_name_use_prefix, true)
   policy_path             = try(var.karpenter.policy_path, null)
   policy_description      = try(var.karpenter.policy_description, "IAM Policy for karpenter")
-
+  
   oidc_providers = {
     this = {
       provider_arn = local.oidc_provider_arn
       # namespace is inherited from chart
       service_account = local.karpenter_service_account_name
-    }
-  }
+    } 
+  } 
 
   tags = var.tags
 }

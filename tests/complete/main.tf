@@ -82,6 +82,7 @@ module "eks_blueprints_addons" {
       most_recent = true
     }
     kube-proxy = {}
+    eks-pod-identity-agent = {}
     adot = {
       most_recent              = true
       service_account_role_arn = module.adot_irsa.iam_role_arn
@@ -162,8 +163,11 @@ module "eks_blueprints_addons" {
 
   enable_karpenter                           = true
   karpenter_enable_instance_profile_creation = true
-  # ECR login required
-  karpenter = {
+  karpenter_create_access_entry              = true
+   karpenter = {
+    enable_pod_identity             = true
+    create_pod_identity_association = true
+    # ECR login required
     repository_username = data.aws_ecrpublic_authorization_token.token.user_name
     repository_password = data.aws_ecrpublic_authorization_token.token.password
   }
@@ -266,12 +270,17 @@ module "eks" {
       instance_type = "m5.large"
 
       min_size     = 1
-      max_size     = 10
+      max_size     = 5
       desired_size = 1
     }
   }
 
-  tags = local.tags
+  tags = merge(local.tags, {
+    # NOTE - if creating multiple security groups with this module, only tag the
+    # security group that Karpenter should utilize with the following tag
+    # (i.e. - at most, only one security group should have this tag in your account)
+    "karpenter.sh/discovery" = local.name
+  })
 }
 
 ################################################################################
@@ -298,6 +307,7 @@ module "vpc" {
 
   private_subnet_tags = {
     "kubernetes.io/role/internal-elb" = 1
+    "karpenter.sh/discovery" = local.name
   }
 
   tags = local.tags
