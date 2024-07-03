@@ -3021,7 +3021,7 @@ module "karpenter" {
   namespace        = local.karpenter_namespace
   create_namespace = try(var.karpenter.create_namespace, true)
   chart            = try(var.karpenter.chart, "karpenter")
-  chart_version    = try(var.karpenter.chart_version, "0.35.0")
+  chart_version    = try(var.karpenter.chart_version, "0.37.0")
   repository       = try(var.karpenter.repository, "oci://public.ecr.aws/karpenter")
   values           = try(var.karpenter.values, [])
 
