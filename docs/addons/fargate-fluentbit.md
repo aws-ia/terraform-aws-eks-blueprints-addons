@@ -23,7 +23,7 @@ It's possible to customize the CloudWatch Log Group parameters in the `fargate_f
 
   name              = "existing-log-group"
   name_prefix       = "dev-environment-logs"
-  retention_in_days = 7
+  retention         = 7
   kms_key_id        = "arn:aws:kms:us-west-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab"
   skip_destroy      = true
   }
