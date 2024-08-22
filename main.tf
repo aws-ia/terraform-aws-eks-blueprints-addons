@@ -567,7 +567,7 @@ module "aws_efs_csi_driver" {
 
 locals {
   aws_for_fluentbit_service_account   = try(var.aws_for_fluentbit.service_account_name, "aws-for-fluent-bit-sa")
-  aws_for_fluentbit_cw_log_group_name = try(var.aws_for_fluentbit_cw_log_group.create, true) ? try(var.aws_for_fluentbit_cw_log_group.name, "/aws/eks/${var.cluster_name}/aws-fluentbit-logs") : ""
+  aws_for_fluentbit_cw_log_group_name = try(var.aws_for_fluentbit_cw_log_group.create, true) ? try(var.aws_for_fluentbit_cw_log_group.name, "/aws/eks/${var.cluster_name}/aws-fluentbit-logs") : try(var.aws_for_fluentbit_cw_log_group.name, "")
   aws_for_fluentbit_namespace         = try(var.aws_for_fluentbit.namespace, "kube-system")
 }
 
@@ -583,13 +583,13 @@ resource "aws_cloudwatch_log_group" "aws_for_fluentbit" {
 }
 
 data "aws_iam_policy_document" "aws_for_fluentbit" {
-  count = (try(var.aws_for_fluentbit_cw_log_group.create, true) || length(lookup(var.aws_for_fluentbit, "s3_bucket_arns", [])) > 0) && var.enable_aws_for_fluentbit ? 1 : 0
+  count = (try(var.aws_for_fluentbit_cw_log_group.create, true) || length(lookup(var.aws_for_fluentbit, "s3_bucket_arns", [])) > 0) && var.enable_aws_for_fluentbit || try(var.aws_for_fluentbit_cw_log_group.create_permission, false) ? 1 : 0
 
   source_policy_documents   = lookup(var.aws_for_fluentbit, "source_policy_documents", [])
   override_policy_documents = lookup(var.aws_for_fluentbit, "override_policy_documents", [])
 
   dynamic "statement" {
-    for_each = try(var.aws_for_fluentbit_cw_log_group.create, true) ? [1] : []
+    for_each = try(var.aws_for_fluentbit_cw_log_group.create || try(var.aws_for_fluentbit_cw_log_group.create_permission, false), true) ? [1] : []
 
     content {
       sid    = "PutLogEvents"
@@ -605,7 +605,7 @@ data "aws_iam_policy_document" "aws_for_fluentbit" {
   }
 
   dynamic "statement" {
-    for_each = try(var.aws_for_fluentbit_cw_log_group.create, true) ? [1] : []
+    for_each = try(var.aws_for_fluentbit_cw_log_group.create || try(var.aws_for_fluentbit_cw_log_group.create_permission, false), true) ? [1] : []
 
     content {
       sid    = "CreateCWLogs"
