@@ -2169,7 +2169,7 @@ module "cluster_proportional_autoscaler" {
 ################################################################################
 
 data "aws_eks_addon_version" "this" {
-  for_each = var.eks_addons
+  for_each = { for k, v in var.eks_addons : k => v if try(v.addon_version == null, true) }
 
   addon_name         = try(each.value.name, each.key)
   kubernetes_version = var.cluster_version
