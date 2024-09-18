@@ -53,7 +53,16 @@ module "eks" {
 }
 ```
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+## Support & Feedback
+
+> [!IMPORTANT]
+> EKS Blueprints for Terraform is maintained by AWS Solution Architects. It is not part of an AWS
+> service and support is provided as a best-effort by the EKS Blueprints community. To provide feedback,
+> please use the [issues templates](https://github.com/aws-ia/terraform-aws-eks-blueprints-addons/issues)
+> provided. If you are interested in contributing to EKS Blueprints, see the
+> [Contribution guide](https://github.com/aws-ia/terraform-aws-eks-blueprints-addons/blob/main/.github/CONTRIBUTING.md).
+
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -273,4 +282,4 @@ module "eks" {
 | <a name="output_secrets_store_csi_driver_provider_aws"></a> [secrets\_store\_csi\_driver\_provider\_aws](#output\_secrets\_store\_csi\_driver\_provider\_aws) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_velero"></a> [velero](#output\_velero) | Map of attributes of the Helm release and IRSA created |
 | <a name="output_vpa"></a> [vpa](#output\_vpa) | Map of attributes of the Helm release and IRSA created |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->
