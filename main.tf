@@ -2627,7 +2627,7 @@ resource "kubernetes_config_map_v1" "aws_logging" {
           log_group_name ${try(var.fargate_fluentbit.cwlog_group, aws_cloudwatch_log_group.fargate_fluentbit[0].name)}
           log_stream_prefix fargate-logs-fluent-bit-
           auto_create_group true
-          
+
       EOT
     )
     "flb_log_cw" = try(var.fargate_fluentbit.flb_log_cw, false)
