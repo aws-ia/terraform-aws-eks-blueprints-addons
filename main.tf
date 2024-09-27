@@ -2585,13 +2585,12 @@ resource "kubernetes_config_map_v1" "aws_logging" {
       var.fargate_fluentbit.parsers_conf,
       <<-EOT
         [PARSER]
-          Name regex
-          Format regex
-          Regex ^(?<time>[^ ]+) (?<stream>[^ ]+) (?<logtag>[^ ]+) (?<message>.+)$
-          Time_Key time
+          Name crio
+          Format Regex
+          Regex ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>P|F) (?<log>.*)$
+          Time_Key    time
           Time_Format %Y-%m-%dT%H:%M:%S.%L%z
           Time_Keep On
-          Decode_Field_As json message
       EOT
     )
     "filters.conf" = try(
@@ -2600,22 +2599,35 @@ resource "kubernetes_config_map_v1" "aws_logging" {
         [FILTER]
           Name parser
           Match *
-          Key_Name log
-          Parser regex
-          Preserve_Key True
-          Reserve_Data True
+          Key_name log
+          Parser crio
+        [FILTER]
+          Name kubernetes
+          Match kube.*
+          Merge_Log On
+          Keep_Log Off
+          Buffer_Size 0
+          Kube_Meta_Cache_TTL 300s
       EOT
     )
     "output.conf" = try(
       var.fargate_fluentbit.output_conf,
       <<-EOT
-        [OUTPUT]
-          Name cloudwatch_logs
-          Match *
+    [OUTPUT]
+          Name cloudwatch
+          Match kube.*
           region ${local.region}
           log_group_name ${try(var.fargate_fluentbit.cwlog_group, aws_cloudwatch_log_group.fargate_fluentbit[0].name)}
           log_stream_prefix ${local.fargate_fluentbit_cwlog_stream_prefix}
           auto_create_group true
+    [OUTPUT]
+          Name cloudwatch_logs
+          Match *
+          region ${local.region}
+          log_group_name ${try(var.fargate_fluentbit.cwlog_group, aws_cloudwatch_log_group.fargate_fluentbit[0].name)}
+          log_stream_prefix fargate-logs-fluent-bit-
+          auto_create_group true
+
       EOT
     )
     "flb_log_cw" = try(var.fargate_fluentbit.flb_log_cw, false)
