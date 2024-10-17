@@ -27,7 +27,7 @@ You can optionally customize the Helm chart that deploys Kube Prometheus Stack v
 Verify kube-prometheus-stack pods are running.
 
 ```sh
-$ kubectl get pods -n external-secrets
+$ kubectl get pods -n kube-prometheus-stack
 NAME                                                        READY   STATUS    RESTARTS       AGE
 alertmanager-kube-prometheus-stack-alertmanager-0           2/2     Running   3 (2d2h ago)   2d7h
 kube-prometheus-stack-grafana-5c6cf88fd9-8wc9k              3/3     Running   3 (2d2h ago)   2d7h
