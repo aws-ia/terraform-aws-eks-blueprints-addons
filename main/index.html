@@ -1434,6 +1434,10 @@ provided. If you are interested in contributing to EKS Blueprints, see the
 <td>resource</td>
 </tr>
 <tr>
+<td><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudformation_stack">aws_cloudformation_stack.usage_telemetry</a></td>
+<td>resource</td>
+</tr>
+<tr>
 <td><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule">aws_cloudwatch_event_rule.aws_node_termination_handler</a></td>
 <td>resource</td>
 </tr>
@@ -1721,7 +1725,7 @@ provided. If you are interested in contributing to EKS Blueprints, see the
 <td><a name="input_cert_manager_route53_hosted_zone_arns"></a> <a href="..#input_cert_manager_route53_hosted_zone_arns">cert_manager_route53_hosted_zone_arns</a></td>
 <td>List of Route53 Hosted Zone ARNs that are used by cert-manager to create DNS records</td>
 <td><code>list(string)</code></td>
-<td><pre>[<br>  "arn:aws:route53:::hostedzone/*"<br>]</pre></td>
+<td><pre>[<br/>  "arn:aws:route53:::hostedzone/*"<br/>]</pre></td>
 <td style="text-align: center;">no</td>
 </tr>
 <tr>
@@ -2022,21 +2026,21 @@ provided. If you are interested in contributing to EKS Blueprints, see the
 <td><a name="input_external_secrets_kms_key_arns"></a> <a href="..#input_external_secrets_kms_key_arns">external_secrets_kms_key_arns</a></td>
 <td>List of KMS Key ARNs that are used by Secrets Manager that contain secrets to mount using External Secrets</td>
 <td><code>list(string)</code></td>
-<td><pre>[<br>  "arn:aws:kms:<em>:</em>:key/*"<br>]</pre></td>
+<td><pre>[<br/>  "arn:aws:kms:<em>:</em>:key/*"<br/>]</pre></td>
 <td style="text-align: center;">no</td>
 </tr>
 <tr>
 <td><a name="input_external_secrets_secrets_manager_arns"></a> <a href="..#input_external_secrets_secrets_manager_arns">external_secrets_secrets_manager_arns</a></td>
 <td>List of Secrets Manager ARNs that contain secrets to mount using External Secrets</td>
 <td><code>list(string)</code></td>
-<td><pre>[<br>  "arn:aws:secretsmanager:<em>:</em>:secret:*"<br>]</pre></td>
+<td><pre>[<br/>  "arn:aws:secretsmanager:<em>:</em>:secret:*"<br/>]</pre></td>
 <td style="text-align: center;">no</td>
 </tr>
 <tr>
 <td><a name="input_external_secrets_ssm_parameter_arns"></a> <a href="..#input_external_secrets_ssm_parameter_arns">external_secrets_ssm_parameter_arns</a></td>
 <td>List of Systems Manager Parameter ARNs that contain secrets to mount using External Secrets</td>
 <td><code>list(string)</code></td>
-<td><pre>[<br>  "arn:aws:ssm:<em>:</em>:parameter/*"<br>]</pre></td>
+<td><pre>[<br/>  "arn:aws:ssm:<em>:</em>:parameter/*"<br/>]</pre></td>
 <td style="text-align: center;">no</td>
 </tr>
 <tr>
@@ -2121,6 +2125,13 @@ provided. If you are interested in contributing to EKS Blueprints, see the
 <td>Metrics Server add-on configurations</td>
 <td><code>any</code></td>
 <td><code>{}</code></td>
+<td style="text-align: center;">no</td>
+</tr>
+<tr>
+<td><a name="input_observability_tag"></a> <a href="..#input_observability_tag">observability_tag</a></td>
+<td>Tag to identify EKS Blueprints usage within observability tools</td>
+<td><code>string</code></td>
+<td><code>"qs-1ubotj5kl"</code></td>
 <td style="text-align: center;">no</td>
 </tr>
 <tr>
