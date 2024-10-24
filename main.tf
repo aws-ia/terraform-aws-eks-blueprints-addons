@@ -3814,3 +3814,26 @@ module "bottlerocket_update_operator" {
   # https://github.com/bottlerocket-os/bottlerocket-update-operator/tree/develop/deploy/charts/bottlerocket-update-operator
   depends_on = [module.bottlerocket_shadow]
 }
+
+################################################################################
+# Usage Telemetry
+################################################################################
+
+resource "aws_cloudformation_stack" "usage_telemetry" {
+  count = var.observability_tag != null ? 1 : 0
+
+  name = var.cluster_name
+
+  on_failure = "DO_NOTHING"
+  template_body = jsonencode({
+    AWSTemplateFormatVersion = "2010-09-09",
+    Description              = "Usage telemetry for EKS Blueprints. (${var.observability_tag})",
+    Resources = {
+      EmptyResource = {
+        Type = "AWS::CloudFormation::WaitConditionHandle"
+      }
+    }
+  })
+
+  tags = var.tags
+}

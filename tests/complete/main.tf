@@ -34,7 +34,13 @@ provider "helm" {
   }
 }
 
-data "aws_availability_zones" "available" {}
+data "aws_availability_zones" "available" {
+  # Do not include local zones
+  filter {
+    name   = "opt-in-status"
+    values = ["opt-in-not-required"]
+  }
+}
 
 data "aws_ecrpublic_authorization_token" "token" {
   provider = aws.virginia
@@ -82,10 +88,6 @@ module "eks_blueprints_addons" {
       most_recent = true
     }
     kube-proxy = {}
-    adot = {
-      most_recent              = true
-      service_account_role_arn = module.adot_irsa.iam_role_arn
-    }
   }
 
   enable_aws_efs_csi_driver                    = true
@@ -237,10 +239,10 @@ module "eks_blueprints_addons" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.4"
+  version = "~> 20.26"
 
   cluster_name                   = local.name
-  cluster_version                = "1.29"
+  cluster_version                = "1.31"
   cluster_endpoint_public_access = true
 
   vpc_id     = module.vpc.vpc_id
@@ -354,27 +356,6 @@ module "ebs_csi_driver_irsa" {
     main = {
       provider_arn               = module.eks.oidc_provider_arn
       namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
-    }
-  }
-
-  tags = local.tags
-}
-
-module "adot_irsa" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.20"
-
-  role_name_prefix = "${local.name}-adot-"
-
-  role_policy_arns = {
-    prometheus = "arn:aws:iam::aws:policy/AmazonPrometheusRemoteWriteAccess"
-    xray       = "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
-    cloudwatch = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
-  }
-  oidc_providers = {
-    main = {
-      provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["opentelemetry-operator-system:opentelemetry-operator"]
     }
   }
 
