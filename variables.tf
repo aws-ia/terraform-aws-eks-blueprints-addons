@@ -609,3 +609,13 @@ variable "create_kubernetes_resources" {
   type        = bool
   default     = true
 }
+
+################################################################################
+# Usage Telemetry
+################################################################################
+
+variable "observability_tag" {
+  description = "Tag to identify EKS Blueprints usage within observability tools"
+  type        = string
+  default     = "qs-1ubotj5kl"
+}
