@@ -3819,10 +3819,14 @@ module "bottlerocket_update_operator" {
 # Usage Telemetry
 ################################################################################
 
+resource "random_bytes" "this" {
+  length = 2
+}
+
 resource "aws_cloudformation_stack" "usage_telemetry" {
   count = var.observability_tag != null ? 1 : 0
 
-  name = var.cluster_name
+  name = "${var.cluster_name}-${random_bytes.this.hex}"
 
   on_failure = "DO_NOTHING"
   template_body = jsonencode({
