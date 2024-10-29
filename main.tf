@@ -700,7 +700,7 @@ module "aws_for_fluentbit" {
     },
     {
       name  = "cloudWatchLogs.logGroupName"
-      value = local.aws_for_fluentbit_cw_log_group_name
+      value = aws_cloudwatch_log_group.aws_for_fluentbit.name
     },
     {
       name  = "cloudWatchLogs.logGroupTemplate"
