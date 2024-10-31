@@ -268,6 +268,18 @@ variable "cert_manager_route53_hosted_zone_arns" {
   default     = ["arn:aws:route53:::hostedzone/*"]
 }
 
+variable "cert_manager_crds_enabled" {
+  description = "Enable CRDs for cert-manager"
+  type        = bool
+  default     = true
+}
+
+variable "cert_manager_crds_keep" {
+  description = "Keep CRDs for cert-manager"
+  type        = bool
+  default     = true
+}
+
 ################################################################################
 # Cluster Autoscaler
 ################################################################################

@@ -115,6 +115,10 @@ module "eks_blueprints_addons" {
   enable_cert_manager = true
   cert_manager = {
     wait = true
+    crds = {
+      enabled = true
+      keep    = true
+    }
   }
 
   # Turn off mutation webhook for services to avoid ordering issue
