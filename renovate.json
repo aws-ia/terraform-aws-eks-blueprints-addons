@@ -7,10 +7,18 @@
       "customType": "regex",
       "fileMatch": ["(^|/)main\\.tf$"],
       "matchStrings": [
-        "chart *=.*\"(?<depName>.*?)\"\\)\\s*chart_version *=.*\"(?<currentValue>.*?)\"\\)\\s*repository *=.*\"(?<registryUrl>.*?)\"\\)"
+        "chart *=.*\"(?<depName>.*?)\"\\)\\s*chart_version *=.*\"(?<currentValue>.*?)\"\\)\\s*repository *=.*\"(?<registryUrl>https.*?)\"\\)"
       ],
-      "datasourceTemplate": "helm",
-      "versioningTemplate": "helm"
+      "datasourceTemplate": "helm"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["(^|/)main\\.tf$"],
+      "matchStrings": [
+        "chart *=.*\"(?<depName>.*?)\"\\)\\s*chart_version *=.*\"(?<currentValue>.*?)\"\\)\\s*repository *=.*\"oci://(?<namespace>.*?)\"\\)"
+      ],
+      "datasourceTemplate": "docker",
+      "packageNameTemplate": "{{namespace}}/{{depName}}"
     }
   ]
 }
