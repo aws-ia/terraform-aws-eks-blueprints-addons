@@ -1,0 +1,16 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "enabledManagers": ["regex"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["(^|/)main\\.tf$"],
+      "matchStrings": [
+        "chart *=.*\"(?<depName>.*?)\"\\)\\s*chart_version *=.*\"(?<currentValue>.*?)\"\\)\\s*repository *=.*\"(?<registryUrl>.*?)\"\\)"
+      ],
+      "datasourceTemplate": "helm",
+      "versioningTemplate": "helm"
+    }
+  ]
+}
