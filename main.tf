@@ -1187,6 +1187,8 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
       "elasticloadbalancing:DescribeTags",
       "elasticloadbalancing:DescribeTrustStores",
       "elasticloadbalancing:DescribeListenerAttributes",
+      "elasticloadbalancing:DescribeCapacityReservation",
+      "elasticloadbalancing:ModifyCapacityReservation",
     ]
     resources = ["*"]
   }
