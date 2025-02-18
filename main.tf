@@ -2508,6 +2508,7 @@ resource "aws_iam_policy" "fargate_fluentbit" {
 
   name        = try(var.fargate_fluentbit.policy_name_use_prefix, true) ? null : local.fargate_fluentbit_policy_name
   name_prefix = try(var.fargate_fluentbit.policy_name_use_prefix, true) ? try(var.fargate_fluentbit.policy_name_prefix, "${local.fargate_fluentbit_policy_name}-") : null
+  path        = try(var.fargate_fluentbit.policy_path, null)
   description = try(var.fargate_fluentbit.policy_description, null)
   policy      = data.aws_iam_policy_document.fargate_fluentbit[0].json
 }
