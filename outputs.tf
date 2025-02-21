@@ -18,16 +18,6 @@ output "argo_events" {
   value       = module.argo_events
 }
 
-output "aws_cloudwatch_metrics" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.aws_cloudwatch_metrics
-}
-
-output "aws_efs_csi_driver" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.aws_efs_csi_driver
-}
-
 output "aws_for_fluentbit" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = module.aws_for_fluentbit
@@ -190,19 +180,6 @@ output "gitops_metadata" {
       namespace       = local.cluster_autoscaler_namespace
       service_account = local.cluster_autoscaler_service_account
       } : "cluster_autoscaler_${k}" => v if var.enable_cluster_autoscaler
-    },
-    { for k, v in {
-      iam_role_arn    = module.aws_cloudwatch_metrics.iam_role_arn
-      namespace       = local.aws_cloudwatch_metrics_namespace
-      service_account = local.aws_cloudwatch_metrics_service_account
-      } : "aws_cloudwatch_metrics_${k}" => v if var.enable_aws_cloudwatch_metrics
-    },
-    { for k, v in {
-      iam_role_arn               = module.aws_efs_csi_driver.iam_role_arn
-      namespace                  = local.aws_efs_csi_driver_namespace
-      controller_service_account = local.aws_efs_csi_driver_controller_service_account
-      node_service_account       = local.aws_efs_csi_driver_node_service_account
-      } : "aws_efs_csi_driver_${k}" => v if var.enable_aws_efs_csi_driver
     },
     { for k, v in {
       iam_role_arn               = module.aws_fsx_csi_driver.iam_role_arn
