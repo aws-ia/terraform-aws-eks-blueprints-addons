@@ -117,38 +117,6 @@ variable "argo_events" {
 }
 
 ################################################################################
-# AWS Cloudwatch Metrics
-################################################################################
-
-variable "enable_aws_cloudwatch_metrics" {
-  description = "Enable AWS Cloudwatch Metrics add-on for Container Insights"
-  type        = bool
-  default     = false
-}
-
-variable "aws_cloudwatch_metrics" {
-  description = "Cloudwatch Metrics add-on configuration values"
-  type        = any
-  default     = {}
-}
-
-################################################################################
-# AWS EFS CSI Driver
-################################################################################
-
-variable "enable_aws_efs_csi_driver" {
-  description = "Enable AWS EFS CSI Driver add-on"
-  type        = bool
-  default     = false
-}
-
-variable "aws_efs_csi_driver" {
-  description = "EFS CSI Driver add-on configuration values"
-  type        = any
-  default     = {}
-}
-
-################################################################################
 # AWS for Fluentbit
 ################################################################################
 
@@ -478,22 +446,6 @@ variable "enable_kube_prometheus_stack" {
 
 variable "kube_prometheus_stack" {
   description = "Kube Prometheus Stack add-on configurations"
-  type        = any
-  default     = {}
-}
-
-################################################################################
-# Metrics Server
-################################################################################
-
-variable "enable_metrics_server" {
-  description = "Enable metrics server add-on"
-  type        = bool
-  default     = false
-}
-
-variable "metrics_server" {
-  description = "Metrics Server add-on configurations"
   type        = any
   default     = {}
 }
