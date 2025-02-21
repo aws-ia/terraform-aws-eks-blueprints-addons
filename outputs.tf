@@ -125,11 +125,6 @@ output "kube_prometheus_stack" {
   value       = module.kube_prometheus_stack
 }
 
-output "metrics_server" {
-  description = "Map of attributes of the Helm release and IRSA created"
-  value       = module.metrics_server
-}
-
 output "secrets_store_csi_driver" {
   description = "Map of attributes of the Helm release and IRSA created"
   value       = module.secrets_store_csi_driver

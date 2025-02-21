@@ -126,7 +126,6 @@ module "eks_blueprints_addons" {
     }]
   }
 
-  enable_metrics_server    = true
   enable_vpa               = true
   enable_fargate_fluentbit = true
   enable_aws_for_fluentbit = true

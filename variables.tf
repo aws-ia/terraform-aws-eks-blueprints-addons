@@ -483,22 +483,6 @@ variable "kube_prometheus_stack" {
 }
 
 ################################################################################
-# Metrics Server
-################################################################################
-
-variable "enable_metrics_server" {
-  description = "Enable metrics server add-on"
-  type        = bool
-  default     = false
-}
-
-variable "metrics_server" {
-  description = "Metrics Server add-on configurations"
-  type        = any
-  default     = {}
-}
-
-################################################################################
 # Secrets Store CSI Driver
 ################################################################################
 
