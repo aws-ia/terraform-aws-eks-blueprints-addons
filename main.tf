@@ -1878,7 +1878,7 @@ module "cert_manager" {
   namespace        = local.cert_manager_namespace
   create_namespace = try(var.cert_manager.create_namespace, true)
   chart            = try(var.cert_manager.chart, "cert-manager")
-  chart_version    = try(var.cert_manager.chart_version, "v1.14.3")
+  chart_version    = try(var.cert_manager.chart_version, "v1.17.1")
   repository       = try(var.cert_manager.repository, "https://charts.jetstack.io")
   values           = try(var.cert_manager.values, [])
 
@@ -1911,7 +1911,11 @@ module "cert_manager" {
   postrender = try(var.cert_manager.postrender, [])
   set = concat([
     {
-      name  = "installCRDs"
+      name  = "crds.enabled"
+      value = true
+    },
+    {
+      name  = "crds.keep"
       value = true
     },
     {
