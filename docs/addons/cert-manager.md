@@ -13,6 +13,23 @@ module "eks_blueprints_addons" {
 }
 ```
 
+#### :warning: **Fargate kubelet port conflict** :warning:
+When running on Fargate the kubelet port conflicts with the secure webhook port cert-manager uses so you will need to change it.
+```hcl
+  # cert-manager default webhook port conflicts with the kubelet port on Fargate
+  # so we change it to avoid the conflict.
+  # SEE: https://github.com/cert-manager/cert-manager/issues/3237
+  enable_cert_manager = true
+  cert_manager = {
+    set = [
+      {
+        name  = "webhook.securePort"
+        value = 10260
+      },
+    ]
+  }
+```
+
 ### Helm Chart customization
 
 It's possible to customize your deployment using the Helm Chart parameters inside the `cert-manager` configuration block:
