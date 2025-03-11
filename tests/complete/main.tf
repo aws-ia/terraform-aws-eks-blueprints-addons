@@ -90,12 +90,10 @@ module "eks_blueprints_addons" {
     kube-proxy = {}
   }
 
-  enable_aws_efs_csi_driver                    = true
   enable_aws_fsx_csi_driver                    = true
   enable_argocd                                = true
   enable_argo_rollouts                         = true
   enable_argo_workflows                        = true
-  enable_aws_cloudwatch_metrics                = true
   enable_aws_privateca_issuer                  = true
   enable_cluster_autoscaler                    = true
   enable_secrets_store_csi_driver              = true
@@ -126,7 +124,6 @@ module "eks_blueprints_addons" {
     }]
   }
 
-  enable_metrics_server    = true
   enable_vpa               = true
   enable_fargate_fluentbit = true
   enable_aws_for_fluentbit = true
