@@ -2723,7 +2723,7 @@ module "ingress_nginx" {
   namespace        = try(var.ingress_nginx.namespace, "ingress-nginx")
   create_namespace = try(var.ingress_nginx.create_namespace, true)
   chart            = try(var.ingress_nginx.chart, "ingress-nginx")
-  chart_version    = try(var.ingress_nginx.chart_version, "4.10.0")
+  chart_version    = try(var.ingress_nginx.chart_version, "4.12.1")
   repository       = try(var.ingress_nginx.repository, "https://kubernetes.github.io/ingress-nginx")
   values           = try(var.ingress_nginx.values, [])
 
