@@ -2835,6 +2835,7 @@ data "aws_iam_policy_document" "karpenter" {
       "ec2:DescribeSecurityGroups",
       "ec2:DescribeSpotPriceHistory",
       "ec2:DescribeSubnets",
+      "ec2:DescribeCapacityReservations",
     ]
     resources = ["*"]
   }
