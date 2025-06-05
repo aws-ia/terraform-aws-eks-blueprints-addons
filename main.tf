@@ -1962,7 +1962,7 @@ module "cert_manager" {
 locals {
   cluster_autoscaler_service_account    = try(var.cluster_autoscaler.service_account_name, "cluster-autoscaler-sa")
   cluster_autoscaler_namespace          = try(var.cluster_autoscaler.namespace, "kube-system")
-  cluster_autoscaler_image_tag_selected = try(local.cluster_autoscaler_image_tag[var.cluster_version], "v${var.cluster_version}.0")
+  cluster_autoscaler_image_tag_selected = try(var.cluster_autoscaler.image_tag_override, local.cluster_autoscaler_image_tag[var.cluster_version], "v${var.cluster_version}.0")
 
   # Lookup map to pull latest cluster-autoscaler patch version given the cluster version
   cluster_autoscaler_image_tag = {
@@ -1976,6 +1976,10 @@ locals {
     "1.27" = "v1.27.5"
     "1.28" = "v1.28.2"
     "1.29" = "v1.29.0"
+    "1.30" = "v1.30.4"
+    "1.31" = "v1.31.2"
+    "1.32" = "v1.32.1"
+    "1.33" = "v1.32.1"
   }
 }
 
