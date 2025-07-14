@@ -230,6 +230,12 @@ variable "aws_node_termination_handler_asg_arns" {
   default     = []
 }
 
+variable "aws_node_termination_handler_asg_names" {
+  description = "List of Auto Scaling group names that AWS Node Termination Handler will monitor for EC2 events. If leaving this empty, all ASGs will be monitored"
+  type        = list(string)
+  default     = []
+}
+
 ################################################################################
 # AWS Private CA Issuer
 ################################################################################
