@@ -1699,6 +1699,13 @@ provided. If you are interested in contributing to EKS Blueprints, see the
 <td style="text-align: center;">no</td>
 </tr>
 <tr>
+<td><a name="input_aws_node_termination_handler_asg_names"></a> <a href="..#input_aws_node_termination_handler_asg_names">aws_node_termination_handler_asg_names</a></td>
+<td>List of Auto Scaling group names that AWS Node Termination Handler will monitor for EC2 events. If leaving this empty, all ASGs will be monitored</td>
+<td><code>list(string)</code></td>
+<td><code>[]</code></td>
+<td style="text-align: center;">no</td>
+</tr>
+<tr>
 <td><a name="input_aws_node_termination_handler_sqs"></a> <a href="..#input_aws_node_termination_handler_sqs">aws_node_termination_handler_sqs</a></td>
 <td>AWS Node Termination Handler SQS queue configuration values</td>
 <td><code>any</code></td>
