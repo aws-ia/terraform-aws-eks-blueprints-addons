@@ -1509,10 +1509,17 @@ locals {
       autoscaling_terminate = {
         name        = "ASGTerminiate"
         description = "Auto scaling instance terminate event"
-        event_pattern = {
-          source      = ["aws.autoscaling"]
-          detail-type = ["EC2 Instance-terminate Lifecycle Action"]
-        }
+        event_pattern = merge(
+          {
+            source      = ["aws.autoscaling"]
+            detail-type = ["EC2 Instance-terminate Lifecycle Action"]
+          },
+          try(length(var.aws_node_termination_handler_asg_names) > 0 ? {
+            detail = {
+              AutoScalingGroupName = var.aws_node_termination_handler_asg_names
+            }
+          } : {}, {})
+        )
       }
     },
     local.ec2_events
