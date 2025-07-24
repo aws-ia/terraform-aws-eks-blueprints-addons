@@ -12,8 +12,8 @@ on:
 permissions: read-all
 
 env:
-  TERRAFORM_DOCS_VERSION: v0.19.0
-  TFLINT_VERSION: v0.53.0
+  TERRAFORM_DOCS_VERSION: v0.20.0
+  TFLINT_VERSION: v0.58.1
 
 concurrency:
   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
@@ -58,7 +58,7 @@ jobs:
               - '${{ matrix.directory }}/*.tf'
 
       - name: Terraform min/max versions
-        uses: clowdhaus/terraform-min-max@v1.3.1
+        uses: clowdhaus/terraform-min-max@v1.4.1
         if: steps.changes.outputs.src== 'true'
         id: minMax
         with:
@@ -100,7 +100,7 @@ jobs:
 
       - name: Terraform min/max versions
         id: minMax
-        uses: clowdhaus/terraform-min-max@v1.3.1
+        uses: clowdhaus/terraform-min-max@v1.4.1
         if: steps.changes.outputs.src== 'true'
 
       - name: Pre-commit Terraform ${{ steps.minMax.outputs.maxVersion }}
