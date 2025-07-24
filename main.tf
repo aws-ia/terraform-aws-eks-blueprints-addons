@@ -32,34 +32,62 @@ locals {
     health_event = {
       name        = "HealthEvent"
       description = "AWS health event"
-      event_pattern = {
-        source      = ["aws.health"]
-        detail-type = ["AWS Health Event"]
-      }
+      event_pattern = merge(
+        {
+          source      = ["aws.health"]
+          detail-type = ["AWS Health Event"]
+        },
+        try(length(var.aws_node_termination_handler_asg_names) > 0 ? {
+          detail = {
+            AutoScalingGroupName = var.aws_node_termination_handler_asg_names
+          }
+        } : {}, {})
+      )
     }
     spot_interupt = {
       name        = "SpotInterrupt"
       description = "EC2 spot instance interruption warning"
-      event_pattern = {
-        source      = ["aws.ec2"]
-        detail-type = ["EC2 Spot Instance Interruption Warning"]
-      }
+      event_pattern = merge(
+        {
+          source      = ["aws.ec2"]
+          detail-type = ["EC2 Spot Instance Interruption Warning"]
+        },
+        try(length(var.aws_node_termination_handler_asg_names) > 0 ? {
+          detail = {
+            AutoScalingGroupName = var.aws_node_termination_handler_asg_names
+          }
+        } : {}, {})
+      )
     }
     instance_rebalance = {
       name        = "InstanceRebalance"
       description = "EC2 instance rebalance recommendation"
-      event_pattern = {
-        source      = ["aws.ec2"]
-        detail-type = ["EC2 Instance Rebalance Recommendation"]
-      }
+      event_pattern = merge(
+        {
+          source      = ["aws.ec2"]
+          detail-type = ["EC2 Instance Rebalance Recommendation"]
+        },
+        try(length(var.aws_node_termination_handler_asg_names) > 0 ? {
+          detail = {
+            AutoScalingGroupName = var.aws_node_termination_handler_asg_names
+          }
+        } : {}, {})
+      )
     }
     instance_state_change = {
       name        = "InstanceStateChange"
       description = "EC2 instance state-change notification"
-      event_pattern = {
-        source      = ["aws.ec2"]
-        detail-type = ["EC2 Instance State-change Notification"]
-      }
+      event_pattern = merge(
+        {
+          source      = ["aws.ec2"]
+          detail-type = ["EC2 Instance State-change Notification"]
+        },
+        try(length(var.aws_node_termination_handler_asg_names) > 0 ? {
+          detail = {
+            AutoScalingGroupName = var.aws_node_termination_handler_asg_names
+          }
+        } : {}, {})
+      )
     }
   }
 }
