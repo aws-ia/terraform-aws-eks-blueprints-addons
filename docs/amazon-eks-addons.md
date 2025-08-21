@@ -39,6 +39,11 @@ module "eks_blueprints_addons" {
       resolve_conflicts_on_create = string # defaults to `OVERWRITE`
       resolve_conflicts_on_update = string # defaults to `OVERWRITE`
 
+      pod_identity_association = list(object({ # Optional, defaults to []
+        role_arn        = string
+        service_account = string
+      }))
+
       timeouts = {
         create = string # optional
         update = string # optional
@@ -365,4 +370,42 @@ module "eks_blueprints_addons" {
         }
       })
     }
+```
+
+### EKS Pod Identity
+
+Several addons can use the [EKS Pod Identity](https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html) feature to provide IAM roles to pods.
+For example, the [CloudWatch Observability add-on](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Observability-EKS-addon.html#install-CloudWatch-Observability-EKS-pod-identity)
+ can optionally use Pod Identities instead of an IRSA, as shown below:
+
+
+```hcl
+module "eks_blueprints_addons" {
+  source = "aws-ia/eks-blueprints-addons/aws"
+
+  # ... truncated for brevity
+
+  eks_addons = {
+    # required for the pod identity feature
+    eks-pod-identity-agent = {
+      most_recent = true
+    }
+
+    amazon-cloudwatch-observability = {
+      most_recent = true
+      pod_identity_association = [
+        {
+          role_arn = module.aws_cloudwatch_observability_pod_identity.iam_role_arn
+          service_account = "cloudwatch-agent"
+        }
+      ]
+    }
+  }
+}
+
+module "aws_cloudwatch_observability_pod_identity" {
+  source = "terraform-aws-modules/eks-pod-identity/aws"
+  name = "aws-cloudwatch-observability"
+  attach_aws_cloudwatch_observability_policy = true
+}
 ```
