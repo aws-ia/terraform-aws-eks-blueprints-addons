@@ -86,8 +86,18 @@ module "eks_blueprints_addons" {
     }
     vpc-cni = {
       most_recent = true
+      pod_identity_association = [
+        {
+          role_arn        = module.aws_vpc_cni_ipv4_pod_identity.iam_role_arn
+          service_account = "aws-node"
+        }
+      ]
     }
     kube-proxy = {}
+    # required for the pod identity feature
+    eks-pod-identity-agent = {
+      most_recent = true
+    }
   }
 
   enable_aws_efs_csi_driver                    = true
@@ -360,4 +370,16 @@ module "ebs_csi_driver_irsa" {
   }
 
   tags = local.tags
+}
+
+module "aws_vpc_cni_ipv4_pod_identity" {
+  source = "terraform-aws-modules/eks-pod-identity/aws"
+  # Note 2.0 requires AWS provider 6, locking to last version before 2.0 until test migrated to AWS provider 6
+  version = "~> 1.12.1"
+
+  name = "aws-vpc-cni-ipv4"
+
+  attach_aws_vpc_cni_policy = true
+  aws_vpc_cni_enable_ipv4   = true
+
 }
