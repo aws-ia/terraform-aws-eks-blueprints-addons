@@ -2236,6 +2236,15 @@ resource "aws_eks_addon" "this" {
   resolve_conflicts_on_update = try(each.value.resolve_conflicts, "OVERWRITE")
   service_account_role_arn    = try(each.value.service_account_role_arn, null)
 
+  dynamic "pod_identity_association" {
+    for_each = try(each.value.pod_identity_association, [])
+
+    content {
+      role_arn        = pod_identity_association.value.role_arn
+      service_account = pod_identity_association.value.service_account
+    }
+  }
+
   timeouts {
     create = try(each.value.timeouts.create, var.eks_addons_timeouts.create, null)
     update = try(each.value.timeouts.update, var.eks_addons_timeouts.update, null)
