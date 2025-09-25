@@ -39,35 +39,9 @@ resource "helm_release" "this" {
   dependency_update          = try(each.value.dependency_update, null)
   replace                    = try(each.value.replace, null)
   lint                       = try(each.value.lint, null)
-
-  dynamic "postrender" {
-    for_each = try([each.value.postrender], [])
-
-    content {
-      binary_path = postrender.value.binary_path
-      args        = try(postrender.value.args, null)
-    }
-  }
-
-  dynamic "set" {
-    for_each = try(each.value.set, [])
-
-    content {
-      name  = set.value.name
-      value = set.value.value
-      type  = try(set.value.type, null)
-    }
-  }
-
-  dynamic "set_sensitive" {
-    for_each = try(each.value.set_sensitive, [])
-
-    content {
-      name  = set_sensitive.value.name
-      value = set_sensitive.value.value
-      type  = try(set_sensitive.value.type, null)
-    }
-  }
+  postrender                 = try(each.value.postrender, [])
+  set                        = try(each.value.set, [])
+  set_sensitive              = try(each.value.set_sensitive, [])
 
   depends_on = [
     # Wait for EBS CSI, etc. to be installed first
