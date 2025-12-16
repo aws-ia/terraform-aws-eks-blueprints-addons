@@ -2948,6 +2948,7 @@ data "aws_iam_policy_document" "karpenter" {
         "iam:GetInstanceProfile",
         "iam:RemoveRoleFromInstanceProfile",
         "iam:TagInstanceProfile",
+        "iam:ListInstanceProfiles",
       ]
       resources = ["*"]
     }
