@@ -98,7 +98,8 @@ locals {
 
 module "argo_rollouts" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_argo_rollouts
 
@@ -154,7 +155,8 @@ module "argo_rollouts" {
 
 module "argo_workflows" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_argo_workflows
 
@@ -210,7 +212,8 @@ module "argo_workflows" {
 
 module "argocd" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_argocd
 
@@ -266,7 +269,8 @@ module "argocd" {
 
 module "argo_events" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_argo_events
 
@@ -327,7 +331,8 @@ locals {
 
 module "aws_cloudwatch_metrics" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_aws_cloudwatch_metrics
 
@@ -406,6 +411,8 @@ module "aws_cloudwatch_metrics" {
       service_account = local.aws_cloudwatch_metrics_service_account
     }
   }
+
+  trust_policy_statements = try(var.aws_cloudwatch_metrics.trust_policy_statements, null)
 
   tags = var.tags
 }
@@ -496,7 +503,8 @@ data "aws_iam_policy_document" "aws_efs_csi_driver" {
 
 module "aws_efs_csi_driver" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_aws_efs_csi_driver
 
@@ -586,6 +594,8 @@ module "aws_efs_csi_driver" {
     }
   }
 
+  trust_policy_statements = try(var.aws_efs_csi_driver.trust_policy_statements, null)
+
   tags = var.tags
 }
 
@@ -673,7 +683,8 @@ data "aws_iam_policy_document" "aws_for_fluentbit" {
 
 module "aws_for_fluentbit" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_aws_for_fluentbit
 
@@ -772,6 +783,8 @@ module "aws_for_fluentbit" {
       service_account = local.aws_for_fluentbit_service_account
     }
   }
+
+  trust_policy_statements = try(var.aws_for_fluentbit.trust_policy_statements, null)
 
   tags = var.tags
 }
@@ -1069,7 +1082,8 @@ data "aws_iam_policy_document" "aws_fsx_csi_driver" {
 
 module "aws_fsx_csi_driver" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_aws_fsx_csi_driver
 
@@ -1158,6 +1172,8 @@ module "aws_fsx_csi_driver" {
       service_account = local.aws_fsx_csi_driver_node_service_account
     }
   }
+
+  trust_policy_statements = try(var.aws_fsx_csi_driver.trust_policy_statements, null)
 }
 
 ################################################################################
@@ -1440,7 +1456,8 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
 
 module "aws_load_balancer_controller" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_aws_load_balancer_controller
 
@@ -1521,6 +1538,8 @@ module "aws_load_balancer_controller" {
       service_account = local.aws_load_balancer_controller_service_account
     }
   }
+
+  trust_policy_statements = try(var.aws_load_balancer_controller.trust_policy_statements, null)
 
   tags = var.tags
 }
@@ -1661,7 +1680,8 @@ data "aws_iam_policy_document" "aws_node_termination_handler" {
 
 module "aws_node_termination_handler" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_aws_node_termination_handler
 
@@ -1752,6 +1772,8 @@ module "aws_node_termination_handler" {
     }
   }
 
+  trust_policy_statements = try(var.aws_node_termination_handler.trust_policy_statements, null)
+
   tags = var.tags
 }
 
@@ -1785,7 +1807,8 @@ data "aws_iam_policy_document" "aws_privateca_issuer" {
 
 module "aws_privateca_issuer" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_aws_privateca_issuer
 
@@ -1863,6 +1886,8 @@ module "aws_privateca_issuer" {
     }
   }
 
+  trust_policy_statements = try(var.aws_privateca_issuer.trust_policy_statements, null)
+
   tags = var.tags
 }
 
@@ -1903,7 +1928,8 @@ data "aws_iam_policy_document" "cert_manager" {
 
 module "cert_manager" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_cert_manager
 
@@ -1987,6 +2013,8 @@ module "cert_manager" {
     }
   }
 
+  trust_policy_statements = try(var.cert_manager.trust_policy_statements, null)
+
   tags = var.tags
 }
 
@@ -2060,7 +2088,8 @@ data "aws_iam_policy_document" "cluster_autoscaler" {
 
 module "cluster_autoscaler" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_cluster_autoscaler
 
@@ -2152,6 +2181,8 @@ module "cluster_autoscaler" {
     }
   }
 
+  trust_policy_statements = try(var.cluster_autoscaler.trust_policy_statements, null)
+
   tags = var.tags
 }
 
@@ -2161,7 +2192,8 @@ module "cluster_autoscaler" {
 
 module "cluster_proportional_autoscaler" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_cluster_proportional_autoscaler
 
@@ -2286,7 +2318,8 @@ data "aws_iam_policy_document" "external_dns" {
 
 module "external_dns" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_external_dns
 
@@ -2364,6 +2397,8 @@ module "external_dns" {
     }
   }
 
+  trust_policy_statements = try(var.external_dns.trust_policy_statements, null)
+
   tags = var.tags
 }
 
@@ -2439,7 +2474,8 @@ data "aws_iam_policy_document" "external_secrets" {
 
 module "external_secrets" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_external_secrets
 
@@ -2520,6 +2556,8 @@ module "external_secrets" {
       service_account = local.external_secrets_service_account
     }
   }
+
+  trust_policy_statements = try(var.external_secrets.trust_policy_statements, null)
 
   tags = var.tags
 }
@@ -2689,7 +2727,8 @@ resource "kubernetes_config_map_v1" "aws_logging" {
 
 module "gatekeeper" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_gatekeeper
 
@@ -2745,7 +2784,8 @@ module "gatekeeper" {
 
 module "ingress_nginx" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_ingress_nginx
 
@@ -3070,7 +3110,8 @@ resource "aws_iam_instance_profile" "karpenter" {
 
 module "karpenter" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_karpenter
 
@@ -3145,6 +3186,8 @@ module "karpenter" {
     }
   }
 
+  trust_policy_statements = try(var.karpenter.trust_policy_statements, null)
+
   tags = var.tags
 }
 
@@ -3165,7 +3208,8 @@ module "karpenter" {
 
 module "kube_prometheus_stack" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_kube_prometheus_stack
 
@@ -3221,7 +3265,8 @@ module "kube_prometheus_stack" {
 
 module "metrics_server" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_metrics_server
 
@@ -3277,7 +3322,8 @@ module "metrics_server" {
 
 module "secrets_store_csi_driver" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_secrets_store_csi_driver
 
@@ -3333,7 +3379,8 @@ module "secrets_store_csi_driver" {
 
 module "secrets_store_csi_driver_provider_aws" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_secrets_store_csi_driver_provider_aws
 
@@ -3446,7 +3493,8 @@ data "aws_iam_policy_document" "velero" {
 
 module "velero" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_velero
 
@@ -3559,6 +3607,8 @@ module "velero" {
     }
   }
 
+  trust_policy_statements = try(var.velero.trust_policy_statements, null)
+
   tags = var.tags
 }
 
@@ -3568,7 +3618,8 @@ module "velero" {
 
 module "vpa" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_vpa
 
@@ -3661,7 +3712,8 @@ data "aws_iam_policy_document" "aws_gateway_api_controller" {
 
 module "aws_gateway_api_controller" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "1.1.1"
+  version = "1.2.0"
+
 
   create = var.enable_aws_gateway_api_controller
 
@@ -3745,6 +3797,8 @@ module "aws_gateway_api_controller" {
     }
   }
 
+  trust_policy_statements = try(var.aws_gateway_api_controller.trust_policy_statements, null)
+
   tags = var.tags
 }
 
@@ -3758,7 +3812,7 @@ locals {
 
 module "bottlerocket_shadow" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "~> 1.1.1"
+  version = "1.2.0"
 
   create = var.enable_bottlerocket_update_operator
 
@@ -3810,7 +3864,7 @@ module "bottlerocket_shadow" {
 
 module "bottlerocket_update_operator" {
   source  = "aws-ia/eks-blueprints-addon/aws"
-  version = "~> 1.1.1"
+  version = "1.2.0"
 
   create = var.enable_bottlerocket_update_operator
 
