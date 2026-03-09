@@ -1204,6 +1204,7 @@ data "aws_iam_policy_document" "aws_load_balancer_controller" {
       "ec2:DescribeCoipPools",
       "ec2:GetSecurityGroupsForVpc",
       "ec2:DescribeIpamPools",
+      "ec2:DescribeRouteTables",
       "elasticloadbalancing:DescribeLoadBalancers",
       "elasticloadbalancing:DescribeLoadBalancerAttributes",
       "elasticloadbalancing:DescribeListeners",
@@ -1523,6 +1524,174 @@ module "aws_load_balancer_controller" {
   }
 
   tags = var.tags
+}
+
+################################################################################
+# AWS Load Balancer Controller - Global Accelerator (AGA) Policy
+################################################################################
+
+# https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/main/docs/install/aga_controller_iam_policy.json
+data "aws_iam_policy_document" "aws_load_balancer_controller_aga" {
+  count = var.enable_aws_load_balancer_controller_aga ? 1 : 0
+
+  statement {
+    actions   = ["iam:CreateServiceLinkedRole"]
+    resources = ["*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "iam:AWSServiceName"
+      values   = ["globalaccelerator.amazonaws.com"]
+    }
+  }
+
+  statement {
+    actions = [
+      "globalaccelerator:ListAccelerators",
+      "globalaccelerator:ListEndpointGroups",
+      "globalaccelerator:ListListeners",
+      "globalaccelerator:ListTagsForResource",
+      "ec2:DescribeRegions",
+      "tag:GetResources",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    actions = [
+      "globalaccelerator:DescribeAccelerator",
+      "globalaccelerator:DescribeEndpointGroup",
+      "globalaccelerator:DescribeListener",
+    ]
+    resources = [
+      "arn:${local.partition}:globalaccelerator::*:accelerator/*",
+      "arn:${local.partition}:globalaccelerator::*:accelerator/*/listener/*",
+      "arn:${local.partition}:globalaccelerator::*:accelerator/*/listener/*/endpoint-group/*",
+    ]
+
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/aga.k8s.aws/resource"
+      values   = ["GlobalAccelerator"]
+    }
+  }
+
+  statement {
+    actions   = ["globalaccelerator:CreateAccelerator"]
+    resources = ["*"]
+
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:RequestTag/aga.k8s.aws/resource"
+      values   = ["GlobalAccelerator"]
+    }
+  }
+
+  statement {
+    actions = [
+      "globalaccelerator:UpdateAccelerator",
+      "globalaccelerator:DeleteAccelerator",
+      "globalaccelerator:CreateListener",
+      "globalaccelerator:UpdateListener",
+      "globalaccelerator:DeleteListener",
+      "globalaccelerator:CreateEndpointGroup",
+      "globalaccelerator:UpdateEndpointGroup",
+      "globalaccelerator:DeleteEndpointGroup",
+      "globalaccelerator:AddEndpoints",
+      "globalaccelerator:RemoveEndpoints",
+    ]
+    resources = [
+      "arn:${local.partition}:globalaccelerator::*:accelerator/*",
+      "arn:${local.partition}:globalaccelerator::*:accelerator/*/listener/*",
+      "arn:${local.partition}:globalaccelerator::*:accelerator/*/listener/*/endpoint-group/*",
+    ]
+
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/aga.k8s.aws/resource"
+      values   = ["GlobalAccelerator"]
+    }
+  }
+
+  statement {
+    actions = [
+      "globalaccelerator:TagResource",
+      "globalaccelerator:UntagResource",
+    ]
+    resources = ["arn:${local.partition}:globalaccelerator::*:accelerator/*"]
+
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["true"]
+    }
+
+    condition {
+      test     = "Null"
+      variable = "aws:ResourceTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:ResourceTag/aga.k8s.aws/resource"
+      values   = ["GlobalAccelerator"]
+    }
+  }
+
+  statement {
+    actions   = ["globalaccelerator:TagResource"]
+    resources = ["arn:${local.partition}:globalaccelerator::*:accelerator/*"]
+
+    condition {
+      test     = "Null"
+      variable = "aws:RequestTag/elbv2.k8s.aws/cluster"
+      values   = ["false"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:RequestTag/aga.k8s.aws/resource"
+      values   = ["GlobalAccelerator"]
+    }
+  }
+}
+
+resource "aws_iam_policy" "aws_load_balancer_controller_aga" {
+  count = var.enable_aws_load_balancer_controller_aga ? 1 : 0
+
+  name        = try(var.aws_load_balancer_controller.aga_policy_name_use_prefix, true) ? null : try(var.aws_load_balancer_controller.aga_policy_name, "aws-load-balancer-controller-aga")
+  name_prefix = try(var.aws_load_balancer_controller.aga_policy_name_use_prefix, true) ? "${try(var.aws_load_balancer_controller.aga_policy_name, "aws-load-balancer-controller-aga")}-" : null
+  path        = try(var.aws_load_balancer_controller.policy_path, null)
+  description = "IAM Policy for AWS Load Balancer Controller - Global Accelerator"
+  policy      = data.aws_iam_policy_document.aws_load_balancer_controller_aga[0].json
+
+  tags = var.tags
+}
+
+resource "aws_iam_role_policy_attachment" "aws_load_balancer_controller_aga" {
+  count = var.enable_aws_load_balancer_controller_aga ? 1 : 0
+
+  policy_arn = aws_iam_policy.aws_load_balancer_controller_aga[0].arn
+  role       = module.aws_load_balancer_controller.iam_role_name
 }
 
 ################################################################################

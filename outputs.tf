@@ -43,6 +43,13 @@ output "aws_load_balancer_controller" {
   value       = module.aws_load_balancer_controller
 }
 
+output "aws_load_balancer_controller_aga" {
+  description = "Map of attributes of the Global Accelerator IAM policy for AWS Load Balancer Controller"
+  value = {
+    iam_policy_arn = try(aws_iam_policy.aws_load_balancer_controller_aga[0].arn, null)
+  }
+}
+
 output "aws_node_termination_handler" {
   description = "Map of attributes of the Helm release and IRSA created"
   value = merge(
