@@ -2621,7 +2621,7 @@ module "external_secrets" {
   namespace        = local.external_secrets_namespace
   create_namespace = try(var.external_secrets.create_namespace, true)
   chart            = try(var.external_secrets.chart, "external-secrets")
-  chart_version    = try(var.external_secrets.chart_version, "0.9.13")
+  chart_version    = try(var.external_secrets.chart_version, "2.2.0")
   repository       = try(var.external_secrets.repository, "https://charts.external-secrets.io")
   values           = try(var.external_secrets.values, [])
 
