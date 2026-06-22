@@ -169,7 +169,7 @@ module "argo_workflows" {
   namespace        = try(var.argo_workflows.namespace, "argo-workflows")
   create_namespace = try(var.argo_workflows.create_namespace, true)
   chart            = try(var.argo_workflows.chart, "argo-workflows")
-  chart_version    = try(var.argo_workflows.chart_version, "0.40.14")
+  chart_version    = try(var.argo_workflows.chart_version, "0.44.2")
   repository       = try(var.argo_workflows.repository, "https://argoproj.github.io/argo-helm")
   values = concat(
     length(var.global_tolerations) > 0 ? [yamlencode({ tolerations = var.global_tolerations })] : [],
@@ -228,7 +228,7 @@ module "argocd" {
   namespace        = try(var.argocd.namespace, "argocd")
   create_namespace = try(var.argocd.create_namespace, true)
   chart            = try(var.argocd.chart, "argo-cd")
-  chart_version    = try(var.argocd.chart_version, "5.55.0") # TODO - v6.x
+  chart_version    = try(var.argocd.chart_version, "7.7.0") 
   repository       = try(var.argocd.repository, "https://argoproj.github.io/argo-helm")
   values = concat(
     length(var.global_tolerations) > 0 ? [yamlencode({ tolerations = var.global_tolerations })] : [],
@@ -310,7 +310,7 @@ module "argocd_image_updater" {
   namespace        = try(var.argocd_image_updater.namespace, "argocd")
   create_namespace = try(var.argocd_image_updater.create_namespace, false)
   chart            = try(var.argocd_image_updater.chart, "argocd-image-updater")
-  chart_version    = try(var.argocd_image_updater.chart_version, "0.9.1")
+  chart_version    = try(var.argocd_image_updater.chart_version, "1.2.2")
   repository       = try(var.argocd_image_updater.repository, "https://argoproj.github.io/argo-helm")
   values = concat(
     length(var.global_tolerations) > 0 ? [yamlencode({ tolerations = var.global_tolerations })] : [],
@@ -399,7 +399,7 @@ module "argo_events" {
   namespace        = try(var.argo_events.namespace, "argo-events")
   create_namespace = try(var.argo_events.create_namespace, true)
   chart            = try(var.argo_events.chart, "argo-events")
-  chart_version    = try(var.argo_events.chart_version, "2.4.3")
+  chart_version    = try(var.argo_events.chart_version, "2.5.0")
   repository       = try(var.argo_events.repository, "https://argoproj.github.io/argo-helm")
   values = concat(
     length(var.global_tolerations) > 0 ? [yamlencode({ tolerations = var.global_tolerations })] : [],
@@ -632,7 +632,7 @@ module "aws_efs_csi_driver" {
   namespace        = local.aws_efs_csi_driver_namespace
   create_namespace = try(var.aws_efs_csi_driver.create_namespace, false)
   chart            = try(var.aws_efs_csi_driver.chart, "aws-efs-csi-driver")
-  chart_version    = try(var.aws_efs_csi_driver.chart_version, "2.5.6")
+  chart_version    = try(var.aws_efs_csi_driver.chart_version, "3.2.0")
   repository       = try(var.aws_efs_csi_driver.repository, "https://kubernetes-sigs.github.io/aws-efs-csi-driver/")
   values           = try(var.aws_efs_csi_driver.values, [])
 
@@ -2208,7 +2208,7 @@ module "cert_manager" {
   namespace        = local.cert_manager_namespace
   create_namespace = try(var.cert_manager.create_namespace, true)
   chart            = try(var.cert_manager.chart, "cert-manager")
-  chart_version    = try(var.cert_manager.chart_version, "v1.14.3")
+  chart_version    = try(var.cert_manager.chart_version, "v1.17.1")
   repository       = try(var.cert_manager.repository, "https://charts.jetstack.io")
   values = concat(
     length(var.global_tolerations) > 0 ? [yamlencode({ tolerations = var.global_tolerations })] : [],
@@ -3056,7 +3056,7 @@ module "ingress_nginx" {
   namespace        = try(var.ingress_nginx.namespace, "ingress-nginx")
   create_namespace = try(var.ingress_nginx.create_namespace, true)
   chart            = try(var.ingress_nginx.chart, "ingress-nginx")
-  chart_version    = try(var.ingress_nginx.chart_version, "4.12.1")
+  chart_version    = try(var.ingress_nginx.chart_version, "4.12.0")
   repository       = try(var.ingress_nginx.repository, "https://kubernetes.github.io/ingress-nginx")
   values = concat(
     length(var.global_tolerations) > 0 ? [yamlencode({ controller = { tolerations = var.global_tolerations } })] : [],
@@ -3479,7 +3479,7 @@ module "kube_prometheus_stack" {
   namespace        = try(var.kube_prometheus_stack.namespace, "kube-prometheus-stack")
   create_namespace = try(var.kube_prometheus_stack.create_namespace, true)
   chart            = try(var.kube_prometheus_stack.chart, "kube-prometheus-stack")
-  chart_version    = try(var.kube_prometheus_stack.chart_version, "48.2.3") # TODO 56.x
+  chart_version    = try(var.kube_prometheus_stack.chart_version, "68.0.0") 
   repository       = try(var.kube_prometheus_stack.repository, "https://prometheus-community.github.io/helm-charts")
   values = concat(
     length(var.global_tolerations) > 0 ? [yamlencode({
