@@ -4,6 +4,14 @@ variable "tags" {
   default     = {}
 }
 
+# --- Add this block for Global Tolerations ---
+variable "global_tolerations" {
+  description = "A list of tolerations to apply to all supported Helm charts"
+  type        = list(any)
+  default     = []
+}
+# ---------------------------------------------
+
 variable "cluster_name" {
   description = "Name of the EKS cluster"
   type        = string
@@ -15,7 +23,7 @@ variable "cluster_endpoint" {
 }
 
 variable "cluster_version" {
-  description = "Kubernetes `<major>.<minor>` version to use for the EKS cluster (i.e.: `1.24`)"
+  description = "Kubernetes <major>.<minor> version to use for the EKS cluster (i.e.: 1.24)"
   type        = string
 }
 
@@ -31,7 +39,7 @@ variable "create_delay_duration" {
 }
 
 variable "create_delay_dependencies" {
-  description = "Dependency attribute which must be resolved before starting the `create_delay_duration`"
+  description = "Dependency attribute which must be resolved before starting the create_delay_duration"
   type        = list(string)
   default     = []
 }
@@ -317,7 +325,7 @@ variable "cluster_proportional_autoscaler" {
 ################################################################################
 
 variable "eks_addons" {
-  description = "Map of EKS add-on configurations to enable for the cluster. Add-on name can be the map keys or set with `name`"
+  description = "Map of EKS add-on configurations to enable for the cluster. Add-on name can be the map keys or set with name"
   type        = any
   default     = {}
 }
