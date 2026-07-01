@@ -202,6 +202,12 @@ variable "aws_load_balancer_controller" {
   default     = {}
 }
 
+variable "enable_aws_load_balancer_controller_aga" {
+  description = "Enable AWS Load Balancer Controller Global Accelerator (AGA) IAM policy"
+  type        = bool
+  default     = false
+}
+
 ################################################################################
 # AWS Node Termination Handler
 ################################################################################
