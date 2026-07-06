@@ -142,7 +142,7 @@ module "argo_rollouts" {
   replace                    = try(var.argo_rollouts.replace, null)
   lint                       = try(var.argo_rollouts.lint, null)
 
-  postrender    = try(var.argo_rollouts.postrender, [])
+  postrender    = try(var.argo_rollouts.postrender, null)
   set           = try(var.argo_rollouts.set, [])
   set_sensitive = try(var.argo_rollouts.set_sensitive, [])
 
@@ -199,7 +199,7 @@ module "argo_workflows" {
   replace                    = try(var.argo_workflows.replace, null)
   lint                       = try(var.argo_workflows.lint, null)
 
-  postrender    = try(var.argo_workflows.postrender, [])
+  postrender    = try(var.argo_workflows.postrender, null)
   set           = try(var.argo_workflows.set, [])
   set_sensitive = try(var.argo_workflows.set_sensitive, [])
 
@@ -256,7 +256,7 @@ module "argocd" {
   replace                    = try(var.argocd.replace, null)
   lint                       = try(var.argocd.lint, null)
 
-  postrender    = try(var.argocd.postrender, [])
+  postrender    = try(var.argocd.postrender, null)
   set           = try(var.argocd.set, [])
   set_sensitive = try(var.argocd.set_sensitive, [])
 
@@ -313,7 +313,7 @@ module "argo_events" {
   replace                    = try(var.argo_events.replace, null)
   lint                       = try(var.argo_events.lint, null)
 
-  postrender    = try(var.argo_events.postrender, [])
+  postrender    = try(var.argo_events.postrender, null)
   set           = try(var.argo_events.set, [])
   set_sensitive = try(var.argo_events.set_sensitive, [])
 
@@ -2405,7 +2405,7 @@ module "cluster_proportional_autoscaler" {
   replace                    = try(var.cluster_proportional_autoscaler.replace, null)
   lint                       = try(var.cluster_proportional_autoscaler.lint, null)
 
-  postrender    = try(var.cluster_proportional_autoscaler.postrender, [])
+  postrender    = try(var.cluster_proportional_autoscaler.postrender, null)
   set           = try(var.cluster_proportional_autoscaler.set, [])
   set_sensitive = try(var.cluster_proportional_autoscaler.set_sensitive, [])
 
@@ -2940,7 +2940,7 @@ module "gatekeeper" {
   replace                    = try(var.gatekeeper.replace, null)
   lint                       = try(var.gatekeeper.lint, null)
 
-  postrender    = try(var.gatekeeper.postrender, [])
+  postrender    = try(var.gatekeeper.postrender, null)
   set           = try(var.gatekeeper.set, [])
   set_sensitive = try(var.gatekeeper.set_sensitive, [])
 
@@ -2997,7 +2997,7 @@ module "ingress_nginx" {
   replace                    = try(var.ingress_nginx.replace, null)
   lint                       = try(var.ingress_nginx.lint, null)
 
-  postrender    = try(var.ingress_nginx.postrender, [])
+  postrender    = try(var.ingress_nginx.postrender, null)
   set           = try(var.ingress_nginx.set, [])
   set_sensitive = try(var.ingress_nginx.set_sensitive, [])
 
@@ -3421,7 +3421,7 @@ module "kube_prometheus_stack" {
   replace                    = try(var.kube_prometheus_stack.replace, null)
   lint                       = try(var.kube_prometheus_stack.lint, null)
 
-  postrender    = try(var.kube_prometheus_stack.postrender, [])
+  postrender    = try(var.kube_prometheus_stack.postrender, null)
   set           = try(var.kube_prometheus_stack.set, [])
   set_sensitive = try(var.kube_prometheus_stack.set_sensitive, [])
 
@@ -3478,7 +3478,7 @@ module "metrics_server" {
   replace                    = try(var.metrics_server.replace, null)
   lint                       = try(var.metrics_server.lint, null)
 
-  postrender    = try(var.metrics_server.postrender, [])
+  postrender    = try(var.metrics_server.postrender, null)
   set           = try(var.metrics_server.set, [])
   set_sensitive = try(var.metrics_server.set_sensitive, [])
 
@@ -3535,7 +3535,7 @@ module "secrets_store_csi_driver" {
   replace                    = try(var.secrets_store_csi_driver.replace, null)
   lint                       = try(var.secrets_store_csi_driver.lint, null)
 
-  postrender    = try(var.secrets_store_csi_driver.postrender, [])
+  postrender    = try(var.secrets_store_csi_driver.postrender, null)
   set           = try(var.secrets_store_csi_driver.set, [])
   set_sensitive = try(var.secrets_store_csi_driver.set_sensitive, [])
 
@@ -3592,7 +3592,7 @@ module "secrets_store_csi_driver_provider_aws" {
   replace                    = try(var.secrets_store_csi_driver_provider_aws.replace, null)
   lint                       = try(var.secrets_store_csi_driver_provider_aws.lint, null)
 
-  postrender    = try(var.secrets_store_csi_driver_provider_aws.postrender, [])
+  postrender    = try(var.secrets_store_csi_driver_provider_aws.postrender, null)
   set           = try(var.secrets_store_csi_driver_provider_aws.set, [])
   set_sensitive = try(var.secrets_store_csi_driver_provider_aws.set_sensitive, [])
 
@@ -4022,7 +4022,7 @@ module "bottlerocket_shadow" {
   replace                    = try(var.bottlerocket_shadow.replace, null)
   lint                       = try(var.bottlerocket_shadow.lint, null)
 
-  postrender    = try(var.bottlerocket_shadow.postrender, [])
+  postrender    = try(var.bottlerocket_shadow.postrender, null)
   set           = try(var.bottlerocket_shadow.set, [])
   set_sensitive = try(var.bottlerocket_shadow.set_sensitive, [])
 
@@ -4076,7 +4076,7 @@ module "bottlerocket_update_operator" {
   replace                    = try(var.bottlerocket_update_operator.replace, null)
   lint                       = try(var.bottlerocket_update_operator.lint, null)
 
-  postrender    = try(var.bottlerocket_update_operator.postrender, [])
+  postrender    = try(var.bottlerocket_update_operator.postrender, null)
   set           = try(var.bottlerocket_update_operator.set, [])
   set_sensitive = try(var.bottlerocket_update_operator.set_sensitive, [])
 
