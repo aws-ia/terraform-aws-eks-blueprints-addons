@@ -39,7 +39,7 @@ resource "helm_release" "this" {
   dependency_update          = try(each.value.dependency_update, null)
   replace                    = try(each.value.replace, null)
   lint                       = try(each.value.lint, null)
-  postrender                 = try(each.value.postrender, [])
+  postrender                 = try(each.value.postrender, null)
   set                        = try(each.value.set, [])
   set_sensitive              = try(each.value.set_sensitive, [])
 
