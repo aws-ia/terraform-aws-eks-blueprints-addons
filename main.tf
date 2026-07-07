@@ -114,8 +114,10 @@ module "argo_rollouts" {
   chart            = try(var.argo_rollouts.chart, "argo-rollouts")
   chart_version    = try(var.argo_rollouts.chart_version, "2.34.3")
   repository       = try(var.argo_rollouts.repository, "https://argoproj.github.io/argo-helm")
-  values           = try(var.argo_rollouts.values, [])
-
+  values = concat(
+    length(var.global_tolerations) > 0 ? [yamlencode({ tolerations = var.global_tolerations })] : [],
+    try(var.argo_rollouts.values, [])
+  )
   timeout                    = try(var.argo_rollouts.timeout, null)
   repository_key_file        = try(var.argo_rollouts.repository_key_file, null)
   repository_cert_file       = try(var.argo_rollouts.repository_cert_file, null)
@@ -169,9 +171,12 @@ module "argo_workflows" {
   namespace        = try(var.argo_workflows.namespace, "argo-workflows")
   create_namespace = try(var.argo_workflows.create_namespace, true)
   chart            = try(var.argo_workflows.chart, "argo-workflows")
-  chart_version    = try(var.argo_workflows.chart_version, "0.40.14")
+  chart_version    = try(var.argo_workflows.chart_version, "0.44.2")
   repository       = try(var.argo_workflows.repository, "https://argoproj.github.io/argo-helm")
-  values           = try(var.argo_workflows.values, [])
+  values = concat(
+    length(var.global_tolerations) > 0 ? [yamlencode({ tolerations = var.global_tolerations })] : [],
+    try(var.argo_workflows.values, [])
+  )
 
   timeout                    = try(var.argo_workflows.timeout, null)
   repository_key_file        = try(var.argo_workflows.repository_key_file, null)
@@ -226,9 +231,12 @@ module "argocd" {
   namespace        = try(var.argocd.namespace, "argocd")
   create_namespace = try(var.argocd.create_namespace, true)
   chart            = try(var.argocd.chart, "argo-cd")
-  chart_version    = try(var.argocd.chart_version, "5.55.0") # TODO - v6.x
+  chart_version    = try(var.argocd.chart_version, "7.7.0") 
   repository       = try(var.argocd.repository, "https://argoproj.github.io/argo-helm")
-  values           = try(var.argocd.values, [])
+  values = concat(
+    length(var.global_tolerations) > 0 ? [yamlencode({ tolerations = var.global_tolerations })] : [],
+    try(var.argocd.values, [])
+  )
 
   timeout                    = try(var.argocd.timeout, null)
   repository_key_file        = try(var.argocd.repository_key_file, null)
@@ -264,6 +272,118 @@ module "argocd" {
 }
 
 ################################################################################
+# ArgoCD Image Updater
+################################################################################
+
+data "aws_iam_policy_document" "argocd_image_updater" {
+  count = var.enable_argocd_image_updater ? 1 : 0
+
+  source_policy_documents   = lookup(var.argocd_image_updater, "source_policy_documents", [])
+  override_policy_documents = lookup(var.argocd_image_updater, "override_policy_documents", [])
+
+  statement {
+    sid       = "ECRGetAuthorizationToken"
+    actions   = ["ecr:GetAuthorizationToken"]
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "ECRReadAccess"
+    actions = [
+      "ecr:BatchGetImage",
+      "ecr:DescribeImages",
+      "ecr:DescribeRepositories",
+      "ecr:ListImages",
+      "ecr:GetDownloadUrlForLayer",
+    ]
+    resources = ["arn:${local.partition}:ecr:${local.region}:${local.account_id}:repository/*"]
+  }
+}
+
+module "argocd_image_updater" {
+  source  = "aws-ia/eks-blueprints-addon/aws"
+  version = "1.1.1"
+
+  create = var.enable_argocd_image_updater
+
+  create_release = var.create_kubernetes_resources
+
+  name             = try(var.argocd_image_updater.name, "argocd-image-updater")
+  description      = try(var.argocd_image_updater.description, "A Helm chart for ArgoCD Image Updater")
+  namespace        = try(var.argocd_image_updater.namespace, "argocd")
+  create_namespace = try(var.argocd_image_updater.create_namespace, false)
+  chart            = try(var.argocd_image_updater.chart, "argocd-image-updater")
+  chart_version    = try(var.argocd_image_updater.chart_version, "1.2.2")
+  repository       = try(var.argocd_image_updater.repository, "https://argoproj.github.io/argo-helm")
+  values = concat(
+    length(var.global_tolerations) > 0 ? [yamlencode({ tolerations = var.global_tolerations })] : [],
+    try(var.argocd_image_updater.values, [])
+  )
+
+  timeout                    = try(var.argocd_image_updater.timeout, null)
+  repository_key_file        = try(var.argocd_image_updater.repository_key_file, null)
+  repository_cert_file       = try(var.argocd_image_updater.repository_cert_file, null)
+  repository_ca_file         = try(var.argocd_image_updater.repository_ca_file, null)
+  repository_username        = try(var.argocd_image_updater.repository_username, null)
+  repository_password        = try(var.argocd_image_updater.repository_password, null)
+  devel                      = try(var.argocd_image_updater.devel, null)
+  verify                     = try(var.argocd_image_updater.verify, null)
+  keyring                    = try(var.argocd_image_updater.keyring, null)
+  disable_webhooks           = try(var.argocd_image_updater.disable_webhooks, null)
+  reuse_values               = try(var.argocd_image_updater.reuse_values, null)
+  reset_values               = try(var.argocd_image_updater.reset_values, null)
+  force_update               = try(var.argocd_image_updater.force_update, null)
+  recreate_pods              = try(var.argocd_image_updater.recreate_pods, null)
+  cleanup_on_fail            = try(var.argocd_image_updater.cleanup_on_fail, null)
+  max_history                = try(var.argocd_image_updater.max_history, null)
+  atomic                     = try(var.argocd_image_updater.atomic, null)
+  skip_crds                  = try(var.argocd_image_updater.skip_crds, null)
+  render_subchart_notes      = try(var.argocd_image_updater.render_subchart_notes, null)
+  disable_openapi_validation = try(var.argocd_image_updater.disable_openapi_validation, null)
+  wait                       = try(var.argocd_image_updater.wait, false)
+  wait_for_jobs              = try(var.argocd_image_updater.wait_for_jobs, null)
+  dependency_update          = try(var.argocd_image_updater.dependency_update, null)
+  replace                    = try(var.argocd_image_updater.replace, null)
+  lint                       = try(var.argocd_image_updater.lint, null)
+
+  postrender = try(var.argocd_image_updater.postrender, [])
+  set = concat([
+    {
+      name  = "serviceAccount.name"
+      value = try(var.argocd_image_updater.service_account_name, "argocd-image-updater-sa")
+    }],
+    try(var.argocd_image_updater.set, [])
+  )
+  set_sensitive = try(var.argocd_image_updater.set_sensitive, [])
+
+  set_irsa_names                = ["serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"]
+  create_role                   = try(var.argocd_image_updater.create_role, true)
+  role_name                     = try(var.argocd_image_updater.role_name, "argocd-image-updater")
+  role_name_use_prefix          = try(var.argocd_image_updater.role_name_use_prefix, true)
+  role_path                     = try(var.argocd_image_updater.role_path, "/")
+  role_permissions_boundary_arn = lookup(var.argocd_image_updater, "role_permissions_boundary_arn", null)
+  role_description              = try(var.argocd_image_updater.role_description, "IRSA for ArgoCD Image Updater")
+  role_policies                 = lookup(var.argocd_image_updater, "role_policies", {})
+
+  source_policy_documents = data.aws_iam_policy_document.argocd_image_updater[*].json
+  policy_statements       = lookup(var.argocd_image_updater, "policy_statements", [])
+  policy_name             = try(var.argocd_image_updater.policy_name, "argocd-image-updater")
+  policy_name_use_prefix  = try(var.argocd_image_updater.policy_name_use_prefix, true)
+  policy_path             = try(var.argocd_image_updater.policy_path, null)
+  policy_description      = try(var.argocd_image_updater.policy_description, "IAM Policy for ArgoCD Image Updater")
+
+  oidc_providers = {
+    this = {
+      provider_arn    = local.oidc_provider_arn
+      service_account = try(var.argocd_image_updater.service_account_name, "argocd-image-updater-sa")
+    }
+  }
+
+  tags = var.tags
+}
+
+
+################################################################################
 # Argo Events
 ################################################################################
 
@@ -283,9 +403,12 @@ module "argo_events" {
   namespace        = try(var.argo_events.namespace, "argo-events")
   create_namespace = try(var.argo_events.create_namespace, true)
   chart            = try(var.argo_events.chart, "argo-events")
-  chart_version    = try(var.argo_events.chart_version, "2.4.3")
+  chart_version    = try(var.argo_events.chart_version, "2.5.0")
   repository       = try(var.argo_events.repository, "https://argoproj.github.io/argo-helm")
-  values           = try(var.argo_events.values, [])
+  values = concat(
+    length(var.global_tolerations) > 0 ? [yamlencode({ tolerations = var.global_tolerations })] : [],
+    try(var.argo_events.values, [])
+  )
 
   timeout                    = try(var.argo_events.timeout, null)
   repository_key_file        = try(var.argo_events.repository_key_file, null)
@@ -517,7 +640,7 @@ module "aws_efs_csi_driver" {
   namespace        = local.aws_efs_csi_driver_namespace
   create_namespace = try(var.aws_efs_csi_driver.create_namespace, false)
   chart            = try(var.aws_efs_csi_driver.chart, "aws-efs-csi-driver")
-  chart_version    = try(var.aws_efs_csi_driver.chart_version, "2.5.6")
+  chart_version    = try(var.aws_efs_csi_driver.chart_version, "3.2.0")
   repository       = try(var.aws_efs_csi_driver.repository, "https://kubernetes-sigs.github.io/aws-efs-csi-driver/")
   values           = try(var.aws_efs_csi_driver.values, [])
 
@@ -1496,7 +1619,7 @@ module "aws_load_balancer_controller" {
   skip_crds                  = try(var.aws_load_balancer_controller.skip_crds, null)
   render_subchart_notes      = try(var.aws_load_balancer_controller.render_subchart_notes, null)
   disable_openapi_validation = try(var.aws_load_balancer_controller.disable_openapi_validation, null)
-  wait                       = try(var.aws_load_balancer_controller.wait, false)
+  wait                       = try(var.aws_load_balancer_controller.wait, null)
   wait_for_jobs              = try(var.aws_load_balancer_controller.wait_for_jobs, null)
   dependency_update          = try(var.aws_load_balancer_controller.dependency_update, null)
   replace                    = try(var.aws_load_balancer_controller.replace, null)
@@ -2111,9 +2234,12 @@ module "cert_manager" {
   namespace        = local.cert_manager_namespace
   create_namespace = try(var.cert_manager.create_namespace, true)
   chart            = try(var.cert_manager.chart, "cert-manager")
-  chart_version    = try(var.cert_manager.chart_version, "v1.14.3")
+  chart_version    = try(var.cert_manager.chart_version, "v1.17.1")
   repository       = try(var.cert_manager.repository, "https://charts.jetstack.io")
-  values           = try(var.cert_manager.values, [])
+  values = concat(
+    length(var.global_tolerations) > 0 ? [yamlencode({ tolerations = var.global_tolerations })] : [],
+    try(var.cert_manager.values, [])
+  )
 
   timeout                    = try(var.cert_manager.timeout, null)
   repository_key_file        = try(var.cert_manager.repository_key_file, null)
@@ -2273,7 +2399,10 @@ module "cluster_autoscaler" {
   chart            = try(var.cluster_autoscaler.chart, "cluster-autoscaler")
   chart_version    = try(var.cluster_autoscaler.chart_version, "9.35.0")
   repository       = try(var.cluster_autoscaler.repository, "https://kubernetes.github.io/autoscaler")
-  values           = try(var.cluster_autoscaler.values, [])
+  values = concat(
+    length(var.global_tolerations) > 0 ? [yamlencode({ tolerations = var.global_tolerations })] : [],
+    try(var.cluster_autoscaler.values, [])
+  )
 
   timeout                    = try(var.cluster_autoscaler.timeout, null)
   repository_key_file        = try(var.cluster_autoscaler.repository_key_file, null)
@@ -2967,9 +3096,12 @@ module "ingress_nginx" {
   namespace        = try(var.ingress_nginx.namespace, "ingress-nginx")
   create_namespace = try(var.ingress_nginx.create_namespace, true)
   chart            = try(var.ingress_nginx.chart, "ingress-nginx")
-  chart_version    = try(var.ingress_nginx.chart_version, "4.12.1")
+  chart_version    = try(var.ingress_nginx.chart_version, "4.12.0")
   repository       = try(var.ingress_nginx.repository, "https://kubernetes.github.io/ingress-nginx")
-  values           = try(var.ingress_nginx.values, [])
+  values = concat(
+    length(var.global_tolerations) > 0 ? [yamlencode({ controller = { tolerations = var.global_tolerations } })] : [],
+    try(var.ingress_nginx.values, [])
+  )
 
   timeout                    = try(var.ingress_nginx.timeout, null)
   repository_key_file        = try(var.ingress_nginx.repository_key_file, null)
@@ -3391,9 +3523,16 @@ module "kube_prometheus_stack" {
   namespace        = try(var.kube_prometheus_stack.namespace, "kube-prometheus-stack")
   create_namespace = try(var.kube_prometheus_stack.create_namespace, true)
   chart            = try(var.kube_prometheus_stack.chart, "kube-prometheus-stack")
-  chart_version    = try(var.kube_prometheus_stack.chart_version, "48.2.3") # TODO 56.x
+  chart_version    = try(var.kube_prometheus_stack.chart_version, "68.0.0") 
   repository       = try(var.kube_prometheus_stack.repository, "https://prometheus-community.github.io/helm-charts")
-  values           = try(var.kube_prometheus_stack.values, [])
+  values = concat(
+    length(var.global_tolerations) > 0 ? [yamlencode({
+      prometheus = { prometheusSpec = { tolerations = var.global_tolerations } }
+      alertmanager = { alertmanagerSpec = { tolerations = var.global_tolerations } }
+      grafana = { tolerations = var.global_tolerations }
+    })] : [],
+    try(var.kube_prometheus_stack.values, [])
+  )
 
   timeout                    = try(var.kube_prometheus_stack.timeout, null)
   repository_key_file        = try(var.kube_prometheus_stack.repository_key_file, null)
