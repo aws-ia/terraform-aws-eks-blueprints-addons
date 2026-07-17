@@ -2197,6 +2197,8 @@ locals {
   cluster_autoscaler_image_tag_selected = try(var.cluster_autoscaler.image_tag_override, local.cluster_autoscaler_image_tag[var.cluster_version], "v${var.cluster_version}.0")
 
   # Lookup map to pull latest cluster-autoscaler patch version given the cluster version
+  # This map silently goes stale unless someone hand-edits it to include newer cluster-autoscaler releases (found here: https://github.com/kubernetes/autoscaler/releases) - versions missing here silently fall back to "v<cluster_version>.0" unless image_tag_override is set.
+  # Requested update after this went stale: https://github.com/aws-ia/terraform-aws-eks-blueprints-addons/issues/496
   cluster_autoscaler_image_tag = {
     "1.20" = "v1.20.3"
     "1.21" = "v1.21.3"
@@ -2211,7 +2213,9 @@ locals {
     "1.30" = "v1.30.4"
     "1.31" = "v1.31.2"
     "1.32" = "v1.32.1"
-    "1.33" = "v1.32.1"
+    "1.33" = "v1.33.5"
+    "1.34" = "v1.34.4"
+    "1.35" = "v1.35.1"
   }
 }
 
