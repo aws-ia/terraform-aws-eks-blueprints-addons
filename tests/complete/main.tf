@@ -162,10 +162,25 @@ module "eks_blueprints_addons" {
   enable_aws_node_termination_handler   = true
   aws_node_termination_handler_asg_arns = [for asg in module.eks.self_managed_node_groups : asg.autoscaling_group_arn]
 
+  # Installed before every other add-on in this module
+  pre_helm_releases = {
+    karpenter-crd = {
+      description   = "A Helm chart for Karpenter CRDs"
+      namespace     = "kube-system"
+      chart         = "karpenter-crd"
+      chart_version = "0.37.0"
+      repository    = "oci://public.ecr.aws/karpenter"
+      # ECR login required
+      repository_username = data.aws_ecrpublic_authorization_token.token.user_name
+      repository_password = data.aws_ecrpublic_authorization_token.token.password
+    }
+  }
+
   enable_karpenter                           = true
   karpenter_enable_instance_profile_creation = true
   # ECR login required
   karpenter = {
+    skip_crds           = true
     repository_username = data.aws_ecrpublic_authorization_token.token.user_name
     repository_password = data.aws_ecrpublic_authorization_token.token.password
   }
