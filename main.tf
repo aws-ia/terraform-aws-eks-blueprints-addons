@@ -13,6 +13,9 @@ resource "time_sleep" "this" {
     custom            = join(",", var.create_delay_dependencies)
     oidc_provider_arn = var.oidc_provider_arn
   }
+
+  # Every add-on in this module is installed after the `pre_helm_releases`
+  depends_on = [helm_release.pre]
 }
 
 locals {

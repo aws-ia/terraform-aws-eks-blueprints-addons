@@ -86,6 +86,39 @@ terraform apply -target=module.addons
 terraform destroy -target=module.addons
 ```
 
+### Installing Helm releases before the add-ons
+
+Helm installs the CRDs from a chart's `crds/` directory only on the first install and never upgrades or deletes them. Projects such as [Karpenter](https://karpenter.sh/docs/upgrading/upgrade-guide/#crd-upgrades) therefore ship the CRDs as a separate chart, which has to be installed before the chart that uses them.
+
+Releases passed in `pre_helm_releases` are installed before every other add-on in this module (including `helm_releases`). They take the same attributes as `helm_releases`. E.g.
+
+```hcl
+module "addons" {
+  source  = "aws-ia/eks-blueprints-addons/aws"
+  version = "~> 1.0"
+
+  ...
+
+  pre_helm_releases = {
+    karpenter-crd = {
+      namespace     = "kube-system"
+      chart         = "karpenter-crd"
+      chart_version = "1.6.0"
+      repository    = "oci://public.ecr.aws/karpenter"
+    }
+  }
+
+  enable_karpenter = true
+  karpenter = {
+    chart_version = "1.6.0"
+  }
+}
+```
+
+Optionally, set `skip_crds = true` on the add-on so that its chart does not install the CRDs from its own `crds/` directory.
+
+Releases in `pre_helm_releases` do not wait for the Amazon EKS add-ons created by this module through `eks_addons`, because those add-ons are themselves created after `pre_helm_releases`. Use `create_delay_dependencies` to wait for the add-ons created outside of this module (e.g. by the `terraform-aws-modules/eks/aws` module).
+
 ## With EKS Blueprints Addon Module
 
 If you have an add-on that requires an IAM Role for Service Account (IRSA), we have created a new Terraform module [terraform-aws-eks-blueprints-addon](https://registry.terraform.io/modules/aws-ia/eks-blueprints-addon/aws/latest) that can help provision a Helm chart along with an IAM role and policies with permissions required for the add-on to function properly. We use this module for all of the add-ons that are provisioned by EKS Blueprints Add-ons today.
