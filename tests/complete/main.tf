@@ -180,7 +180,6 @@ module "eks_blueprints_addons" {
   karpenter_enable_instance_profile_creation = true
   # ECR login required
   karpenter = {
-    skip_crds           = true
     repository_username = data.aws_ecrpublic_authorization_token.token.user_name
     repository_password = data.aws_ecrpublic_authorization_token.token.password
   }

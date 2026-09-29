@@ -111,10 +111,11 @@ module "addons" {
   enable_karpenter = true
   karpenter = {
     chart_version = "1.6.0"
-    skip_crds     = true
   }
 }
 ```
+
+Optionally, set `skip_crds = true` on the add-on so that its chart does not install the CRDs from its own `crds/` directory.
 
 Releases in `pre_helm_releases` do not wait for the Amazon EKS add-ons created by this module through `eks_addons`, because those add-ons are themselves created after `pre_helm_releases`. Use `create_delay_dependencies` to wait for the add-ons created outside of this module (e.g. by the `terraform-aws-modules/eks/aws` module).
 
