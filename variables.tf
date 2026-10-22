@@ -466,6 +466,12 @@ variable "karpenter_enable_instance_profile_creation" {
   default     = true
 }
 
+variable "karpenter_enable_access_entry" {
+  description = "Determines whether to create an EKS access entry for the Karpenter node IAM role, so the nodes launched by Karpenter can join a cluster that uses access entries for authentication"
+  type        = bool
+  default     = false
+}
+
 variable "karpenter_sqs" {
   description = "Karpenter SQS queue for native node termination handling configuration values"
   type        = any

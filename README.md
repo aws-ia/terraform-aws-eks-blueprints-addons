@@ -68,7 +68,7 @@ module "eks" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.2 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.33 |
 | <a name="requirement_helm"></a> [helm](#requirement\_helm) | >= 3.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2.20 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.6 |
@@ -78,7 +78,7 @@ module "eks" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.33 |
 | <a name="provider_helm"></a> [helm](#provider\_helm) | >= 3.0 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.20 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.6 |
@@ -132,6 +132,7 @@ module "eks" {
 | [aws_cloudwatch_event_target.karpenter](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
 | [aws_cloudwatch_log_group.aws_for_fluentbit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
 | [aws_cloudwatch_log_group.fargate_fluentbit](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
+| [aws_eks_access_entry.karpenter](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_access_entry) | resource |
 | [aws_eks_addon.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_addon) | resource |
 | [aws_iam_instance_profile.karpenter](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile) | resource |
 | [aws_iam_policy.aws_load_balancer_controller_aga](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
@@ -243,6 +244,7 @@ module "eks" {
 | <a name="input_helm_releases"></a> [helm\_releases](#input\_helm\_releases) | A map of Helm releases to create. This provides the ability to pass in an arbitrary map of Helm chart definitions to create | `any` | `{}` | no |
 | <a name="input_ingress_nginx"></a> [ingress\_nginx](#input\_ingress\_nginx) | Ingress Nginx add-on configurations | `any` | `{}` | no |
 | <a name="input_karpenter"></a> [karpenter](#input\_karpenter) | Karpenter add-on configuration values | `any` | `{}` | no |
+| <a name="input_karpenter_enable_access_entry"></a> [karpenter\_enable\_access\_entry](#input\_karpenter\_enable\_access\_entry) | Determines whether to create an EKS access entry for the Karpenter node IAM role, so the nodes launched by Karpenter can join a cluster that uses access entries for authentication | `bool` | `false` | no |
 | <a name="input_karpenter_enable_instance_profile_creation"></a> [karpenter\_enable\_instance\_profile\_creation](#input\_karpenter\_enable\_instance\_profile\_creation) | Determines whether Karpenter will be allowed to create the IAM instance profile (v1beta1) or if Terraform will (v1alpha1) | `bool` | `true` | no |
 | <a name="input_karpenter_enable_spot_termination"></a> [karpenter\_enable\_spot\_termination](#input\_karpenter\_enable\_spot\_termination) | Determines whether to enable native node termination handling | `bool` | `true` | no |
 | <a name="input_karpenter_node"></a> [karpenter\_node](#input\_karpenter\_node) | Karpenter IAM role and IAM instance profile configuration values | `any` | `{}` | no |
