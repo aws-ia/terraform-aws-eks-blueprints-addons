@@ -52,6 +52,12 @@ variable "helm_releases" {
   default     = {}
 }
 
+variable "pre_helm_releases" {
+  description = "A map of Helm releases to create before any other add-on in this module (e.g. CRD-only charts). Takes the same attributes as `helm_releases`"
+  type        = any
+  default     = {}
+}
+
 ################################################################################
 # Argo Rollouts
 ################################################################################
