@@ -115,7 +115,13 @@ module "addons" {
 }
 ```
 
+Keep the version of the CRD chart in step with the version of the add-on that uses it (`1.6.0` for both above).
+
 Optionally, set `skip_crds = true` on the add-on so that its chart does not install the CRDs from its own `crds/` directory.
+
+Like `helm_releases`, releases in `pre_helm_releases` default to `wait = false`: the add-ons are ordered after the pre releases are submitted, not after their resources are ready. Set `wait = true` on a pre release when the add-ons need its resources (e.g. a webhook or a controller) to be running first.
+
+When `pre_helm_releases` is set, `create_delay_duration` is applied twice: once before the pre releases and once more before the other add-ons.
 
 Releases in `pre_helm_releases` do not wait for the Amazon EKS add-ons created by this module through `eks_addons`, because those add-ons are themselves created after `pre_helm_releases`. Use `create_delay_dependencies` to wait for the add-ons created outside of this module (e.g. by the `terraform-aws-modules/eks/aws` module).
 
