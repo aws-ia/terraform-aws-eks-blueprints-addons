@@ -402,6 +402,19 @@
     With helm_releases Variable
   </a>
   
+    <nav class="md-nav" aria-label="With helm_releases Variable">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installing-helm-releases-before-the-add-ons" class="md-nav__link">
+    Installing Helm releases before the add-ons
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1040,6 +1053,19 @@
     With helm_releases Variable
   </a>
   
+    <nav class="md-nav" aria-label="With helm_releases Variable">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installing-helm-releases-before-the-add-ons" class="md-nav__link">
+    Installing Helm releases before the add-ons
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1077,14 +1103,14 @@
 <h2 id="with-helm_releases-variable">With <code>helm_releases</code> Variable<a class="headerlink" href="#with-helm_releases-variable" title="Permanent link">&para;</a></h2>
 <p>You can use the <code>helm_releases</code> variable in <a href="https://registry.terraform.io/modules/aws-ia/eks-blueprints-addons/aws/latest?tab=inputs">EKS Blueprints Add-ons</a> to provide a map of add-ons and their respective Helm configuration. Under the hood, we just iterate through the provided map and pass each configuration to the Terraform <a href="https://registry.terraform.io/providers/hashicorp/helm/latest/docs/resources/release">helm_release</a> resource.</p>
 <p>E.g.</p>
-<div class="language-hcl highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kr">module</span><span class="w"> </span><span class="nv">&quot;addons&quot;</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="na">source</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;aws-ia/eks-blueprints-addons/aws&quot;</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="na">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;~&gt; 1.0&quot;</span>
+<div class="language-hcl highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kr">module</span><span class="w"> </span><span class="nv">"addons"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="na">source</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">"aws-ia/eks-blueprints-addons/aws"</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="na">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"~&gt; 1.0"</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="na">cluster_name</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&lt;cluster_name&gt;&quot;</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="na">cluster_endpoint</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&lt;cluster_endpoint&gt;&quot;</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="na">cluster_version</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&lt;cluster_version&gt;&quot;</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="na">oidc_provider_arn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&lt;oidc_provider_arn&gt;&quot;</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="na">cluster_name</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="s2">"&lt;cluster_name&gt;"</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="na">cluster_endpoint</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">"&lt;cluster_endpoint&gt;"</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="na">cluster_version</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="s2">"&lt;cluster_version&gt;"</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="na">oidc_provider_arn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"&lt;oidc_provider_arn&gt;"</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1">  # EKS add-ons</span>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="nb">eks_addons</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
@@ -1102,12 +1128,12 @@
 </span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="c1">  # Pass in any number of Helm charts to be created for those that are not natively supported</span>
 </span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">  </span><span class="nb">helm_releases</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">    </span><span class="nb">prometheus-adapter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">      </span><span class="na">description</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;A Helm chart for k8s prometheus adapter&quot;</span>
-</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="w">      </span><span class="na">namespace</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;prometheus-adapter&quot;</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">      </span><span class="na">description</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="s2">"A Helm chart for k8s prometheus adapter"</span>
+</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="w">      </span><span class="na">namespace</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">"prometheus-adapter"</span>
 </span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="w">      </span><span class="na">create_namespace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
-</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="w">      </span><span class="na">chart</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;prometheus-adapter&quot;</span>
-</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="w">      </span><span class="na">chart_version</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;4.2.0&quot;</span>
-</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="w">      </span><span class="na">repository</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;https://prometheus-community.github.io/helm-charts&quot;</span>
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="w">      </span><span class="na">chart</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="s2">"prometheus-adapter"</span>
+</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="w">      </span><span class="na">chart_version</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s2">"4.2.0"</span>
+</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="w">      </span><span class="na">repository</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://prometheus-community.github.io/helm-charts"</span>
 </span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="w">      </span><span class="na">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
 </span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="w">        </span><span class="o">&lt;&lt;-</span><span class="dl">EOT</span>
 </span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="sh">          replicas: 2</span>
@@ -1117,12 +1143,12 @@
 </span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a><span class="w">      </span><span class="p">]</span>
 </span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a><span class="w">    </span><span class="p">}</span>
 </span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a><span class="w">    </span><span class="nb">gpu-operator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a><span class="w">      </span><span class="na">description</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;A Helm chart for NVIDIA GPU operator&quot;</span>
-</span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a><span class="w">      </span><span class="na">namespace</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;gpu-operator&quot;</span>
+</span><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a><span class="w">      </span><span class="na">description</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="s2">"A Helm chart for NVIDIA GPU operator"</span>
+</span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a><span class="w">      </span><span class="na">namespace</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="s2">"gpu-operator"</span>
 </span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a><span class="w">      </span><span class="na">create_namespace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
-</span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a><span class="w">      </span><span class="na">chart</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;gpu-operator&quot;</span>
-</span><span id="__span-0-45"><a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a><span class="w">      </span><span class="na">chart_version</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;v23.3.2&quot;</span>
-</span><span id="__span-0-46"><a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a><span class="w">      </span><span class="na">repository</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;https://nvidia.github.io/gpu-operator&quot;</span>
+</span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a><span class="w">      </span><span class="na">chart</span><span class="w">            </span><span class="o">=</span><span class="w"> </span><span class="s2">"gpu-operator"</span>
+</span><span id="__span-0-45"><a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a><span class="w">      </span><span class="na">chart_version</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s2">"v23.3.2"</span>
+</span><span id="__span-0-46"><a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a><span class="w">      </span><span class="na">repository</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="s2">"https://nvidia.github.io/gpu-operator"</span>
 </span><span id="__span-0-47"><a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a><span class="w">      </span><span class="na">values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
 </span><span id="__span-0-48"><a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a><span class="w">        </span><span class="o">&lt;&lt;-</span><span class="dl">EOT</span>
 </span><span id="__span-0-49"><a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a><span class="sh">          operator:</span>
@@ -1140,6 +1166,35 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>terraform<span class="w"> </span>destroy<span class="w"> </span>-target<span class="o">=</span>module.addons
 </span></code></pre></div>
+<h3 id="installing-helm-releases-before-the-add-ons">Installing Helm releases before the add-ons<a class="headerlink" href="#installing-helm-releases-before-the-add-ons" title="Permanent link">&para;</a></h3>
+<p>Helm installs the CRDs from a chart's <code>crds/</code> directory only on the first install and never upgrades or deletes them. Projects such as <a href="https://karpenter.sh/docs/upgrading/upgrade-guide/#crd-upgrades">Karpenter</a> therefore ship the CRDs as a separate chart, which has to be installed before the chart that uses them.</p>
+<p>Releases passed in <code>pre_helm_releases</code> are installed before every other add-on in this module (including <code>helm_releases</code>). They take the same attributes as <code>helm_releases</code>. E.g.</p>
+<div class="language-hcl highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kr">module</span><span class="w"> </span><span class="nv">"addons"</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="na">source</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="s2">"aws-ia/eks-blueprints-addons/aws"</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="na">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"~&gt; 1.0"</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="p">...</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="nb">pre_helm_releases</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="nb">karpenter-crd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">      </span><span class="na">namespace</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">"kube-system"</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">      </span><span class="na">chart</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="s2">"karpenter-crd"</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">      </span><span class="na">chart_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"1.6.0"</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">      </span><span class="na">repository</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s2">"oci://public.ecr.aws/karpenter"</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">  </span><span class="na">enable_karpenter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">true</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">  </span><span class="nb">karpenter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">    </span><span class="na">chart_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"1.6.0"</span>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>Keep the version of the CRD chart in step with the version of the add-on that uses it (<code>1.6.0</code> for both above).</p>
+<p>Optionally, set <code>skip_crds = true</code> on the add-on so that its chart does not install the CRDs from its own <code>crds/</code> directory.</p>
+<p>Like <code>helm_releases</code>, releases in <code>pre_helm_releases</code> default to <code>wait = false</code>: the add-ons are ordered after the pre releases are submitted, not after their resources are ready. Set <code>wait = true</code> on a pre release when the add-ons need its resources (e.g. a webhook or a controller) to be running first.</p>
+<p>When <code>pre_helm_releases</code> is set, <code>create_delay_duration</code> is applied twice: once before the pre releases and once more before the other add-ons.</p>
+<p>Releases in <code>pre_helm_releases</code> do not wait for the Amazon EKS add-ons created by this module through <code>eks_addons</code>, because those add-ons are themselves created after <code>pre_helm_releases</code>. Use <code>create_delay_dependencies</code> to wait for the add-ons created outside of this module (e.g. by the <code>terraform-aws-modules/eks/aws</code> module).</p>
 <h2 id="with-eks-blueprints-addon-module">With EKS Blueprints Addon Module<a class="headerlink" href="#with-eks-blueprints-addon-module" title="Permanent link">&para;</a></h2>
 <p>If you have an add-on that requires an IAM Role for Service Account (IRSA), we have created a new Terraform module <a href="https://registry.terraform.io/modules/aws-ia/eks-blueprints-addon/aws/latest">terraform-aws-eks-blueprints-addon</a> that can help provision a Helm chart along with an IAM role and policies with permissions required for the add-on to function properly. We use this module for all of the add-ons that are provisioned by EKS Blueprints Add-ons today.</p>
 <p>You can optionally use this module for add-ons that do not need IRSA or even just to create the IAM resources for IRSA and skip the helm release. Detailed usage of how to consume this module can be found in its <a href="https://github.com/aws-ia/terraform-aws-eks-blueprints-addon#readme">readme</a>.</p>
