@@ -180,6 +180,11 @@ output "helm_releases" {
   value       = helm_release.this
 }
 
+output "pre_helm_releases" {
+  description = "Map of attributes of the Helm releases created before the other add-ons"
+  value       = helm_release.pre
+}
+
 ################################################################################
 # GitOps Bridge
 ################################################################################
