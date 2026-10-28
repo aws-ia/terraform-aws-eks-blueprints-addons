@@ -178,6 +178,7 @@ module "eks_blueprints_addons" {
 
   enable_karpenter                           = true
   karpenter_enable_instance_profile_creation = true
+  karpenter_enable_access_entry              = true
   # ECR login required
   karpenter = {
     repository_username = data.aws_ecrpublic_authorization_token.token.user_name

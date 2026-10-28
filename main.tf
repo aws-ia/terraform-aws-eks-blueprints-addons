@@ -3284,6 +3284,16 @@ resource "aws_iam_instance_profile" "karpenter" {
   tags = merge(var.tags, try(var.karpenter_node.instance_profile_tags, {}))
 }
 
+resource "aws_eks_access_entry" "karpenter" {
+  count = var.enable_karpenter && var.karpenter_enable_access_entry ? 1 : 0
+
+  cluster_name  = var.cluster_name
+  principal_arn = local.karpenter_node_iam_role_arn
+  type          = try(var.karpenter_node.access_entry_type, "EC2_LINUX")
+
+  tags = merge(var.tags, try(var.karpenter_node.access_entry_tags, {}))
+}
+
 module "karpenter" {
   source  = "aws-ia/eks-blueprints-addon/aws"
   version = "1.3.0"

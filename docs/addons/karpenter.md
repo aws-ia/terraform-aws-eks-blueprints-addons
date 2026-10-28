@@ -8,6 +8,19 @@ If deploying a node template that uses `spot`, please ensure you have the Spot s
 aws iam create-service-linked-role --aws-service-name spot.amazonaws.com || true
 ```
 
+The nodes launched by Karpenter use the node IAM role created by this module (or the one passed in `karpenter_node.iam_role_arn`). On a cluster that uses access entries for authentication, the role needs an `EC2_LINUX` access entry to join the cluster. Set `karpenter_enable_access_entry = true` to have the module create it, or create it outside of the module from the `karpenter.node_iam_role_arn` output:
+
+```hcl
+module "eks_blueprints_addons" {
+  ...
+
+  enable_karpenter              = true
+  karpenter_enable_access_entry = true
+}
+```
+
+On a cluster that uses only the `aws-auth` ConfigMap, add the node IAM role to it instead.
+
 ## Validate
 
 The following command will update the `kubeconfig` on your local machine and allow you to interact with your EKS Cluster using `kubectl` to validate the CoreDNS deployment for Fargate.
