@@ -1211,7 +1211,7 @@ provided. If you are interested in contributing to EKS Blueprints, see the
 </tr>
 <tr>
 <td><a name="requirement_aws"></a> <a href="..#requirement_aws">aws</a></td>
-<td>&gt;= 5.0</td>
+<td>&gt;= 5.33</td>
 </tr>
 <tr>
 <td><a name="requirement_helm"></a> <a href="..#requirement_helm">helm</a></td>
@@ -1242,7 +1242,7 @@ provided. If you are interested in contributing to EKS Blueprints, see the
 <tbody>
 <tr>
 <td><a name="provider_aws"></a> <a href="..#provider_aws">aws</a></td>
-<td>&gt;= 5.0</td>
+<td>&gt;= 5.33</td>
 </tr>
 <tr>
 <td><a name="provider_helm"></a> <a href="..#provider_helm">helm</a></td>
@@ -1467,6 +1467,10 @@ provided. If you are interested in contributing to EKS Blueprints, see the
 </tr>
 <tr>
 <td><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group">aws_cloudwatch_log_group.fargate_fluentbit</a></td>
+<td>resource</td>
+</tr>
+<tr>
+<td><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_access_entry">aws_eks_access_entry.karpenter</a></td>
 <td>resource</td>
 </tr>
 <tr>
@@ -2129,6 +2133,13 @@ provided. If you are interested in contributing to EKS Blueprints, see the
 <td>Karpenter add-on configuration values</td>
 <td><code>any</code></td>
 <td><code>{}</code></td>
+<td style="text-align: center;">no</td>
+</tr>
+<tr>
+<td><a name="input_karpenter_enable_access_entry"></a> <a href="..#input_karpenter_enable_access_entry">karpenter_enable_access_entry</a></td>
+<td>Determines whether to create an EKS access entry for the Karpenter node IAM role, so the nodes launched by Karpenter can join a cluster that uses access entries for authentication</td>
+<td><code>bool</code></td>
+<td><code>false</code></td>
 <td style="text-align: center;">no</td>
 </tr>
 <tr>
