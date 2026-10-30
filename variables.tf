@@ -52,6 +52,12 @@ variable "helm_releases" {
   default     = {}
 }
 
+variable "pre_helm_releases" {
+  description = "A map of Helm releases to create before any other add-on in this module (e.g. CRD-only charts). Takes the same attributes as `helm_releases`"
+  type        = any
+  default     = {}
+}
+
 ################################################################################
 # Argo Rollouts
 ################################################################################
@@ -464,6 +470,12 @@ variable "karpenter_enable_instance_profile_creation" {
   description = "Determines whether Karpenter will be allowed to create the IAM instance profile (v1beta1) or if Terraform will (v1alpha1)"
   type        = bool
   default     = true
+}
+
+variable "karpenter_enable_access_entry" {
+  description = "Determines whether to create an EKS access entry for the Karpenter node IAM role, so the nodes launched by Karpenter can join a cluster that uses access entries for authentication"
+  type        = bool
+  default     = false
 }
 
 variable "karpenter_sqs" {

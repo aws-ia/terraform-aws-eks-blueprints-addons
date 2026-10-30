@@ -122,6 +122,7 @@ output "karpenter" {
       node_instance_profile_name = try(aws_iam_instance_profile.karpenter[0].name, "")
       node_iam_role_arn          = try(aws_iam_role.karpenter[0].arn, "")
       node_iam_role_name         = try(aws_iam_role.karpenter[0].name, "")
+      node_access_entry_arn      = try(aws_eks_access_entry.karpenter[0].access_entry_arn, "")
       sqs                        = module.karpenter_sqs
     }
   )
@@ -177,6 +178,11 @@ output "bottlerocket_update_operator" {
 output "helm_releases" {
   description = "Map of attributes of the Helm release created"
   value       = helm_release.this
+}
+
+output "pre_helm_releases" {
+  description = "Map of attributes of the Helm releases created before the other add-ons"
+  value       = helm_release.pre
 }
 
 ################################################################################

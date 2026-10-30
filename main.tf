@@ -13,6 +13,9 @@ resource "time_sleep" "this" {
     custom            = join(",", var.create_delay_dependencies)
     oidc_provider_arn = var.oidc_provider_arn
   }
+
+  # Every add-on in this module is installed after the `pre_helm_releases`
+  depends_on = [helm_release.pre]
 }
 
 locals {
@@ -3279,6 +3282,16 @@ resource "aws_iam_instance_profile" "karpenter" {
   role        = try(aws_iam_role.karpenter[0].name, var.karpenter_node.iam_role_name, "")
 
   tags = merge(var.tags, try(var.karpenter_node.instance_profile_tags, {}))
+}
+
+resource "aws_eks_access_entry" "karpenter" {
+  count = var.enable_karpenter && var.karpenter_enable_access_entry ? 1 : 0
+
+  cluster_name  = var.cluster_name
+  principal_arn = local.karpenter_node_iam_role_arn
+  type          = try(var.karpenter_node.access_entry_type, "EC2_LINUX")
+
+  tags = merge(var.tags, try(var.karpenter_node.access_entry_tags, {}))
 }
 
 module "karpenter" {
