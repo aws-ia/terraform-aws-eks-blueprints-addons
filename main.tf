@@ -652,6 +652,7 @@ data "aws_iam_policy_document" "aws_for_fluentbit" {
       sid    = "CreateCWLogs"
       effect = "Allow"
       resources = [
+        "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${try(var.aws_for_fluentbit_cw_log_group.name, "*")}",
         "arn:${local.partition}:logs:${local.region}:${local.account_id}:log-group:${try(var.aws_for_fluentbit_cw_log_group.name, "*")}:*",
       ]
 
@@ -2784,6 +2785,7 @@ data "aws_iam_policy_document" "fargate_fluentbit" {
         "logs:PutLogEvents"
       ]
       resources = [
+        try(var.fargate_fluentbit.cwlog_arn, aws_cloudwatch_log_group.fargate_fluentbit[0].arn),
         try("${var.fargate_fluentbit.cwlog_arn}:*", "${aws_cloudwatch_log_group.fargate_fluentbit[0].arn}:*"),
         try("${var.fargate_fluentbit.cwlog_arn}:logstream:*", "${aws_cloudwatch_log_group.fargate_fluentbit[0].arn}:logstream:*")
       ]
