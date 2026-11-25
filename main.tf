@@ -3626,7 +3626,7 @@ locals {
   velero_backup_s3_bucket        = try(split(":", var.velero.s3_backup_location), [])
   velero_backup_s3_bucket_arn    = try(split("/", var.velero.s3_backup_location)[0], var.velero.s3_backup_location, "")
   velero_backup_s3_bucket_name   = try(split("/", local.velero_backup_s3_bucket[5])[0], local.velero_backup_s3_bucket[5], "")
-  velero_backup_s3_bucket_prefix = try(split("/", var.velero.s3_backup_location)[1], "")
+  velero_backup_s3_bucket_prefix = try(trimsuffix(regex("/(.+)$", var.velero.s3_backup_location)[0], "/"), "")
   velero_namespace               = try(var.velero.namespace, "velero")
 }
 
